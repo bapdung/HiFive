@@ -1,7 +1,7 @@
-package com.ssafy.hifive.domain.question.entity;
+package com.ssafy.hifive.domain.timetable.entity;
 
+import com.ssafy.hifive.domain.category.entity.Category;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
-import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -16,29 +16,26 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "question")
+@Table(name = "timetable")
 @Getter
 @Setter
-public class Question extends BaseEntity {
+public class Timetable extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long questionId;
+	private Long timetableId;
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
 	private Fanmeeting fanmeetingId;
 
 	@ManyToOne
-	@JoinColumn(name = "fan_id", nullable = false)
-	private Member fanId;
+	@JoinColumn(name = "category_id", nullable = false)
+	private Category categoryId;
 
-	@Column(nullable = false, length = 30)
-	private String problem;
+	@Column(nullable = false)
+	private Integer sequence;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
-	private String content;
-
-	@Column(name = "is_picked", nullable = false)
-	private Boolean isPicked = false;
+	@Column(name = "detail_name", nullable = false, length = 20)
+	private String detailName;
 }
