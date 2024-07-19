@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: hifive
+
+
+  profiles:
+    include: private
+
+
+  datasource:
+    url: jdbc:mysql://${db.host}:${db.port}/${db.database}
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
+  jpa:
+    hibernate:
+    ddl-auto: create
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.example: DEBUG
+  file:
+    name: logs/spring-boot-application.log
