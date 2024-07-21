@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 300;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Light.eot");
+  src:
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Light.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Light.woff2")
+      format("woff2"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Light.woff")
+      format("woff"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Light.ttf")
+      format("truetype");
+}
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Regular.eot");
+  src:
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Regular.woff2")
+      format("woff2"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Regular.woff")
+      format("woff"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Regular.ttf")
+      format("truetype");
+}
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 500;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Medium.eot");
+  src:
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Medium.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Medium.woff2")
+      format("woff2"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Medium.woff")
+      format("woff"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Medium.ttf")
+      format("truetype");
+}
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-SemiBold.eot");
+  src:
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-SemiBold.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-SemiBold.woff2")
+      format("woff2"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-SemiBold.woff")
+      format("woff"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-SemiBold.ttf")
+      format("truetype");
+}
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Bold.eot");
+  src:
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Bold.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Bold.woff2")
+      format("woff2"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Bold.woff")
+      format("woff"),
+    url("https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard-Bold.ttf")
+      format("truetype");
+}
+
+@layer components {
+  .btn-lg {
+    @apply p-[10px_19px] rounded-3xl bg-primary font-semibold text-medium text-white;
+  }
+
+  .btn-md {
+    @apply p-[7px_15px] rounded-3xl bg-primary font-semibold text-small text-white;
+  }
+
+  .btn-light-lg {
+    @apply p-[10px_19px] rounded-3xl bg-primary-300 font-semibold text-medium text-primary-text;
+  }
+
+  .btn-light-md {
+    @apply p-[7px_15px] rounded-3xl bg-primary-300 font-semibold text-small text-primary-text;
+  }
+
+  .btn-outline-lg {
+    @apply p-[10px_19px] rounded-3xl bg-white border-[2px] border-solid border-primary font-semibold text-medium text-primary;
+  }
+
+  .btn-outline-md {
+    @apply p-[7px_15px] rounded-3xl bg-white border-[2px] border-solid border-primary font-semibold text-small text-primary;
+  }
+
+  .creator-btn-lg {
+    @apply p-[10px_19px] rounded-3xl bg-secondary font-semibold text-medium text-white;
+  }
+
+  .creator-btn-md {
+    @apply p-[7px_15px] rounded-3xl bg-secondary font-semibold text-small text-white;
+  }
+
+  .creator-btn-light-lg {
+    @apply p-[10px_19px] rounded-3xl bg-secondary-300 font-semibold text-medium text-secondary;
+  }
+
+  .creator-btn-light-md {
+    @apply p-[7px_15px] rounded-3xl bg-secondary-300 font-semibold text-small text-secondary;
+  }
+
+  .creator-btn-outline-lg {
+    @apply p-[10px_19px] rounded-3xl bg-white border-[2px] border-solid border-secondary font-semibold text-medium text-secondary;
+  }
+
+  .creator-btn-outline-md {
+    @apply p-[7px_15px] rounded-3xl bg-white border-[2px] border-solid border-secondary font-semibold text-small text-secondary;
+  }
+}
+
+* {
+  font-family: "Pretendard";
+}
