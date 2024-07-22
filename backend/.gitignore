@@ -335,4 +335,8 @@ gradle-app.setting
 *.rdb
 application-private.yml
 
+*.xml
+*.iml
+*.name
+
 # End of https://www.toptal.com/developers/gitignore/api/redis

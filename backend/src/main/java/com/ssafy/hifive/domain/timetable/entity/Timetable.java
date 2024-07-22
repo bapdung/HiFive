@@ -1,7 +1,7 @@
-package com.ssafy.hifive.domain.question.entity;
+package com.ssafy.hifive.domain.timetable.entity;
 
+import com.ssafy.hifive.domain.category.entity.Category;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
-import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -18,38 +18,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "question")
+@Table(name = "timetable")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question extends BaseTimeEntity {
+public class Timetable extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long questionId;
+	private long timetableId;
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
 	private Fanmeeting fanmeetingId;
 
 	@ManyToOne
-	@JoinColumn(name = "fan_id", nullable = false)
-	private Member fanId;
+	@JoinColumn(name = "category_id", nullable = false)
+	private Category categoryId;
 
-	@Column(nullable = false, length = 30)
-	private String problem;
+	@Column(nullable = false)
+	private int sequence;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
-	private String content;
-
-	@Column(name = "is_picked", nullable = false)
-	private boolean isPicked;
+	@Column(name = "detail_name", nullable = false, length = 20)
+	private String detailName;
 
 	@Builder
-	private Question(Fanmeeting fanmeetingId, Member fanId, String problem, String content) {
+	private Timetable(Fanmeeting fanmeetingId, Category categoryId, Integer sequence, String detailName) {
 		this.fanmeetingId = fanmeetingId;
-		this.fanId = fanId;
-		this.problem = problem;
-		this.content = content;
-		this.isPicked = false;
+		this.categoryId = categoryId;
+		this.sequence = sequence;
+		this.detailName = detailName;
 	}
 }
