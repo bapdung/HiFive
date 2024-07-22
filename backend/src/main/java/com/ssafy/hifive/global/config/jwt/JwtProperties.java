@@ -3,9 +3,9 @@ package com.ssafy.hifive.global.config.jwt;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Component
 @ConfigurationProperties("jwt")
 public class JwtProperties {

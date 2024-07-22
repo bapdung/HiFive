@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,13 +26,14 @@ public class Token extends BaseTimeEntity {
 
 	@JoinColumn(name = "member_id", nullable = false)
 	@ManyToOne
-	private Member memberId;
+	private Member member;
 
 	@Column(length = 255, nullable = false)
 	private String refreshToken;
 
-	public Token(Member memberId, String refreshToken) {
-		this.memberId = memberId;
+	@Builder
+	public Token(Member member, String refreshToken) {
+		this.member = member;
 		this.refreshToken = refreshToken;
 	}
 

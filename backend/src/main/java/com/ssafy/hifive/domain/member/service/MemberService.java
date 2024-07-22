@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.repository.MemberRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -15,11 +16,11 @@ public class MemberService {
 
 	public Member findByEmail(String email) {
 		return memberRepository.findByEmail(email)
-			.orElseThrow(() -> new IllegalArgumentException("User Not Found"));
+			.orElseThrow(() -> new EntityNotFoundException("User Not Found"));
 	}
 
 	public Member findById(Member member) {
 		return memberRepository.findById(member.getMemberId())
-			.orElseThrow(() -> new RuntimeException("User Not Found"));
+			.orElseThrow(() -> new EntityNotFoundException("User Not Found"));
 	}
 }

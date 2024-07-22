@@ -68,10 +68,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		CookieUtil.addCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookieMaxAge, true, false);
 	}
 
-	private void saveRefreshToken(Member memberId, String newRefreshToken) {
-		Token refreshToken = tokenRepository.findByMemberId(memberId)
+	private void saveRefreshToken(Member member, String newRefreshToken) {
+		Token refreshToken = tokenRepository.findByMemberId(member.getMemberId())
 			.map(entity -> entity.update(newRefreshToken))
-			.orElse(new Token(memberId, newRefreshToken));
+			.orElse(new Token(member, newRefreshToken));
 
 		tokenRepository.save(refreshToken);
 	}
