@@ -23,7 +23,6 @@ public class Token extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long tokenId;
 
-	@Column(nullable = false)
 	@JoinColumn(name = "member_id", nullable = false)
 	@ManyToOne
 	private Member memberId;
