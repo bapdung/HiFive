@@ -53,7 +53,8 @@ public class Member extends BaseTimeEntity {
 	private String identificationImg;
 
 	@Builder
-	private Member(String profileImg, boolean isCreator, String name, String nickname, String email, OauthServerType oAuthServer, String identificationImg) {
+	private Member(String profileImg, boolean isCreator, String name, String nickname, String email,
+		OauthServerType oAuthServer, String identificationImg) {
 		this.profileImg = profileImg;
 		this.isCreator = isCreator;
 		this.name = name;
@@ -65,4 +66,11 @@ public class Member extends BaseTimeEntity {
 		this.identificationImg = identificationImg;
 
 	}
+
+	public Member update(String nickname, String profileImg) {
+		this.nickname = nickname;
+		this.profileImg = profileImg;
+		return this;
+	}
+
 }
