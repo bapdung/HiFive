@@ -27,7 +27,7 @@ public class Board extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "creator_id", nullable = false)
-	private Member creatorId;
+	private Member creator;
 
 	@Column(name = "board_img")
 	private String boardImg;
@@ -36,8 +36,8 @@ public class Board extends BaseTimeEntity {
 	private String contents;
 
 	@Builder
-	private Board(Member creatorId, String boardImg, String contents) {
-		this.creatorId = creatorId;
+	private Board(Member creator, String boardImg, String contents) {
+		this.creator = creator;
 		this.boardImg = boardImg;
 		this.contents = contents;
 	}
