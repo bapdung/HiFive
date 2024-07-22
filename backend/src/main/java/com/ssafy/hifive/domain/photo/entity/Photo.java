@@ -2,7 +2,7 @@ package com.ssafy.hifive.domain.photo.entity;
 
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,17 +16,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "photo")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Photo extends BaseEntity {
+public class Photo extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long photoId;
+	private long photoId;
 
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)

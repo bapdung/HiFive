@@ -1,8 +1,6 @@
 package com.ssafy.hifive.domain.category.entity;
 
-import java.time.LocalDateTime;
-
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,17 +12,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "category")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category extends BaseEntity {
+public class Category extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long categoryId;
+	private long categoryId;
 
 	@Column(nullable = false, length = 10)
 	private String name;

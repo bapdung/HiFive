@@ -1,7 +1,7 @@
 package com.ssafy.hifive.domain.follow.entity;
 
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,17 +14,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "follow")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Follow extends BaseEntity {
+public class Follow extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long followId;
+	private long followId;
 
 	@ManyToOne
 	@JoinColumn(name = "creator_id", nullable = false)

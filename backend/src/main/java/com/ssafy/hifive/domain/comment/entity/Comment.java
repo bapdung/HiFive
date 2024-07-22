@@ -1,10 +1,8 @@
 package com.ssafy.hifive.domain.comment.entity;
 
-import java.time.LocalDateTime;
-
 import com.ssafy.hifive.domain.board.entity.Board;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,17 +16,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "comment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseEntity {
+public class Comment extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long commentId;
+	private long commentId;
 
 	@ManyToOne
 	@JoinColumn(name = "member_id", nullable = false)

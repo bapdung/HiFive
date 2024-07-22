@@ -1,10 +1,9 @@
 package com.ssafy.hifive.domain.fanmeeting.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,17 +17,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "fanmeeting")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Fanmeeting extends BaseEntity {
+public class Fanmeeting extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long fanmeetingId;
+	private long fanmeetingId;
 
 	@ManyToOne
 	@JoinColumn(name = "creator_id")
@@ -46,8 +44,8 @@ public class Fanmeeting extends BaseEntity {
 	@Column(nullable = false)
 	private int participant;
 
-	@Column(name = "start_time", nullable = false)
-	private LocalDate startTime;
+	@Column(name = "start_date", nullable = false)
+	private LocalDateTime startDate;
 
 	@Column(name = "running_time", nullable = false)
 	private int runningTime;
@@ -59,14 +57,15 @@ public class Fanmeeting extends BaseEntity {
 	private LocalDateTime openDate;
 
 	@Builder
-	private Fanmeeting(Member creatorId, String title, String posterImg, String notice, int participant, LocalDate startTime, int runningTime, int price) {
+	private Fanmeeting(Member creatorId, String title, String posterImg, String notice, int participant, LocalDateTime startDate, int runningTime, int price, LocalDateTime openDate) {
 		this.creatorId = creatorId;
 		this.title = title;
 		this.posterImg = posterImg;
 		this.notice = notice;
 		this.participant = participant;
-		this.startTime = startTime;
+		this.startDate = startDate;
 		this.runningTime = runningTime;
 		this.price = price;
+		this.openDate = openDate;
 	}
 }

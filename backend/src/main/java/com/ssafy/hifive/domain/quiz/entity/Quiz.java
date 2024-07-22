@@ -1,7 +1,7 @@
 package com.ssafy.hifive.domain.quiz.entity;
 
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,17 +15,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "quiz")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Quiz extends BaseEntity {
+public class Quiz extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long quizId;
+	private long quizId;
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
@@ -35,16 +34,16 @@ public class Quiz extends BaseEntity {
 	private String problem;
 
 	@Column(nullable = false)
-	private Boolean answer;
+	private boolean answer;
 
 	@Column(length = 100)
 	private String detail;
 
 	@Column(nullable = false)
-	private Integer sequence;
+	private int sequence;
 
 	@Builder
-	private Quiz(Fanmeeting fanmeetingId, String problem, Boolean answer, Integer sequence, String detail) {
+	private Quiz(Fanmeeting fanmeetingId, String problem, boolean answer, int sequence, String detail) {
 		this.fanmeetingId = fanmeetingId;
 		this.problem = problem;
 		this.answer = answer;

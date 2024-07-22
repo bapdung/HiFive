@@ -2,7 +2,7 @@ package com.ssafy.hifive.domain.timetable.entity;
 
 import com.ssafy.hifive.domain.category.entity.Category;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,17 +16,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "timetable")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Timetable extends BaseEntity {
+public class Timetable extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long timetableId;
+	private long timetableId;
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)

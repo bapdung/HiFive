@@ -1,7 +1,7 @@
 package com.ssafy.hifive.domain.point.entity;
 
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,17 +17,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "point_transaction")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Point extends BaseEntity {
+public class Point extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long pointTransactionId;
+	private long pointTransactionId;
 
 	@ManyToOne
 	@JoinColumn(name = "member_id", nullable = false)

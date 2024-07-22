@@ -2,7 +2,7 @@ package com.ssafy.hifive.domain.story.entity;
 
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.global.entity.BaseEntity;
+import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,17 +16,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "story")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Story extends BaseEntity {
+public class Story extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long storyId;
+	private long storyId;
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
@@ -40,7 +39,7 @@ public class Story extends BaseEntity {
 	private String contents;
 
 	@Column(name = "is_picked")
-	private Boolean isPicked = false;
+	private boolean isPicked = false;
 
 	@Column(nullable = false, length = 30)
 	private String title;
