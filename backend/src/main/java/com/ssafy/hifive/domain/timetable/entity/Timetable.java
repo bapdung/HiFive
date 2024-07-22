@@ -12,13 +12,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "timetable")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Timetable extends BaseEntity {
 
 	@Id
@@ -34,8 +37,16 @@ public class Timetable extends BaseEntity {
 	private Category categoryId;
 
 	@Column(nullable = false)
-	private Integer sequence;
+	private int sequence;
 
 	@Column(name = "detail_name", nullable = false, length = 20)
 	private String detailName;
+
+	@Builder
+	private Timetable(Fanmeeting fanmeetingId, Category categoryId, Integer sequence, String detailName) {
+		this.fanmeetingId = fanmeetingId;
+		this.categoryId = categoryId;
+		this.sequence = sequence;
+		this.detailName = detailName;
+	}
 }

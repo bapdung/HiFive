@@ -10,13 +10,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "follow")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Follow extends BaseEntity {
 
 	@Id
@@ -30,4 +33,10 @@ public class Follow extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)
 	private Member fanId;
+
+	@Builder
+	private Follow(Member creatorId, Member fanId) {
+		this.creatorId = creatorId;
+		this.fanId = fanId;
+	}
 }

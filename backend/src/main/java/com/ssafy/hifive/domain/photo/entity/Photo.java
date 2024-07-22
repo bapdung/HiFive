@@ -12,13 +12,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "photo")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Photo extends BaseEntity {
 
 	@Id
@@ -37,5 +40,13 @@ public class Photo extends BaseEntity {
 	private String photoImg;
 
 	@Column(nullable = false)
-	private Integer sequence;
+	private int sequence;
+
+	@Builder
+	private Photo(Member fanId, Fanmeeting fanmeetingId, String photoImg, int sequence) {
+		this.fanId = fanId;
+		this.fanmeetingId = fanmeetingId;
+		this.photoImg = photoImg;
+		this.sequence = sequence;
+	}
 }

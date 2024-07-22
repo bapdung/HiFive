@@ -12,13 +12,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "question")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question extends BaseEntity {
 
 	@Id
@@ -40,5 +43,14 @@ public class Question extends BaseEntity {
 	private String content;
 
 	@Column(name = "is_picked", nullable = false)
-	private Boolean isPicked = false;
+	private Boolean isPicked;
+
+	@Builder
+	private Question(Fanmeeting fanmeetingId, Member fanId, String problem, String content) {
+		this.fanmeetingId = fanmeetingId;
+		this.fanId = fanId;
+		this.problem = problem;
+		this.content = content;
+		this.isPicked = false;
+	}
 }

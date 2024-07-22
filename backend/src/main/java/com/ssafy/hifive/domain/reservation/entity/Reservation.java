@@ -11,13 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "reservation")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation extends BaseEntity {
 
 	@Id
@@ -31,4 +34,10 @@ public class Reservation extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)
 	private Member fanId;
+
+	@Builder
+	private Reservation(Fanmeeting fanmeetingId, Member fanId) {
+		this.fanmeetingId = fanmeetingId;
+		this.fanId = fanId;
+	}
 }

@@ -11,13 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "creator_profile")
 @Getter
-@Setter
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 public class Creator extends BaseEntity {
 
 	@Id
@@ -41,5 +44,15 @@ public class Creator extends BaseEntity {
 	private String description;
 
 	@Column(nullable = false)
-	private Integer follower = 0;
+	private int follower;
+
+	@Builder
+	private Creator(Member creatorId, String creatorImg, String creatorName, String link, String description) {
+		this.creatorId = creatorId;
+		this.creatorImg = creatorImg;
+		this.creatorName = creatorName;
+		this.link = link;
+		this.description = description;
+		this.follower = 0;
+	}
 }

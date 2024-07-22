@@ -14,13 +14,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "comment")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseEntity {
 
 	@Id
@@ -29,7 +32,7 @@ public class Comment extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "member_id", nullable = false)
-	private Member member;
+	private Member memberId;
 
 	@ManyToOne
 	@JoinColumn(name = "board_id", nullable = false)
@@ -37,4 +40,11 @@ public class Comment extends BaseEntity {
 
 	@Column(nullable = false, length = 200)
 	private String contents;
+
+	@Builder
+	private Comment(Member memberId, Board board, String contents) {
+		this.memberId = memberId;
+		this.board = board;
+		this.contents = contents;
+	}
 }

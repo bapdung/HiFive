@@ -11,13 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "board")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +35,12 @@ public class Board extends BaseEntity {
 
 	@Column(nullable = false, length = 1000)
 	private String contents;
+
+	@Builder
+	private Board(Member creatorId, String boardImg, String contents) {
+		this.creatorId = creatorId;
+		this.boardImg = boardImg;
+		this.contents = contents;
+	}
 
 }

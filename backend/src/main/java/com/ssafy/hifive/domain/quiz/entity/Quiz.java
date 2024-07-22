@@ -11,13 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "quiz")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Quiz extends BaseEntity {
 
 	@Id
@@ -39,4 +42,13 @@ public class Quiz extends BaseEntity {
 
 	@Column(nullable = false)
 	private Integer sequence;
+
+	@Builder
+	private Quiz(Fanmeeting fanmeetingId, String problem, Boolean answer, Integer sequence, String detail) {
+		this.fanmeetingId = fanmeetingId;
+		this.problem = problem;
+		this.answer = answer;
+		this.sequence = sequence;
+		this.detail = detail;
+	}
 }

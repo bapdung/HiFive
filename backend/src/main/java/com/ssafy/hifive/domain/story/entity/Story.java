@@ -12,13 +12,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "story")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Story extends BaseEntity {
 
 	@Id
@@ -41,4 +44,13 @@ public class Story extends BaseEntity {
 
 	@Column(nullable = false, length = 30)
 	private String title;
+
+	@Builder
+	private Story(Fanmeeting fanmeetingId, Member fanId, String contents, String title) {
+		this.fanmeetingId = fanmeetingId;
+		this.fanId = fanId;
+		this.contents = contents;
+		this.isPicked = false;
+		this.title = title;
+	}
 }

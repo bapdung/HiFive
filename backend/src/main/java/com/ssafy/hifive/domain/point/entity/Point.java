@@ -13,13 +13,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "point_transaction")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Point extends BaseEntity {
 
 	@Id
@@ -40,7 +43,13 @@ public class Point extends BaseEntity {
 	@Column(nullable = false)
 	private String detail;
 
-	public enum TransactionType {
-		PLUS, MINUS
+
+	@Builder
+	private Point(Member memberId, TransactionType type, int point, String detail) {
+		this.memberId = memberId;
+		this.type = type;
+		this.point = point;
+		this.detail = detail;
+
 	}
 }
