@@ -37,7 +37,7 @@ public class Creator extends BaseEntity {
 	@Column(nullable = false, length = 200)
 	private String link;
 
-	@Column(nullable = false, length = 50)
+	@Column(nullable = false, length = 100)
 	private String description;
 
 	@Column(nullable = false)
