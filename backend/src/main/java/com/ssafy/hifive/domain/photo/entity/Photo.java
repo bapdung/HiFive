@@ -1,4 +1,4 @@
-package com.ssafy.hifive.domain.question.entity;
+package com.ssafy.hifive.domain.photo.entity;
 
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.member.entity.Member;
@@ -18,38 +18,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "question")
+@Table(name = "photo")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question extends BaseTimeEntity {
+public class Photo extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long questionId;
-
-	@ManyToOne
-	@JoinColumn(name = "fanmeeting_id", nullable = false)
-	private Fanmeeting fanmeetingId;
+	private long photoId;
 
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)
 	private Member fanId;
 
-	@Column(nullable = false, length = 30)
-	private String problem;
+	@ManyToOne
+	@JoinColumn(name = "fanmeeting_id", nullable = false)
+	private Fanmeeting fanmeetingId;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
-	private String content;
+	@Column(name = "photo_img")
+	private String photoImg;
 
-	@Column(name = "is_picked", nullable = false)
-	private boolean isPicked;
+	@Column(nullable = false)
+	private int sequence;
 
 	@Builder
-	private Question(Fanmeeting fanmeetingId, Member fanId, String problem, String content) {
-		this.fanmeetingId = fanmeetingId;
+	private Photo(Member fanId, Fanmeeting fanmeetingId, String photoImg, int sequence) {
 		this.fanId = fanId;
-		this.problem = problem;
-		this.content = content;
-		this.isPicked = false;
+		this.fanmeetingId = fanmeetingId;
+		this.photoImg = photoImg;
+		this.sequence = sequence;
 	}
 }
