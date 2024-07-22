@@ -1,7 +1,10 @@
 spring:
   application:
     name: hifive
-
+  security:
+    user:
+      name: user
+      password: 1234
 
   profiles:
     include: private
@@ -12,12 +15,14 @@ spring:
     username: ${db.username}
     password: ${db.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-
-
   jpa:
+    open-in-view: false
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
-    ddl-auto: create
+      ddl-auto: create
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
