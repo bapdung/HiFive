@@ -22,7 +22,7 @@ export default {
           700: "#727272",
           500: "#999999",
         },
-        background: "#F7F7F7",
+        background: "#F5F5F5",
         meetingroom: "#7A5A8A",
         yellow: "#FFE45E",
       },
@@ -39,6 +39,10 @@ export default {
         large: "1.125rem",
         medium: "1rem",
         small: "0.875rem",
+      },
+      backgroundImage: {
+        "custom-gradient":
+          "linear-gradient(99deg, #FFF 21.02%, #FCEBF0 71.1%, #FFE7EE 78.98%)",
       },
     },
   },
