@@ -1,8 +1,11 @@
 package com.ssafy.hifive.domain.fanmeeting.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.timetable.entity.Timetable;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -12,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,9 +60,12 @@ public class Fanmeeting extends BaseTimeEntity {
 	@Column(name = "open_date")
 	private LocalDateTime openDate;
 
+	@OneToMany(mappedBy = "fanmeeting")
+	private List<Timetable> timetable = new ArrayList<>();
+
 	@Builder
 	private Fanmeeting(Member creator, String title, String posterImg, String notice, int participant,
-		LocalDateTime startDate, int runningTime, int price, LocalDateTime openDate) {
+		LocalDateTime startDate, int runningTime, int price, LocalDateTime openDate, List<Timetable> timetable) {
 		this.creator = creator;
 		this.title = title;
 		this.posterImg = posterImg;
@@ -68,5 +75,10 @@ public class Fanmeeting extends BaseTimeEntity {
 		this.runningTime = runningTime;
 		this.price = price;
 		this.openDate = openDate;
+		if (timetable != null) {
+			this.timetable.addAll(timetable);
+			timetable.forEach(t -> t.setFanmeeting(this));  // 중요한 부분
+		}
+
 	}
 }
