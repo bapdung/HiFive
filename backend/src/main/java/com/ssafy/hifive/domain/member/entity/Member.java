@@ -30,7 +30,7 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "is_creator")
 	private boolean isCreator;
 
-	@Column(nullable = false, length = 30)
+	@Column(length = 30)
 	private String name;
 
 	@Column(nullable = false, unique = true, length = 100)
@@ -53,7 +53,8 @@ public class Member extends BaseTimeEntity {
 	private String identificationImg;
 
 	@Builder
-	private Member(String profileImg, boolean isCreator, String name, String nickname, String email, OauthServerType oAuthServer, String identificationImg) {
+	private Member(String profileImg, boolean isCreator, String name, String nickname, String email,
+		OauthServerType oAuthServer, String identificationImg) {
 		this.profileImg = profileImg;
 		this.isCreator = isCreator;
 		this.name = name;
@@ -65,4 +66,10 @@ public class Member extends BaseTimeEntity {
 		this.identificationImg = identificationImg;
 
 	}
+
+	public void update(String nickname, String profileImg) {
+		this.nickname = nickname;
+		this.profileImg = profileImg;
+	}
+
 }

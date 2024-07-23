@@ -30,7 +30,7 @@ public class Fanmeeting extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "creator_id")
-	private Member creatorId;
+	private Member creator;
 
 	@Column(nullable = false, length = 100)
 	private String title;
@@ -57,8 +57,9 @@ public class Fanmeeting extends BaseTimeEntity {
 	private LocalDateTime openDate;
 
 	@Builder
-	private Fanmeeting(Member creatorId, String title, String posterImg, String notice, int participant, LocalDateTime startDate, int runningTime, int price, LocalDateTime openDate) {
-		this.creatorId = creatorId;
+	private Fanmeeting(Member creator, String title, String posterImg, String notice, int participant,
+		LocalDateTime startDate, int runningTime, int price, LocalDateTime openDate) {
+		this.creator = creator;
 		this.title = title;
 		this.posterImg = posterImg;
 		this.notice = notice;
