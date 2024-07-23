@@ -9,6 +9,7 @@ export default {
           700: "#FF99B8",
           500: "#FFCADA",
           300: "#FFE7EE",
+          100: "#FFF1F5",
           text: "#E55883",
         },
         secondary: {
