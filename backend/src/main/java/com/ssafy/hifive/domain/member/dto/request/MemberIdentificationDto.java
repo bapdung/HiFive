@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberIdentificationDto {
+public final class MemberIdentificationDto {
 	private String identificationImg;
 
 	public Member toEntity(Member member) {

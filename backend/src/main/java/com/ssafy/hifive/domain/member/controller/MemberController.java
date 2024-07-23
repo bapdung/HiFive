@@ -43,7 +43,7 @@ public class MemberController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MemberResponseDto> getMember(@AuthenticationPrincipal Member member) {
 		return memberService.getMemberDetail(member);
 	}
@@ -65,7 +65,7 @@ public class MemberController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@PatchMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateMember(@RequestBody MemberUpdateDto memberUpdateDto,
 		@AuthenticationPrincipal Member member) {
 		memberService.updateMember(memberUpdateDto, member);
@@ -77,7 +77,7 @@ public class MemberController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> createIdentification(@RequestBody MemberIdentificationDto memberIdentificationDto,
 		@AuthenticationPrincipal Member member) {
 		memberService.createIdentification(memberIdentificationDto, member);
