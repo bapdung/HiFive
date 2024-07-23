@@ -33,7 +33,10 @@ module.exports = {
       1,
       { extensions: [".js", ".jsx", ".ts", ".tsx"] },
     ],
-    "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
+    "import/no-extraneous-dependencies": [
+      "error",
+      { devDependencies: true, projectDependencies: false },
+    ],
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
     "@typescript-eslint/no-unused-vars": "error",
