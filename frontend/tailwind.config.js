@@ -48,6 +48,8 @@ export default {
       backgroundImage: {
         "custom-gradient":
           "linear-gradient(99deg, #FFF 21.02%, #FCEBF0 71.1%, #FFE7EE 78.98%)",
+        "board-gradient":
+          "linear-gradient(to top, #ffffff 60%, #fcebf0 78%, #ffe7ee 100%)",
       },
     },
   },
