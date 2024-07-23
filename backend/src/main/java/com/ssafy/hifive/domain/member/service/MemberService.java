@@ -34,19 +34,19 @@ public class MemberService {
 	}
 
 	public void nicknameCheck(MemberNicknameDto memberNicknameDto, Member member) {
-		return;
+
 	}
 
 	public void updateMember(MemberUpdateDto updateMember, Member member) {
-		return;
+
 	}
 
 	public void createIdentification(MemberIdentificationDto memberIdentificationDto, Member member) {
-		return;
+
 	}
 
 	public void deleteMember(Member member) {
-		return;
+		
 	}
 
 }
