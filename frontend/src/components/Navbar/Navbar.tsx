@@ -2,7 +2,7 @@ import logo from "../../assets/logo.png";
 
 function Navbar() {
   return (
-    <div className="flex w-full justify-between items-center h-20 px-7 py-2">
+    <div className="bg-white flex w-full justify-between items-center h-20 px-7 py-2">
       <div>
         <img src={logo} alt="Logo" />
       </div>
