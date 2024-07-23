@@ -1,14 +1,17 @@
 package com.ssafy.hifive.domain.member.service;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberNicknameDto;
+import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.hifive.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.hifive.domain.member.entity.Member;
-import org.springframework.stereotype.Service;
 import com.ssafy.hifive.domain.member.repository.MemberRepository;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +37,16 @@ public class MemberService {
 		return;
 	}
 
+	public void updateMember(MemberUpdateDto updateMember, Member member) {
+		return;
+	}
+
+	public void createIdentification(MemberIdentificationDto memberIdentificationDto, Member member) {
+		return;
+	}
+
+	public void deleteMember(Member member) {
+		return;
+	}
 
 }
