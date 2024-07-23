@@ -1,6 +1,6 @@
 function CommentForm() {
   return (
-    <div className="flex items-centerw-full">
+    <div className="flex items-centerw-full mb-12">
       <div className="bg-gray-400 min-w-[50px] h-[50px] rounded-full" />
       <form className="w-full flex justify-between ml-5 border-b border-solid border-1 pb-2 border-gray-500 ">
         <input
