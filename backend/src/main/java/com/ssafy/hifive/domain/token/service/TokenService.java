@@ -24,7 +24,7 @@ public class TokenService {
 			throw new IllegalArgumentException("Unexpected token");
 		}
 
-		Member memberId = refreshTokenService.findByRefreshToken(refreshToken).getMemberId();
+		Member memberId = refreshTokenService.findByRefreshToken(refreshToken).getMember();
 		Member member = memberService.findById(memberId);
 		return tokenProvider.generateToken(member, Duration.ofHours(1));
 	}

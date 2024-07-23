@@ -28,7 +28,7 @@ public class Quiz extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
-	private Fanmeeting fanmeetingId;
+	private Fanmeeting fanmeeting;
 
 	@Column(nullable = false, length = 100)
 	private String problem;
@@ -43,8 +43,8 @@ public class Quiz extends BaseTimeEntity {
 	private int sequence;
 
 	@Builder
-	private Quiz(Fanmeeting fanmeetingId, String problem, boolean answer, int sequence, String detail) {
-		this.fanmeetingId = fanmeetingId;
+	private Quiz(Fanmeeting fanmeeting, String problem, boolean answer, int sequence, String detail) {
+		this.fanmeeting = fanmeeting;
 		this.problem = problem;
 		this.answer = answer;
 		this.sequence = sequence;

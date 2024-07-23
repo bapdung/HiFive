@@ -29,7 +29,7 @@ public class Timetable extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
-	private Fanmeeting fanmeetingId;
+	private Fanmeeting fanmeeting;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id", nullable = false)
@@ -42,8 +42,8 @@ public class Timetable extends BaseTimeEntity {
 	private String detailName;
 
 	@Builder
-	private Timetable(Fanmeeting fanmeetingId, Category categoryId, Integer sequence, String detailName) {
-		this.fanmeetingId = fanmeetingId;
+	private Timetable(Fanmeeting fanmeeting, Category categoryId, Integer sequence, String detailName) {
+		this.fanmeeting = fanmeeting;
 		this.categoryId = categoryId;
 		this.sequence = sequence;
 		this.detailName = detailName;
