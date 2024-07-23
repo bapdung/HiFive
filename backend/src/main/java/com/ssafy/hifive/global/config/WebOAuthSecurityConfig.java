@@ -9,8 +9,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ssafy.hifive.domain.member.service.MemberService;
 import com.ssafy.hifive.domain.token.repository.TokenRepository;
@@ -30,10 +30,12 @@ public class WebOAuthSecurityConfig {
 	private final TokenProvider tokenProvider;
 	private final MemberService memberService;
 
-	public WebSecurityCustomizer configure() {
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring().requestMatchers("/static/**");
 	}
 
+	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 			.httpBasic(httpBasic -> httpBasic.disable())
@@ -43,9 +45,12 @@ public class WebOAuthSecurityConfig {
 		http.sessionManagement(
 			sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		http.addFilterBefore(tokenAuthenticationFilter(), OncePerRequestFilter.class);
+		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-		http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/token").permitAll()
+		http.authorizeHttpRequests(authorize -> authorize
+			.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
+				"/webjars/**").permitAll()
+			.requestMatchers("/api/token").permitAll()
 			.requestMatchers("/api/**").authenticated()
 			.anyRequest().permitAll());
 
@@ -58,7 +63,7 @@ public class WebOAuthSecurityConfig {
 					userInfo.userService(oAuth2UserCustomService)));
 
 		http.logout(logout ->
-			logout.logoutSuccessUrl("/main"));
+			logout.logoutSuccessUrl("/login"));
 
 		http.exceptionHandling(exceptionHandling ->
 			exceptionHandling.defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
