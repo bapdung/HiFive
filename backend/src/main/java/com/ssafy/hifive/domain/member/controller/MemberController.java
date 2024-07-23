@@ -100,7 +100,7 @@ public class MemberController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> logoutMember(HttpServletRequest request, HttpServletResponse response) {
 		new SecurityContextLogoutHandler().logout(request, response,
 			SecurityContextHolder.getContext().getAuthentication());
