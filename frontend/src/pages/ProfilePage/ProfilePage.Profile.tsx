@@ -1,6 +1,6 @@
 function Profile() {
   return (
-    <div className="flex h-[350px] p-[40px_50px] items-center justify-between w-4/5 rounded-[30px] bg-custom-gradient">
+    <div className="flex h-[350px] p-[40px_50px] items-center justify-between w-4/5 rounded-[30px] bg-horizontal-gradient">
       <div className="w-2/5 h-[250px] flex flex-col justify-center">
         <div className="flex items-center">
           <div className="text-h2 mr-[20px]">이름</div>

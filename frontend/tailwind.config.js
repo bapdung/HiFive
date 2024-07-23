@@ -47,8 +47,10 @@ export default {
         small: "0.875rem",
       },
       backgroundImage: {
-        "custom-gradient":
-          "linear-gradient(99deg, #FFF 21.02%, #FCEBF0 71.1%, #FFE7EE 78.98%)",
+        "horizontal-gradient":
+          "linear-gradient(90deg, #FFFBFB 0%, #FFF1F5 100%)",
+        "vertical-gradient":
+          "linear-gradient(180deg, #FFF 0%, #FCEBF0 30%, #FFE7EE 100%)",
       },
     },
   },
