@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public final class BoardResponseDto {
-	private Long boardId;
+	private long boardId;
 	private String boardImg;
 	private LocalDateTime createdDate;
 	private String contents;

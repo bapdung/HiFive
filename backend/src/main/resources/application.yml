@@ -1,14 +1,9 @@
 spring:
   application:
     name: hifive
-  security:
-    user:
-      name: user
-      password: 1234
 
   profiles:
     include: private
-
 
   datasource:
     url: jdbc:mysql://${db.host}:${db.port}/${db.database}
