@@ -30,7 +30,7 @@ public class Point extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "member_id", nullable = false)
-	private Member memberId;
+	private Member member;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -42,10 +42,9 @@ public class Point extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String detail;
 
-
 	@Builder
-	private Point(Member memberId, TransactionType type, int point, String detail) {
-		this.memberId = memberId;
+	private Point(Member member, TransactionType type, int point, String detail) {
+		this.member = member;
 		this.type = type;
 		this.point = point;
 		this.detail = detail;

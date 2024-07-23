@@ -27,15 +27,15 @@ public class Follow extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "creator_id", nullable = false)
-	private Member creatorId;
+	private Member creator;
 
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)
-	private Member fanId;
+	private Member fan;
 
 	@Builder
-	private Follow(Member creatorId, Member fanId) {
-		this.creatorId = creatorId;
-		this.fanId = fanId;
+	private Follow(Member creator, Member fan) {
+		this.creator = creator;
+		this.fan = fan;
 	}
 }
