@@ -47,6 +47,8 @@ export default {
         small: "0.875rem",
       },
       backgroundImage: {
+        "board-gradient":
+          "linear-gradient(to top, #ffffff 60%, #fcebf0 78%, #ffe7ee 100%)",
         "horizontal-gradient":
           "linear-gradient(90deg, #FFFBFB 0%, #FFF1F5 100%)",
         "vertical-gradient":

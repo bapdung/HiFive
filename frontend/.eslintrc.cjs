@@ -50,6 +50,7 @@ module.exports = {
         tsx: "never",
       },
     ],
+    "react/function-component-definition": "off",
   },
 
   settings: {
