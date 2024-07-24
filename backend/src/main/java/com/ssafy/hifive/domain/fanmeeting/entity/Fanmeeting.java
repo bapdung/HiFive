@@ -38,7 +38,7 @@ public class Fanmeeting extends BaseTimeEntity {
 	@Column(name = "poster_img", nullable = false)
 	private String posterImg;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 300)
 	private String notice;
 
 	@Column(nullable = false)
