@@ -2,12 +2,10 @@ package com.ssafy.hifive.domain.fanmeeting.dto.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.domain.timetable.dto.request.TimetableRequestDto;
-import com.ssafy.hifive.domain.timetable.entity.Timetable;
+import com.ssafy.hifive.domain.timetable.dto.request.TimetableCreateDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,15 +21,11 @@ public final class FanmeetingRequestDto {
 	private LocalDateTime startDate;
 	private LocalDateTime openDate;
 	private int price;
-	private List<TimetableRequestDto> timetable;
+	private List<TimetableCreateDto> timetable;
 
 	public Fanmeeting toEntity(Member creator) {
 
-		List<Timetable> timetables = this.timetable.stream()
-			.map(t -> t.toEntity(null))
-			.collect(Collectors.toList());
-
-		Fanmeeting fanmeeting = Fanmeeting.builder()
+		return Fanmeeting.builder()
 			.creator(creator)
 			.title(title)
 			.posterImg(posterImg)
@@ -41,12 +35,7 @@ public final class FanmeetingRequestDto {
 			.startDate(startDate)
 			.openDate(openDate)
 			.price(price)
-			.timetable(timetables)
 			.build();
-
-		timetables.forEach(t -> t.setFanmeeting(fanmeeting));
-
-		return fanmeeting;
 
 	}
 }

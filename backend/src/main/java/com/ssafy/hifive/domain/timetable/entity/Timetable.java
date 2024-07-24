@@ -42,15 +42,11 @@ public class Timetable extends BaseTimeEntity {
 	private String detailName;
 
 	@Builder
-	private Timetable(Fanmeeting fanmeeting, Category category, Integer sequence, String detailName) {
+	private Timetable(Fanmeeting fanmeeting, Category category, int sequence, String detailName) {
 		this.fanmeeting = fanmeeting;
 		this.category = category;
 		this.sequence = sequence;
 		this.detailName = detailName;
-	}
-
-	public void setFanmeeting(Fanmeeting fanmeeting) {
-		this.fanmeeting = fanmeeting;
 	}
 
 }

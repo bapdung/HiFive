@@ -8,11 +8,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FanmeetingParam {
 
-	@Schema(description = "정렬 기준", defaultValue = "create date", allowableValues = {
+	@Schema(description = "정렬 기준", defaultValue = "desc", allowableValues = {
 		"asc",
 		"desc"})
 	public String sort;
 
-	@Schema(description = "가져올 항목의 상위 N개")
-	public String top;
+	@Schema(description = "가장 나중에 불러온 것의 id")
+	public Long top;
 }

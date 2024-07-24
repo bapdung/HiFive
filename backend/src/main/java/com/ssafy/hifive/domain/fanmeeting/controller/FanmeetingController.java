@@ -8,14 +8,15 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.hifive.domain.fanmeeting.dto.param.FanmeetingParam;
 import com.ssafy.hifive.domain.fanmeeting.dto.request.FanmeetingRequestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingDetailDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingLatestDto;
@@ -32,7 +33,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/fanmeeting")
+@RequestMapping("/api/fanmeeting")
 @RequiredArgsConstructor
 @Tag(name = "fanmeeting", description = "팬미팅 관련 API")
 public class FanmeetingController {
@@ -132,8 +133,8 @@ public class FanmeetingController {
 	)
 	@GetMapping(path = "/completed/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingsByCreator(@PathVariable long creatorId,
-		@RequestParam String sort, @RequestParam int top) {
-		return fanmeetingService.getCompletedFanmeetingsByCreator(creatorId, sort, top);
+		@ModelAttribute FanmeetingParam param) {
+		return fanmeetingService.getCompletedFanmeetingsByCreator(creatorId, param);
 	}
 
 	@Operation(summary = "사용자가 예매한 팬미팅 조회", description = "사용자가 예매한 팬미팅을 조회한다.")
@@ -143,9 +144,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = {"sort", "top"})
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsForUser(@RequestParam String sort,
-		@RequestParam int top) {
-		return fanmeetingService.getFanmeetingsForUser(sort, top);
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsForUser(@ModelAttribute FanmeetingParam param) {
+		return fanmeetingService.getFanmeetingsForUser(param);
 	}
 
 	@Operation(summary = "가장 최근 팬미팅 1개 조회", description = "가장 최근 팬미팅 1개를 조회한다.")

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class TimetableRequestDto {
+public class TimetableCreateDto {
 
 	private Category category;
 	private int sequence;

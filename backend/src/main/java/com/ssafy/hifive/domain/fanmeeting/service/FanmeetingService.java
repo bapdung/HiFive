@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.hifive.domain.fanmeeting.dto.param.FanmeetingParam;
 import com.ssafy.hifive.domain.fanmeeting.dto.request.FanmeetingRequestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingDetailDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingLatestDto;
@@ -43,12 +44,12 @@ public class FanmeetingService {
 		return ResponseEntity.ok(null);
 	}
 
-	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingsByCreator(long creatorId, String sort,
-		int top) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingsByCreator(long creatorId,
+		FanmeetingParam param) {
 		return ResponseEntity.ok(null);
 	}
 
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsForUser(String sort, int top) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsForUser(FanmeetingParam param) {
 		return ResponseEntity.ok(null);
 	}
 }

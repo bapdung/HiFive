@@ -22,9 +22,10 @@ public class FanmeetingDetailDto {
 	private LocalDateTime startDate;
 	private LocalDateTime openDate;
 	private int price;
+	private int remainingTickets;
 	private List<TimetableResponseDto> timetable;
 
-	public static FanmeetingDetailDto from(Fanmeeting fanmeeting) {
+	public static FanmeetingDetailDto from(Fanmeeting fanmeeting, int remainingTickets) {
 		return new FanmeetingDetailDto(
 			fanmeeting.getTitle(),
 			fanmeeting.getPosterImg(),
@@ -34,6 +35,7 @@ public class FanmeetingDetailDto {
 			fanmeeting.getStartDate(),
 			fanmeeting.getOpenDate(),
 			fanmeeting.getPrice(),
+			remainingTickets,
 			fanmeeting.getTimetable().stream()
 				.map(TimetableResponseDto::from)
 				.collect(Collectors.toList())

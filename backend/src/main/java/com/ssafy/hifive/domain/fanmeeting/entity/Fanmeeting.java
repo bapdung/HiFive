@@ -75,10 +75,7 @@ public class Fanmeeting extends BaseTimeEntity {
 		this.runningTime = runningTime;
 		this.price = price;
 		this.openDate = openDate;
-		if (timetable != null) {
-			this.timetable.addAll(timetable);
-			timetable.forEach(t -> t.setFanmeeting(this));  // 중요한 부분
-		}
+		this.timetable = timetable;
 
 	}
 }
