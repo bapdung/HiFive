@@ -54,7 +54,7 @@ public class QuizController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<QuizResponseDto>> getAllQuizzes(@PathVariable long fanmeetingId,
+	public ResponseEntity<List<QuizResponseDto>> getQuizAll(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
 		return quizService.getQuizAll(fanmeetingId, member);
 	}

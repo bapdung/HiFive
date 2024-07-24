@@ -64,9 +64,9 @@ public class CreatorController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/main", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CreatorOverviewDto>> getCreatorLimit(
+	public ResponseEntity<List<CreatorOverviewDto>> getCreatorMain(
 		@AuthenticationPrincipal Member member) {
-		return creatorService.getCreatorLimit(member);
+		return creatorService.getCreatorMain(member);
 	}
 
 	@Operation(summary = "크리에이터 프로필 상세 조회", description = "내가 팔로우한 크리에이터 프로필 상세 내용을 조회한다.")
@@ -75,7 +75,7 @@ public class CreatorController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CreatorOverviewDto> getCreatorLimit(
+	public ResponseEntity<CreatorOverviewDto> getCreatorDetail(
 		@PathVariable long creatorId, @AuthenticationPrincipal Member member) {
 		return creatorService.getCreatorDetail(creatorId, member);
 	}

@@ -23,6 +23,6 @@ public class CreatorParam {
 	})
 	public String sort;
 
-	@Schema(description = "가져올 항목의 상위 N개")
-	public String top;
+	@Schema(description = "가장 마지막에 불러온 creator_id")
+	public Long top;
 }

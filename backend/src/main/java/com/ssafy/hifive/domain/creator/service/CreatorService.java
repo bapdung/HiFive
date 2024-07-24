@@ -21,7 +21,7 @@ public class CreatorService {
 		return ResponseEntity.ok(null);
 	}
 
-	public ResponseEntity<List<CreatorOverviewDto>> getCreatorLimit(Member member) {
+	public ResponseEntity<List<CreatorOverviewDto>> getCreatorMain(Member member) {
 		return ResponseEntity.ok(null);
 	}
 
