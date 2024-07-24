@@ -1,5 +1,4 @@
 import React from "react";
-import ContentProfile from "./BoardPage.ContentProfile";
 
 interface ContentProps {
   handleModal: (stateOfModal: boolean, msg?: string) => void;
@@ -7,7 +6,25 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = ({ handleModal }) => (
   <div className="py-8 px-10 bg-white w-full rounded-[30px] relative">
-    <ContentProfile handleModal={handleModal} />
+    <div className="flex items-center space-x-reverse">
+      <div className="bg-gray-400 w-[50px] h-[50px] rounded-full" />
+      <div className="ml-4">
+        <p className="text-h6">개복어</p>
+        <p className="text-xs">2024. 07. 15</p>
+      </div>
+      <div className="ml-auto space-x-2.5">
+        <button className="creator-btn-light-md px-[2.5]" type="button">
+          수정
+        </button>
+        <button
+          className="btn-light-md px-[2.5]"
+          type="button"
+          onClick={() => handleModal(true, "게시글")}
+        >
+          삭제
+        </button>
+      </div>
+    </div>
     <p className="py-5 w-full text-gray-900 text-medium">
       고대 로마 시대부터 현대에 이르기까지, 인류는 다양한 방법으로 세상과 상호
       작용해 왔습니다. 이러한 상호 작용은 문화, 과학, 예술, 기술 등 다양한
