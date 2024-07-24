@@ -32,7 +32,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ handleModal }) => {
       </div>
       <button
         type="submit"
-        className="btn-outline-md max-h-10 w-15 mt-auto mb-auto"
+        className="btn-outline-md mt-auto mb-auto"
         onClick={openModal}
       >
         삭제

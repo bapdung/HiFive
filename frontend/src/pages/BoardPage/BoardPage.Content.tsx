@@ -99,13 +99,13 @@ const Content: React.FC<ContentProps> = ({
             ref={textareaRef}
             value={inputValue}
             onChange={handleInputChange}
-            className="mt-4 p-5 border w-full border-solid border-gray-700 text-medium text-gray-900 rounded-[15px] resize-none overflow-hidden focus:outline-0"
+            className="mt-4 p-5 border-2 w-full border-solid border-gray-200 text-medium text-gray-900 rounded-[15px] resize-none overflow-hidden focus:outline-0"
             rows={1}
           />
-          <div className="bg-gray-400 w-[90%] h-[500px] py-5 ml-auto mr-auto mt-4" />
-          <div className="flex justify-center mt-4">
+          <div className="relative">
+            <div className="bg-gray-400 w-[90%] h-[500px] py-5 ml-auto mr-auto mt-4" />
             <button
-              className="creator-btn-outline-md flex justify-center items-center px-[2.5]"
+              className="creator-btn-outline-md flex justify-center items-center px-[2.5] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-70"
               type="button"
             >
               <img src={camera} alt="edit" className="mr-2.5" />

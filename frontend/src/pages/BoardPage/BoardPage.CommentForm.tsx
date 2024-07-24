@@ -8,7 +8,7 @@ function CommentForm() {
           type="text"
           placeholder="댓글 작성"
         />
-        <button type="submit" className="btn-light-md max-h-10 w-14">
+        <button type="submit" className="btn-light-md">
           댓글
         </button>
       </form>
