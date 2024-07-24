@@ -52,6 +52,9 @@ export default {
         "vertical-gradient":
           "linear-gradient(180deg, #FFF 0%, #FCEBF0 30%, #FFE7EE 100%)",
       },
+      boxShadow: {
+        "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
+      },
     },
   },
   plugins: [],
