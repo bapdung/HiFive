@@ -15,7 +15,7 @@ function ModifyModal() {
           프로필 사진 변경하기
         </button>
         <TextareaAutosize
-          className="w-full border-2 border-[##DED8E1] rounded-xl px-5 py-2.5 auto-rows-auto resize-none focus:outline-none font-Pretendard"
+          className="w-full max-h-20 border-2 border-[##DED8E1] rounded-xl px-5 py-2.5 auto-rows-auto resize-none focus:outline-none font-Pretendard"
           placeholder="간단한 프로필 소개문을 100자 이내로 작성해 주세요."
         />
         <input
