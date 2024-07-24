@@ -38,18 +38,22 @@ public class Story extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String contents;
 
-	@Column(name = "is_picked")
-	private boolean isPicked = false;
+	@Column(name = "is_picked", nullable = false)
+	private boolean isPicked;
 
 	@Column(nullable = false, length = 30)
 	private String title;
 
 	@Builder
-	private Story(Fanmeeting fanmeeting, Member fan, String contents, String title) {
+	private Story(Fanmeeting fanmeeting, Member fan, String contents, String title, boolean isPicked) {
 		this.fanmeeting = fanmeeting;
 		this.fan = fan;
 		this.contents = contents;
-		this.isPicked = false;
+		this.isPicked = isPicked;
 		this.title = title;
+	}
+
+	public void toggleIsPicked() {
+		this.isPicked = !this.isPicked;
 	}
 }
