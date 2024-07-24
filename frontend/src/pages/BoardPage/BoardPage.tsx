@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Content from "./BoardPage.Content";
 import CommentList from "./BoardPage.CommentList";
-import DeleteModal from "./BoardPage.DeleteModal"; // DeleteModal 컴포넌트의 올바른 경로로 변경 필요
+import DeleteModal from "./BoardPage.DeleteModal";
 
 const BoardPage: React.FC = () => {
   const [isOpen, setOpen] = useState<boolean>(false);

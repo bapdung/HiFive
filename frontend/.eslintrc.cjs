@@ -50,7 +50,6 @@ module.exports = {
         tsx: "never",
       },
     ],
-    // 이부분 추가
     "react/function-component-definition": "off",
   },
 
