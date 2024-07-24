@@ -9,6 +9,7 @@ export default {
           700: "#FF99B8",
           500: "#FFCADA",
           300: "#FFE7EE",
+          100: "#FFF1F5",
           text: "#E55883",
         },
         secondary: {
@@ -46,10 +47,15 @@ export default {
         small: "0.875rem",
       },
       backgroundImage: {
-        "custom-gradient":
-          "linear-gradient(99deg, #FFF 21.02%, #FCEBF0 71.1%, #FFE7EE 78.98%)",
         "board-gradient":
           "linear-gradient(to top, #ffffff 60%, #fcebf0 78%, #ffe7ee 100%)",
+        "horizontal-gradient":
+          "linear-gradient(90deg, #FFFBFB 0%, #FFF1F5 100%)",
+        "vertical-gradient":
+          "linear-gradient(180deg, #FFF 0%, #FCEBF0 30%, #FFE7EE 100%)",
+      },
+      boxShadow: {
+        "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
       },
     },
   },
