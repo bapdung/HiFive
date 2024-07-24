@@ -6,7 +6,7 @@ import Board from "./ProfilePage.BoardList.Board";
 function BoardList() {
   return (
     <>
-      <div className="text-h3 flex justify-center my-7">From. 개복어</div>
+      <div className="text-h4 flex justify-center my-7">From. 개복어</div>
       <div className="w-3/4 bg-white rounded-2xl p-5 mb-9">
         <TextareaAutosize
           className="w-full auto-rows-auto resize-none focus:outline-none"
