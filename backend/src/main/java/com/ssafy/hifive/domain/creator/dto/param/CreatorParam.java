@@ -11,13 +11,13 @@ public class CreatorParam {
 	@Schema(description = "검색할 크리에이터의 이름")
 	private String name;
 
-	@Schema(description = "정렬 조건", defaultValue = "creator name", allowableValues = {
+	@Schema(description = "정렬 조건", defaultValue = "creatorName", allowableValues = {
 		"createdDate",
 		"creatorName"
 	})
 	public String condition;
 
-	@Schema(description = "정렬 기준", defaultValue = "create date", allowableValues = {
+	@Schema(description = "정렬 기준", defaultValue = "desc", allowableValues = {
 		"asc",
 		"desc"
 	})
