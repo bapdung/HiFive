@@ -2,10 +2,6 @@ import React from "react";
 
 interface ContentProfileProps {
   handleModal: (stateOfModal: boolean, msg: string) => void;
-  isEditing: boolean;
-  onEdit: () => void;
-  onCancel: () => void;
-  onSave: () => void;
 }
 
 const ContentProfile: React.FC<ContentProfileProps> = ({ handleModal }) => (
@@ -16,25 +12,16 @@ const ContentProfile: React.FC<ContentProfileProps> = ({ handleModal }) => (
       <p className="text-xs">2024. 07. 15</p>
     </div>
     <div className="ml-auto space-x-2.5">
-      {!isEditing ? (
-        <>
-          <button className="creator-btn-light-md px-[2.5]" type="button">
-            수정
-          </button>
-          <button
-            className="btn-light-md px-[2.5]"
-            type="button"
-            onClick={() => handleModal(true, "게시글")}
-          >
-            삭제
-          </button>
-        </>
-      ) : (
-        <>
-          <button type="button">취소</button>
-          <button type="button">수정 완료</button>
-        </>
-      )}
+      <button className="creator-btn-light-md px-[2.5]" type="button">
+        수정
+      </button>
+      <button
+        className="btn-light-md px-[2.5]"
+        type="button"
+        onClick={() => handleModal(true, "게시글")}
+      >
+        삭제
+      </button>
     </div>
   </div>
 );
