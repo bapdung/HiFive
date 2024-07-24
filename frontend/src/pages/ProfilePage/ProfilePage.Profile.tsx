@@ -1,5 +1,8 @@
 // import ModifyModal from "./ProfilePage.Modify.Modal";
 
+// import fullHeart from "../../assets/full-heart.png";
+// import heart from "../../assets/heart.png";
+
 function Profile() {
   return (
     <>
@@ -11,6 +14,14 @@ function Profile() {
             <div className="creator-btn-outline-md h-8 flex items-center">
               프로필 수정
             </div>
+            {/* <div className="btn-outline-md h-8 flex items-center">
+              <img src={fullHeart} alt="하트" className="mr-1  w-3 h-3" />
+              팔로잉 중
+            </div> */}
+            {/* <div className="btn-md h-8 flex items-center">
+              <img src={heart} alt="하트" className="mr-1 w-3 h-3" />
+              팔로우
+            </div> */}
           </div>
           <p className="text-medium my-5 text-gray-600">
             안녕하세요! 🐡 복하복하~ 개복어입니다! 여러분과 함께하는 웃음 가득한
