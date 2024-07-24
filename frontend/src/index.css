@@ -84,51 +84,51 @@
 
 @layer components {
   .btn-lg {
-    @apply p-[10px_19px] rounded-3xl bg-primary font-semibold text-medium text-white;
+    @apply px-5 py-2.5 rounded-3xl bg-primary font-semibold text-medium text-white;
   }
 
   .btn-md {
-    @apply p-[7px_15px] rounded-3xl bg-primary font-semibold text-small text-white;
+    @apply px-4 py-2 rounded-3xl bg-primary font-semibold text-small text-white;
   }
 
   .btn-light-lg {
-    @apply p-[10px_19px] rounded-3xl bg-primary-300 font-semibold text-medium text-primary-text;
+    @apply px-5 py-2.5 rounded-3xl bg-primary-300 font-semibold text-medium text-primary-text;
   }
 
   .btn-light-md {
-    @apply p-[7px_15px] rounded-3xl bg-primary-300 font-semibold text-small text-primary-text;
+    @apply px-4 py-2 rounded-3xl bg-primary-300 font-semibold text-small text-primary-text;
   }
 
   .btn-outline-lg {
-    @apply p-[10px_19px] rounded-3xl bg-white border-[2px] border-solid border-primary font-semibold text-medium text-primary;
+    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-primary font-semibold text-medium text-primary;
   }
 
   .btn-outline-md {
-    @apply p-[7px_15px] rounded-3xl bg-white border-[2px] border-solid border-primary font-semibold text-small text-primary;
+    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-primary font-semibold text-small text-primary;
   }
 
   .creator-btn-lg {
-    @apply p-[10px_19px] rounded-3xl bg-secondary font-semibold text-medium text-white;
+    @apply px-5 py-2.5 rounded-3xl bg-secondary font-semibold text-medium text-white;
   }
 
   .creator-btn-md {
-    @apply p-[7px_15px] rounded-3xl bg-secondary font-semibold text-small text-white;
+    @apply px-4 py-2 rounded-3xl bg-secondary font-semibold text-small text-white;
   }
 
   .creator-btn-light-lg {
-    @apply p-[10px_19px] rounded-3xl bg-secondary-300 font-semibold text-medium text-secondary;
+    @apply px-5 py-2.5 rounded-3xl bg-secondary-300 font-semibold text-medium text-secondary;
   }
 
   .creator-btn-light-md {
-    @apply p-[7px_15px] rounded-3xl bg-secondary-300 font-semibold text-small text-secondary;
+    @apply px-4 py-2 rounded-3xl bg-secondary-300 font-semibold text-small text-secondary;
   }
 
   .creator-btn-outline-lg {
-    @apply p-[10px_19px] rounded-3xl bg-white border-[2px] border-solid border-secondary font-semibold text-medium text-secondary;
+    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-secondary font-semibold text-medium text-secondary;
   }
 
   .creator-btn-outline-md {
-    @apply p-[7px_15px] rounded-3xl bg-white border-[2px] border-solid border-secondary font-semibold text-small text-secondary;
+    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-secondary font-semibold text-small text-secondary;
   }
 }
 
