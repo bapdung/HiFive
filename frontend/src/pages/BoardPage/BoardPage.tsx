@@ -6,10 +6,15 @@ import DeleteModal from "./BoardPage.DeleteModal"; // DeleteModal 컴포넌트�
 const BoardPage: React.FC = () => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("게시글");
+  const [isEditing, setEditing] = useState<boolean>(false);
 
   const handleModal = (stateOfModal: boolean, msg = "게시글"): void => {
     setOpen(stateOfModal);
     setMessage(msg);
+  };
+
+  const handleEdit = (editingState: boolean): void => {
+    setEditing(editingState);
   };
 
   return (
@@ -22,7 +27,11 @@ const BoardPage: React.FC = () => {
           <div className="absolute inset-0 bg-black opacity-50 z-10 rounded-3xl" />
         )}
         <div className="w-[80%] mt-20 mb-10 relative">
-          <Content handleModal={handleModal} />
+          <Content
+            handleModal={handleModal}
+            handleEdit={handleEdit}
+            isEditing={isEditing}
+          />
           <CommentList handleModal={handleModal} />
         </div>
       </div>
