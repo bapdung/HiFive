@@ -29,11 +29,11 @@ public class Photo extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)
-	private Member fanId;
+	private Member fan;
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
-	private Fanmeeting fanmeetingId;
+	private Fanmeeting fanmeeting;
 
 	@Column(name = "photo_img")
 	private String photoImg;
@@ -42,9 +42,9 @@ public class Photo extends BaseTimeEntity {
 	private int sequence;
 
 	@Builder
-	private Photo(Member fanId, Fanmeeting fanmeetingId, String photoImg, int sequence) {
-		this.fanId = fanId;
-		this.fanmeetingId = fanmeetingId;
+	private Photo(Member fan, Fanmeeting fanmeeting, String photoImg, int sequence) {
+		this.fan = fan;
+		this.fanmeeting = fanmeeting;
 		this.photoImg = photoImg;
 		this.sequence = sequence;
 	}

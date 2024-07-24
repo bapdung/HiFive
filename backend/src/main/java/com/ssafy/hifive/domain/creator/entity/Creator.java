@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "creator_profile")
 @Getter
-@NoArgsConstructor(access=AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Creator extends BaseTimeEntity {
 
 	@Id
@@ -28,7 +28,7 @@ public class Creator extends BaseTimeEntity {
 
 	@OneToOne
 	@JoinColumn(name = "creator_id", unique = true, nullable = false)
-	private Member creatorId;
+	private Member creator;
 
 	@Column(name = "creator_img")
 	private String creatorImg;
@@ -46,8 +46,8 @@ public class Creator extends BaseTimeEntity {
 	private int follower;
 
 	@Builder
-	private Creator(Member creatorId, String creatorImg, String creatorName, String link, String description) {
-		this.creatorId = creatorId;
+	private Creator(Member creator, String creatorImg, String creatorName, String link, String description) {
+		this.creator = creator;
 		this.creatorImg = creatorImg;
 		this.creatorName = creatorName;
 		this.link = link;

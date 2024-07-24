@@ -29,11 +29,11 @@ public class Question extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
-	private Fanmeeting fanmeetingId;
+	private Fanmeeting fanmeeting;
 
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)
-	private Member fanId;
+	private Member fan;
 
 	@Column(nullable = false, length = 30)
 	private String problem;
@@ -45,9 +45,9 @@ public class Question extends BaseTimeEntity {
 	private boolean isPicked;
 
 	@Builder
-	private Question(Fanmeeting fanmeetingId, Member fanId, String problem, String content) {
-		this.fanmeetingId = fanmeetingId;
-		this.fanId = fanId;
+	private Question(Fanmeeting fanmeeting, Member fan, String problem, String content) {
+		this.fanmeeting = fanmeeting;
+		this.fan = fan;
 		this.problem = problem;
 		this.content = content;
 		this.isPicked = false;

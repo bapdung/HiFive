@@ -28,15 +28,15 @@ public class Reservation extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "fanmeeting_id", nullable = false)
-	private Fanmeeting fanmeetingId;
+	private Fanmeeting fanmeeting;
 
 	@ManyToOne
 	@JoinColumn(name = "fan_id", nullable = false)
-	private Member fanId;
+	private Member fan;
 
 	@Builder
-	private Reservation(Fanmeeting fanmeetingId, Member fanId) {
-		this.fanmeetingId = fanmeetingId;
-		this.fanId = fanId;
+	private Reservation(Fanmeeting fanmeeting, Member fan) {
+		this.fanmeeting = fanmeeting;
+		this.fan = fan;
 	}
 }
