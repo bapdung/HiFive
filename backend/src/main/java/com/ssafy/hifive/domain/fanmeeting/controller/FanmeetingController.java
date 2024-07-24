@@ -87,8 +87,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getAllFanmeetings() {
-		return fanmeetingService.getAllFanmeetings();
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll() {
+		return fanmeetingService.getFanmeetingAll();
 	}
 
 	@Operation(summary = "특정 크리에이터 팬미팅 전체 조회", description = "특정 크리에이터의 팬미팅을 전체 조회한다.")
@@ -98,8 +98,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsByCreator(@PathVariable long creatorId) {
-		return fanmeetingService.getFanmeetingsByCreator(creatorId);
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingByCreator(@PathVariable long creatorId) {
+		return fanmeetingService.getFanmeetingByCreator(creatorId);
 	}
 
 	@Operation(summary = "팬미팅 상세 조회", description = "특정 팬미팅의 상세 정보를 조회한다.")
@@ -121,8 +121,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/scheduled/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingsByCreator(@PathVariable long creatorId) {
-		return fanmeetingService.getScheduledFanmeetingsByCreator(creatorId);
+	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingByCreator(@PathVariable long creatorId) {
+		return fanmeetingService.getScheduledFanmeetingByCreator(creatorId);
 	}
 
 	@Operation(summary = "크리에이터의 종료된 팬미팅 정렬 조회", description = "크리에이터의 종료된 팬미팅을 정렬하여 조회한다.")
@@ -132,9 +132,9 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/completed/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingsByCreator(@PathVariable long creatorId,
+	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingByCreator(@PathVariable long creatorId,
 		@ModelAttribute FanmeetingParam param) {
-		return fanmeetingService.getCompletedFanmeetingsByCreator(creatorId, param);
+		return fanmeetingService.getCompletedFanmeetingByCreator(creatorId, param);
 	}
 
 	@Operation(summary = "사용자가 예매한 팬미팅 조회", description = "사용자가 예매한 팬미팅을 조회한다.")
@@ -144,8 +144,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = {"sort", "top"})
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsForUser(@ModelAttribute FanmeetingParam param) {
-		return fanmeetingService.getFanmeetingsForUser(param);
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingForUser(@ModelAttribute FanmeetingParam param) {
+		return fanmeetingService.getFanmeetingForUser(param);
 	}
 
 	@Operation(summary = "가장 최근 팬미팅 1개 조회", description = "가장 최근 팬미팅 1개를 조회한다.")

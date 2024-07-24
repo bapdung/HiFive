@@ -32,24 +32,24 @@ public class FanmeetingService {
 	public void deleteFanmeeting(long fanmeetingId, Member member) {
 	}
 
-	public ResponseEntity<List<FanmeetingOverViewDto>> getAllFanmeetings() {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll() {
 		return ResponseEntity.ok(null);
 	}
 
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsByCreator(long creatorId) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingByCreator(long creatorId) {
 		return ResponseEntity.ok(null);
 	}
 
-	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingsByCreator(long creatorId) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingByCreator(long creatorId) {
 		return ResponseEntity.ok(null);
 	}
 
-	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingsByCreator(long creatorId,
+	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingByCreator(long creatorId,
 		FanmeetingParam param) {
 		return ResponseEntity.ok(null);
 	}
 
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingsForUser(FanmeetingParam param) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingForUser(FanmeetingParam param) {
 		return ResponseEntity.ok(null);
 	}
 }
