@@ -6,9 +6,11 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-      <Routes>
-        <Route path="/creator/:creatorId" element={<ProfilePage />} />
-      </Routes>
+      <main>
+        <Routes>
+          <Route path="/creator/:creatorId" element={<ProfilePage />} />
+        </Routes>
+      </main>
     </div>
   );
 }
