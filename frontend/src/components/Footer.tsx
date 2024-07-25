@@ -1,4 +1,4 @@
-import logo from "../assets/gray-logo.png";
+import logo from "../assets/icons/logo/gray-logo.png";
 
 function Footer() {
   return (

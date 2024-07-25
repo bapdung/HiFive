@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import camera from "../../assets/icons/camera.png";
+import camera from "../../assets/icons/cameraIcon.png";
 
 interface ContentProps {
   handleModal: (stateOfModal: boolean, msg?: string) => void;
@@ -108,7 +108,7 @@ const Content: React.FC<ContentProps> = ({
               className="creator-btn-outline-md flex justify-center items-center px-[2.5] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-70"
               type="button"
             >
-              <img src={camera} alt="edit" className="mr-2.5" />
+              <img src={camera} alt="edit" className="mr-2.5 w-3.5" />
               게시글 사진 변경하기
             </button>
           </div>

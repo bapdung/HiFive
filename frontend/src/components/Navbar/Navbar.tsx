@@ -1,4 +1,4 @@
-import logo from "../../assets/logo.png";
+import logo from "../../assets/icons/logo/logo.png";
 
 function Navbar() {
   return (

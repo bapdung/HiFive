@@ -1,7 +1,7 @@
 // import ModifyModal from "./ProfilePage.Modify.Modal";
 
-// import fullHeart from "../../assets/full-heart.png";
-// import heart from "../../assets/heart.png";
+// import fullHeart from "../../assets/icons/full-heart.png";
+// import heart from "../../assets/icons/heart.png";
 
 function Profile() {
   return (

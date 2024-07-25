@@ -1,8 +1,8 @@
-import personIcon from "../../assets/icons/personIcon.png";
-import pencilIcon from "../../assets/icons/pencilIcon.png";
-import photoIcon from "../../assets/icons/photoIcon.png";
-import faceIcon from "../../assets/icons/faceIcon.png";
-import pointIcon from "../../assets/icons/pointIcon.png";
+import personIcon from "../../assets/icons/sidebar/personIcon.png";
+import pencilIcon from "../../assets/icons/sidebar/pencilIcon.png";
+import galleryIcon from "../../assets/icons/sidebar/galleryIcon.png";
+import faceIcon from "../../assets/icons/sidebar/faceIcon.png";
+import pointIcon from "../../assets/icons/sidebar/pointIcon.png";
 
 function Sidebar() {
   return (
@@ -16,7 +16,7 @@ function Sidebar() {
         <span className="text-h5">개인 정보 수정</span>
       </div>
       <div className="flex items-center h-20 pl-10">
-        <img src={photoIcon} alt="사진아이콘" className="w-4 h-4 mr-3.5" />
+        <img src={galleryIcon} alt="사진아이콘" className="w-4 h-4 mr-3.5" />
         <span className="text-h5">추억 갤러리</span>
       </div>
       <div className="flex items-center h-20 pl-10">
