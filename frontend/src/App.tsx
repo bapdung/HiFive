@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar/Navbar";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import Footer from "./components/Footer";
 import BoardPage from "./pages/BoardPage/BoardPage";
+import Mypage from "./pages/Mypage/MyPage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
           <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
+          <Route path="/mypage" element={<Mypage />} />
         </Routes>
       </main>
       <Footer />
