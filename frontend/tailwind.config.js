@@ -32,6 +32,8 @@ export default {
         },
         meetingroom: "#7A5A8A",
         yellow: "#FFE45E",
+        red: "#C53737",
+        green: "#169C47",
         "page-background": "f5f5f5",
       },
       fontFamily: {
