@@ -1,6 +1,6 @@
 function WaitingModal() {
   return (
-    <div className="w-[50rem] bg-white flex flex-col items-center h-[26rem] justify-center">
+    <div className="w-[50rem] bg-white flex flex-col items-center h-[26rem] justify-center rounded-3xl">
       <div className="bg-primary-100 px-6 py-3 flex flex-col justify-center items-center rounded-[10px]">
         <p>나의 대기 순서</p>
         <h1 className="text-h2 text-primary-text">1</h1>

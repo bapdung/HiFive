@@ -1,6 +1,6 @@
 function SuccessModal() {
   return (
-    <div className="w-[50rem] bg-white flex flex-col items-center h-[26rem] justify-center">
+    <div className="w-[50rem] bg-white flex flex-col items-center h-[26rem] justify-center rounded-3xl">
       <h1 className="text-primary-text text-h2 my-4">예매 완료되었습니다!</h1>
       <h2 className="text-small mb-4">
         팬미팅 입장 전에 신분증 등록을 진행해주세요!
