@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TimetableCreateDto {
 
-	private Category category;
+	private long categoryId;
 	private int sequence;
 	private String detail;
 
-	public Timetable toEntity(Fanmeeting fanmeeting) {
+	public Timetable toEntity(Fanmeeting fanmeeting, Category category) {
 		return Timetable.builder()
 			.fanmeeting(fanmeeting)
 			.category(category)
