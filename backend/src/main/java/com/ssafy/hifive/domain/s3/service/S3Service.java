@@ -46,7 +46,7 @@ public class S3Service {
 	private Date getPresignedUrlExpiration() {
 		Date expiration = new Date();
 		long expTimeMillis = expiration.getTime();
-		expTimeMillis += 1000000 * 60 * 2;
+		expTimeMillis += 1000 * 60 * 2;
 		expiration.setTime(expTimeMillis);
 
 		return expiration;
