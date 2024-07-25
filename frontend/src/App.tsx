@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import BoardPage from "./pages/BoardPage/BoardPage";
 import TicketList from "./pages/TicketPage/TicketPage.List";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
+import Question from "./pages/TicketPage/TicketPage.Question";
 
 function App() {
   return (
@@ -17,6 +18,10 @@ function App() {
           <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
           <Route path="/ticket" element={<TicketList />} />
           <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
+          <Route
+            path="/fanmeeting/:fanmeetingId/question"
+            element={<Question />}
+          />
         </Routes>
       </main>
       <Footer />
