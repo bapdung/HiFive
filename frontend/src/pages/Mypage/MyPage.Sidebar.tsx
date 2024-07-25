@@ -6,7 +6,7 @@ import pointIcon from "../../assets/icons/sidebar/pointIcon.png";
 
 function Sidebar() {
   return (
-    <div className="w-64 h-screen bg-white pt-10 absolute left-0">
+    <div className="w-64 h-full bg-white pt-10 absolute left-0 shadow-side-shadow">
       <div className="flex items-center h-20 pl-10">
         <img src={personIcon} alt="사람아이콘" className="w-4 h-4 mr-3.5" />
         <span className="text-h5">나의 활동</span>
