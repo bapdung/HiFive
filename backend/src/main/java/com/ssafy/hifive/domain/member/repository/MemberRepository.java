@@ -9,4 +9,6 @@ import com.ssafy.hifive.domain.member.entity.Member;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findByEmail(String email);
+
+	boolean existsByNickname(String nickname);
 }

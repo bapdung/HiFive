@@ -9,7 +9,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.ssafy.hifive.domain.member.service.MemberService;
@@ -45,13 +44,14 @@ public class WebOAuthSecurityConfig {
 		http.sessionManagement(
 			sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		// http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		http.authorizeHttpRequests(authorize -> authorize
 			.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
 				"/webjars/**").permitAll()
 			.requestMatchers("/api/token").permitAll()
-			.requestMatchers("/api/**").authenticated()
+			// .requestMatchers("/api/**").authenticated()
+			.requestMatchers("/api/**").permitAll()
 			.anyRequest().permitAll());
 
 		http.oauth2Login(oauth2 ->

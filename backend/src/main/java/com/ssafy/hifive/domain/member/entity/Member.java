@@ -1,5 +1,7 @@
 package com.ssafy.hifive.domain.member.entity;
 
+import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
+import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -70,6 +72,17 @@ public class Member extends BaseTimeEntity {
 	public void update(String nickname, String profileImg) {
 		this.nickname = nickname;
 		this.profileImg = profileImg;
+	}
+
+	public void updateMember(MemberUpdateDto memberUpdateDto) {
+		this.profileImg = memberUpdateDto.getProfileImg();
+		this.nickname = memberUpdateDto.getNickname();
+		this.name = memberUpdateDto.getName();
+		this.email = memberUpdateDto.getEmail();
+	}
+
+	public void createIdentification(MemberIdentificationDto memberIdentificationDto) {
+		this.identificationImg = memberIdentificationDto.getIdentificationImg();
 	}
 
 }
