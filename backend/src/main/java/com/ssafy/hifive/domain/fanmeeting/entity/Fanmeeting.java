@@ -36,7 +36,7 @@ public class Fanmeeting extends BaseTimeEntity {
 	@JoinColumn(name = "creator_id")
 	private Member creator;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 30)
 	private String title;
 
 	@Column(name = "poster_img", nullable = false)
