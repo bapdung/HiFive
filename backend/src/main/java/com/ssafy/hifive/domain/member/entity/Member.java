@@ -1,6 +1,5 @@
 package com.ssafy.hifive.domain.member.entity;
 
-import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
@@ -81,8 +80,8 @@ public class Member extends BaseTimeEntity {
 		this.email = memberUpdateDto.getEmail();
 	}
 
-	public void createIdentification(MemberIdentificationDto memberIdentificationDto) {
-		this.identificationImg = memberIdentificationDto.getIdentificationImg();
+	public void createIdentification(String imageUrl) {
+		this.identificationImg = imageUrl;
 	}
 
 }

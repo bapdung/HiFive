@@ -73,8 +73,8 @@ public class MemberService {
 	public void createIdentification(MemberIdentificationDto memberIdentificationDto, Member member) {
 		Member user = memberRepository.findById(member.getMemberId())
 			.orElseThrow(() -> new EntityNotFoundException("User Not Found"));
-		user.createIdentification(memberIdentificationDto);
-		memberRepository.save(user);
+
+		// memberRepository.save(user);
 	}
 
 	public void deleteMember(Member member) {

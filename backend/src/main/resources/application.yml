@@ -51,3 +51,15 @@ spring:
   jwt:
     issuer: ${jwt.issuer}
     secret_key: ${jwt.secret_key}
+
+cloud:
+  s3:
+    bucket: ${aws.bucket}
+  aws:
+    credentials:
+      accessKey: ${aws.accessKey}
+      secretKey: ${aws.secretKey}
+    region:
+      static: ${aws.region}
+    stack:
+      auto: false
