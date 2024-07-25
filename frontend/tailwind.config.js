@@ -17,6 +17,7 @@ export default {
           700: "#A4D7FF",
           500: "#A9D9FF",
           300: "#DBEFFF",
+          text: "459EE4",
         },
         gray: {
           900: "#333333",
