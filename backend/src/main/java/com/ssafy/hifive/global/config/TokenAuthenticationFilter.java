@@ -13,7 +13,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
@@ -31,6 +33,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 		if (tokenProvider.validToken(token)) {
 			Authentication authentication = tokenProvider.getAuthentication(token);
+			log.info(String.valueOf(authentication));
+			log.info(authentication.getName());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 

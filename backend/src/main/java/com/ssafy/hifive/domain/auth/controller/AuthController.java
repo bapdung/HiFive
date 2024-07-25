@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.hifive.domain.auth.dto.TokenResponseDto;
+import com.ssafy.hifive.domain.auth.service.TokenService;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.service.MemberService;
-import com.ssafy.hifive.domain.token.dto.response.TokenResponseDto;
-import com.ssafy.hifive.domain.token.repository.TokenRepository;
-import com.ssafy.hifive.domain.token.service.TokenService;
-import com.ssafy.hifive.global.config.jwt.TokenProvider;
 import com.ssafy.hifive.global.util.CookieUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,9 +35,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "auth", description = "인증 관련 API")
 public class AuthController {
 
-	private final TokenProvider tokenProvider;
 	private final TokenService tokenService;
-	private final TokenRepository tokenRepository;
 	private final MemberService memberService;
 
 	@Operation(summary = "OAuth2 콜백", description = "카카오 OAuth2 로그인 후 콜백을 처리한다.")

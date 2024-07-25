@@ -12,8 +12,8 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.service.MemberService;
-import com.ssafy.hifive.domain.token.repository.TokenRepository;
 import com.ssafy.hifive.global.config.jwt.TokenProvider;
 import com.ssafy.hifive.global.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.ssafy.hifive.global.config.oauth.OAuth2SuccessHandler;
@@ -50,7 +50,7 @@ public class WebOAuthSecurityConfig {
 		http.authorizeHttpRequests(authorize -> authorize
 			.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
 				"/webjars/**").permitAll()
-			.requestMatchers("/api/token").permitAll()
+			.requestMatchers("/api/auth/**").permitAll()
 			.requestMatchers("/api/**").authenticated()
 			.anyRequest().permitAll());
 

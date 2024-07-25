@@ -1,4 +1,4 @@
-package com.ssafy.hifive.domain.token.entity;
+package com.ssafy.hifive.domain.auth.entity;
 
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;

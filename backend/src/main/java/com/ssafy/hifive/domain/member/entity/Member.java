@@ -72,4 +72,8 @@ public class Member extends BaseTimeEntity {
 		this.profileImg = profileImg;
 	}
 
+	public String toString() {
+		return memberId + " " + nickname + " " + profileImg;
+	}
+
 }
