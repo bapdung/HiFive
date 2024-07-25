@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import ProfileImg from "../../assets/temp/profile.svg";
 import PosterImg from "../../assets/temp/poster.svg";
@@ -6,6 +6,10 @@ import TimeTable from "./TicketPage.DetailTimetable";
 import Info from "./TicketPage.DetailInfo";
 
 function Detail() {
+  const [isReserved, setIsReserved] = useState(false);
+  function toggleReserved() {
+    setIsReserved(!isReserved);
+  }
   return (
     <div className="my-10 flex justify-center w-full">
       <div className="w-[60%] bg-white rounded-[25px] p-10">
@@ -47,7 +51,7 @@ function Detail() {
         <TimeTable />
         <Info />
       </div>
-      <div className="bg-white rounded-[25px] p-10 ml-8 max-w-[22%] h-fit sticky top-4">
+      <div className="bg-white rounded-[25px] p-10 ml-8 max-w-[23%] h-fit sticky top-4">
         <h2 className="text-h2 mb-12">
           팬미팅제목팬미팅제목팬미팅제목팬미팅제목팬미팅제목팬미팅제목
         </h2>
@@ -73,14 +77,43 @@ function Detail() {
             <span>50,000원</span>
           </p>
         </div>
-        <div className="mt-20">
-          <p className="text-gray-500 text-sm text-center mb-1">
-            잠깐! 예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
-          </p>
-          <button type="button" className="btn-lg w-full">
-            예매하기
-          </button>
-        </div>
+        {isReserved ? (
+          <div id="reserved" className="mt-10">
+            <div className="bg-gray-100 rounded-[10px] flex flex-col items-center w-full p-2">
+              <p className="text-gray-500 my-2.5 text-sm">
+                아래 링크를 통해 질문과 사연을 남겨주세요.
+              </p>
+              <div className="mb-2.5">
+                <button type="button" className="mr-6 btn-outline-md">
+                  질문 작성
+                </button>
+                <button type="button" className="btn-outline-md">
+                  사연 작성
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={toggleReserved}
+              type="button"
+              className="btn-light-lg w-full mt-8"
+            >
+              예매완료
+            </button>
+          </div>
+        ) : (
+          <div id="notReserved" className="mt-20">
+            <p className="text-gray-500 text-sm text-center mb-1">
+              잠깐! 예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
+            </p>
+            <button
+              type="button"
+              className="btn-lg w-full"
+              onClick={toggleReserved}
+            >
+              예매하기
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
