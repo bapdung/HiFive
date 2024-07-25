@@ -12,9 +12,9 @@ public final class CreatorOverviewDto {
 	private String creatorName;
 	private String profileImg;
 
-	public static CreatorOverviewDto from(Creator creator, long memberId) {
+	public static CreatorOverviewDto from(Creator creator) {
 		return new CreatorOverviewDto(
-			memberId,
+			creator.getCreator().getMemberId(),
 			creator.getCreatorName(),
 			creator.getCreatorImg()
 		);
