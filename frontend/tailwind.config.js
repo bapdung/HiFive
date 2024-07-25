@@ -34,7 +34,7 @@ export default {
         yellow: "#FFE45E",
         red: "#C53737",
         green: "#169C47",
-        "page-background": "f5f5f5",
+        "page-background": "#f5f5f5",
       },
       fontFamily: {
         Pretendard: ["Pretendard"],
@@ -61,6 +61,7 @@ export default {
       boxShadow: {
         "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
         "side-shadow": "1px 0px 5px 0px rgba(0, 0, 0, 0.10)",
+        "mypage-shadow": "0px 2px 10px 0px rgba(0, 0, 0, 0.10)",
       },
     },
   },
