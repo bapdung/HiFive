@@ -2,7 +2,7 @@ import logo from "../assets/icons/logo/gray-logo.png";
 
 function Footer() {
   return (
-    <div className="bg-gray-500 w-screen h-36 text-small flex justify-center items-center">
+    <div className="bg-gray-500 w-screen h-36 text-small flex justify-center items-center mt-10">
       <div className="w-[1406px] flex justify-between">
         <img src={logo} alt="logo" className="w-[219.43px] h-[58.64px]" />
         <div className="flex flex-col">
