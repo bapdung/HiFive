@@ -12,8 +12,8 @@ function Question() {
     { key: 4, value: "문질문질문질문질문질문질문질문질문질문질문질문" },
   ];
   return (
-    <div className="w-[100vw]">
-      <div className="bg-white w-full flex flex-col items-center py-8">
+    <div className="w-[100vw] flex flex-col items-center">
+      <div className="bg-white w-full flex flex-col items-center py-8 mb-5">
         <h1 className="text-primary-text text-h2 mb-5">질문 작성</h1>
         <div className="bg-gray-100 px-8 py-4 rounded-lg text-center">
           <p className="text-gray-700">
@@ -27,11 +27,11 @@ function Question() {
           </p>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full max-w-[80%] justify-items-center pb-5 ">
         {questions.map((question) => (
           <div
             key={question.key}
-            className="border border-primary-700 rounded-[20px] w-[25rem] bg-white py-5 px-8 flex flex-col items-center m-2 mb-4"
+            className="border border-primary-700 rounded-[20px] w-[25rem] bg-white py-5 px-8 flex flex-col items-center"
           >
             <p className="text-large mb-4 min-h-32">{question.value}</p>
             <button type="button" className="btn-light-md mt-auto">
@@ -43,7 +43,7 @@ function Question() {
         {Array.from({ length: 6 - questions.length }).map(() => (
           <div
             key={`${Date.now()}-${Math.random()}`}
-            className="border border-primary-700 rounded-[20px] w-[25rem] bg-white py-5 px-8 flex flex-col items-center m-2 mb-4"
+            className="border border-primary-700 rounded-[20px] w-[25rem] bg-white py-5 px-8 flex flex-col items-center"
           >
             <textarea className="focus:outline-none resize-none w-full min-h-32 text-body-large" />
             <button type="button" className="btn-md mt-auto">
