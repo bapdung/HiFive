@@ -12,24 +12,16 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import com.ssafy.hifive.domain.member.entity.Member;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class CustomMemberDetails implements UserDetails, OAuth2User {
-	private Member member;
-	private Map<String, Object> attributes;
+	private final Member member;
+	private final Map<String, Object> attributes;
 
 	public CustomMemberDetails(Member member) {
-		this.member = member;
-	}
-
-	public CustomMemberDetails(Member member, Map<String, Object> attributes) {
-		this.member = member;
-		this.attributes = attributes;
-	}
-
-	@Override
-	public Map<String, Object> getAttributes() {
-		return attributes;
+		this(member, null);
 	}
 
 	@Override
@@ -48,6 +40,7 @@ public class CustomMemberDetails implements UserDetails, OAuth2User {
 	}
 
 	@Override
+
 	public boolean isAccountNonExpired() {
 		return true;
 	}

@@ -94,9 +94,8 @@ public class QuestionController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@PatchMapping(path = "/{questionId}/toggle")
-	public ResponseEntity<Void> toggleQuestion(@PathVariable long questionId,
-		@AuthenticationPrincipal Member member) {
-		questionService.toggleQuestion(questionId, member);
+	public ResponseEntity<Void> toggleQuestion(@PathVariable long questionId) {
+		questionService.toggleQuestion(questionId);
 		return ResponseEntity.ok().build();
 	}
 
@@ -106,9 +105,10 @@ public class QuestionController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<QuestionResponseDto>> getQuestionMine(@PathVariable long fanId,
+	public ResponseEntity<List<QuestionResponseDto>> getMyQuestion(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
-		return questionService.getMyQuestion(fanId, member);
+		List<QuestionResponseDto> questions = questionService.getMyQuestion(fanmeetingId, member);
+		return ResponseEntity.ok(questions);
 	}
 
 	@Operation(summary = "내가 작성한 질문 수정", description = "내가 작성한 질문을 수정한다.")
