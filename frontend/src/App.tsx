@@ -1,6 +1,7 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar/Navbar";
+import CreatorNavbar from "./components/Navbar/CreatorNavbar";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import Footer from "./components/Footer";
 import BoardPage from "./pages/BoardPage/BoardPage";
@@ -8,11 +9,13 @@ import TicketList from "./pages/TicketPage/TicketPage.List";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
+import CreatorOnly from "./pages/CreatorOnly/CreatorOnly.MyFanmeeting";
 
 function App() {
+  const location = useLocation();
   return (
     <div className="App">
-      <Navbar />
+      {location.pathname === "/creator-only" ? <CreatorNavbar /> : <Navbar />}
       <main>
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
@@ -27,6 +30,7 @@ function App() {
             path="/fanmeeting/:fanmeetingId/story"
             element={<StoryForm />}
           />
+          <Route path="/creator-only" element={<CreatorOnly />} />
         </Routes>
       </main>
       <Footer />
