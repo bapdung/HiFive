@@ -7,6 +7,7 @@ import BoardPage from "./pages/BoardPage/BoardPage";
 import TicketList from "./pages/TicketPage/TicketPage.List";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
+import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
           <Route
             path="/fanmeeting/:fanmeetingId/question"
             element={<Question />}
+          />
+          <Route
+            path="/fanmeeting/:fanmeetingId/story"
+            element={<StoryForm />}
           />
         </Routes>
       </main>
