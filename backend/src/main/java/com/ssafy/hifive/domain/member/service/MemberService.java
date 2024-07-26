@@ -17,7 +17,9 @@ import com.ssafy.hifive.domain.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -81,5 +83,7 @@ public class MemberService {
 		member = memberRepository.findById(2L).get();
 		//TODO : 403 forbidden
 		memberRepository.deleteById(member.getMemberId());
+=======
+
 	}
 }

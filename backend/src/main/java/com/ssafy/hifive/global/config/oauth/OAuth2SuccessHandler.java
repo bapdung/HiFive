@@ -9,10 +9,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.ssafy.hifive.domain.auth.entity.Token;
+import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.service.MemberService;
-import com.ssafy.hifive.domain.token.entity.Token;
-import com.ssafy.hifive.domain.token.repository.TokenRepository;
 import com.ssafy.hifive.global.config.jwt.TokenProvider;
 import com.ssafy.hifive.global.util.CookieUtil;
 
@@ -28,7 +28,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
 	public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(10);
 	public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
-	public static final String REDIRECT_PATH = "/";
+	public static final String REDIRECT_PATH = "/main";
 
 	private final TokenProvider tokenProvider;
 	private final TokenRepository tokenRepository;

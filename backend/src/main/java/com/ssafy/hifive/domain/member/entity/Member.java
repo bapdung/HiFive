@@ -78,4 +78,8 @@ public class Member extends BaseTimeEntity {
 		this.identificationImg = memberIdentificationDto.getIdentificationImg();
 	}
 
+	public String toString() {
+		return memberId + " " + nickname + " " + profileImg;
+	}
+
 }

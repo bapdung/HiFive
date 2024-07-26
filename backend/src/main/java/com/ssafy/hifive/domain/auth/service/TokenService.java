@@ -1,15 +1,14 @@
-package com.ssafy.hifive.domain.token.service;
+package com.ssafy.hifive.domain.auth.service;
 
 import java.time.Duration;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.hifive.domain.auth.dto.TokenResponseDto;
+import com.ssafy.hifive.domain.auth.entity.Token;
+import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.domain.member.service.MemberService;
-import com.ssafy.hifive.domain.token.dto.response.TokenResponseDto;
-import com.ssafy.hifive.domain.token.entity.Token;
-import com.ssafy.hifive.domain.token.repository.TokenRepository;
 import com.ssafy.hifive.global.config.jwt.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -19,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class TokenService {
 
 	private final TokenProvider tokenProvider;
-	private final RefreshTokenService refreshTokenService;
-	private final MemberService memberService;
 	private final TokenRepository tokenRepository;
 
 	public ResponseEntity<TokenResponseDto> createTokenResponse(Member member) {
