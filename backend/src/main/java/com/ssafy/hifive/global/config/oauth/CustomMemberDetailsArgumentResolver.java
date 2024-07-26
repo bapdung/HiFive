@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config;
+package com.ssafy.hifive.global.config.oauth;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,7 +10,6 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.global.config.oauth.CustomMemberDetails;
 
 @Component
 public class CustomMemberDetailsArgumentResolver implements HandlerMethodArgumentResolver {

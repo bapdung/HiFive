@@ -19,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.service.MemberService;
 import com.ssafy.hifive.global.config.jwt.TokenProvider;
+import com.ssafy.hifive.global.config.oauth.CustomMemberDetailsArgumentResolver;
 import com.ssafy.hifive.global.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.ssafy.hifive.global.config.oauth.OAuth2SuccessHandler;
 import com.ssafy.hifive.global.config.oauth.OAuth2UserCustomService;
