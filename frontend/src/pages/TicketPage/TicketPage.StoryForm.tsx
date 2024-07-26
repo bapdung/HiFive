@@ -6,7 +6,7 @@ function StoryForm() {
         <div className="bg-gray-100 px-8 py-4 rounded-lg text-center">
           <p className="text-gray-700">여러분의 이야기를 남겨주세요!</p>
           <p className="text-gray-700">
-            남겨주신 사연은
+            남겨주신 사연은 &nbsp;
             <span className="text-primary-text">어쩌면 해피엔딩</span>{" "}
             팬미팅에서 소개될 수 있습니다 :)
           </p>

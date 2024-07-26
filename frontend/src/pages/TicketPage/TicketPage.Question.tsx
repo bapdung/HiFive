@@ -15,7 +15,7 @@ function Question() {
     <div className="w-[100vw]">
       <div className="bg-white w-full flex flex-col items-center py-8">
         <h1 className="text-primary-text text-h2 mb-5">질문 작성</h1>
-        <div className="bg-gray-100 px-8 py-4 rounded-lg">
+        <div className="bg-gray-100 px-8 py-4 rounded-lg text-center">
           <p className="text-gray-700">
             <span className="text-primary-text">개복어</span> 에게 궁금한 내용을
             남겨주세요!
