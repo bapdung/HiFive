@@ -35,7 +35,7 @@ module.exports = {
     ],
     "import/no-extraneous-dependencies": [
       "error",
-      { devDependencies: true, projectDependencies: false },
+      { devDependencies: false, projectDependencies: false },
     ],
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
