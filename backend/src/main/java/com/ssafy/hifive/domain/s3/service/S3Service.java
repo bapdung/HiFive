@@ -11,6 +11,7 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.s3.dto.request.S3RequestDto;
 import com.ssafy.hifive.domain.s3.dto.response.S3ResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class S3Service {
 
 	private final AmazonS3 amazonS3;
 
-	public S3ResponseDto createPresignedUrl(String prefix, String fileName, Member member) {
-		if (!prefix.isEmpty()) {
-			fileName = createPath(prefix, fileName);
+	public S3ResponseDto createPresignedUrl(S3RequestDto s3RequestDto, String fileName, Member member) {
+		if (!s3RequestDto.getPrefix().isEmpty()) {
+			fileName = createPath(s3RequestDto.getPrefix(), fileName);
 		}
 
 		GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
