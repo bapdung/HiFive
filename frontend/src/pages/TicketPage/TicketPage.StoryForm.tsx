@@ -7,7 +7,9 @@ function StoryForm() {
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
   };
-  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleContentChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     setContent(event.target.value);
   };
 
@@ -33,8 +35,7 @@ function StoryForm() {
             onInput={handleTitleChange}
             placeholder="제목을 입력해주세요."
           />
-          <input
-            type="text"
+          <textarea
             className="rounded-xl border-2 border-gray-300 min-h-[31rem] resize-none focus:outline-none w-full mt-5 text-gray-600 py-2.5 px-8"
             value={content}
             onInput={handleContentChange}
