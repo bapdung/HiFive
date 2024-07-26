@@ -30,13 +30,13 @@ function StoryForm() {
         <form className="flex flex-col items-center">
           <input
             type="text"
-            className="w-full focus:outline-none border-2 border-gray-300 p-2.5 rounded-[39px] text-gray-600 px-8"
+            className="w-full focus:outline-none border-2 border-gray-300 p-2.5 rounded-[39px] text-gray-900 px-8"
             value={title}
             onInput={handleTitleChange}
             placeholder="제목을 입력해주세요."
           />
           <textarea
-            className="rounded-xl border-2 border-gray-300 min-h-[31rem] resize-none focus:outline-none w-full mt-5 text-gray-600 py-2.5 px-8"
+            className="rounded-xl border-2 border-gray-300 min-h-[31rem] resize-none focus:outline-none w-full mt-5 text-gray-900 py-2.5 px-8"
             value={content}
             onInput={handleContentChange}
           />
