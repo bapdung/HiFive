@@ -16,7 +16,6 @@ import com.ssafy.hifive.domain.board.entity.Board;
 import com.ssafy.hifive.domain.board.repository.BoardRepository;
 import com.ssafy.hifive.domain.comment.service.CommentService;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.domain.member.repository.MemberRepository;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 import com.ssafy.hifive.global.error.type.ForbiddenException;
@@ -31,7 +30,6 @@ public class BoardService {
 
 	private final CommentService commentService;
 	private final BoardRepository boardRepository;
-	private final MemberRepository memberRepository;
 
 	private final static int PAGE_SIZE = 5;
 
