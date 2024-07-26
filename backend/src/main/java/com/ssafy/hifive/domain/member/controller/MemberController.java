@@ -20,6 +20,7 @@ import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.hifive.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.service.MemberService;
+import com.ssafy.hifive.global.util.CookieUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +31,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -44,7 +47,8 @@ public class MemberController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MemberResponseDto> getMember(@AuthenticationPrincipal Member member) {
+	public ResponseEntity<MemberResponseDto> getMember(
+		@AuthenticationPrincipal Member member) {
 		return memberService.getMemberDetail(member);
 	}
 
@@ -105,6 +109,8 @@ public class MemberController {
 	public ResponseEntity<Void> logoutMember(HttpServletRequest request, HttpServletResponse response) {
 		new SecurityContextLogoutHandler().logout(request, response,
 			SecurityContextHolder.getContext().getAuthentication());
+		CookieUtil.deleteCookie(request, response, "refresh_token");
+
 		return ResponseEntity.ok().build();
 	}
 

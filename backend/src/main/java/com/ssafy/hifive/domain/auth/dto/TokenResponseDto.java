@@ -1,4 +1,4 @@
-package com.ssafy.hifive.domain.token.dto.response;
+package com.ssafy.hifive.domain.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
