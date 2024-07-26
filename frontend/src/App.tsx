@@ -14,7 +14,7 @@ function App() {
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
           <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
-          <Route path="/mypage" element={<Mypage />} />
+          <Route path="/mypage/*" element={<Mypage />} />
         </Routes>
       </main>
       <Footer />
