@@ -44,7 +44,7 @@ public class CreatorController {
 	@GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CreatorOverviewDto>> getCreatorAll(
 		@ModelAttribute CreatorParam param, @AuthenticationPrincipal Member member) {
-		return creatorService.getCreatorAll(param, member);
+		return ResponseEntity.ok(creatorService.getCreatorAll(param, member));
 	}
 
 	@Operation(summary = "내가 팔로우한 크리에이터 프로필 전체 조회", description = "내가 팔로우한 크리에이터 프로필을 전체 조회한다.")
@@ -55,7 +55,7 @@ public class CreatorController {
 	@GetMapping(path = "/follow", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CreatorOverviewDto>> getCreatorFollow(
 		@AuthenticationPrincipal Member member) {
-		return creatorService.getCreatorFollow(member);
+		return ResponseEntity.ok(creatorService.getCreatorFollow(member));
 	}
 
 	@Operation(summary = "내가 팔로우한 크리에이터 기준 전체 크리에이터 조회", description = "메인화면에 표시되며 내가 팔로우한 크리에이터 프로필을 우선순위로 전체 크리에이터를 6명 조회한다.")
@@ -66,7 +66,7 @@ public class CreatorController {
 	@GetMapping(path = "/main", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CreatorOverviewDto>> getCreatorMain(
 		@AuthenticationPrincipal Member member) {
-		return creatorService.getCreatorMain(member);
+		return ResponseEntity.ok(creatorService.getCreatorMain(member));
 	}
 
 	@Operation(summary = "크리에이터 프로필 상세 조회", description = "내가 팔로우한 크리에이터 프로필 상세 내용을 조회한다.")
@@ -77,7 +77,7 @@ public class CreatorController {
 	@GetMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CreatorOverviewDto> getCreatorDetail(
 		@PathVariable long creatorId, @AuthenticationPrincipal Member member) {
-		return creatorService.getCreatorDetail(creatorId, member);
+		return ResponseEntity.ok(creatorService.getCreatorDetail(creatorId, member));
 	}
 
 	@Operation(summary = "크리에이터 프로필 생성", description = "이메일로 받은 정보를 바탕으로 관리자가 크리에이터 프로필 생성해준다")
@@ -86,11 +86,11 @@ public class CreatorController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
-	@PostMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createCreator(@PathVariable long memberId,
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> createCreator(
 		@RequestBody CreatorRequestDto creatorRequestDto,
 		@AuthenticationPrincipal Member member) {
-		creatorService.createCreator(memberId, creatorRequestDto, member);
+		creatorService.createCreator(creatorRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 
@@ -101,8 +101,9 @@ public class CreatorController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createCreator(@RequestBody CreatorRequestDto creatorRequestDto,
+	public ResponseEntity<Void> updateCreator(@RequestBody CreatorRequestDto creatorRequestDto,
 		@AuthenticationPrincipal Member member) {
+		
 		creatorService.updateCreator(creatorRequestDto, member);
 		return ResponseEntity.ok().build();
 	}

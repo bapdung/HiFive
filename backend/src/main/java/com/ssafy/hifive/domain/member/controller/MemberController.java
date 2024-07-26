@@ -59,7 +59,7 @@ public class MemberController {
 	@PostMapping(path = "/valid", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> nicknameCheck(@RequestBody MemberNicknameDto memberNicknameDto,
 		@AuthenticationPrincipal Member member) {
-		return memberService.nicknameCheck(memberNicknameDto, member);
+		return memberService.nicknameCheck(memberNicknameDto);
 	}
 
 	@Operation(summary = "회원 정보 수정", description = "사용자의 정보를 수정한다.")
