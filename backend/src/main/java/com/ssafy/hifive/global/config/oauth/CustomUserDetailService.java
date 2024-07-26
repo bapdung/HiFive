@@ -1,6 +1,4 @@
-package com.ssafy.hifive.domain.member.service;
-
-import java.util.Collections;
+package com.ssafy.hifive.global.config.oauth;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.repository.MemberRepository;
-import com.ssafy.hifive.global.config.oauth.CustomMemberDetials;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +21,6 @@ public class CustomUserDetailService implements UserDetailsService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-		return new CustomMemberDetials(member, Collections.emptyMap());
+		return new CustomMemberDetails(member, null);
 	}
 }

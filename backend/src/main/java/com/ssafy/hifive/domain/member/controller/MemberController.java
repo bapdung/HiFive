@@ -20,7 +20,6 @@ import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.hifive.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.service.MemberService;
-import com.ssafy.hifive.global.config.oauth.CustomMemberDetials;
 import com.ssafy.hifive.global.util.CookieUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,10 +48,7 @@ public class MemberController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MemberResponseDto> getMember(
-		@AuthenticationPrincipal CustomMemberDetials customMemberDetials) {
-		Member member = customMemberDetials.getMember();
-		log.info(String.valueOf(member));
-		log.info(member.toString());
+		@AuthenticationPrincipal Member member) {
 		return memberService.getMemberDetail(member);
 	}
 

@@ -11,17 +11,20 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.ssafy.hifive.domain.member.entity.Member;
 
-public class CustomMemberDetials implements UserDetails, OAuth2User {
-	private final Member member;
-	private final Map<String, Object> attributes;
+import lombok.Getter;
 
-	public CustomMemberDetials(Member member, Map<String, Object> attributes) {
+@Getter
+public class CustomMemberDetails implements UserDetails, OAuth2User {
+	private Member member;
+	private Map<String, Object> attributes;
+
+	public CustomMemberDetails(Member member) {
 		this.member = member;
-		this.attributes = attributes;
 	}
 
-	public Member getMember() {
-		return member;
+	public CustomMemberDetails(Member member, Map<String, Object> attributes) {
+		this.member = member;
+		this.attributes = attributes;
 	}
 
 	@Override

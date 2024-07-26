@@ -6,10 +6,10 @@ import java.util.Date;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.global.config.oauth.CustomUserDetailService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TokenProvider {
 
 	private final JwtProperties jwtProperties;
-	private final UserDetailsService userDetailsService;
+	private final CustomUserDetailService customUserDetailService;
 
 	public String generateToken(Member member, Duration expiredAt) {
 		Date now = new Date();
@@ -58,7 +58,7 @@ public class TokenProvider {
 
 	public Authentication getAuthentication(String token) {
 		Claims claims = getClaims(token);
-		UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
+		UserDetails userDetails = customUserDetailService.loadUserByUsername(claims.getSubject());
 		return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
 	}
 

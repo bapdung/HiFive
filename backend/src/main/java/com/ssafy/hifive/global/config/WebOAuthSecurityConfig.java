@@ -1,5 +1,7 @@
 package com.ssafy.hifive.global.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.service.MemberService;
@@ -23,12 +27,13 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebOAuthSecurityConfig {
+public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 
 	private final OAuth2UserCustomService oAuth2UserCustomService;
 	private final TokenRepository tokenRepository;
 	private final TokenProvider tokenProvider;
 	private final MemberService memberService;
+	private final CustomMemberDetailsArgumentResolver customMemberDetailsArgumentResolver;
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
@@ -93,4 +98,10 @@ public class WebOAuthSecurityConfig {
 		return new OAuth2SuccessHandler(tokenProvider, tokenRepository,
 			oAuth2AuthorizationRequestBasedOnCookieRepository(), memberService);
 	}
+
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		resolvers.add(customMemberDetailsArgumentResolver);
+	}
+
 }
