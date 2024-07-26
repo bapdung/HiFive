@@ -12,7 +12,6 @@ import com.ssafy.hifive.domain.question.dto.response.QuestionResponseDto;
 
 @Service
 public class QuestionService {
-
 	public void createQuestion(long fanmeetingId, QuestionRequestDto questionRequestDto, Member member) {
 	}
 

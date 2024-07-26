@@ -15,6 +15,7 @@ import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.repository.MemberRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,15 +30,13 @@ public class MemberService {
 	}
 
 	public MemberResponseDto getMemberDetail(Member member) {
-		return memberRepository.findById(member.getMemberId())
-			.map(MemberResponseDto::from)
-			.orElseThrow(() -> new EntityNotFoundException("User Not Found"));
-		// MemberResponseDto memberResponseDto = MemberResponseDto.from(user);
-		// return ResponseEntity.ok(memberResponseDto);
+		member = memberRepository.findById(1L).get();
+		//TODO : 403 forbidden
+		return MemberResponseDto.from(member);
 	}
 
-	public ResponseEntity<String> nicknameCheck(MemberNicknameDto memberNicknameDto, Member member) {
-
+	public ResponseEntity<String> nicknameCheck(MemberNicknameDto memberNicknameDto) {
+		//TODO : 403 forbidden
 		if (memberNicknameDto.getNickname().length() < 2 || memberNicknameDto.getNickname().length() > 10) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body("닉네임은 최소 2글자에서 최대 10글자 이내여야 합니다.");
@@ -63,21 +62,24 @@ public class MemberService {
 		return ResponseEntity.ok("사용 가능한 닉네임입니다.");
 	}
 
-	public void updateMember(MemberUpdateDto updateMember, Member member) {
-		Member user = memberRepository.findById(member.getMemberId())
-			.orElseThrow(() -> new EntityNotFoundException("User Not Found"));
-		user.updateMember(updateMember);
-		memberRepository.save(user);
+	@Transactional
+	public void updateMember(MemberUpdateDto updateMemberdto, Member member) {
+		member = memberRepository.findById(1L).get();
+		//TODO : 403 forbidden
+		member.updateMember(updateMemberdto);
 	}
 
+	@Transactional
 	public void createIdentification(MemberIdentificationDto memberIdentificationDto, Member member) {
-		Member user = memberRepository.findById(member.getMemberId())
-			.orElseThrow(() -> new EntityNotFoundException("User Not Found"));
-
-		// memberRepository.save(user);
+		member = memberRepository.findById(1L).get();
+		//TODO : 403 forbidden
+		member.updateIdentification(memberIdentificationDto);
 	}
 
+	@Transactional
 	public void deleteMember(Member member) {
+		member = memberRepository.findById(2L).get();
+		//TODO : 403 forbidden
 		memberRepository.deleteById(member.getMemberId());
 	}
 }

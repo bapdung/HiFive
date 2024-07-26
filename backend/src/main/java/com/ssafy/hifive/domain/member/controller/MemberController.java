@@ -48,8 +48,7 @@ public class MemberController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MemberResponseDto> getMember(@AuthenticationPrincipal Member member) {
-		Member mem = memberRepository.findById(1L).get();
-		return ResponseEntity.ok(memberService.getMemberDetail(mem));
+		return ResponseEntity.ok(memberService.getMemberDetail(member));
 	}
 
 	@Operation(summary = "닉네임 중복 확인 및 유효성 검사", description = "사용자가 수정할 닉네임의 유효성과 중복여부를 검사한다.")
@@ -95,8 +94,7 @@ public class MemberController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal Member member) {
-		Member mem = memberRepository.findById(1L).get();
-		memberService.deleteMember(mem);
+		memberService.deleteMember(member);
 		return ResponseEntity.ok().build();
 	}
 
