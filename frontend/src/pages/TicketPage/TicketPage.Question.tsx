@@ -1,4 +1,16 @@
 function Question() {
+  const questions = [
+    {
+      key: 1,
+      value: "질문",
+    },
+    { key: 2, value: "질문" },
+    {
+      key: 3,
+      value: "질문",
+    },
+    { key: 4, value: "문질문질문질문질문질문질문질문질문질문질문질문" },
+  ];
   return (
     <div className="w-[100vw]">
       <div className="bg-white w-full flex flex-col items-center py-8">
@@ -15,25 +27,30 @@ function Question() {
           </p>
         </div>
       </div>
-      <div className="row-auto">
-        <div className="bg-gray-100 flex flex-col items-center justify-center col-auto">
-          <div className="border border-primary-700 rounded-[20px] w-[28rem] bg-white py-5 px-8">
-            <p className="mr-auto ml-auto text-large">
-              질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문질문
-            </p>
-            <button type="button" className="btn-light-md mt-4">
+      <div className="flex flex-wrap justify-center">
+        {questions.map((question) => (
+          <div
+            key={question.key}
+            className="border border-primary-700 rounded-[20px] w-[25rem] bg-white py-5 px-8 flex flex-col items-center m-2 mb-4"
+          >
+            <p className="text-large mb-4 min-h-32">{question.value}</p>
+            <button type="button" className="btn-light-md mt-auto">
               수정
             </button>
           </div>
-        </div>
-        <div className="bg-gray-100 flex flex-col items-center justify-center col-auto">
-          <div className="border border-primary-700 rounded-[20px] w-[28rem] bg-white py-5 px-8">
-            <p className="mr-auto ml-auto text-large">질문질문질문질문</p>
-            <button type="button" className="btn-light-md mt-4">
-              수정
+        ))}
+
+        {Array.from({ length: 6 - questions.length }).map(() => (
+          <div
+            key={`${Date.now()}-${Math.random()}`}
+            className="border border-primary-700 rounded-[20px] w-[25rem] bg-white py-5 px-8 flex flex-col items-center m-2 mb-4"
+          >
+            <textarea className="focus:outline-none resize-none w-full min-h-32 text-body-large" />
+            <button type="button" className="btn-md mt-auto">
+              작성
             </button>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
