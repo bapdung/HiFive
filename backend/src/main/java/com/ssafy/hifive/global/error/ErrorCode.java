@@ -23,7 +23,17 @@ public enum ErrorCode {
 	 * Board
 	 */
 	BOARD_NOT_FOUND(BAD_REQUEST, "BOARD-001", "BoardId에 해당하는 Board가 존재하지 않습니다."),
-	BOARD_DELETE_NOT_ALLOWED(FORBIDDEN, "BOARD-002", "자신이 작성하지 않은 게시글을 삭제할 수 없습니다.");
+	BOARD_DELETE_NOT_ALLOWED(FORBIDDEN, "BOARD-002", "자신이 작성하지 않은 게시글을 삭제할 수 없습니다."),
+
+	/**
+	 * Fanmeeting
+	 */
+	FANMEETING_NOT_FOUND(BAD_REQUEST, "FANMEETING-001", "FanmeetingId에 해당하는 Fanmeeting이 존재하지 않습니다."),
+
+	/**
+	 * Question
+	 */
+	QUESTION_NOT_FOUND(BAD_REQUEST, "QUESTION-001", "QuestionId에 해당하는 Question이 존재하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
