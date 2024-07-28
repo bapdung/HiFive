@@ -43,9 +43,6 @@ public class Creator extends BaseTimeEntity {
 	@Column(nullable = false, length = 100)
 	private String description;
 
-	@Column(nullable = false)
-	private int follower;
-
 	public void updateCreator(CreatorRequestDto creatorRequestDto) {
 		this.link = creatorRequestDto.getLink();
 		this.description = creatorRequestDto.getDescription();
@@ -58,6 +55,5 @@ public class Creator extends BaseTimeEntity {
 		this.creatorName = creatorName;
 		this.link = link;
 		this.description = description;
-		this.follower = 0;
 	}
 }

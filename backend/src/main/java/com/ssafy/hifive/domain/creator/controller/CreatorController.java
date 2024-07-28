@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.creator.dto.param.CreatorParam;
 import com.ssafy.hifive.domain.creator.dto.request.CreatorRequestDto;
+import com.ssafy.hifive.domain.creator.dto.response.CreatorDetailDto;
+import com.ssafy.hifive.domain.creator.dto.response.CreatorMainDto;
 import com.ssafy.hifive.domain.creator.dto.response.CreatorOverviewDto;
 import com.ssafy.hifive.domain.creator.service.CreatorService;
 import com.ssafy.hifive.domain.member.entity.Member;
@@ -44,7 +46,7 @@ public class CreatorController {
 	@GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CreatorOverviewDto>> getCreatorAll(
 		@ModelAttribute CreatorParam param, @AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(creatorService.getCreatorAll(param, member));
+		return ResponseEntity.ok(creatorService.getCreatorAll(param));
 	}
 
 	@Operation(summary = "내가 팔로우한 크리에이터 프로필 전체 조회", description = "내가 팔로우한 크리에이터 프로필을 전체 조회한다.")
@@ -64,7 +66,7 @@ public class CreatorController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/main", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CreatorOverviewDto>> getCreatorMain(
+	public ResponseEntity<CreatorMainDto> getCreatorMain(
 		@AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(creatorService.getCreatorMain(member));
 	}
@@ -75,7 +77,7 @@ public class CreatorController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CreatorOverviewDto> getCreatorDetail(
+	public ResponseEntity<CreatorDetailDto> getCreatorDetail(
 		@PathVariable long creatorId, @AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(creatorService.getCreatorDetail(creatorId, member));
 	}
@@ -103,7 +105,7 @@ public class CreatorController {
 	@PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateCreator(@RequestBody CreatorRequestDto creatorRequestDto,
 		@AuthenticationPrincipal Member member) {
-		
+
 		creatorService.updateCreator(creatorRequestDto, member);
 		return ResponseEntity.ok().build();
 	}

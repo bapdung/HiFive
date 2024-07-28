@@ -26,6 +26,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 			where b.creator.memberId = :creatorId
 		""")
 	void deleteAllByCreatorId(@Param("creatorId") Long creatorId);
+
+	@Query("""
+			select count(*) 
+			from Board b
+			where b.creator.memberId = :creatorId
+		""")
+	long countByCreatorId(long creatorId);
 }
 
 

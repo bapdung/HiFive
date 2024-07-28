@@ -23,9 +23,13 @@ public enum ErrorCode {
 	/**
 	 * Board
 	 */
-	BOARD_NOT_FOUND(BAD_REQUEST, "BOARD-001", "BoardId에 해당하는 Board가 존재하지 않습니다."),
-	BOARD_DELETE_NOT_ALLOWED(FORBIDDEN, "BOARD-002", "자신이 작성하지 않은 게시글을 삭제할 수 없습니다.");
+	BOARD_NOT_FOUND(BAD_REQUEST, "BOARD-001", "boardId에 해당하는 Board가 존재하지 않습니다."),
+	BOARD_DELETE_NOT_ALLOWED(FORBIDDEN, "BOARD-002", "자신이 작성하지 않은 게시글을 삭제할 수 없습니다."),
 
+	/**
+	 * Creator
+	 */
+	CREATOR_NOT_FOUND(BAD_REQUEST, "CREATOR-001", "creatorId에 해당하는 Creator가 존재하지 않습니다.");
 	private final HttpStatus httpStatus;
 	private final String code;
 	private final String message;

@@ -23,4 +23,11 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 			where f.fan.memberId = :fanId
 		""")
 	void deleteAllByFanId(@Param("fanId") Long fanId);
+
+	@Query("""
+			select count(*) 
+			from Follow f
+			where f.creator.memberId = :creatorId
+		""")
+	long countByCreatorId(long creatorId);
 }

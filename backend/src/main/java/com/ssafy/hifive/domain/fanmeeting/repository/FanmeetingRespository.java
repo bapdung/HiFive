@@ -16,4 +16,11 @@ public interface FanmeetingRespository extends JpaRepository<Fanmeeting, Long> {
 		where f.creator.memberId = :creatorId
 		""")
 	void deleteAllByCreatorId(@Param("creatorId") Long creatorId);
+
+	@Query("""
+			select count(*) 
+			from Fanmeeting f
+			where f.creator.memberId = :creatorId
+		""")
+	long countByCreatorId(long creatorId);
 }

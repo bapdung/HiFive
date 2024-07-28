@@ -17,12 +17,15 @@ public class CreatorParam {
 	})
 	public String condition;
 
-	@Schema(description = "정렬 기준", defaultValue = "desc", allowableValues = {
+	@Schema(description = "정렬 기준", defaultValue = "asc", allowableValues = {
 		"asc",
 		"desc"
 	})
 	public String sort;
 
 	@Schema(description = "가장 마지막에 불러온 creator_id")
-	public Long top;
+	public Long topId;
+
+	@Schema(description = "가장 마지막에 불러온 creator_name")
+	public String topName;
 }

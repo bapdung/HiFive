@@ -50,7 +50,7 @@ public class MemberService {
 
 	public Member findByEmail(String email) {
 		return memberRepository.findByEmail(email)
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND, "유효하지 않은 email입니다."));
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 
 	public MemberResponseDto getMemberDetail(Member member) {
