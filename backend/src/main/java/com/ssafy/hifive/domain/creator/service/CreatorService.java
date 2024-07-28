@@ -42,14 +42,11 @@ public class CreatorService {
 
 	@Transactional
 	public void createCreator(CreatorRequestDto creatorRequestDto, Member member) {
-		member = memberRepository.findById(2L).get();
 		creatorRepository.save(creatorRequestDto.toEntity(member));
 	}
 
 	@Transactional
 	public void updateCreator(CreatorRequestDto creatorRequestDto, Member member) {
-		member = memberRepository.findById(1L).get();
-		System.out.println(member);
 		Creator creator = creatorRepository.findByMemberId(member.getMemberId())
 			.orElseThrow(() -> new EntityNotFoundException()
 			);

@@ -18,6 +18,7 @@ public enum ErrorCode {
 	 * Member
 	 */
 	MEMBER_FORBIDDEN_ERROR(FORBIDDEN, "MEMBER-000", "사용자의 접근 권한이 없습니다."),
+	MEMBER_NOT_FOUND(BAD_REQUEST, "MEMBER-001", "email에 해당하는 Member가 존재하지 않습니다."),
 
 	/**
 	 * Board

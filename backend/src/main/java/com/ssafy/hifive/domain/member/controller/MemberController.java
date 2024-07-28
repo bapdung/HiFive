@@ -51,6 +51,7 @@ public class MemberController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MemberResponseDto> getMember(@AuthenticationPrincipal Member member) {
+		System.out.println(member);
 		return ResponseEntity.ok(memberService.getMemberDetail(member));
 	}
 
@@ -98,6 +99,7 @@ public class MemberController {
 	@DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal Member member) {
 		memberService.deleteMember(member);
+		//DB 삭제 후 OAuth 탈퇴 API 전송 필요
 		return ResponseEntity.ok().build();
 	}
 
