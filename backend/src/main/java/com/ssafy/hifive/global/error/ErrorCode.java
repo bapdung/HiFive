@@ -33,7 +33,12 @@ public enum ErrorCode {
 	/**
 	 * Question
 	 */
-	QUESTION_NOT_FOUND(BAD_REQUEST, "QUESTION-001", "QuestionId에 해당하는 Question이 존재하지 않습니다.");
+	QUESTION_NOT_FOUND(BAD_REQUEST, "QUESTION-001", "QuestionId에 해당하는 Question이 존재하지 않습니다."),
+
+	/**
+	 * Question
+	 */
+	STORY_NOT_FOUND(BAD_REQUEST, "STORY-001", "StoryId에 해당하는 Story가 존재하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
