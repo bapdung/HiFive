@@ -60,8 +60,8 @@ public class QuestionController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<QuestionResponseDto>> getQuestionAll(@PathVariable long fanmeetingId,
-		@ModelAttribute QuestionParam param) {
-		return ResponseEntity.ok(questionService.getQuestionAll(fanmeetingId, param));
+		@ModelAttribute QuestionParam param, @AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(questionService.getQuestionAll(fanmeetingId, param, member));
 	}
 
 	@Operation(summary = "선택된 질문 조회", description = "특정 팬미팅에서 선택된 질문 목록을 조회한다.")
@@ -71,8 +71,8 @@ public class QuestionController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanmeetingId}/selected", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<QuestionResponseDto>> getQuestionSelected(@PathVariable long fanmeetingId,
-		@ModelAttribute QuestionParam param) {
-		return ResponseEntity.ok(questionService.getQuestionSelected(fanmeetingId, param));
+		@ModelAttribute QuestionParam param, @AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(questionService.getQuestionSelected(fanmeetingId, param, member));
 	}
 
 	@Operation(summary = "미선택 질문 조회", description = "특정 팬미팅에서 미선택된 질문 목록을 조회한다.")
@@ -82,8 +82,8 @@ public class QuestionController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanmeetingId}/unselected", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<QuestionResponseDto>> getQuestionUnselected(@PathVariable long fanmeetingId,
-		@ModelAttribute QuestionParam param) {
-		return ResponseEntity.ok(questionService.getQuestionUnselected(fanmeetingId, param));
+		@ModelAttribute QuestionParam param, @AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(questionService.getQuestionUnselected(fanmeetingId, param, member));
 	}
 
 	@Operation(summary = "질문 선택/비선택 토글", description = "질문을 선택하거나 비선택으로 변경한다.")

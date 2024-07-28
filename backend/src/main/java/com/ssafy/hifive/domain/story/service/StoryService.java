@@ -20,6 +20,7 @@ import com.ssafy.hifive.domain.story.repository.StoryRepository;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 import com.ssafy.hifive.global.error.type.ForbiddenException;
+import com.ssafy.hifive.global.util.FanmeetingValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,7 @@ public class StoryService {
 
 	private final StoryRepository storyRepository;
 	private final FanmeetingRepository fanmeetingRepository;
+	private final FanmeetingValidator fanmeetingValidator;
 
 	private final static int PAGE_SIZE = 5;
 
@@ -41,17 +43,8 @@ public class StoryService {
 			story.getFanmeeting().getCreator().getMemberId() == member.getMemberId();
 	}
 
-	private void validateCreator(long fanmeetingId, Member member) {
-		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
-
-		if (fanmeeting.getCreator().getMemberId() != member.getMemberId()) {
-			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-		}
-	}
-
 	public List<StoryOverviewDto> getStoryAll(long fanmeetingId, StoryParam param, Member member) {
-		validateCreator(fanmeetingId, member);
+		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
 		return storyRepository.findByFanmeeting_FanmeetingId(fanmeetingId, pageable).getContent().stream()
@@ -59,7 +52,7 @@ public class StoryService {
 	}
 
 	public List<StoryOverviewDto> getStorySelected(long fanmeetingId, StoryParam param, Member member) {
-		validateCreator(fanmeetingId, member);
+		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
 		return storyRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, true, pageable)
@@ -68,7 +61,7 @@ public class StoryService {
 	}
 
 	public List<StoryOverviewDto> getStoryUnselected(long fanmeetingId, StoryParam param, Member member) {
-		validateCreator(fanmeetingId, member);
+		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
 		return storyRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, false, pageable)
