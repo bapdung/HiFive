@@ -40,7 +40,8 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers("/static/**");
+
+		return null;
 	}
 
 	@Bean

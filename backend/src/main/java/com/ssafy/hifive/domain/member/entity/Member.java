@@ -67,9 +67,17 @@ public class Member extends BaseTimeEntity {
 
 	}
 
-	public void update(String nickname, String profileImg) {
-		this.nickname = nickname;
+	public void updateMember(String profileImg, String nickname) {
 		this.profileImg = profileImg;
+		this.nickname = nickname;
+	}
+
+	public void updateIdentification(String identificationImg) {
+		this.identificationImg = identificationImg;
+	}
+
+	public void deleteMember() {
+		this.isDeleted = true;
 	}
 
 	public String toString() {
