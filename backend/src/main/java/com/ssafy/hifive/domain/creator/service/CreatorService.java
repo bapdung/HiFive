@@ -17,7 +17,7 @@ import com.ssafy.hifive.domain.creator.dto.response.CreatorMainDto;
 import com.ssafy.hifive.domain.creator.dto.response.CreatorOverviewDto;
 import com.ssafy.hifive.domain.creator.entity.Creator;
 import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
-import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRespository;
+import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.follow.repository.FollowRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.error.ErrorCode;
@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CreatorService {
 	private static final int PAGE_SIZE = 30;
 	private final CreatorRepository creatorRepository;
-	private final FanmeetingRespository fanmeetingRespository;
+	private final FanmeetingRepository fanmeetingRepository;
 	private final FollowRepository followRepository;
 	private final BoardRepository boardRepository;
 
@@ -82,7 +82,7 @@ public class CreatorService {
 	public CreatorDetailDto getCreatorDetail(long creatorId, Member member) {
 		Creator creator = creatorRepository.findCreatorByCreatorId(creatorId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
-		long fanmeetingCount = fanmeetingRespository.countByCreatorId(creatorId);
+		long fanmeetingCount = fanmeetingRepository.countByCreatorId(creatorId);
 		long boardCount = boardRepository.countByCreatorId(creatorId);
 
 		return CreatorDetailDto.from(creator, boardCount, fanmeetingCount);
