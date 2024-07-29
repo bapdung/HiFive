@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,10 +45,8 @@ public class AuthController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\": \"Unauthorized\"}")))
 	@PostMapping("/callback")
-	public ResponseEntity<TokenResponseDto> authCallback(@AuthenticationPrincipal OAuth2User oAuth2User,
+	public ResponseEntity<TokenResponseDto> authCallback(@AuthenticationPrincipal Member member,
 		HttpServletResponse response) {
-		String email = getKakaoEmail(oAuth2User.getAttributes());
-		Member member = memberService.findByEmail(email);
 
 		if (member == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
