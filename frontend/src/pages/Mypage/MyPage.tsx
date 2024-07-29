@@ -12,7 +12,10 @@ function Mypage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (window.location.pathname === "/mypage") {
+    if (
+      window.location.pathname === "/mypage" ||
+      window.location.pathname === "/mypage/"
+    ) {
       navigate("/mypage/reservation");
     }
   }, [navigate]);
