@@ -18,7 +18,6 @@ import com.ssafy.hifive.domain.creator.dto.response.CreatorOverviewDto;
 import com.ssafy.hifive.domain.creator.entity.Creator;
 import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
-import com.ssafy.hifive.domain.follow.repository.FollowRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -35,7 +34,6 @@ public class CreatorService {
 	private static final int PAGE_SIZE = 30;
 	private final CreatorRepository creatorRepository;
 	private final FanmeetingRepository fanmeetingRepository;
-	private final FollowRepository followRepository;
 	private final BoardRepository boardRepository;
 
 	public List<CreatorOverviewDto> getCreatorAll(CreatorParam param) {

@@ -51,7 +51,12 @@ public enum ErrorCode {
 	QUESTION_NOT_FOUND(BAD_REQUEST, "QUESTION-001", "QuestionId에 해당하는 Question이 존재하지 않습니다."),
 
 	/**
-	 * Question
+	 * Quiz
+	 */
+	QUIZ_NOT_FOUND(BAD_REQUEST, "QUIZ-001", "QuizId에 해당하는 Quiz가 존재하지 않습니다."),
+
+	/**
+	 * Story
 	 */
 	STORY_NOT_FOUND(BAD_REQUEST, "STORY-001", "StoryId에 해당하는 Story가 존재하지 않습니다."),
 
