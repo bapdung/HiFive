@@ -69,6 +69,7 @@ public class QuestionService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
 		Question question = questionRequestDto.toEntity(fanmeeting, member);
+		questionRepository.save(question);
 	}
 
 	@Transactional
