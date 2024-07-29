@@ -82,7 +82,6 @@ public class StoryService {
 		Story story = storyRepository.findById(storyId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.STORY_NOT_FOUND));
 		story.toggleIsPicked();
-		storyRepository.save(story);
 	}
 
 	public List<StoryOverviewDto> getMyStory(long fanmeetingId, Member member) {
@@ -112,7 +111,6 @@ public class StoryService {
 		}
 
 		story.updateStory(storyRequestDto.getTitle(), storyRequestDto.getContent());
-		storyRepository.save(story);
 	}
 
 	@Transactional

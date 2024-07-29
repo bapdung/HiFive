@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.story.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,7 +49,7 @@ public class StoryController {
 	public ResponseEntity<Void> createStory(@PathVariable long fanmeetingId,
 		@RequestBody StoryRequestDto storyRequestDto, @AuthenticationPrincipal Member member) {
 		storyService.createStory(fanmeetingId, storyRequestDto, member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Operation(summary = "사연 목록 조회", description = "특정 팬미팅의 모든 사연 목록을 조회한다.")
