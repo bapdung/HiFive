@@ -7,11 +7,12 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 
 @Repository
-public interface FanmeetingRespository extends JpaRepository<Fanmeeting, Long> {
+public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long> {
 	@Query("""
 			select count(*) 
 			from Fanmeeting f
 			where f.creator.memberId = :creatorId
 		""")
 	long countByCreatorId(long creatorId);
+
 }
