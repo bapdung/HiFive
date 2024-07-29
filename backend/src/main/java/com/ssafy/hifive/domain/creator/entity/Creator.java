@@ -1,6 +1,5 @@
 package com.ssafy.hifive.domain.creator.entity;
 
-import com.ssafy.hifive.domain.creator.dto.request.CreatorRequestDto;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
@@ -43,9 +42,12 @@ public class Creator extends BaseTimeEntity {
 	@Column(nullable = false, length = 100)
 	private String description;
 
-	public void updateCreator(CreatorRequestDto creatorRequestDto) {
-		this.link = creatorRequestDto.getLink();
-		this.description = creatorRequestDto.getDescription();
+	@Column(nullable = false)
+	private int follower;
+
+	public void updateCreator(String link, String description) {
+		this.link = link;
+		this.description = description;
 	}
 
 	@Builder
@@ -54,6 +56,7 @@ public class Creator extends BaseTimeEntity {
 		this.creatorImg = creatorImg;
 		this.creatorName = creatorName;
 		this.link = link;
+		this.follower = 0;
 		this.description = description;
 	}
 }

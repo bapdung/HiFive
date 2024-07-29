@@ -19,6 +19,9 @@ public enum ErrorCode {
 	 */
 	MEMBER_FORBIDDEN_ERROR(FORBIDDEN, "MEMBER-000", "사용자의 접근 권한이 없습니다."),
 	MEMBER_NOT_FOUND(BAD_REQUEST, "MEMBER-001", "email에 해당하는 Member가 존재하지 않습니다."),
+	NICKNAME_LENGTH(BAD_REQUEST, "CREATOR-002", "닉네임은 최소 2글자에서 최대 10글자 이내여야 합니다."),
+	NICKNAME_SPECIAL_SYMBOL(BAD_REQUEST, "CREATOR-003", "닉네임에 특수문자를 포함할 수 없습니다."),
+	NICKNAME_DUPLICATE(BAD_REQUEST, "CREATOR-004", "중복되는 닉네임이 존재합니다."),
 
 	/**
 	 * Board
@@ -30,6 +33,7 @@ public enum ErrorCode {
 	 * Creator
 	 */
 	CREATOR_NOT_FOUND(BAD_REQUEST, "CREATOR-001", "creatorId에 해당하는 Creator가 존재하지 않습니다.");
+
 	private final HttpStatus httpStatus;
 	private final String code;
 	private final String message;

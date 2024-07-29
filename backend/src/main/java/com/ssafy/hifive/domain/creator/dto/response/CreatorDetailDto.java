@@ -19,13 +19,13 @@ public final class CreatorDetailDto {
 	private LocalDateTime createdDate;
 	private long fanmeetingCount;
 
-	public static CreatorDetailDto from(Creator creator, long boardCount, long fanmeetingCount, long follower) {
+	public static CreatorDetailDto from(Creator creator, long boardCount, long fanmeetingCount) {
 		return new CreatorDetailDto(
 			creator.getCreatorProfileId(),
 			creator.getCreatorName(),
 			creator.getLink(),
 			creator.getDescription(),
-			follower,
+			creator.getFollower(),
 			boardCount,
 			creator.getCreatedDate(),
 			fanmeetingCount

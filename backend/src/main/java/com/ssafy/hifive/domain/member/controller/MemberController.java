@@ -61,9 +61,10 @@ public class MemberController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@PostMapping(path = "/valid", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> nicknameCheck(@RequestBody MemberNicknameDto memberNicknameDto,
+	public ResponseEntity<String> checkNickName(@RequestBody MemberNicknameDto memberNicknameDto,
 		@AuthenticationPrincipal Member member) {
-		return memberService.nicknameCheck(memberNicknameDto);
+		memberService.checkNickName(memberNicknameDto);
+		return ResponseEntity.ok("사용 가능한 닉네임입니다.");
 	}
 
 	@Operation(summary = "회원 정보 수정", description = "사용자의 정보를 수정한다.")

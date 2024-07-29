@@ -84,9 +84,8 @@ public class CreatorService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
 		long fanmeetingCount = fanmeetingRespository.countByCreatorId(creatorId);
 		long boardCount = boardRepository.countByCreatorId(creatorId);
-		long follower = followRepository.countByCreatorId(creatorId);
 
-		return CreatorDetailDto.from(creator, boardCount, fanmeetingCount, follower);
+		return CreatorDetailDto.from(creator, boardCount, fanmeetingCount);
 	}
 
 	@Transactional
@@ -102,6 +101,6 @@ public class CreatorService {
 		Creator creator = creatorRepository.findByMemberId(member.getMemberId())
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
 
-		creator.updateCreator(creatorRequestDto);
+		creator.updateCreator(creatorRequestDto.getLink(), creatorRequestDto.getDescription());
 	}
 }

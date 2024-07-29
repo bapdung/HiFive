@@ -1,10 +1,5 @@
 package com.ssafy.hifive.domain.member.service;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.auth.repository.TokenRepository;
@@ -47,6 +42,7 @@ public class MemberService {
 	private final CommentRepository commentRepository;
 	private final StoryRepository storyRepository;
 	private final ReservationRepository reservationRepository;
+	private final MemberValidService memberValidService;
 
 	public Member findByEmail(String email) {
 		return memberRepository.findByEmail(email)
@@ -57,58 +53,26 @@ public class MemberService {
 		return MemberResponseDto.from(member);
 	}
 
-	public ResponseEntity<String> nicknameCheck(MemberNicknameDto memberNicknameDto) {
-		if (memberNicknameDto.getNickname().length() < 2 || memberNicknameDto.getNickname().length() > 10) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("닉네임은 최소 2글자에서 최대 10글자 이내여야 합니다.");
-		}
-
-		String regex = "[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(memberNicknameDto.getNickname());
-		boolean isInvaild = matcher.find();
-
-		if (isInvaild) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("닉네임에 특수문자를 포함할 수 없습니다.");
-		}
-
-		boolean isDuplicate = memberRepository.existsByNickname(memberNicknameDto.getNickname());
-
-		if (isDuplicate) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("중복되는 닉네임이 존재합니다.");
-		}
-
-		return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+	public void checkNickName(MemberNicknameDto memberNicknameDto) {
+		memberValidService.isValidNicknameLength(memberNicknameDto.getNickname());
+		memberValidService.isValidNicknameSpecailSymbol(memberNicknameDto.getNickname());
+		memberValidService.isValidDuplicate(memberNicknameDto.getNickname());
 	}
 
 	@Transactional
 	public void updateMember(MemberUpdateDto memberUpdateDto, Member member) {
-		member.updateMember(memberUpdateDto);
+		member.updateMember(memberUpdateDto.getProfileImg(), memberUpdateDto.getNickname());
 		memberRepository.save(member);
 	}
 
 	@Transactional
 	public void createIdentification(MemberIdentificationDto memberIdentificationDto, Member member) {
-		member.updateIdentification(memberIdentificationDto);
+		member.updateIdentification(memberIdentificationDto.getIdentificationImg());
 	}
 
 	@Transactional
 	public void deleteMember(Member member) {
-		memberRepository.deleteById(member.getMemberId());
-		tokenRepository.deleteByMemberId(member.getMemberId());
-		creatorRepository.deleteByCreatorId(member.getMemberId());
-		followRepository.deleteAllByFanId(member.getMemberId());
-		followRepository.deleteAllByCreatorId(member.getMemberId());
-		boardRepository.deleteAllByCreatorId(member.getMemberId());
-		commentRepository.deleteAllByMemberId(member.getMemberId());
-		storyRepository.deleteAllByFanId(member.getMemberId());
-		reservationRepository.deleteAllByFanId(member.getMemberId());
-		photoRepository.deleteAllByFanId(member.getMemberId());
-		questionRepository.deleteAllByFanId(member.getMemberId());
-		pointRepository.deleteAllByMemberId(member.getMemberId());
-		fanmeetingRespository.deleteAllByCreatorId(member.getMemberId());
-		memberRepository.delete(member);
+		member.deleteMember();
+		memberRepository.save(member);
 	}
 }
