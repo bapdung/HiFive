@@ -1,10 +1,41 @@
 import { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "../../custom-datepicker.css";
+import { format, differenceInDays } from "date-fns"; // 날짜를 특정 형식으로 표시하는 라이브러리
+import { ko } from "date-fns/locale"; // 날짜 한국어 패치
 
 function CreateFanmeeting() {
   const [peopleNumber, setPeopleNumber] = useState(0);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+
   const handlePeopleNumber = (num: number) => {
     setPeopleNumber(num);
   };
+  const toggleCalendar = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
+  const checkDateValidation = (date: Date) => {
+    const today = new Date();
+    const difference = differenceInDays(date, today);
+    if (difference <= 7) {
+      alert("일주일 뒤 날짜만 선택 가능합니다.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleDateChange = (date: Date) => {
+    if (checkDateValidation(date)) {
+      setStartDate(date);
+      setIsCalendarOpen(false);
+    } else {
+      setStartDate(null);
+      setIsCalendarOpen(false);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col items-center">
       <div className="w-[100vw] bg-white py-8 flex flex-col items-center">
@@ -24,7 +55,7 @@ function CreateFanmeeting() {
               <p className="text-small">타이틀</p>
               <input
                 type="text"
-                className="creator-btn-outline-md border-1 mt-1 focus:outline-none text-gray-900 mb-5"
+                className="creator-btn-outline-md mt-1 focus:outline-none text-gray-900 mb-5 text-center"
                 placeholder="이 곳에 팬미팅 제목을 입력하세요."
               />
               <p className="text-small">참가 인원</p>
@@ -76,11 +107,53 @@ function CreateFanmeeting() {
               </div>
               <p className="text-small mb-1">행사 날짜</p>
               <button
+                onClick={() => toggleCalendar()}
                 type="button"
                 className="creator-btn-outline-md w-full mb-5 focus:outline-none"
               >
-                날짜 선택 &nbsp; ▼
+                {startDate ? (
+                  <p className="text-secondary">
+                    {format(startDate, "yyyy.MM.dd (EEE) HH:mm", {
+                      locale: ko,
+                    })}
+                  </p>
+                ) : (
+                  <>
+                    날짜 선택 &nbsp;{" "}
+                    <span className="text-[9px] text-secondary">▼</span>
+                  </>
+                )}
               </button>
+              {isCalendarOpen && (
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => handleDateChange(date as Date)}
+                  showTimeSelect
+                  inline
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  dateFormat="yyyy.MM.dd (EEE) HH:mm"
+                  locale={ko}
+                />
+              )}
+              <div className="flex w-full justify-between">
+                <div className="w-1/2">
+                  <p className="text-small mb-1">진행 시간</p>
+                  <button type="button" className="creator-btn-outline-md px-6">
+                    시간 선택&nbsp;{" "}
+                    <span className="text-[9px] text-secondary">▼</span>
+                  </button>
+                </div>
+                <div className="w-1/2">
+                  <p className="text-small mb-1">티켓 가격</p>
+                  <input
+                    type="number"
+                    className="creator-btn-outline-md px-6"
+                  />
+                  시간 선택&nbsp;{" "}
+                  <span className="text-[9px] text-secondary">▼</span>
+                </div>
+              </div>
             </div>
             <div className="flex flex-col w-[40%]">
               <p>포스터</p>
