@@ -69,7 +69,6 @@ public class QuestionService {
 		}
 
 		Question question = questionRequestDto.toEntity(fanmeeting, member);
-		questionRepository.save(question);
 	}
 
 	@Transactional
@@ -77,7 +76,6 @@ public class QuestionService {
 		Question question = questionRepository.findById(questionId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.QUESTION_NOT_FOUND));
 		question.toggleIsPicked();
-		questionRepository.save(question);
 	}
 
 	public List<QuestionResponseDto> getMyQuestion(long fanmeetingId, Member member) {

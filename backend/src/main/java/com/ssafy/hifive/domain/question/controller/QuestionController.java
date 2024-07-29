@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.question.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,7 +51,7 @@ public class QuestionController {
 		@RequestBody QuestionRequestDto questionRequestDto,
 		@AuthenticationPrincipal Member member) {
 		questionService.createQuestion(fanmeetingId, questionRequestDto, member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Operation(summary = "질문 목록 전체 조회", description = "특정 팬미팅의 모든 질문 목록을 조회한다.")
