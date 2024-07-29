@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 import Sidebar from "./MyPage.Sidebar";
 import Reservation from "./MyPage.Reservation";
@@ -8,6 +9,14 @@ import IdCard from "./MyPage.IdCard";
 import Point from "./MyPage.Point";
 
 function Mypage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (window.location.pathname === "/mypage") {
+      navigate("/mypage/reservation");
+    }
+  }, [navigate]);
+
   return (
     <>
       <Sidebar />
