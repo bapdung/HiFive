@@ -29,7 +29,6 @@ public class MemberValidService {
 		if (isInvaild) {
 			throw new BadRequestException(ErrorCode.NICKNAME_SPECIAL_SYMBOL);
 		}
-
 	}
 
 	public void isValidDuplicate(String nickname) {
