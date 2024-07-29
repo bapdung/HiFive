@@ -8,11 +8,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.comment.dto.param.CommentParam;
@@ -44,9 +44,8 @@ public class CommentController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CommentResponseDto>> getCommentAll(@PathVariable long boardId,
-		@RequestParam CommentParam param,
-		@AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(commentService.getCommentAll(boardId, param, member));
+		@ModelAttribute CommentParam param) {
+		return ResponseEntity.ok(commentService.getCommentAll(boardId, param));
 	}
 
 	@Operation(summary = "댓글 작성", description = "특정 게시물에 댓글을 작성한다.")
