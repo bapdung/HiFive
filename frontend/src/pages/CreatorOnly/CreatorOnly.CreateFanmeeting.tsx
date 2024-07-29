@@ -2,21 +2,51 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../custom-datepicker.css";
-import { format, differenceInDays } from "date-fns"; // 날짜를 특정 형식으로 표시하는 라이브러리
+import { format, differenceInDays, addDays, isBefore, isAfter } from "date-fns"; // 날짜를 특정 형식으로 표시하는 라이브러리
 import { ko } from "date-fns/locale"; // 날짜 한국어 패치
+import {
+  formatNumberWithCommas,
+  parseNumberIntoInteger,
+} from "../../utils/formatNumber";
+import DownloadIcon from "../../assets/icons/download.svg";
 
 function CreateFanmeeting() {
   const [peopleNumber, setPeopleNumber] = useState(0);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isFanmeetingCalendarOpen, setIsFanmeetingCalendarOpen] =
+    useState(false);
+  const [isTicketCalendarOpen, setIsTicketCalendarOpen] = useState(false);
+  const [isTimeOpen, setIsTimeOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
+  const [ticketDate, setTicketDate] = useState<Date | null>(null);
+  const [selectedDuration, setSelectedDuration] = useState("");
+  const [ticketPrice, setTicketPrice] = useState<number | "">("");
+
+  const durations = [
+    "1:00",
+    "1:30",
+    "2:00",
+    "2:30",
+    "3:00",
+    "3:30",
+    "4:00",
+    "4:30",
+    "5:00",
+  ];
 
   const handlePeopleNumber = (num: number) => {
     setPeopleNumber(num);
   };
-  const toggleCalendar = () => {
-    setIsCalendarOpen(!isCalendarOpen);
+  const toggleFanmeetingCalendar = () => {
+    setIsFanmeetingCalendarOpen(!isFanmeetingCalendarOpen);
   };
-  const checkDateValidation = (date: Date) => {
+  const toggleTicketCalendar = () => {
+    setIsTicketCalendarOpen(!isTicketCalendarOpen);
+  };
+  const toggleTimeOpen = () => {
+    setIsTimeOpen(!isTimeOpen);
+  };
+
+  const checkStartDateValidation = (date: Date) => {
     const today = new Date();
     const difference = differenceInDays(date, today);
     if (difference <= 7) {
@@ -25,15 +55,49 @@ function CreateFanmeeting() {
     }
     return true;
   };
+  const checkTicketDateValidation = (date: Date) => {
+    const today = new Date();
+    const tomorrow = addDays(today, 1);
+    if (!startDate) {
+      alert("팬미팅 날짜를 먼저 정해주세요.");
+      return false;
+    }
+    const dayBeforeTicketDate = addDays(startDate, -1);
+    if (isBefore(date, tomorrow) || isAfter(date, dayBeforeTicketDate)) {
+      alert("잘못된 날짜를 선택하셨습니다.");
+      return false;
+    }
+    return true;
+  };
 
-  const handleDateChange = (date: Date) => {
-    if (checkDateValidation(date)) {
+  const handleStartDateChange = (date: Date) => {
+    if (checkStartDateValidation(date)) {
       setStartDate(date);
-      setIsCalendarOpen(false);
+      setIsFanmeetingCalendarOpen(false);
     } else {
       setStartDate(null);
-      setIsCalendarOpen(false);
+      setIsFanmeetingCalendarOpen(false);
     }
+  };
+  const handleTicketDateChange = (date: Date) => {
+    if (checkTicketDateValidation(date)) {
+      setTicketDate(date);
+      console.log(ticketDate);
+      setIsTicketCalendarOpen(false);
+    } else {
+      setTicketDate(null);
+      setIsTicketCalendarOpen(false);
+    }
+  };
+
+  const handleDurationSelect = (duration: string) => {
+    setSelectedDuration(duration);
+    setIsTimeOpen(false);
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const intValue = parseNumberIntoInteger(e.target.value);
+    setTicketPrice(intValue);
   };
 
   return (
@@ -107,7 +171,7 @@ function CreateFanmeeting() {
               </div>
               <p className="text-small mb-1">행사 날짜</p>
               <button
-                onClick={() => toggleCalendar()}
+                onClick={() => toggleFanmeetingCalendar()}
                 type="button"
                 className="creator-btn-outline-md w-full mb-5 focus:outline-none"
               >
@@ -124,10 +188,10 @@ function CreateFanmeeting() {
                   </>
                 )}
               </button>
-              {isCalendarOpen && (
+              {isFanmeetingCalendarOpen && (
                 <DatePicker
                   selected={startDate}
-                  onChange={(date) => handleDateChange(date as Date)}
+                  onChange={(date) => handleStartDateChange(date as Date)}
                   showTimeSelect
                   inline
                   timeFormat="HH:mm"
@@ -139,24 +203,93 @@ function CreateFanmeeting() {
               <div className="flex w-full justify-between">
                 <div className="w-1/2">
                   <p className="text-small mb-1">진행 시간</p>
-                  <button type="button" className="creator-btn-outline-md px-6">
-                    시간 선택&nbsp;{" "}
-                    <span className="text-[9px] text-secondary">▼</span>
+                  <button
+                    type="button"
+                    className="creator-btn-outline-md px-6 focus:outline-none"
+                    onClick={() => toggleTimeOpen()}
+                  >
+                    {selectedDuration || (
+                      <>
+                        시간 선택&nbsp;{" "}
+                        <span className="text-[9px] text-secondary">▼</span>
+                      </>
+                    )}
                   </button>
+                  {isTimeOpen ? (
+                    <div className="bg-white mt-4 w-full grid grid-cols-3 gap-5 p-2 px-2">
+                      {durations.map((duration) => (
+                        <button
+                          type="button"
+                          key={duration}
+                          className="cursor-pointer rounded-3xl hover:bg-secondary-300 w-fit p-2 px-3"
+                          onClick={() => handleDurationSelect(duration)}
+                        >
+                          {duration}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
                 <div className="w-1/2">
                   <p className="text-small mb-1">티켓 가격</p>
-                  <input
-                    type="number"
-                    className="creator-btn-outline-md px-6"
-                  />
-                  시간 선택&nbsp;{" "}
-                  <span className="text-[9px] text-secondary">▼</span>
+                  <div className="creator-btn-outline-md w-full flex justify-between">
+                    <input
+                      type="text"
+                      className="focus:outline-none w-3/4"
+                      value={
+                        ticketPrice !== ""
+                          ? formatNumberWithCommas(ticketPrice as number)
+                          : ""
+                      }
+                      onChange={handlePriceChange}
+                    />
+                    <span className="text-secondary">원</span>
+                  </div>
                 </div>
+              </div>
+              <div className="flex flex-col w-full my-5">
+                <p className="text-small mb-1">예매 오픈일</p>
+                <button
+                  onClick={() => toggleTicketCalendar()}
+                  type="button"
+                  className="creator-btn-outline-md w-full mb-5 focus:outline-none"
+                >
+                  {ticketDate ? (
+                    <p className="text-secondary">
+                      {format(ticketDate, "yyyy.MM.dd (EEE) HH:mm", {
+                        locale: ko,
+                      })}
+                    </p>
+                  ) : (
+                    <>
+                      날짜 선택 &nbsp;{" "}
+                      <span className="text-[9px] text-secondary">▼</span>
+                    </>
+                  )}
+                </button>
+                {isTicketCalendarOpen && (
+                  <DatePicker
+                    selected={ticketDate}
+                    onChange={(date) => handleTicketDateChange(date as Date)}
+                    showTimeSelect
+                    inline
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="yyyy.MM.dd (EEE) HH:mm"
+                    locale={ko}
+                  />
+                )}
               </div>
             </div>
             <div className="flex flex-col w-[40%]">
               <p>포스터</p>
+              <div className="relative w-full h-full bg-gray-300">
+                <img
+                  src={DownloadIcon}
+                  alt="download-img"
+                  className="absolute top-1/2 right-1/2"
+                />
+              </div>
             </div>
           </div>
           <div className="flex">
