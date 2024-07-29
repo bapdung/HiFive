@@ -18,7 +18,9 @@ services: # container setting info
       - db-mysql:/var/lib/mysql
     restart: unless-stopped
     environment:
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=1q2w3e4r!
+      - MYSQL_USER=hifive
+      - MYSQL_PASSWORD=1q2w3e4r!
       - MYSQL_DATABASE=hifive
     networks:
       - db-network
