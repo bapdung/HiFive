@@ -18,12 +18,19 @@ public enum ErrorCode {
 	 * Member
 	 */
 	MEMBER_FORBIDDEN_ERROR(FORBIDDEN, "MEMBER-000", "사용자의 접근 권한이 없습니다."),
+	MEMBER_NOT_FOUND(UNAUTHORIZED, "MEMBER-001", "사용자가 존재하지 않습니다."),
 
 	/**
 	 * Board
 	 */
 	BOARD_NOT_FOUND(BAD_REQUEST, "BOARD-001", "BoardId에 해당하는 Board가 존재하지 않습니다."),
 	BOARD_DELETE_NOT_ALLOWED(FORBIDDEN, "BOARD-002", "자신이 작성하지 않은 게시글을 삭제할 수 없습니다."),
+
+	/**
+	 * Auth
+	 */
+	INVALID_REFRESH_TOKEN(UNAUTHORIZED, "TOKEN-001", "유효하지 않은 리프레시 토큰입니다."),
+	REFRESH_TOKEN_NOT_FOUND(BAD_REQUEST, "TOKEN-002", "리프레시 토큰을 찾을 수 없습니다."),
 
 	/**
 	 * Fanmeeting

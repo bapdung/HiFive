@@ -1,9 +1,5 @@
 package com.ssafy.hifive.domain.auth.controller;
 
-import java.time.Duration;
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
@@ -14,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hifive.domain.auth.dto.TokenResponseDto;
 import com.ssafy.hifive.domain.auth.service.TokenService;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.domain.member.service.MemberService;
 import com.ssafy.hifive.global.util.CookieUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
 
 	private final TokenService tokenService;
-	private final MemberService memberService;
 
 	@Operation(summary = "OAuth2 콜백", description = "카카오 OAuth2 로그인 후 콜백을 처리한다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
@@ -48,16 +42,7 @@ public class AuthController {
 	public ResponseEntity<TokenResponseDto> authCallback(@AuthenticationPrincipal Member member,
 		HttpServletResponse response) {
 
-		if (member == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-		}
-
-		ResponseEntity<TokenResponseDto> tokenResponse = tokenService.createTokenResponse(member);
-		if (tokenResponse.getStatusCode() == HttpStatus.OK) {
-			CookieUtil.addCookie(response, "refresh_token", tokenResponse.getBody().getRefreshToken(),
-				(int)Duration.ofDays(7).toSeconds(), true, true);
-		}
-		return tokenResponse;
+		return ResponseEntity.ok(tokenService.createTokenResponse(member, response));
 	}
 
 	@Operation(summary = "토큰 갱신", description = "리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급한다.")
@@ -71,21 +56,7 @@ public class AuthController {
 			.map(Cookie::getValue)
 			.orElse(null);
 
-		if (refreshToken == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-		}
-
-		log.info(request.getRequestURI() + " refresh token: " + refreshToken);
-		ResponseEntity<TokenResponseDto> tokenResponse = tokenService.refreshAccessToken(refreshToken);
-		if (tokenResponse.getStatusCode() == HttpStatus.OK) {
-			CookieUtil.addCookie(response, "refresh_token", refreshToken, (int)Duration.ofDays(7).toSeconds(), true,
-				true);
-		}
-		return tokenResponse;
+		return ResponseEntity.ok(tokenService.refreshAccessToken(refreshToken, response));
 	}
 
-	private String getKakaoEmail(Map<String, Object> attributes) {
-		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
-		return (String)kakaoAccount.get("email");
-	}
 }
