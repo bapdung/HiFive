@@ -45,6 +45,10 @@ public class Question extends BaseTimeEntity {
 		this.isPicked = !this.isPicked;
 	}
 
+	public void updateQuestion(String content) {
+		this.content = content;
+	}
+
 	@Builder
 	private Question(Fanmeeting fanmeeting, Member fan, String content) {
 		this.fanmeeting = fanmeeting;

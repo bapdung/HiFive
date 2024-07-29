@@ -16,6 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.service.MemberService;
 import com.ssafy.hifive.global.config.jwt.TokenProvider;
@@ -35,6 +36,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 	private final TokenProvider tokenProvider;
 	private final MemberService memberService;
 	private final CustomMemberDetailsArgumentResolver customMemberDetailsArgumentResolver;
+	private final ObjectMapper objectMapper; // 추가
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
@@ -98,7 +100,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 	@Bean
 	public OAuth2SuccessHandler oAuth2SuccessHandler() {
 		return new OAuth2SuccessHandler(tokenProvider, tokenRepository,
-			oAuth2AuthorizationRequestBasedOnCookieRepository(), memberService);
+			oAuth2AuthorizationRequestBasedOnCookieRepository(), memberService, objectMapper);
 	}
 
 	@Override
