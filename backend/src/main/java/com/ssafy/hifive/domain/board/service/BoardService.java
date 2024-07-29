@@ -60,30 +60,22 @@ public class BoardService {
 
 	@Transactional
 	public void updateBoard(long boardId, BoardRequestDto boardRequestDto, Member member) {
-		if (!member.isCreator())
-			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-
 		Board board = boardRepository.findById(boardId)
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
-		if (board.getCreator().getMemberId() != member.getMemberId()) {
+		if (!member.isCreator() || board.getCreator().getMemberId() != member.getMemberId())
 			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-		}
 
 		board.updateBoard(boardRequestDto.getContents(), boardRequestDto.getBoardImg());
 	}
 
 	@Transactional
 	public void deleteBoard(long boardId, Member member) {
-		if (!member.isCreator())
-			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-
 		Board board = boardRepository.findById(boardId)
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
-		if (board.getCreator().getMemberId() != member.getMemberId()) {
+		if (!member.isCreator() || board.getCreator().getMemberId() != member.getMemberId())
 			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-		}
 
 		commentService.deleteByBoardId(boardId);
 		boardRepository.delete(board);
