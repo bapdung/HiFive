@@ -1,3 +1,5 @@
+import kakaoLogin from "../../service/authService";
+
 import logo from "../../assets/logo.png";
 
 function Navbar() {
@@ -7,7 +9,14 @@ function Navbar() {
         <img src={logo} alt="Logo" className="w-[164.72px] h-[44px]" />
       </div>
       <div className="flex items-center">
-        <div className="text-primary-text text-medium m-7">로그인</div>
+        <div
+          className="text-primary-text text-medium m-7"
+          onClick={kakaoLogin}
+          onKeyDown={kakaoLogin}
+          role="presentation"
+        >
+          로그인
+        </div>
         <div className="btn-lg">회원가입</div>
       </div>
       {/* <div className="flex items-center">
