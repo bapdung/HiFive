@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hifive.domain.comment.entity.Comment;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentCustomRepository {
 	@Modifying
 	@Query("""
 			delete from Comment c where c.board.boardId =:boardId
