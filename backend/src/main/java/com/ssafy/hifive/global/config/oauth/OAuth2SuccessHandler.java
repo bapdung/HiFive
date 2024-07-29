@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hifive.domain.auth.entity.Token;
 import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
@@ -26,14 +27,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 	public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
-	public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(10);
-	public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
+	public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
+	public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(2);
 	public static final String REDIRECT_PATH = "/main";
 
 	private final TokenProvider tokenProvider;
 	private final TokenRepository tokenRepository;
 	private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 	private final MemberService memberService;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -47,18 +49,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		addRefreshToken(request, response, refreshToken);
 
 		String accessToken = tokenProvider.generateToken(member, ACCESS_TOKEN_DURATION);
-		addAccessToken(response, accessToken);
 
 		clearAuthenticationAttributes(request, response);
 
-		getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
+		sendJsonResponse(response, member, accessToken);
 
-	}
-
-	private void addAccessToken(HttpServletResponse response, String accessToken) {
-		int cookieMaxAge = (int)ACCESS_TOKEN_DURATION.toSeconds();
-
-		CookieUtil.addCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, cookieMaxAge, true, false);
 	}
 
 	private void addRefreshToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
@@ -69,7 +64,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 	private void saveRefreshToken(Member member, String newRefreshToken) {
-		Token refreshToken = tokenRepository.findByMemberId(member.getMemberId())
+		Token refreshToken = tokenRepository.findByMemberMemberId(member.getMemberId())
 			.map(entity -> entity.update(newRefreshToken))
 			.orElse(new Token(member, newRefreshToken));
 
@@ -84,6 +79,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private String getKakaoEmail(Map<String, Object> attributes) {
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 		return (String)kakaoAccount.get("email");
+	}
+
+	private void sendJsonResponse(HttpServletResponse response, Member member, String accessToken) throws IOException {
+		Map<String, Object> responseBody = Map.of(
+			"accessToken", accessToken,
+			"member", Map.of(
+				"id", member.getMemberId(),
+				"email", member.getEmail(),
+				"nickname", member.getNickname()
+			)
+		);
+
+		response.setContentType("application/json;charset=UTF-8");
+		response.setStatus(HttpServletResponse.SC_OK);
+		objectMapper.writeValue(response.getWriter(), responseBody);
 	}
 
 }
