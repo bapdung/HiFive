@@ -1,7 +1,6 @@
 package com.ssafy.hifive.domain.reservation.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,12 +8,13 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hifive.domain.reservation.entity.Reservation;
 
 @Repository
-public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-	@Modifying
+public interface ReservationRepository extends JpaRepository<Reservation, Long>, ReservationRepositoryCustom {
+
 	@Query("""
-			delete from Reservation r
-			where r.fan.memberId = :fanId
+			select count(*)
+			from Reservation r
+			where r.fanmeeting.fanmeetingId = :fanmeetingId
 		""")
-	void deleteAllByFanId(@Param("fanId") Long fanId);
+	int reservedTicketCountByFanmeetingId(@Param("fanmeetingId") Long fanmeetingId);
 
 }
