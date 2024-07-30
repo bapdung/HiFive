@@ -17,10 +17,13 @@ import {
   parseNumberIntoInteger,
 } from "../../utils/formatNumber";
 
+// drag and drop 할 때 형식
 interface Corner {
   id: string;
   content: string;
 }
+
+// backend 로 보낼때 형식
 interface CornerIndex {
   categoryId: number;
   sequence: number;
@@ -29,21 +32,22 @@ interface CornerIndex {
 function CreateFanmeeting() {
   const [title, setTitle] = useState("");
   const [peopleNumber, setPeopleNumber] = useState(0);
-  const [isFanmeetingCalendarOpen, setIsFanmeetingCalendarOpen] =
+  const [isFanmeetingCalendarOpen, setIsFanmeetingCalendarOpen] = // 팬미팅 날짜 캘린더 토글
     useState(false);
-  const [isTicketCalendarOpen, setIsTicketCalendarOpen] = useState(false);
+  const [isTicketCalendarOpen, setIsTicketCalendarOpen] = useState(false); // 티켓팅 날짜 캘린더 토글
   const [isTimeOpen, setIsTimeOpen] = useState(false); // 진행 시간 선택 버튼 토글
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [ticketDate, setTicketDate] = useState<Date | null>(null);
-  const [selectedDuration, setSelectedDuration] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(null); // 팬미팅 날짜
+  const [ticketDate, setTicketDate] = useState<Date | null>(null); // 티켓팅 날짜
+  const [selectedDuration, setSelectedDuration] = useState(""); // 팬미팅 진행 시간
   const [ticketPrice, setTicketPrice] = useState<number | "">("");
-  const [corners, setCorners] = useState<Corner[]>([]);
-  const [customCorner, setCustomCorner] = useState<{ [key: string]: string }>(
+  const [corners, setCorners] = useState<Corner[]>([]); // 최종 선택된 코너(타임테이블)
+  const [customCorner, setCustomCorner] = useState<{ [key: string]: string }>( // drag 에 사용
     {},
   );
-  const [description, setDescription] = useState("");
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [description, setDescription] = useState(""); // 팬미팅 상세설명(공지)
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // 팬미팅 포스터
 
+  // 진행시간
   const durations = [
     "1:00",
     "1:30",
@@ -55,6 +59,8 @@ function CreateFanmeeting() {
     "4:30",
     "5:00",
   ];
+
+  // 타임테이블
   const typeOfCorners = [
     "소통",
     "공연",
@@ -64,25 +70,33 @@ function CreateFanmeeting() {
     "O/X게임",
     "직접 입력",
   ];
+
   const handleTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 제목 받아옴
     setTitle(e.target.value);
   };
   const handleDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // 설명 받아옴
     setDescription(e.target.value);
   };
   const handlePeopleNumber = (num: number) => {
+    // 인원수 받아옴
     setPeopleNumber(num);
   };
   const toggleFanmeetingCalendar = () => {
+    // 팬미팅 달력 토글
     setIsFanmeetingCalendarOpen(!isFanmeetingCalendarOpen);
   };
   const toggleTicketCalendar = () => {
+    // 티켓 달력 토글
     setIsTicketCalendarOpen(!isTicketCalendarOpen);
   };
   const toggleTimeOpen = () => {
+    // 진행시간 토글
     setIsTimeOpen(!isTimeOpen);
   };
 
+  // 팬미팅 날짜 유효한지 확인
   const checkStartDateValidation = (date: Date) => {
     const today = new Date();
     const difference = differenceInDays(date, today);
@@ -92,6 +106,8 @@ function CreateFanmeeting() {
     }
     return true;
   };
+
+  // 티켓팅 날짜 유효한지 확인
   const checkTicketDateValidation = (date: Date) => {
     const today = new Date();
     const tomorrow = addDays(today, 1);
@@ -99,7 +115,7 @@ function CreateFanmeeting() {
       alert("팬미팅 날짜를 먼저 정해주세요.");
       return false;
     }
-    const dayBeforeTicketDate = addDays(startDate, -1);
+    const dayBeforeTicketDate = addDays(startDate, -1); // 팬미팅 하루전
     if (isBefore(date, tomorrow) || isAfter(date, dayBeforeTicketDate)) {
       alert("잘못된 날짜를 선택하셨습니다.");
       return false;
@@ -107,6 +123,7 @@ function CreateFanmeeting() {
     return true;
   };
 
+  // 팬미팅 날짜 변경
   const handleStartDateChange = (date: Date) => {
     if (checkStartDateValidation(date)) {
       setStartDate(date);
@@ -118,6 +135,8 @@ function CreateFanmeeting() {
       setIsFanmeetingCalendarOpen(false);
     }
   };
+
+  // 티켓팅 날짜 변경
   const handleTicketDateChange = (date: Date) => {
     if (checkTicketDateValidation(date)) {
       setTicketDate(date);
@@ -130,16 +149,19 @@ function CreateFanmeeting() {
     }
   };
 
+  // 진행 시간 선택
   const handleDurationSelect = (duration: string) => {
     setSelectedDuration(duration);
     setIsTimeOpen(false);
   };
 
+  // 티켓 가격 받아옴
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const intValue = parseNumberIntoInteger(e.target.value);
     setTicketPrice(intValue);
   };
 
+  // 이미지 받아옴
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -148,6 +170,7 @@ function CreateFanmeeting() {
     }
   };
 
+  // 코너를 drag 공간에 추가
   const handleAddCorner = () => {
     setCorners([
       ...corners,
@@ -155,20 +178,24 @@ function CreateFanmeeting() {
     ]);
   };
 
+  // drag 공간에서 제거
   const handleRemoveCorner = (index: number) => {
     setCorners(corners.filter((_, i) => i !== index));
   };
 
+  // 특정 코너 선택
   const handleSelectCorner = (index: number, corner: string) => {
     const newCorners = [...corners];
     newCorners[index] = { ...newCorners[index], content: corner };
     setCorners(newCorners);
   };
 
+  // 직접 입력 코너
   const handleCustomCornerChange = (index: number, value: string) => {
     setCustomCorner({ ...customCorner, [`corner-${index}`]: value });
   };
 
+  // 직접 입력 코너 제출
   const handleCustomCornerSubmit = (index: number) => {
     const newCorners = [...corners];
     newCorners[index] = {
@@ -178,6 +205,7 @@ function CreateFanmeeting() {
     setCorners(newCorners);
   };
 
+  // drag and drop
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
@@ -188,6 +216,7 @@ function CreateFanmeeting() {
     setCorners(newCorners);
   };
 
+  // 코너 선택하는 곳 렌더링
   const renderCornerContent = (corner: Corner, index: number) => {
     if (corner.content === "코너 선택") {
       return (
@@ -234,16 +263,19 @@ function CreateFanmeeting() {
     );
   };
 
+  // 코너 선택이 아직 안 됨
   const isCornerSelectionIncomplete = corners.some(
     (corner) => corner.content === "코너 선택",
   );
 
+  // backend 에 제출하기 위해 데이터 형식 변경 (코너)
   const convertCornersToIndices = (cornerArray: Corner[]): CornerIndex[] =>
     cornerArray.map((corner, index) => ({
       categoryId: typeOfCorners.indexOf(corner.content),
       sequence: index + 1,
     }));
 
+  // 팬미팅 생성시 유효성 확인
   const validateCreateFanmeeting = () => {
     if (
       title === "" ||
@@ -262,6 +294,7 @@ function CreateFanmeeting() {
       return false;
     }
     const [hours, minutes] = selectedDuration.split(":").map(Number);
+    // 해당 결과를 back으로 전송
     const result = {
       title,
       posterImg: imagePreview,
