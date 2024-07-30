@@ -75,7 +75,12 @@ public enum ErrorCode {
 	/**
 	 * Category
 	 */
-	CATEGORY_NOT_FOUND(BAD_REQUEST, "CATEGORY-001", "categoryId에 해당하는 Category가 존재하지 않습니다.");
+	CATEGORY_NOT_FOUND(BAD_REQUEST, "CATEGORY-001", "categoryId에 해당하는 Category가 존재하지 않습니다."),
+
+	/**
+	 * Category
+	 */
+	PHOTO_NOT_FOUND(BAD_REQUEST, "PHOTO-001", "해당하는 사진을 찾을 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
