@@ -1,8 +1,25 @@
-import CreatorInfo from "../../components/CreatorInfo";
+import { useState } from "react";
 
+import CreatorInfo from "../../components/CreatorInfo";
 import searchIcon from "../../assets/icons/searchIcon.png";
 
 function CreatorList() {
+  const [keyword, setKeyword] = useState("");
+
+  const onSearch = () => {
+    console.log(keyword);
+  };
+
+  const onInputKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
+  };
+
+  const onkeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onSearch();
+    }
+  };
+
   return (
     <div className="bg-white pb-20">
       <div className="absolute top-[80px] left-0 bg-page-background w-screen flex flex-col justify-center items-center p-16 ">
@@ -14,13 +31,17 @@ function CreatorList() {
       <div className="mt-52 w-screen flex flex-col items-center">
         <div className="flex relative items-center">
           <input
-            className="w-[1200px] h-[75px] px-5 pr-20 rounded-full shadow-pink-shadow z-50"
+            className="w-[1200px] h-[75px] px-5 pr-20 rounded-full shadow-pink-shadow z-50 focus:outline-none text-h5"
             placeholder="어떤 크리에이터를 찾으시나요?"
+            onChange={(e) => onInputKeyword(e)}
+            onKeyDown={(e) => onkeydown(e)}
           />
           <img
             src={searchIcon}
             alt="검색"
             className="absolute w-[18px] h-[18px] z-50 right-10"
+            onClick={() => onSearch()}
+            role="presentation"
           />
         </div>
         <div className="mt-8">
