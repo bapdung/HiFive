@@ -1,4 +1,4 @@
-import creatorLogo from "../../assets/creator-logo.png";
+import creatorLogo from "../../assets/icons/logo/creator-logo.png";
 
 function CreatorNavbar() {
   return (
