@@ -5,21 +5,39 @@ import "../../custom-datepicker.css";
 import { format, differenceInDays, addDays, isBefore, isAfter } from "date-fns"; // 날짜를 특정 형식으로 표시하는 라이브러리
 import { ko } from "date-fns/locale"; // 날짜 한국어 패치
 import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+  DroppableProvided,
+  DraggableProvided,
+} from "@hello-pangea/dnd";
+import {
   formatNumberWithCommas,
   parseNumberIntoInteger,
 } from "../../utils/formatNumber";
-import DownloadIcon from "../../assets/icons/download.svg";
+
+interface Corner {
+  id: string;
+  content: string;
+}
 
 function CreateFanmeeting() {
   const [peopleNumber, setPeopleNumber] = useState(0);
   const [isFanmeetingCalendarOpen, setIsFanmeetingCalendarOpen] =
     useState(false);
   const [isTicketCalendarOpen, setIsTicketCalendarOpen] = useState(false);
-  const [isTimeOpen, setIsTimeOpen] = useState(false);
+  const [isTimeOpen, setIsTimeOpen] = useState(false); // 진행 시간 선택 버튼 토글
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [ticketDate, setTicketDate] = useState<Date | null>(null);
   const [selectedDuration, setSelectedDuration] = useState("");
   const [ticketPrice, setTicketPrice] = useState<number | "">("");
+  const [corners, setCorners] = useState<Corner[]>([]);
+  const [customCorner, setCustomCorner] = useState<{ [key: string]: string }>(
+    {},
+  );
+  const [description, setDescription] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const durations = [
     "1:00",
@@ -32,7 +50,19 @@ function CreateFanmeeting() {
     "4:30",
     "5:00",
   ];
+  const typeOfCorners = [
+    "소통",
+    "공연",
+    "포토 타임",
+    "Q&A",
+    "사연 전달",
+    "O/X게임",
+    "직접 입력",
+  ];
 
+  const handleDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+  };
   const handlePeopleNumber = (num: number) => {
     setPeopleNumber(num);
   };
@@ -86,7 +116,6 @@ function CreateFanmeeting() {
       setTicketDate(date);
       if (ticketDate) {
         setIsTicketCalendarOpen(false);
-        console.log(ticketDate);
       }
     } else {
       setTicketDate(null);
@@ -104,6 +133,121 @@ function CreateFanmeeting() {
     setTicketPrice(intValue);
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImagePreview(imageUrl);
+    }
+  };
+
+  const handleAddCorner = () => {
+    setCorners([
+      ...corners,
+      { id: `corner-${corners.length}`, content: "코너 선택" },
+    ]);
+  };
+
+  const handleRemoveCorner = (index: number) => {
+    setCorners(corners.filter((_, i) => i !== index));
+  };
+
+  const handleSelectCorner = (index: number, corner: string) => {
+    const newCorners = [...corners];
+    newCorners[index] = { ...newCorners[index], content: corner };
+    setCorners(newCorners);
+  };
+
+  const handleCustomCornerChange = (index: number, value: string) => {
+    setCustomCorner({ ...customCorner, [`corner-${index}`]: value });
+  };
+
+  const handleCustomCornerSubmit = (index: number) => {
+    const newCorners = [...corners];
+    newCorners[index] = {
+      ...newCorners[index],
+      content: customCorner[`corner-${index}`] || "직접 입력",
+    };
+    setCorners(newCorners);
+  };
+
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const newCorners = Array.from(corners);
+    const [movedCorner] = newCorners.splice(result.source.index, 1);
+    newCorners.splice(result.destination.index, 0, movedCorner);
+
+    setCorners(newCorners);
+  };
+
+  const renderCornerContent = (corner: Corner, index: number) => {
+    if (corner.content === "코너 선택") {
+      return (
+        <select
+          onChange={(e) => handleSelectCorner(index, e.target.value)}
+          className="creator-btn-md"
+          style={{ borderWidth: "1px" }}
+        >
+          <option value="코너 선택" className="bg-white">
+            코너 선택
+          </option>
+          {typeOfCorners.map((type) => (
+            <option key={type} value={type} className="bg-white">
+              {type}
+            </option>
+          ))}
+        </select>
+      );
+    }
+    if (corner.content === "직접 입력") {
+      return (
+        <div className="flex">
+          <input
+            type="text"
+            value={customCorner[`corner-${index}`] || ""}
+            onChange={(e) => handleCustomCornerChange(index, e.target.value)}
+            className="focus:outline-none creator-btn-outline-md mr-2 text-small w-1/2"
+            style={{ borderWidth: "1px" }}
+          />
+          <button
+            onClick={() => handleCustomCornerSubmit(index)}
+            type="button"
+            className="creator-btn-md"
+          >
+            추가
+          </button>
+        </div>
+      );
+    }
+    return (
+      <span className="creator-btn-outline-md" style={{ borderWidth: "1px" }}>
+        {corner.content}
+      </span>
+    );
+  };
+
+  const isCornerSelectionIncomplete = corners.some(
+    (corner) => corner.content === "코너 선택",
+  );
+
+  const validateCreateFanmeeting = () => {
+    if (
+      isCornerSelectionIncomplete ||
+      corners.length === 0 ||
+      !peopleNumber ||
+      !startDate ||
+      !ticketDate ||
+      !selectedDuration ||
+      ticketPrice === ""
+    ) {
+      alert("미입력한 항목이 있습니다.");
+
+      return false;
+    }
+    alert("팬미팅 생성이 완료되었습니다.");
+    return true;
+  };
   return (
     <div className="w-full flex flex-col items-center">
       <div className="w-[100vw] bg-white py-8 flex flex-col items-center">
@@ -120,14 +264,14 @@ function CreateFanmeeting() {
         <div className="w-full flex flex-col">
           <div className="flex my-10 justify-between">
             <div className="flex flex-col w-[40%]">
-              <p className="text-small">타이틀</p>
+              <p className="text-small mb-1.5">타이틀</p>
               <input
                 type="text"
                 className="creator-btn-outline-md mt-1 focus:outline-none text-gray-900 mb-5 text-center"
                 style={{ borderWidth: "1px" }}
                 placeholder="이 곳에 팬미팅 제목을 입력하세요."
               />
-              <p className="text-small">참가 인원</p>
+              <p className="text-small mb-1.5">참가 인원</p>
               <div className="w-full flex justify-around mt-1 mb-5">
                 <button
                   onClick={() => handlePeopleNumber(5)}
@@ -178,7 +322,7 @@ function CreateFanmeeting() {
                   50명
                 </button>
               </div>
-              <p className="text-small mb-1">행사 날짜</p>
+              <p className="text-small mb-1.5">행사 날짜</p>
               <button
                 onClick={() => toggleFanmeetingCalendar()}
                 type="button"
@@ -212,7 +356,7 @@ function CreateFanmeeting() {
               )}
               <div className="flex w-full justify-between">
                 <div className="w-1/2">
-                  <p className="text-small mb-1">진행 시간</p>
+                  <p className="text-small mb-1.5">진행 시간</p>
                   <button
                     type="button"
                     className="creator-btn-outline-md px-6 focus:outline-none"
@@ -242,14 +386,14 @@ function CreateFanmeeting() {
                   ) : null}
                 </div>
                 <div className="w-1/2">
-                  <p className="text-small mb-1">티켓 가격</p>
+                  <p className="text-small mb-1.5">티켓 가격</p>
                   <div
                     style={{ borderWidth: "1px" }}
                     className="creator-btn-outline-md w-full flex justify-between"
                   >
                     <input
                       type="text"
-                      className="focus:outline-none w-3/4"
+                      className="focus:outline-none w-3/4 text-end"
                       value={
                         ticketPrice !== ""
                           ? formatNumberWithCommas(ticketPrice as number)
@@ -262,7 +406,7 @@ function CreateFanmeeting() {
                 </div>
               </div>
               <div className="flex flex-col w-full my-5">
-                <p className="text-small mb-1">예매 오픈일</p>
+                <p className="text-small mb-1.5">예매 오픈일</p>
                 <button
                   onClick={() => toggleTicketCalendar()}
                   type="button"
@@ -297,32 +441,131 @@ function CreateFanmeeting() {
               </div>
             </div>
             <div className="flex flex-col w-[40%]">
-              <p>포스터</p>
-              <div className="relative w-full h-full bg-gray-300 flex justify-center items-center">
-                <button type="button">
-                  <img src={DownloadIcon} alt="upload" />
-                </button>
-              </div>
+              <p className="text-small mb-1.5">포스터</p>
+              <form action="" method="post" encType="multipart/form-data">
+                <div>
+                  <label htmlFor="photoFile">
+                    <div className="creator-btn-outline-md">파일 업로드</div>
+                  </label>
+                  <input
+                    type="file"
+                    id="photoFile"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <div className="relative w-full h-full bg-gray-300 flex justify-center items-center">
+                    {imagePreview && (
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="max-w-full max-h-full"
+                      />
+                    )}
+                  </div>
+                  <button type="button">등록</button>
+                  <div className="relative w-full h-full bg-gray-300 flex justify-center items-center" />
+                </div>
+              </form>
             </div>
           </div>
           <div className="flex justify-between">
             <div className="w-[40%]">
-              <p className="text-small mb-1">팬미팅 상세 설명</p>
+              <p className="text-small mb-1.5">팬미팅 상세 설명</p>
               <textarea
+                onChange={handleDescription}
                 placeholder="팬미팅에 대한 나만의 설명을 추가해주세요.
 예시)
 안녕하세요, ㅇㅇㅇ입니다!
 여러분과 함께하는 온라인 팬미팅이 열릴 예정입니다! 🥳
 팬미팅에서 특별한 이야기와 깜짝 이벤트를 준비했으니 많이 기대해 주세요! 여러분과 함께 소중한 시간을 보낼 수 있기를 기대합니다. 💖"
                 className="focus:outline-none w-full h-[20rem] rounded-[10px] border border-secondary resize-none p-3"
-              />
+              >
+                {description}
+              </textarea>
             </div>
             <div className="w-2/5">
-              <p className="text-small mb-1">타임 테이블 설정</p>
+              <p className="text-small mb-1.5">타임 테이블 설정</p>
+              <button
+                onClick={handleAddCorner}
+                className="creator-btn-outline-md text-small"
+                type="button"
+                style={{ borderWidth: "1px" }}
+              >
+                코너 생성 +
+              </button>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="corners">
+                  {(providedDroppable: DroppableProvided) => {
+                    const {
+                      innerRef: droppableInnerRef,
+                      droppableProps,
+                      placeholder,
+                    } = providedDroppable;
+                    return (
+                      <div
+                        ref={droppableInnerRef}
+                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        {...droppableProps}
+                        className="droppable-container"
+                      >
+                        {corners.map((corner, index) => (
+                          <Draggable
+                            key={corner.id}
+                            draggableId={corner.id}
+                            index={index}
+                          >
+                            {(providedDraggable: DraggableProvided) => {
+                              const {
+                                innerRef: draggableInnerRef,
+                                draggableProps,
+                                dragHandleProps,
+                              } = providedDraggable;
+                              return (
+                                <div
+                                  ref={draggableInnerRef}
+                                  className="w-full flex items-center my-2"
+                                  // eslint-disable-next-line react/jsx-props-no-spreading
+                                  {...draggableProps}
+                                  // eslint-disable-next-line react/jsx-props-no-spreading
+                                  {...dragHandleProps}
+                                >
+                                  {renderCornerContent(corner, index)}
+                                  <button
+                                    onClick={() => handleRemoveCorner(index)}
+                                    className="creator-btn-outline-md w-[1.2rem] rounded-full h-[1.2rem] ml-2"
+                                    type="button"
+                                    style={{
+                                      padding: "0px",
+                                      borderWidth: "1px",
+                                    }}
+                                  >
+                                    -
+                                  </button>
+                                </div>
+                              );
+                            }}
+                          </Draggable>
+                        ))}
+                        {placeholder}
+                      </div>
+                    );
+                  }}
+                </Droppable>
+              </DragDropContext>
+              {isCornerSelectionIncomplete && (
+                <p className="text-red-500">
+                  코너 선택을 완료해야 팬미팅을 생성할 수 있습니다.
+                </p>
+              )}
             </div>
           </div>
         </div>
-        <button type="button" className="w-2/3 creator-btn-md mt-10">
+        <button
+          type="button"
+          className="w-2/3 creator-btn-md mt-10"
+          onClick={validateCreateFanmeeting}
+        >
           팬미팅 생성하기
         </button>
       </div>
