@@ -6,7 +6,7 @@ import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.board.repository.BoardRepository;
 import com.ssafy.hifive.domain.comment.repository.CommentRepository;
 import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
-import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRespository;
+import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.follow.repository.FollowRepository;
 import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberNicknameDto;
@@ -37,7 +37,7 @@ public class MemberService {
 	private final PointRepository pointRepository;
 	private final PhotoRepository photoRepository;
 	private final QuestionRepository questionRepository;
-	private final FanmeetingRespository fanmeetingRespository;
+	private final FanmeetingRepository fanmeetingRepository;
 	private final BoardRepository boardRepository;
 	private final CommentRepository commentRepository;
 	private final StoryRepository storyRepository;
@@ -62,7 +62,6 @@ public class MemberService {
 	@Transactional
 	public void updateMember(MemberUpdateDto memberUpdateDto, Member member) {
 		member.updateMember(memberUpdateDto.getProfileImg(), memberUpdateDto.getNickname());
-		memberRepository.save(member);
 	}
 
 	@Transactional

@@ -36,6 +36,7 @@ public class TimetableController {
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TimetableResponseDto>> getTimetableAll() {
-		return timetableService.getTimetableAll();
+		List<TimetableResponseDto> timetables = timetableService.getTimetableAll();
+		return ResponseEntity.ok(timetables);
 	}
 }
