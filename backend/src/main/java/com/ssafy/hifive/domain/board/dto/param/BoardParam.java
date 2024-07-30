@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BoardParam {
-	@Schema(description = "정렬 기준", defaultValue = "create date", allowableValues = {
+	@Schema(description = "정렬 기준", defaultValue = "desc", allowableValues = {
 		"asc",
 		"desc"})
 	public String sort;
