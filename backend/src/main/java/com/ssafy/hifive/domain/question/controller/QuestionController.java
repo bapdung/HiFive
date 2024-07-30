@@ -9,12 +9,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.entity.Member;
@@ -30,11 +30,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/question")
 @RequiredArgsConstructor
 @Tag(name = "question", description = "질문 관련 API")
+@Slf4j
 public class QuestionController {
 
 	private final QuestionService questionService;
@@ -59,9 +61,8 @@ public class QuestionController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<QuestionResponseDto>> getQuestionAll(@PathVariable long fanmeetingId,
-		@RequestParam QuestionParam param,
-		@AuthenticationPrincipal Member member) {
-		return questionService.getQuestionAll(fanmeetingId, param, member);
+		@ModelAttribute QuestionParam param, @AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(questionService.getQuestionAll(fanmeetingId, param, member));
 	}
 
 	@Operation(summary = "선택된 질문 조회", description = "특정 팬미팅에서 선택된 질문 목록을 조회한다.")
@@ -71,9 +72,8 @@ public class QuestionController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanmeetingId}/selected", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<QuestionResponseDto>> getQuestionSelected(@PathVariable long fanmeetingId,
-		@RequestParam QuestionParam param,
-		@AuthenticationPrincipal Member member) {
-		return questionService.getQuestionSelected(fanmeetingId, param, member);
+		@ModelAttribute QuestionParam param, @AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(questionService.getQuestionSelected(fanmeetingId, param, member));
 	}
 
 	@Operation(summary = "미선택 질문 조회", description = "특정 팬미팅에서 미선택된 질문 목록을 조회한다.")
@@ -83,9 +83,8 @@ public class QuestionController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{fanmeetingId}/unselected", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<QuestionResponseDto>> getQuestionUnselected(@PathVariable long fanmeetingId,
-		@RequestParam QuestionParam param,
-		@AuthenticationPrincipal Member member) {
-		return questionService.getQuestionUnselected(fanmeetingId, param, member);
+		@ModelAttribute QuestionParam param, @AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(questionService.getQuestionUnselected(fanmeetingId, param, member));
 	}
 
 	@Operation(summary = "질문 선택/비선택 토글", description = "질문을 선택하거나 비선택으로 변경한다.")
@@ -94,9 +93,8 @@ public class QuestionController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@PatchMapping(path = "/{questionId}/toggle")
-	public ResponseEntity<Void> toggleQuestion(@PathVariable long questionId,
-		@AuthenticationPrincipal Member member) {
-		questionService.toggleQuestion(questionId, member);
+	public ResponseEntity<Void> toggleQuestion(@PathVariable long questionId) {
+		questionService.toggleQuestion(questionId);
 		return ResponseEntity.ok().build();
 	}
 
@@ -105,10 +103,10 @@ public class QuestionController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/{fanId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<QuestionResponseDto>> getQuestionMine(@PathVariable long fanId,
+	@GetMapping(path = "/my/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<QuestionResponseDto>> getMyQuestion(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
-		return questionService.getMyQuestion(fanId, member);
+		return ResponseEntity.ok(questionService.getMyQuestion(fanmeetingId, member));
 	}
 
 	@Operation(summary = "내가 작성한 질문 수정", description = "내가 작성한 질문을 수정한다.")
@@ -116,11 +114,11 @@ public class QuestionController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@PatchMapping(path = "/{fanId}")
-	public ResponseEntity<Void> updateQuestion(@PathVariable long fanId,
+	@PatchMapping(path = "/{questionId}")
+	public ResponseEntity<Void> updateQuestion(@PathVariable long questionId,
 		@RequestBody QuestionRequestDto questionRequestDto,
 		@AuthenticationPrincipal Member member) {
-		questionService.updateQuestion(fanId, questionRequestDto, member);
+		questionService.updateQuestion(questionId, questionRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 
@@ -129,10 +127,10 @@ public class QuestionController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@DeleteMapping(path = "/{fanId}")
-	public ResponseEntity<Void> deleteQuestion(@PathVariable long fanId,
+	@DeleteMapping(path = "/{questionId}")
+	public ResponseEntity<Void> deleteQuestion(@PathVariable long questionId,
 		@AuthenticationPrincipal Member member) {
-		questionService.deleteQuestion(fanId, member);
+		questionService.deleteQuestion(questionId, member);
 		return ResponseEntity.ok().build();
 	}
 }
