@@ -36,6 +36,6 @@ public class CategoryController {
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CategoryResponseDto>> getCategoryAll() {
-		return categoryService.getCategoryAll();
+		return ResponseEntity.ok(categoryService.getCategoryAll());
 	}
 }
