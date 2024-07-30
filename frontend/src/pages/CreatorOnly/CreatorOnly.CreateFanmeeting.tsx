@@ -73,7 +73,9 @@ function CreateFanmeeting() {
   const handleStartDateChange = (date: Date) => {
     if (checkStartDateValidation(date)) {
       setStartDate(date);
-      setIsFanmeetingCalendarOpen(false);
+      if (startDate) {
+        setIsFanmeetingCalendarOpen(false);
+      }
     } else {
       setStartDate(null);
       setIsFanmeetingCalendarOpen(false);
@@ -82,8 +84,10 @@ function CreateFanmeeting() {
   const handleTicketDateChange = (date: Date) => {
     if (checkTicketDateValidation(date)) {
       setTicketDate(date);
-      console.log(ticketDate);
-      setIsTicketCalendarOpen(false);
+      if (ticketDate) {
+        setIsTicketCalendarOpen(false);
+        console.log(ticketDate);
+      }
     } else {
       setTicketDate(null);
       setIsTicketCalendarOpen(false);
@@ -111,7 +115,7 @@ function CreateFanmeeting() {
           </h1>
         </div>
       </div>
-      <div className="my-10 flex flex-col bg-white w-1/2 rounded-[25px] py-10 px-14 items-center">
+      <div className="my-10 flex flex-col bg-white w-[60%] rounded-[25px] py-10 px-14 items-center">
         <p className="text-h5">나만의 팬미팅 설정</p>
         <div className="w-full flex flex-col">
           <div className="flex my-10 justify-between">
@@ -120,6 +124,7 @@ function CreateFanmeeting() {
               <input
                 type="text"
                 className="creator-btn-outline-md mt-1 focus:outline-none text-gray-900 mb-5 text-center"
+                style={{ borderWidth: "1px" }}
                 placeholder="이 곳에 팬미팅 제목을 입력하세요."
               />
               <p className="text-small">참가 인원</p>
@@ -127,6 +132,7 @@ function CreateFanmeeting() {
                 <button
                   onClick={() => handlePeopleNumber(5)}
                   type="button"
+                  style={{ borderWidth: "1px" }}
                   className={
                     peopleNumber === 5
                       ? "creator-btn-md"
@@ -138,6 +144,7 @@ function CreateFanmeeting() {
                 <button
                   onClick={() => handlePeopleNumber(10)}
                   type="button"
+                  style={{ borderWidth: "1px" }}
                   className={
                     peopleNumber === 10
                       ? "creator-btn-md"
@@ -149,6 +156,7 @@ function CreateFanmeeting() {
                 <button
                   onClick={() => handlePeopleNumber(30)}
                   type="button"
+                  style={{ borderWidth: "1px" }}
                   className={
                     peopleNumber === 30
                       ? "creator-btn-md"
@@ -160,6 +168,7 @@ function CreateFanmeeting() {
                 <button
                   onClick={() => handlePeopleNumber(50)}
                   type="button"
+                  style={{ borderWidth: "1px" }}
                   className={
                     peopleNumber === 50
                       ? "creator-btn-md"
@@ -174,6 +183,7 @@ function CreateFanmeeting() {
                 onClick={() => toggleFanmeetingCalendar()}
                 type="button"
                 className="creator-btn-outline-md w-full mb-5 focus:outline-none"
+                style={{ borderWidth: "1px" }}
               >
                 {startDate ? (
                   <p className="text-secondary">
@@ -206,6 +216,7 @@ function CreateFanmeeting() {
                   <button
                     type="button"
                     className="creator-btn-outline-md px-6 focus:outline-none"
+                    style={{ borderWidth: "1px" }}
                     onClick={() => toggleTimeOpen()}
                   >
                     {selectedDuration || (
@@ -232,7 +243,10 @@ function CreateFanmeeting() {
                 </div>
                 <div className="w-1/2">
                   <p className="text-small mb-1">티켓 가격</p>
-                  <div className="creator-btn-outline-md w-full flex justify-between">
+                  <div
+                    style={{ borderWidth: "1px" }}
+                    className="creator-btn-outline-md w-full flex justify-between"
+                  >
                     <input
                       type="text"
                       className="focus:outline-none w-3/4"
@@ -252,6 +266,7 @@ function CreateFanmeeting() {
                 <button
                   onClick={() => toggleTicketCalendar()}
                   type="button"
+                  style={{ borderWidth: "1px" }}
                   className="creator-btn-outline-md w-full mb-5 focus:outline-none"
                 >
                   {ticketDate ? (
@@ -283,24 +298,33 @@ function CreateFanmeeting() {
             </div>
             <div className="flex flex-col w-[40%]">
               <p>포스터</p>
-              <div className="relative w-full h-full bg-gray-300">
-                <img
-                  src={DownloadIcon}
-                  alt="download-img"
-                  className="absolute top-1/2 right-1/2"
-                />
+              <div className="relative w-full h-full bg-gray-300 flex justify-center items-center">
+                <button type="button">
+                  <img src={DownloadIcon} alt="upload" />
+                </button>
               </div>
             </div>
           </div>
-          <div className="flex">
-            <div>
-              <p>팬미팅 상세 설명</p>
+          <div className="flex justify-between">
+            <div className="w-[40%]">
+              <p className="text-small mb-1">팬미팅 상세 설명</p>
+              <textarea
+                placeholder="팬미팅에 대한 나만의 설명을 추가해주세요.
+예시)
+안녕하세요, ㅇㅇㅇ입니다!
+여러분과 함께하는 온라인 팬미팅이 열릴 예정입니다! 🥳
+팬미팅에서 특별한 이야기와 깜짝 이벤트를 준비했으니 많이 기대해 주세요! 여러분과 함께 소중한 시간을 보낼 수 있기를 기대합니다. 💖"
+                className="focus:outline-none w-full h-[20rem] rounded-[10px] border border-secondary resize-none p-3"
+              />
             </div>
-            <div>
-              <p>타임 테이블 설정</p>
+            <div className="w-2/5">
+              <p className="text-small mb-1">타임 테이블 설정</p>
             </div>
           </div>
         </div>
+        <button type="button" className="w-2/3 creator-btn-md my-10">
+          팬미팅 생성하기
+        </button>
       </div>
     </div>
   );
