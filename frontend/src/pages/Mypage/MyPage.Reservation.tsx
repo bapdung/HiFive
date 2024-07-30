@@ -13,7 +13,7 @@ function Reservation() {
         <span className="mr-2.5 text-primary-text text-medium">최신순</span>
         <span className="text-medium">과거순</span>
       </div>
-      <div className="mt-6 flex flex-wrap px-10 box-border justify-start gap-8">
+      <div className="mt-6 flex flex-wrap px-10 box-border justify-start gap-9">
         <FanmeetingInfo />
         <FanmeetingInfo />
         <FanmeetingInfo />

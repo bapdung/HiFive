@@ -23,14 +23,16 @@ function Mypage() {
   return (
     <>
       <Sidebar />
-      <div className="w-5/6 ml-72 mt-10 bg-white rounded-3xl flex flex-col items-center shadow-mypage-shadow">
-        <Routes>
-          <Route path="reservation" element={<Reservation />} />
-          <Route path="my-info" element={<MyInfo />} />
-          <Route path="gallery" element={<Gallery />} />
-          <Route path="idcard" element={<IdCard />} />
-          <Route path="point" element={<Point />} />
-        </Routes>
+      <div className="w-screen pl-64 flex justify-start">
+        <div className="m-[40px] w-full h-[920px] bg-white rounded-3xl flex flex-col items-center shadow-mypage-shadow overflow-y-auto overflow-x-hidden scrollbar-hide">
+          <Routes>
+            <Route path="reservation" element={<Reservation />} />
+            <Route path="my-info" element={<MyInfo />} />
+            <Route path="gallery" element={<Gallery />} />
+            <Route path="idcard" element={<IdCard />} />
+            <Route path="point" element={<Point />} />
+          </Routes>
+        </div>
       </div>
     </>
   );

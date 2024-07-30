@@ -14,8 +14,10 @@ function IdCard() {
         </div>
       </div>
       <div>
-        <div className="mb-12">
-          <h5 className="text-h5 mb-2.5">왜 나의 신분증을 제출해야 하나요?</h5>
+        <div className="mb-8">
+          <h5 className="text-h5 mb-2.5 font-semibold">
+            왜 나의 신분증을 제출해야 하나요?
+          </h5>
           <p className="text-small">
             안녕하세요, HiFive 를 이용해 주셔서 감사합니다. <br /> 저희 플랫폼은
             팬미팅의 공정성과 안전한 운영을 위해 본인 확인 절차를 강화하고
@@ -33,8 +35,10 @@ function IdCard() {
             외에는 사용되지 않습니다.
           </p>
         </div>
-        <div className="mb-12">
-          <h5 className="text-h5 mb-2.5">신분증은 어떻게 제출해야 하나요?</h5>
+        <div className="mb-8">
+          <h5 className="text-h5 mb-2.5 font-semibold">
+            신분증은 어떻게 제출해야 하나요?
+          </h5>
           <p className="text-small">
             개인 정보 보호를 위해 개인 정보 마스킹 (가림처리) 이 필요합니다.{" "}
             <br />
@@ -43,8 +47,8 @@ function IdCard() {
             모든 문서는 암호화되어 저장되며, 확인 후 즉시 파기됩니다.
           </p>
         </div>
-        <div className="mb-12">
-          <h5 className="text-h5 mb-2.5">예시 이미지</h5>
+        <div className="mb-8">
+          <h5 className="text-h5 mb-2.5 font-semibold">예시 이미지</h5>
           <div className="flex">
             <img
               src={idCard1}
@@ -58,8 +62,8 @@ function IdCard() {
             />
           </div>
         </div>
-        <div className="mb-12">
-          <h5 className="text-h5 mb-2.5">사용 가능한 신분증</h5>
+        <div className="mb-8">
+          <h5 className="text-h5 mb-2.5 font-semibold">사용 가능한 신분증</h5>
           <ol className="text-small list-decimal ml-6">
             <li>주민등록증</li>
             <li>운전면허증</li>

@@ -34,7 +34,7 @@ export default {
         yellow: "#FFE45E",
         red: "#C53737",
         green: "#169C47",
-        "page-background": "#f5f5f5",
+        "page-background": "#F9F9F9",
       },
       fontFamily: {
         Pretendard: ["Pretendard"],
@@ -65,5 +65,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
