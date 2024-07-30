@@ -21,8 +21,13 @@ interface Corner {
   id: string;
   content: string;
 }
+interface CornerIndex {
+  categoryId: number;
+  sequence: number;
+}
 
 function CreateFanmeeting() {
+  const [title, setTitle] = useState("");
   const [peopleNumber, setPeopleNumber] = useState(0);
   const [isFanmeetingCalendarOpen, setIsFanmeetingCalendarOpen] =
     useState(false);
@@ -59,7 +64,9 @@ function CreateFanmeeting() {
     "O/X게임",
     "직접 입력",
   ];
-
+  const handleTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
   const handleDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
   };
@@ -231,22 +238,44 @@ function CreateFanmeeting() {
     (corner) => corner.content === "코너 선택",
   );
 
+  const convertCornersToIndices = (cornerArray: Corner[]): CornerIndex[] =>
+    cornerArray.map((corner, index) => ({
+      categoryId: typeOfCorners.indexOf(corner.content),
+      sequence: index + 1,
+    }));
+
   const validateCreateFanmeeting = () => {
     if (
+      title === "" ||
+      description === "" ||
+      selectedDuration === "" ||
+      ticketPrice === "" ||
       isCornerSelectionIncomplete ||
       corners.length === 0 ||
       !peopleNumber ||
       !startDate ||
       !ticketDate ||
       !selectedDuration ||
-      ticketPrice === "" ||
       !imagePreview
     ) {
       alert("미입력한 항목이 있습니다.");
-
       return false;
     }
+    const [hours, minutes] = selectedDuration.split(":").map(Number);
+    const result = {
+      title,
+      posterImg: imagePreview,
+      notice: description,
+      participant: peopleNumber,
+      runningtime: hours * 60 + minutes,
+      startDate,
+      openDate: ticketDate,
+      price: ticketPrice,
+      timetable: convertCornersToIndices(corners),
+    };
+    console.log(result);
     alert("팬미팅 생성이 완료되었습니다.");
+
     return true;
   };
   return (
@@ -271,6 +300,8 @@ function CreateFanmeeting() {
                 className="creator-btn-outline-md mt-1 focus:outline-none text-gray-900 mb-5 text-center"
                 style={{ borderWidth: "1px" }}
                 placeholder="이 곳에 팬미팅 제목을 입력하세요."
+                value={title}
+                onChange={handleTitle}
               />
               <p className="text-small mb-1.5">참가 인원</p>
               <div className="w-full flex justify-around mt-1 mb-5">
