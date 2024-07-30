@@ -73,7 +73,7 @@ services: # container setting info
     container_name: nginx-container
     image: nginx:latest
     volumes:
-      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt
       - ./frontend/build:/usr/share/nginx/html
     networks:
