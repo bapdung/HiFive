@@ -322,7 +322,7 @@ function CreateFanmeeting() {
             </div>
           </div>
         </div>
-        <button type="button" className="w-2/3 creator-btn-md my-10">
+        <button type="button" className="w-2/3 creator-btn-md mt-10">
           팬미팅 생성하기
         </button>
       </div>
