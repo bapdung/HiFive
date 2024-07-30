@@ -40,9 +40,6 @@ public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long> {
 		    SELECT f FROM Fanmeeting f
 		    WHERE f.creator.memberId = :creatorId AND f.startDate <= CURRENT_TIMESTAMP
 		    AND (:top IS NULL OR (:sort = 'desc' AND f.fanmeetingId < :top) OR (:sort = 'asc' AND f.fanmeetingId > :top))
-		    ORDER BY 
-		    CASE WHEN :sort = 'desc' THEN f.startDate END DESC,
-		    CASE WHEN :sort = 'asc' THEN f.startDate END ASC
 		""")
 	Slice<Fanmeeting> findCompletedFanmeetingsByCreatorWithScrolling(
 		@Param("creatorId") long creatorId,

@@ -163,10 +163,12 @@ public class FanmeetingService {
 
 	public List<FanmeetingOverViewDto> getCompletedFanmeetingByCreator(long creatorId, FanmeetingParam param) {
 
+		String sort = param.getSort() != null ? param.getSort() : "asc";
+
 		Slice<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingsByCreatorWithScrolling(
 			creatorId,
 			param.getTop(),
-			param.getSort(),
+			sort,
 			createPageable(param)
 		);
 		return fanmeetings.getContent().stream()

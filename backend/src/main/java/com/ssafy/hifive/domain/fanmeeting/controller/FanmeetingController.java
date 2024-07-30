@@ -89,8 +89,7 @@ public class FanmeetingController {
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll() {
-		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getFanmeetingAll();
-		return ResponseEntity.ok(fanmeetings);
+		return ResponseEntity.ok(fanmeetingService.getFanmeetingAll());
 	}
 
 	@Operation(summary = "특정 크리에이터 팬미팅 전체 조회", description = "특정 크리에이터의 팬미팅을 전체 조회한다.")
@@ -101,8 +100,7 @@ public class FanmeetingController {
 	)
 	@GetMapping(path = "/creator/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingByCreator(@PathVariable long creatorId) {
-		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getFanmeetingByCreator(creatorId);
-		return ResponseEntity.ok(fanmeetings);
+		return ResponseEntity.ok(fanmeetingService.getFanmeetingByCreator(creatorId));
 	}
 
 	@Operation(summary = "팬미팅 상세 조회", description = "특정 팬미팅의 상세 정보를 조회한다.")
@@ -114,8 +112,7 @@ public class FanmeetingController {
 	@GetMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<FanmeetingDetailDto> getFanmeetingDetail(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
-		FanmeetingDetailDto fanmeetingDetail = fanmeetingService.getFanmeetingDetail(fanmeetingId, member);
-		return ResponseEntity.ok(fanmeetingDetail);
+		return ResponseEntity.ok(fanmeetingService.getFanmeetingDetail(fanmeetingId, member));
 	}
 
 	@Operation(summary = "크리에이터의 예정된 팬미팅 조회", description = "크리에이터의 예정된 팬미팅을 조회한다.")
@@ -126,8 +123,7 @@ public class FanmeetingController {
 	)
 	@GetMapping(path = "/scheduled/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingByCreator(@PathVariable long creatorId) {
-		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getScheduledFanmeetingByCreator(creatorId);
-		return ResponseEntity.ok(fanmeetings);
+		return ResponseEntity.ok(fanmeetingService.getScheduledFanmeetingByCreator(creatorId));
 	}
 
 	@Operation(summary = "크리에이터의 종료된 팬미팅 정렬 조회", description = "크리에이터의 종료된 팬미팅을 정렬하여 조회한다.")
@@ -139,8 +135,7 @@ public class FanmeetingController {
 	@GetMapping(path = "/completed/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingByCreator(@PathVariable long creatorId,
 		@ModelAttribute FanmeetingParam param) {
-		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getCompletedFanmeetingByCreator(creatorId, param);
-		return ResponseEntity.ok(fanmeetings);
+		return ResponseEntity.ok(fanmeetingService.getCompletedFanmeetingByCreator(creatorId, param));
 	}
 
 	// @Operation(summary = "사용자가 예매한 팬미팅 조회", description = "사용자가 예매한 팬미팅을 조회한다.")
@@ -163,7 +158,6 @@ public class FanmeetingController {
 	)
 	@GetMapping(path = "/main", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<FanmeetingLatestDto> getLatestFanmeeting() {
-		FanmeetingLatestDto latestFanmeeting = fanmeetingService.getLatestFanmeeting();
-		return ResponseEntity.ok(latestFanmeeting);
+		return ResponseEntity.ok(fanmeetingService.getLatestFanmeeting());
 	}
 }
