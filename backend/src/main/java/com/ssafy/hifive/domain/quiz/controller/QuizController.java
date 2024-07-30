@@ -8,9 +8,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,7 +56,7 @@ public class QuizController {
 	@GetMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<QuizResponseDto>> getQuizAll(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
-		return quizService.getQuizAll(fanmeetingId, member);
+		return ResponseEntity.ok(quizService.getQuizAll(fanmeetingId));
 	}
 
 	@Operation(summary = "퀴즈 수정", description = "특정 퀴즈를 수정한다.")
@@ -64,7 +64,7 @@ public class QuizController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@PatchMapping(path = "/{quizId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(path = "/{quizId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateQuiz(@PathVariable long quizId,
 		@RequestBody QuizRequestDto quizRequestDto,
 		@AuthenticationPrincipal Member member) {

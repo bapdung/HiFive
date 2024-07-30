@@ -29,7 +29,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
@@ -44,9 +46,8 @@ public class BoardController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BoardResponseDto>> getBoardAll(@PathVariable long creatorId,
-		@ModelAttribute BoardParam param,
-		@AuthenticationPrincipal Member member) {
-		return boardService.getBoardAll(creatorId, param, member);
+		@ModelAttribute BoardParam param) {
+		return ResponseEntity.ok(boardService.getBoardAll(creatorId, param));
 	}
 
 	@Operation(summary = "게시글 상세 조회", description = "특정 크리에이터의 특정 게시물을 상세 조회한다.")
@@ -54,10 +55,9 @@ public class BoardController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<BoardResponseDto> getBoardDetail(@PathVariable long boardId,
-		@AuthenticationPrincipal Member member) {
-		return boardService.getBoardDetail(boardId, member);
+	@GetMapping(path = "/detail/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<BoardResponseDto> getBoardDetail(@PathVariable long boardId) {
+		return ResponseEntity.ok(boardService.getBoardDetail(boardId));
 	}
 
 	@Operation(summary = "게시글 생성", description = "특정 크리에이터의 게시글 생성")
@@ -66,10 +66,10 @@ public class BoardController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createBoard(@RequestBody BoardRequestDto boardRequestDto,
+	@PostMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> createBoard(@PathVariable long creatorId, @RequestBody BoardRequestDto boardRequestDto,
 		@AuthenticationPrincipal Member member) {
-		boardService.createBoard(boardRequestDto, member);
+		boardService.createBoard(creatorId, boardRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 
