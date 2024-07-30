@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.comment.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,7 +45,7 @@ public class CommentController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CommentResponseDto>> getCommentAll(@PathVariable long boardId,
-		@ModelAttribute CommentParam param) {
+		@ModelAttribute CommentParam param, @AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(commentService.getCommentAll(boardId, param));
 	}
 
@@ -58,7 +59,7 @@ public class CommentController {
 		@RequestBody CommentRequestDto commentRequestDto,
 		@AuthenticationPrincipal Member member) {
 		commentService.createComment(boardId, commentRequestDto, member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Operation(summary = "댓글 삭제", description = "특정 댓글을 삭제한다.")

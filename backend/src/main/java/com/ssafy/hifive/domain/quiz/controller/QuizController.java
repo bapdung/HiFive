@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.quiz.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,7 +46,7 @@ public class QuizController {
 		@RequestBody QuizRequestDto quizRequestDto,
 		@AuthenticationPrincipal Member member) {
 		quizService.createQuiz(fanmeetingId, quizRequestDto, member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Operation(summary = "퀴즈 목록 조회", description = "특정 팬미팅의 모든 퀴즈를 조회한다.")

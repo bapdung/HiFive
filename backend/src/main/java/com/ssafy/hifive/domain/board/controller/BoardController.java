@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.board.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,7 +47,7 @@ public class BoardController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BoardResponseDto>> getBoardAll(@PathVariable long creatorId,
-		@ModelAttribute BoardParam param) {
+		@ModelAttribute BoardParam param, @AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(boardService.getBoardAll(creatorId, param));
 	}
 
@@ -56,7 +57,8 @@ public class BoardController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/detail/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<BoardResponseDto> getBoardDetail(@PathVariable long boardId) {
+	public ResponseEntity<BoardResponseDto> getBoardDetail(@PathVariable long boardId,
+		@AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(boardService.getBoardDetail(boardId));
 	}
 
@@ -70,7 +72,7 @@ public class BoardController {
 	public ResponseEntity<Void> createBoard(@PathVariable long creatorId, @RequestBody BoardRequestDto boardRequestDto,
 		@AuthenticationPrincipal Member member) {
 		boardService.createBoard(creatorId, boardRequestDto, member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Operation(summary = "게시글 수정", description = "특정 크리에이터의 게시글 수정")

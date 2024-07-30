@@ -93,7 +93,7 @@ public class QuestionController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@PatchMapping(path = "/{questionId}/toggle")
-	public ResponseEntity<Void> toggleQuestion(@PathVariable long questionId) {
+	public ResponseEntity<Void> toggleQuestion(@PathVariable long questionId, @AuthenticationPrincipal Member member) {
 		questionService.toggleQuestion(questionId);
 		return ResponseEntity.ok().build();
 	}
