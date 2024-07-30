@@ -72,6 +72,10 @@ public class Member extends BaseTimeEntity {
 		this.nickname = nickname;
 	}
 
+	public void updatePoint(int point) {
+		this.point = point;
+	}
+
 	public void updateIdentification(String identificationImg) {
 		this.identificationImg = identificationImg;
 	}
