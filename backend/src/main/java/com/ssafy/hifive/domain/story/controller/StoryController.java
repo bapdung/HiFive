@@ -91,7 +91,7 @@ public class StoryController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@PatchMapping(path = "/{storyId}/toggle")
-	public ResponseEntity<Void> toggleStory(@PathVariable long storyId) {
+	public ResponseEntity<Void> toggleStory(@PathVariable long storyId, @AuthenticationPrincipal Member member) {
 		storyService.toggleStory(storyId);
 		return ResponseEntity.ok().build();
 	}

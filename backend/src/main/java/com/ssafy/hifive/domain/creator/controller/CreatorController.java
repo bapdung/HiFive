@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.creator.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -93,7 +94,7 @@ public class CreatorController {
 		@RequestBody CreatorRequestDto creatorRequestDto,
 		@AuthenticationPrincipal Member member) {
 		creatorService.createCreator(creatorRequestDto, member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Operation(summary = "크리에이터 프로필 수정", description = "크리에이터 프로필을 수정한다")
