@@ -70,8 +70,12 @@ public enum ErrorCode {
 	 */
 	RESERVATION_NOT_FOUND(BAD_REQUEST, "RESERVATION-001", "reservationId에 해당하는 Reservation이 존재하지 않습니다."),
 	WANT_FOR_MONEY(BAD_REQUEST, "RESERVATION-002", "결제할 돈이 부족합니다."),
-	ALREADY_RESERVATION(FORBIDDEN, "RESERVATION-003", "한 사람 당 하나의 티켓만 구매 가능합니다.")
-	;
+	ALREADY_RESERVATION(FORBIDDEN, "RESERVATION-003", "한 사람 당 하나의 티켓만 구매 가능합니다."),
+
+	/**
+	 * Category
+	 */
+	CATEGORY_NOT_FOUND(BAD_REQUEST, "CATEGORY-001", "categoryId에 해당하는 Category가 존재하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
