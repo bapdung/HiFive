@@ -6,7 +6,7 @@ spring:
     include: private
 
   datasource:
-    url: jdbc:mysql://${db.host}:${db.port}/${db.database}?useSSL=false
+    url: jdbc:mysql://${db.host}:${db.port}/${db.database}?useSSL=false&allowPublicKeyRetrieval=true
     username: ${db.username}
     password: ${db.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
