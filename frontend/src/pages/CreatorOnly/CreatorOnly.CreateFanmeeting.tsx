@@ -239,7 +239,8 @@ function CreateFanmeeting() {
       !startDate ||
       !ticketDate ||
       !selectedDuration ||
-      ticketPrice === ""
+      ticketPrice === "" ||
+      !imagePreview
     ) {
       alert("미입력한 항목이 있습니다.");
 
@@ -445,16 +446,21 @@ function CreateFanmeeting() {
               <form action="" method="post" encType="multipart/form-data">
                 <div>
                   <label htmlFor="photoFile">
-                    <div className="creator-btn-outline-md">파일 업로드</div>
+                    <div
+                      className="creator-btn-outline-md text-center mb-4 hover:cursor-pointer"
+                      style={{ borderWidth: "1px" }}
+                    >
+                      파일 업로드
+                    </div>
+                    <input
+                      type="file"
+                      id="photoFile"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
                   </label>
-                  <input
-                    type="file"
-                    id="photoFile"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <div className="relative w-full h-full bg-gray-300 flex justify-center items-center">
+                  <div>
                     {imagePreview && (
                       <img
                         src={imagePreview}
@@ -463,7 +469,6 @@ function CreateFanmeeting() {
                       />
                     )}
                   </div>
-                  <button type="button">등록</button>
                   <div className="relative w-full h-full bg-gray-300 flex justify-center items-center" />
                 </div>
               </form>
