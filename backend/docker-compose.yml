@@ -44,6 +44,11 @@ services: # container setting info
       dockerfile: Dockerfile
     #    env_file:
     #      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/hifive
+      SPRING_DATASOURCE_USERNAME: hifive
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r!
+      SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
     ports:
       - "8080:8080"
     networks:
