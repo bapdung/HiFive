@@ -21,15 +21,12 @@ public class BoardService {
 		return ResponseEntity.ok(null);
 	}
 
-	public void createBoard(long creatorId, BoardRequestDto boardRequestDto, Member member) {
-		return;
+	public void createBoard(BoardRequestDto boardRequestDto, Member member) {
 	}
 
 	public void updateBoard(long boardId, BoardRequestDto boardRequestDto, Member member) {
-		return;
 	}
 
 	public void deleteBoard(long boardId, Member member) {
-		return;
 	}
 }

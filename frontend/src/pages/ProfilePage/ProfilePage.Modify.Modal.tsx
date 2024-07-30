@@ -1,6 +1,6 @@
 import TextareaAutosize from "react-textarea-autosize";
 
-import cameraIcon from "../../assets/cameraicon.png";
+import cameraIcon from "../../assets/icons/cameraicon.png";
 
 function ModifyModal() {
   return (
