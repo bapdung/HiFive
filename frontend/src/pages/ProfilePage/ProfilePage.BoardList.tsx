@@ -1,6 +1,6 @@
 import TextareaAutosize from "react-textarea-autosize";
 
-import photoIcon from "../../assets/photoicon.png";
+import photoIcon from "../../assets/icons/photoIcon.png";
 import Board from "./ProfilePage.BoardList.Board";
 
 function BoardList() {
