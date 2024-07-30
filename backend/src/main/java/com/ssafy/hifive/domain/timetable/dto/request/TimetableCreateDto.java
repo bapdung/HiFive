@@ -13,14 +13,14 @@ public class TimetableCreateDto {
 
 	private long categoryId;
 	private int sequence;
-	private String detail;
+	private String detailName;
 
 	public Timetable toEntity(Fanmeeting fanmeeting, Category category) {
 		return Timetable.builder()
 			.fanmeeting(fanmeeting)
 			.category(category)
 			.sequence(sequence)
-			.detailName(detail)
+			.detailName(detailName)
 			.build();
 	}
 

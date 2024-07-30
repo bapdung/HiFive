@@ -63,8 +63,12 @@ public enum ErrorCode {
 	/**
 	 * Comment
 	 */
-	COMMENT_NOT_FOUND(BAD_REQUEST, "COMMENT-001", "commentId에 해당하는 Comment가 존재하지 않습니다.")
-	;
+	COMMENT_NOT_FOUND(BAD_REQUEST, "COMMENT-001", "commentId에 해당하는 Comment가 존재하지 않습니다."),
+
+	/**
+	 * Category
+	 */
+	CATEGORY_NOT_FOUND(BAD_REQUEST, "CATEGORY-001", "categoryId에 해당하는 Category가 존재하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

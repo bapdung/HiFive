@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ssafy.hifive.domain.fanmeeting.dto.request.FanmeetingRequestDto;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.timetable.entity.Timetable;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;
@@ -77,5 +78,24 @@ public class Fanmeeting extends BaseTimeEntity {
 		this.openDate = openDate;
 		this.timetable = timetable;
 
+	}
+
+	public void updateTimetable(List<Timetable> timetables) {
+		if (this.timetable == null) {
+			this.timetable = new ArrayList<>();
+		}
+		this.timetable.clear();
+		this.timetable.addAll(timetables);
+	}
+
+	public void updateFanmeeting(FanmeetingRequestDto dto) {
+		this.title = dto.getTitle();
+		this.posterImg = dto.getPosterImg();
+		this.notice = dto.getNotice();
+		this.participant = dto.getParticipant();
+		this.startDate = dto.getStartDate();
+		this.runningTime = dto.getRunningTime();
+		this.openDate = dto.getOpenDate();
+		this.price = dto.getPrice();
 	}
 }
