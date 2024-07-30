@@ -10,8 +10,6 @@ RUN npm run build
 FROM nginx:alpine
 
 COPY --from=build /app/build /usr/share/nginx/html
-
-# mime.types 파일을 복사
 COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
