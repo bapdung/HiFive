@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberUpdateDto {
+public final class MemberUpdateDto {
 	private String profileImg;
 	private String name;
 	private String nickname;

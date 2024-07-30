@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberNicknameDto {
+public final class MemberNicknameDto {
 	private String nickname;
 
 	public Member toEntity(Member member) {
