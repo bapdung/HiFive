@@ -4,7 +4,7 @@ function Reservation() {
   return (
     <>
       <div className="mt-6">
-        <span className="text-primary-text pr-5 mr-5 border-r-2 border-gray-700 text-h4">
+        <span className="text-primary-text pr-5 mr-5 border-r-2 border-gray-200 text-h4">
           예정 팬미팅
         </span>
         <span className="text-h4">지난 팬미팅</span>
