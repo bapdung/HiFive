@@ -51,6 +51,17 @@ function Question() {
     setTypeOfQuestion(type);
   };
 
+  const toggleQuestion = async (questionId: number) => {
+    try {
+      const response = await client(token).patch(
+        `/api/question/${questionId}/toggle`,
+      );
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full items-center">
       <p className="text-h4 w-1/3 flex justify-around my-10">
@@ -93,11 +104,19 @@ function Question() {
             <p className="text-large">{question.nickname}</p>
             <p className="text-large text-gray-700">{question.contents}</p>
             {question.isPicked ? (
-              <button className="creator-btn-light-md" type="button">
+              <button
+                className="creator-btn-light-md"
+                type="button"
+                onClick={() => toggleQuestion(question.questionId)}
+              >
                 선택 취소
               </button>
             ) : (
-              <button className="creator-btn-md" type="button">
+              <button
+                className="creator-btn-md"
+                type="button"
+                onClick={() => toggleQuestion(question.questionId)}
+              >
                 질문 선택
               </button>
             )}
