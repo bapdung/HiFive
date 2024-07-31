@@ -35,10 +35,6 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 		String profileImg = getKakaoProfileImage(attributes);
 
 		Member member = memberRepository.findByEmail(email)
-			.map(entity -> {
-				entity.update(nickname, profileImg);
-				return entity;
-			})
 			.orElse(Member.builder()
 				.email(email)
 				.nickname(nickname)

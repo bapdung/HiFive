@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public final class StoryRequestDto {
 	private String title;
-	private String contents;
+	private String content;
 
 	public Story toEntity(Member fan, Fanmeeting fanmeeting) {
 		return Story.builder()
 			.fanmeeting(fanmeeting)
 			.fan(fan)
 			.title(title)
-			.contents(contents)
+			.content(content)
 			.build();
 	}
 }

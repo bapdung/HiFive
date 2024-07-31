@@ -58,31 +58,17 @@ services: # container setting info
       - redis-docker
 
   frontend:
-    container_name: frontend-container
+    depends_on:
+      - spring-application
+    container_name: hifive-react
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    volumes:
-      - ./frontend/build:/usr/share/nginx/html
+    ports:
+      - "3000:3000"
     networks:
       - webnet
-    ports:
-      - "80:80"
 
-  nginx:
-    container_name: nginx-container
-    image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt:/etc/letsencrypt
-    networks:
-      - webnet
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - frontend
-      - spring-application
 volumes:
   db-mysql:
   db-redis:
