@@ -15,7 +15,7 @@ function Quiz() {
         {tempQuiz.map((quiz) => (
           <div
             key={quiz.id}
-            className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[0.5rem] px-8 justify-between bg-white"
+            className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[1rem] px-8 justify-between bg-white"
           >
             <p className="text-h5 flex justify-between w-full">
               <span>문제 {quiz.sequence}</span>{" "}
