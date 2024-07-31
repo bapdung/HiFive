@@ -41,7 +41,7 @@ public class TokenService {
 
 		addRefreshTokenCookie(response, refreshToken);
 
-		return new TokenResponseDto(accessToken, refreshToken);
+		return new TokenResponseDto(accessToken);
 	}
 
 	public TokenResponseDto refreshAccessToken(String refreshToken, HttpServletResponse response) {
@@ -63,7 +63,7 @@ public class TokenService {
 
 		addRefreshTokenCookie(response, refreshToken);
 
-		return new TokenResponseDto(newAccessToken, refreshToken);
+		return new TokenResponseDto(newAccessToken);
 	}
 
 	private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
