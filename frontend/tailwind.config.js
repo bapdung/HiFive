@@ -17,6 +17,7 @@ export default {
           700: "#A4D7FF",
           500: "#A9D9FF",
           300: "#DBEFFF",
+          text: "459EE4",
         },
         gray: {
           900: "#333333",
@@ -31,6 +32,9 @@ export default {
         },
         meetingroom: "#7A5A8A",
         yellow: "#FFE45E",
+        red: "#C53737",
+        green: "#169C47",
+        "page-background": "#F9F9F9",
       },
       fontFamily: {
         Pretendard: ["Pretendard"],
@@ -56,8 +60,10 @@ export default {
       },
       boxShadow: {
         "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
+        "side-shadow": "1px 0px 5px 0px rgba(0, 0, 0, 0.10)",
+        "mypage-shadow": "0px 2px 10px 0px rgba(0, 0, 0, 0.10)",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
