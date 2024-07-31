@@ -10,6 +10,7 @@ import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
 import CreatorList from "./pages/CreatorListPage/CreatorListPage";
+import JoinCreator from "./pages/JoinCreatorPage/JoinCreatorPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             element={<StoryForm />}
           />
           <Route path="/creator/list" element={<CreatorList />} />
+          <Route path="/parther" element={<JoinCreator />} />
         </Routes>
       </main>
       <Footer />
