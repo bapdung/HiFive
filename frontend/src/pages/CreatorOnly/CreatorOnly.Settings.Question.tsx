@@ -62,6 +62,16 @@ function Question() {
     }
   };
 
+  const filteredQuestions = tempQuestion.filter((question) => {
+    if (typeOfQuestion === "selected") {
+      return question.isPicked;
+    }
+    if (typeOfQuestion === "unselected") {
+      return !question.isPicked;
+    }
+    return true;
+  });
+
   return (
     <div className="flex flex-col w-full items-center">
       <p className="text-h4 w-1/3 flex justify-around my-10">
@@ -96,7 +106,7 @@ function Question() {
         </button>
       </p>
       <div className="w-3/4 flex flex-wrap justify-center gap-6">
-        {tempQuestion.map((question) => (
+        {filteredQuestions.map((question) => (
           <div
             key={question.questionId}
             className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[0.5rem] px-10 justify-between bg-white"
