@@ -1,7 +1,7 @@
 package com.ssafy.hifive.domain.fanmeeting.repository;
 
-import static com.ssafy.hifive.domain.fanmeeting.entity.QFanmeeting.fanmeeting;
-import static com.ssafy.hifive.domain.reservation.entity.QReservation.reservation;
+import static com.ssafy.hifive.domain.fanmeeting.entity.QFanmeeting.*;
+import static com.ssafy.hifive.domain.reservation.entity.QReservation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,12 +32,12 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 				afterCursor(top, sort)
 			)
 			.orderBy(orderSpecifier)
-			.limit(3)
+			.limit(10)
 			.fetch();
 	}
 
 	@Override
-	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId){
+	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId) {
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
