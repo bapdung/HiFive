@@ -88,10 +88,10 @@ function Question() {
         {tempQuestion.map((question) => (
           <div
             key={question.questionId}
-            className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[0.5rem] px-10 justify-between"
+            className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[0.5rem] px-10 justify-between bg-white"
           >
             <p className="text-large">{question.nickname}</p>
-            <p>{question.contents}</p>
+            <p className="text-large text-gray-700">{question.contents}</p>
             {question.isPicked ? (
               <button className="creator-btn-light-md" type="button">
                 선택 취소
