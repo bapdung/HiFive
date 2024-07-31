@@ -29,7 +29,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
 	public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 	public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(2);
-	public static final String REDIRECT_PATH = "/main";
+	public static final String REDIRECT_PATH = "/";
 
 	private final TokenProvider tokenProvider;
 	private final TokenRepository tokenRepository;
@@ -52,7 +52,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		clearAuthenticationAttributes(request, response);
 
-		sendJsonResponse(response, member, accessToken);
+		getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
 
 	}
 
@@ -81,14 +81,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		return (String)kakaoAccount.get("email");
 	}
 
-	private void sendJsonResponse(HttpServletResponse response, Member member, String accessToken) throws IOException {
+	private void sendJsonResponse(HttpServletResponse response, String accessToken) throws IOException {
 		Map<String, Object> responseBody = Map.of(
-			"accessToken", accessToken,
-			"member", Map.of(
-				"id", member.getMemberId(),
-				"email", member.getEmail(),
-				"nickname", member.getNickname()
-			)
+			"accessToken", accessToken
 		);
 
 		response.setContentType("application/json;charset=UTF-8");
