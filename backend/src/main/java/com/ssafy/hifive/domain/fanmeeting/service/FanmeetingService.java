@@ -42,7 +42,7 @@ public class FanmeetingService {
 	private final FanmeetingValidService fanmeetingValidService;
 	private final FanmeetingPayService fanmeetingPayService;
 
-	private final static int PAGE_SIZE = 30;
+	private final static int PAGE_SIZE = 5;
 
 	private Pageable createPageable(FanmeetingParam param) {
 		return PageRequest.of(0, PAGE_SIZE,
@@ -86,9 +86,6 @@ public class FanmeetingService {
 				return timetableCreateDto.toEntity(fanmeeting, category);
 			}).toList();
 
-		for (Timetable timetable : timetables) {
-			log.info(timetable.toString());
-		}
 		fanmeeting.updateTimetable(timetables);
 		timetableRepository.saveAll(timetables);
 
