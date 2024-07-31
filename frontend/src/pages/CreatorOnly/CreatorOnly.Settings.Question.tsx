@@ -1,24 +1,56 @@
-// import { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import useOnMounted from "../../utils/useOnMounted";
 import client from "../../client";
 
 function Question() {
   const token = process.env.REACT_APP_AUTHORIZATION as string;
-  // const [typeOfQuestion, setTypeOfQuestion] = useState("all");
-  // const [allQuestions, setAllQuestions] = useState([]);
+  const location = useLocation();
+  const fanmeetingId = location.pathname.split("/")[1];
+  const [typeOfQuestion, setTypeOfQuestion] = useState("all");
+  const [allQuestions, setAllQuestions] = useState([{}]);
 
   const fetchAllQuestions = async () => {
-    await client(token).get("/api/question/");
+    const params = {
+      sort: "desc",
+      page: 0,
+    };
+    try {
+      const response = await client(token).get(
+        `/api/question/${fanmeetingId}`,
+        {
+          params,
+        },
+      );
+      setAllQuestions(response.data);
+      console.log(allQuestions);
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
   useOnMounted(fetchAllQuestions);
 
+  const handleTypeOfQuestion = (type: string) => {
+    setTypeOfQuestion(type);
+  };
   return (
     <div>
       <p>
-        <span>전체 질문 |</span> <span>선택한 질문 |</span>{" "}
-        <span>미선택 질문</span>
+        <button type="button" onClick={() => handleTypeOfQuestion("all")}>
+          전체 질문 |
+        </button>{" "}
+        <button type="button" onClick={() => handleTypeOfQuestion("selected")}>
+          선택한 질문 |
+        </button>{" "}
+        <button
+          type="button"
+          onClick={() => handleTypeOfQuestion("unselected")}
+        >
+          미선택 질문
+        </button>
       </p>
+      <p>{typeOfQuestion}</p>
     </div>
   );
 }
