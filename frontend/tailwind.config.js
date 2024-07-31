@@ -62,8 +62,10 @@ export default {
         "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
         "side-shadow": "1px 0px 5px 0px rgba(0, 0, 0, 0.10)",
         "mypage-shadow": "0px 2px 10px 0px rgba(0, 0, 0, 0.10)",
+        "pink-shadow":
+          "0px 2px 8px 0px rgba(255, 99, 146, 0.30), 0px -1px 1px 0px #FF6392 inset",
       },
     },
   },
-  plugins: [require("tailwind-scrollbar-hide")],
+  plugins: ["tailwind-scrollbar-hide"],
 };
