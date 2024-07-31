@@ -64,9 +64,7 @@ services: # container setting info
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "80:80"
-    volumes:
-      - /nginx/:/etc/nginx/conf.d
+      - "3000:3000"
     networks:
       - webnet
 
