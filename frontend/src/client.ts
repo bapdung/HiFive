@@ -1,11 +1,10 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
-const client = (token: string) => {
+const client = (token: string): AxiosInstance => {
   const ENDPOINT = process.env.REACT_APP_END_POINT;
 
   if (!ENDPOINT) {
-    console.error("Endpoint is not exist");
-    return null;
+    throw new Error("Endpoint is not exist");
   }
 
   const config: {
