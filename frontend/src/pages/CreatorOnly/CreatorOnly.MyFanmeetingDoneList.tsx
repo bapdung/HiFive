@@ -45,14 +45,20 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
   useOnMounted(() => fetchFanmeetings);
   return (
     <div className="w-full flex flex-wrap">
-      <MyFanmeetingItem isDone />
-      <MyFanmeetingItem isDone />
-      <MyFanmeetingItem isDone />
-      <MyFanmeetingItem isDone />
-      <MyFanmeetingItem isDone />
-      <MyFanmeetingItem isDone />
-      <MyFanmeetingItem isDone />
-      <MyFanmeetingItem isDone />
+      {fanmeetings.length === 0 ? (
+        <p className="mr-auto ml-auto text-xl my-5 text-gray-500">
+          종료된 팬미팅이 없습니다.
+        </p>
+      ) : null}
+      {fanmeetings.map((fanmeeting) => (
+        <MyFanmeetingItem
+          key={fanmeeting.title}
+          isDone
+          title={fanmeeting.title}
+          posterImg={fanmeeting.posterImg}
+          startDate={fanmeeting.startDate}
+        />
+      ))}
     </div>
   );
 };
