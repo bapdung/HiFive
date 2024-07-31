@@ -52,6 +52,11 @@ spring:
     issuer: ${jwt.issuer}
     secret_key: ${jwt.secret_key}
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 cloud:
   s3:
     bucket: ${aws.bucket}
