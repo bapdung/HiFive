@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { kakaoLogin, handleKakaoCallback } from "../../service/authService";
 
-import logo from "../../assets/logo.png";
+import logo from "../../assets/icons/logo/logo.png";
 
 function Navbar() {
   const navigate = useNavigate();
