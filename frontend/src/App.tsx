@@ -16,7 +16,11 @@ function App() {
   const location = useLocation();
   return (
     <div className="App">
-      {location.pathname === "/creator-only" ? <CreatorNavbar /> : <Navbar />}
+      {location.pathname.startsWith("/creator-only") ? (
+        <CreatorNavbar />
+      ) : (
+        <Navbar />
+      )}
       <main>
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
