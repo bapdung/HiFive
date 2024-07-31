@@ -1,6 +1,26 @@
+import { useEffect } from "react";
+import client from "../../client";
+
 import cameraIcon from "../../assets/icons/pink-cameraIcon.png";
 
 function MyInfo() {
+  useEffect(() => {
+    const getMemberInfo = async () => {
+      try {
+        const token = process.env.REACT_APP_AUTHORIZATION;
+
+        if (token) {
+          const response = await client(token).get("/member");
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.error("Error 발생", error);
+      }
+    };
+
+    getMemberInfo();
+  }, []);
+
   return (
     <div className="flex flex-col h-[900px] justify-center">
       <div className="flex w-[800px] justify-between">
