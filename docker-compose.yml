@@ -58,32 +58,28 @@ services: # container setting info
       - redis-docker
 
   frontend:
-    container_name: frontend-container
+    depends_on:
+      - spring-application
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    volumes:
-      - ./frontend/build:/usr/share/nginx/html
-    networks:
-      - webnet
-    # ports:
-    #   - "80:80"
-
-  nginx:
-    container_name: nginx-container
-    image: nginx:latest
-    volumes:
-      - ./frontend/nginx.conf:/etc/nginx
-      - /etc/letsencrypt:/etc/letsencrypt
-      - ./frontend/build:/usr/share/nginx/html
-    networks:
-      - webnet
     ports:
-      - "80:80"
-      - "443:443"
+      - "3000:3000"
+    networks:
+      - webnet
+  nginx:
+    image: nginx:latest
+    networks:
+      - webnet
+    restart: always
+    volumes:
+      - /nginx/:/etc/nginx/conf.d
+    ports:
+      - 80:80
     depends_on:
+      - backend
       - frontend
-      - spring-application
+
 volumes:
   db-mysql:
   db-redis:
