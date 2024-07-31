@@ -24,6 +24,12 @@ public class FanmeetingValidService {
 		}
 	}
 
+	public void validateFanmeetingCreator(Fanmeeting fanmeeting, Member member) {
+		if (fanmeeting.getCreator().getMemberId() != member.getMemberId()) {
+			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
+		}
+	}
+
 	public LocalDateTime validateTop(Long fanmeetingId) {
 		LocalDateTime topDate = null;
 		if(fanmeetingId != null) {

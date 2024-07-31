@@ -26,7 +26,6 @@ import com.ssafy.hifive.domain.timetable.repository.TimetableRepository;
 import com.ssafy.hifive.domain.timetable.service.TimetableService;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
-import com.ssafy.hifive.global.error.type.ForbiddenException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,12 +47,6 @@ public class FanmeetingService {
 	private Pageable createPageable(FanmeetingParam param) {
 		return PageRequest.of(0, PAGE_SIZE,
 			Sort.by(Sort.Direction.fromString(param.getSort()), "startDate"));
-	}
-
-	private void validateFanmeetingCreator(Fanmeeting fanmeeting, Member member) {
-		if (fanmeeting.getCreator().getMemberId() != member.getMemberId()) {
-			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-		}
 	}
 
 	public FanmeetingDetailDto getFanmeetingDetail(long fanmeetingId, Member member) {
@@ -108,7 +101,7 @@ public class FanmeetingService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		validateFanmeetingCreator(fanmeeting, member);
+		fanmeetingValidService.validateFanmeetingCreator(fanmeeting, member);
 
 		fanmeeting.updateFanmeeting(fanmeetingRequestDto);
 
@@ -130,7 +123,7 @@ public class FanmeetingService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		validateFanmeetingCreator(fanmeeting, member);
+		fanmeetingValidService.validateFanmeetingCreator(fanmeeting, member);
 
 		timetableService.deleteByTimetableId(fanmeetingId);
 		fanmeetingRepository.delete(fanmeeting);
