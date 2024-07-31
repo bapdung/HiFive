@@ -9,6 +9,7 @@ import TicketList from "./pages/TicketPage/TicketPage.List";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
+import MainPage from "./pages/MainPage/MainPage";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             path="/fanmeeting/:fanmeetingId/story"
             element={<StoryForm />}
           />
+          <Route path="/main" element={<MainPage />} />
         </Routes>
       </main>
       <Footer />
