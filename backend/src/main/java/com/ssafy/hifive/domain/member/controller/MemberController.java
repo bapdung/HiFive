@@ -51,7 +51,6 @@ public class MemberController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MemberResponseDto> getMember(@AuthenticationPrincipal Member member) {
-		System.out.println(member);
 		return ResponseEntity.ok(memberService.getMemberDetail(member));
 	}
 
