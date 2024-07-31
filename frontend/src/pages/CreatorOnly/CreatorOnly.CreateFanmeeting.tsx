@@ -19,6 +19,7 @@ import {
 } from "../../utils/formatNumber";
 import Modal from "./CreatorOnly.CreateFanmeeting.Modal";
 // import axios from "axios";
+import client from "../../client";
 
 // drag and drop 할 때 형식
 interface Corner {
@@ -310,7 +311,7 @@ function CreateFanmeeting() {
     return true;
   };
 
-  const submitCreateFanmeeting = () => {
+  const submitCreateFanmeeting = async () => {
     // 해당 결과를 back으로 전송
     const [hours, minutes] = selectedDuration.split(":").map(Number);
     const result = {
@@ -324,7 +325,17 @@ function CreateFanmeeting() {
       price: ticketPrice,
       timetable: convertCornersToIndices(corners),
     };
+
+    const token = process.env.REACT_APP_AUTHORIZATION as string;
     console.log(result);
+    console.log(token);
+    try {
+      const response = await client(token).post("/fanmeeting");
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error sending post request:", error);
+    }
+
     handleModalClose();
     naviate("/creator-only");
     window.scrollTo(0, 0);
