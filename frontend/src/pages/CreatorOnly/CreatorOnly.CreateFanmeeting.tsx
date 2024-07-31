@@ -330,7 +330,10 @@ function CreateFanmeeting() {
     console.log(result);
     console.log(token);
     try {
-      const response = await client(token).post("/fanmeeting");
+      if (!token) {
+        return;
+      }
+      const response = await client(token).post("/api/fanmeeting");
       console.log("Response:", response.data);
     } catch (error) {
       console.error("Error sending post request:", error);
