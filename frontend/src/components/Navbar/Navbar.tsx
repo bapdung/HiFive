@@ -17,7 +17,9 @@ function Navbar() {
         />
       </div>
       <div className="flex items-center">
-        <div className="text-primary-text text-medium m-7">로그인</div>
+        <div className="text-primary-text text-large font-bold m-10">
+          로그인
+        </div>
         <div className="btn-lg">회원가입</div>
       </div>
       {/* <div className="flex items-center">
