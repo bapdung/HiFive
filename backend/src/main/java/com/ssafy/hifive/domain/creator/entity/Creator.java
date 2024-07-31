@@ -45,13 +45,18 @@ public class Creator extends BaseTimeEntity {
 	@Column(nullable = false)
 	private int follower;
 
+	public void updateCreator(String link, String description) {
+		this.link = link;
+		this.description = description;
+	}
+
 	@Builder
 	private Creator(Member creator, String creatorImg, String creatorName, String link, String description) {
 		this.creator = creator;
 		this.creatorImg = creatorImg;
 		this.creatorName = creatorName;
 		this.link = link;
-		this.description = description;
 		this.follower = 0;
+		this.description = description;
 	}
 }
