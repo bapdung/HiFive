@@ -49,7 +49,7 @@ function MyFanmeeting() {
             오래된순
           </button>
         </div>
-        <MyFanmeetingDoneList />
+        <MyFanmeetingDoneList isRecent={isRecent} />
       </div>
     </div>
   );
