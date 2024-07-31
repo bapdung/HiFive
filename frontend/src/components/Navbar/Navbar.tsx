@@ -1,18 +1,10 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { kakaoLogin, handleKakaoCallback } from "../../service/authService";
+import kakaoLogin from "../../service/authService";
 
 import logo from "../../assets/icons/logo/logo.png";
 
 function Navbar() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (window.location.pathname === "/kakao/auth") {
-      handleKakaoCallback();
-    }
-    navigate("/");
-  }, []);
 
   return (
     <div className="z-10 bg-white flex w-screen justify-between items-center h-20 px-10 py-2 shadow-nav-shadow">
