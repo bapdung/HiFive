@@ -1,7 +1,7 @@
 package com.ssafy.hifive.domain.timetable.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +17,11 @@ public class TimetableService {
 
 	private final TimetableRepository timetableRepository;
 
-	public List<TimetableResponseDto> getTimetableAll() {
+	public List<TimetableResponseDto> getTimetableAll(long fanmeetingId) {
 
-		List<TimetableResponseDto> timetableResponseDtos = new ArrayList<TimetableResponseDto>();
-
-		return timetableResponseDtos;
+		return timetableRepository.findByFanmeeting_FanmeetingId(fanmeetingId).stream()
+			.map(TimetableResponseDto::from)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional
