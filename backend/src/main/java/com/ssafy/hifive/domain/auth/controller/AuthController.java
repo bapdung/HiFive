@@ -51,7 +51,7 @@ public class AuthController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\": \"Unauthorized\"}")))
 	@PostMapping("/refresh")
-	public ResponseEntity<TokenResponseDto> refresh(@AuthenticationPrincipal Member member, HttpServletRequest request,
+	public ResponseEntity<TokenResponseDto> refresh(HttpServletRequest request,
 		HttpServletResponse response) {
 		String refreshToken = CookieUtil.getCookie(request, "refresh_token")
 			.map(Cookie::getValue)
