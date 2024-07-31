@@ -2,6 +2,7 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../custom-datepicker.css";
+import { useNavigate } from "react-router-dom";
 import { format, differenceInDays, addDays, isBefore, isAfter } from "date-fns"; // 날짜를 특정 형식으로 표시하는 라이브러리
 import { ko } from "date-fns/locale"; // 날짜 한국어 패치
 import {
@@ -16,6 +17,7 @@ import {
   formatNumberWithCommas,
   parseNumberIntoInteger,
 } from "../../utils/formatNumber";
+import Modal from "./CreatorOnly.CreateFanmeeting.Modal";
 
 // drag and drop 할 때 형식
 interface Corner {
@@ -46,6 +48,8 @@ function CreateFanmeeting() {
   );
   const [description, setDescription] = useState(""); // 팬미팅 상세설명(공지)
   const [imagePreview, setImagePreview] = useState<string | null>(null); // 팬미팅 포스터
+  const [showModal, setShowModal] = useState(false);
+  const naviate = useNavigate();
 
   // 진행시간
   const durations = [
@@ -94,6 +98,14 @@ function CreateFanmeeting() {
   const toggleTimeOpen = () => {
     // 진행시간 토글
     setIsTimeOpen(!isTimeOpen);
+  };
+  // 팬미팅 생성 모달 닫기
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+  // 팬미팅 생성 모달 열기
+  const handleModalOpen = () => {
+    setShowModal(true);
   };
 
   // 팬미팅 날짜 유효한지 확인
@@ -293,6 +305,11 @@ function CreateFanmeeting() {
       alert("미입력한 항목이 있습니다.");
       return false;
     }
+    handleModalOpen();
+    return true;
+  };
+
+  const submitCreateFanmeeting = () => {
     const [hours, minutes] = selectedDuration.split(":").map(Number);
     // 해당 결과를 back으로 전송
     const result = {
@@ -307,12 +324,12 @@ function CreateFanmeeting() {
       timetable: convertCornersToIndices(corners),
     };
     console.log(result);
-    alert("팬미팅 생성이 완료되었습니다.");
-
-    return true;
+    handleModalClose();
+    naviate("/creator-only");
+    window.scrollTo(0, 0);
   };
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center relative">
       <div className="w-[100vw] bg-white py-8 flex flex-col items-center">
         <h1 className="text-secondary text-h3 mb-5">팬 미팅 생성하기</h1>
         <div className="bg-gray-100 rounded-lg py-[1rem] px-[2rem] text-center w-[30rem]">
@@ -549,6 +566,7 @@ function CreateFanmeeting() {
 여러분과 함께하는 온라인 팬미팅이 열릴 예정입니다! 🥳
 팬미팅에서 특별한 이야기와 깜짝 이벤트를 준비했으니 많이 기대해 주세요! 여러분과 함께 소중한 시간을 보낼 수 있기를 기대합니다. 💖"
                 className="focus:outline-none w-full h-[20rem] rounded-[10px] border border-secondary resize-none p-3"
+                value={description}
               >
                 {description}
               </textarea>
@@ -623,7 +641,7 @@ function CreateFanmeeting() {
                 </Droppable>
               </DragDropContext>
               {isCornerSelectionIncomplete && (
-                <p className="text-red-500">
+                <p style={{ color: "#CC3333" }}>
                   코너 선택을 완료해야 팬미팅을 생성할 수 있습니다.
                 </p>
               )}
@@ -638,6 +656,9 @@ function CreateFanmeeting() {
           팬미팅 생성하기
         </button>
       </div>
+      {showModal && (
+        <Modal onClose={handleModalClose} onConfirm={submitCreateFanmeeting} />
+      )}
     </div>
   );
 }
