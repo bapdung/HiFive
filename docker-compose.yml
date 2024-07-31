@@ -63,8 +63,8 @@ services: # container setting info
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
     networks:
       - webnet
   nginx:
