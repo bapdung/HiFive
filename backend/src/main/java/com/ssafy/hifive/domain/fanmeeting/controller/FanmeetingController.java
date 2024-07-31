@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hifive.domain.fanmeeting.dto.param.FanmeetingParam;
 import com.ssafy.hifive.domain.fanmeeting.dto.request.FanmeetingRequestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingDetailDto;
-import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingLatestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingOverViewDto;
 import com.ssafy.hifive.domain.fanmeeting.service.FanmeetingService;
 import com.ssafy.hifive.domain.member.entity.Member;
@@ -88,7 +87,7 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll() {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll(@AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(fanmeetingService.getFanmeetingAll());
 	}
 
@@ -99,7 +98,7 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/creator/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingByCreator(@PathVariable long creatorId) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingByCreator(@PathVariable long creatorId, @AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(fanmeetingService.getFanmeetingByCreator(creatorId));
 	}
 
@@ -122,7 +121,7 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/scheduled/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingByCreator(@PathVariable long creatorId) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingByCreator(@PathVariable long creatorId, @AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(fanmeetingService.getScheduledFanmeetingByCreator(creatorId));
 	}
 
@@ -134,30 +133,45 @@ public class FanmeetingController {
 	)
 	@GetMapping(path = "/completed/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingByCreator(@PathVariable long creatorId,
-		@ModelAttribute FanmeetingParam param) {
+		@ModelAttribute FanmeetingParam param, @AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(fanmeetingService.getCompletedFanmeetingByCreator(creatorId, param));
 	}
 
-	// @Operation(summary = "사용자가 예매한 팬미팅 조회", description = "사용자가 예매한 팬미팅을 조회한다.")
-	// @ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
-	// 	content = @Content(mediaType = "application/json",
-	// 		schema = @Schema(implementation = ErrorResponse.class),
-	// 		examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
-	// )
-	// @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = {"sort", "top"})
-	// public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingForUser(@ModelAttribute FanmeetingParam param) {
-	// 	List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getFanmeetingForUser(param);
-	// 	return ResponseEntity.ok(fanmeetings);
-	// }
+	@Operation(summary = "사용자가 예매한 예정된 팬미팅 조회", description = "사용자가 예매한 예정된 팬미팅을 조회한다.")
+	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
+		content = @Content(mediaType = "application/json",
+			schema = @Schema(implementation = ErrorResponse.class),
+			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
+	)
+	@GetMapping(path ="/scheduled/sss/sss", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingForFan(@ModelAttribute FanmeetingParam param, @AuthenticationPrincipal Member member) {
+		System.out.println("하이");
+		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getScheduledFanmeetingForFan(param, member);
+		return ResponseEntity.ok(fanmeetings);
+	}
 
-	@Operation(summary = "가장 최근 팬미팅 1개 조회", description = "가장 최근 팬미팅 1개를 조회한다.")
+	@Operation(summary = "사용자가 예매한 지난 팬미팅 조회", description = "사용자가 예매한 지난 팬미팅을 조회한다.")
+	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
+		content = @Content(mediaType = "application/json",
+			schema = @Schema(implementation = ErrorResponse.class),
+			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
+	)
+	@GetMapping(path ="/completed/sss/sss", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingForFan(@ModelAttribute FanmeetingParam param, @AuthenticationPrincipal Member member) {
+		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getCompletedFanmeetingForFan(param, member);
+		return ResponseEntity.ok(fanmeetings);
+	}
+
+
+
+	@Operation(summary = "사용자가 예매한 예정된 팬미팅 전체 조회", description = "사용자가 예매한 예정된 팬미팅을 전체 조회한다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/main", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<FanmeetingLatestDto> getLatestFanmeeting() {
-		return ResponseEntity.ok(fanmeetingService.getLatestFanmeeting());
+	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingAllForFan(@AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(fanmeetingService.getScheduledFanmeetingAllForFan(member));
 	}
 }

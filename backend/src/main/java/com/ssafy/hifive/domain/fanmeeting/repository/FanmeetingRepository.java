@@ -14,15 +14,13 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 
 @Repository
-public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long> {
+public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long>, FanmeetingCustomRepository {
 	@Query("""
 			select count(*) 
 			from Fanmeeting f
 			where f.creator.memberId = :creatorId
 		""")
 	long countByCreatorId(long creatorId);
-
-	Optional<Fanmeeting> findTopByOrderByStartDateDesc();
 
 	List<Fanmeeting> findByCreatorMemberId(long creatorId);
 
@@ -46,5 +44,4 @@ public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long> {
 		@Param("top") Long top,
 		@Param("sort") String sort,
 		Pageable pageable);
-
 }
