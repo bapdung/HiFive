@@ -66,10 +66,10 @@ public class BoardController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
-	@PostMapping(path = "/{creatorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createBoard(@PathVariable long creatorId, @RequestBody BoardRequestDto boardRequestDto,
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> createBoard(@RequestBody BoardRequestDto boardRequestDto,
 		@AuthenticationPrincipal Member member) {
-		boardService.createBoard(creatorId, boardRequestDto, member);
+		boardService.createBoard(boardRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 
