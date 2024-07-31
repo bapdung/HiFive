@@ -54,8 +54,7 @@ public class FanmeetingService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
 		//1. 티켓이 남아있는지 확인하는 로직
-		//만약 redis에 ticketcount가 저장되어있지 않다면
-		int remainingTickets = fanmeetingPayService.checkRemainedTicket(fanmeeting);
+		int remainingTickets = fanmeetingPayService.checkRemainingTicket(fanmeeting);
 
 		return FanmeetingDetailDto.from(fanmeeting, remainingTickets);
 	}
