@@ -63,22 +63,12 @@ services: # container setting info
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    # ports:
-    #   - "3000:3000"
-    networks:
-      - webnet
-  nginx:
-    image: nginx:latest
-    networks:
-      - webnet
-    restart: always
-    volumes:
-      - /nginx/:/etc/nginx/conf.d
     ports:
-      - 80:80
-    depends_on:
-      - spring-application
-      - frontend
+      - "80:80"
+    volumes:
+      - /nginx/ : /etc/nginx/conf.d
+    networks:
+      - webnet
 
 volumes:
   db-mysql:
