@@ -10,7 +10,7 @@ function MyInfo() {
         const token = process.env.REACT_APP_AUTHORIZATION;
 
         if (token) {
-          const response = await client(token).get("/member");
+          const response = await client(token).get("/api/member");
           console.log(response.data);
         }
       } catch (error) {
