@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 import MyFanmeetingItem from "./CreatorOnly.MyFanmeetingItem";
@@ -12,7 +12,6 @@ interface MyFanmeetingDoneListProps {
 interface Fanmeeting {
   title: string;
   posterImg: string;
-  openDate: string;
   startDate: string;
 }
 
@@ -43,6 +42,11 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
     }
   };
   useOnMounted(() => fetchFanmeetings);
+
+  useEffect(() => {
+    fetchFanmeetings();
+  }, [creatorId, isRecent]);
+
   return (
     <div className="w-full flex flex-wrap">
       {fanmeetings.length === 0 ? (
