@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.domain.reservation.repository.ReservationRepository;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
@@ -34,12 +33,10 @@ public class ReservationService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		//1. 티켓이 남아있는지 확인하는 로직
-		//만약 redis에 ticketcount가 저장되어있지 않다면
-		fanmeetingPayService.checkRemainedTicket(fanmeeting);
+		int remainingTicket = fanmeetingPayService.checkRemainingTicket(fanmeeting);
 
 		//2. 결제로직
-		fanmeetingPayService.payTicket(fanmeeting, member);
+		fanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
 
 		//3. 예약기록
 		fanmeetingPayService.recordReservation(fanmeeting, member);
