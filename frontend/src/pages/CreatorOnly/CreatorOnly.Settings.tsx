@@ -1,11 +1,4 @@
-import {
-  useParams,
-  useLocation,
-  useNavigate,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Question from "./CreatorOnly.Settings.Question";
@@ -74,12 +67,9 @@ function Settings() {
           ) : null}
         </div>
       </div>
-      <Routes>
-        <Route path="question" element={<Question />} />
-        <Route path="story" element={<Story />} />
-        <Route path="quiz" element={<Quiz />} />
-        <Route path="*" element={<Navigate to="question" replace />} />{" "}
-      </Routes>
+      {currentPath === "question" ? <Question /> : null}
+      {currentPath === "story" ? <Story /> : null}
+      {currentPath === "quiz" ? <Quiz /> : null}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar/Navbar";
 import CreatorNavbar from "./components/Navbar/CreatorNavbar";
@@ -41,12 +41,17 @@ function App() {
           />
           <Route path="/creator-only" element={<CreatorOnly />} />
           <Route path="/creator-only/new" element={<CreateFanmeeting />} />
-          <Route path="/creator-only/:fanmeetingId/*" element={<Settings />} />
           <Route
-            path="*"
-            element={
-              <Navigate to="/creator-only/:fanmeetingId/question" replace />
-            }
+            path="/creator-only/:fanmeetingId/question"
+            element={<Settings />}
+          />
+          <Route
+            path="/creator-only/:fanmeetingId/quiz"
+            element={<Settings />}
+          />
+          <Route
+            path="/creator-only/:fanmeetingId/story"
+            element={<Settings />}
           />
           <Route path="/creator/list" element={<CreatorList />} />
         </Routes>
