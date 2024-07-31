@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,8 +45,9 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-
-		return null;
+		return (web) -> web.ignoring()
+			.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**",
+				"/webjars/**");
 	}
 
 	@Bean
@@ -67,24 +69,21 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 			.requestMatchers("/api/**").authenticated()
 			.anyRequest().permitAll());
 
-		http.oauth2Login(oauth2 ->
-			oauth2.loginPage("/login")
-				.authorizationEndpoint(authorization -> authorization.authorizationRequestRepository(
-					oAuth2AuthorizationRequestBasedOnCookieRepository()))
-				.successHandler(oAuth2SuccessHandler())
-				.userInfoEndpoint(userInfo ->
-					userInfo.userService(oAuth2UserCustomService)));
+		http.oauth2Login(oauth2 -> oauth2
+			.loginPage("/login")
+			.authorizationEndpoint(authorization -> authorization.authorizationRequestRepository(
+				oAuth2AuthorizationRequestBasedOnCookieRepository()))
+			.successHandler(oAuth2SuccessHandler())
+			.userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserCustomService)));
 
-		http.logout(logout ->
-			logout.logoutSuccessUrl("/login"));
+		http.logout(logout -> logout.logoutSuccessUrl("/login"));
 
-		http.exceptionHandling(exceptionHandling ->
-			exceptionHandling.defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-				new AntPathRequestMatcher("/api/**")));
+		http.exceptionHandling(exceptionHandling -> exceptionHandling.defaultAuthenticationEntryPointFor(
+			new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+			new AntPathRequestMatcher("/api/**")));
 
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
-
 	}
 
 	@Bean
@@ -119,14 +118,24 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("*"));
-		configuration.setExposedHeaders(Arrays.asList("*"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+		configuration.setExposedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 		configuration.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
-
 	}
 
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+			.allowedOrigins("http://localhost:3000")
+			.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+			.allowedHeaders("Authorization", "Content-Type")
+			.exposedHeaders("Custom-Header")
+			.allowCredentials(true)
+			.maxAge(3600);
+
+	}
 }
