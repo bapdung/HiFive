@@ -18,6 +18,7 @@ import {
   parseNumberIntoInteger,
 } from "../../utils/formatNumber";
 import Modal from "./CreatorOnly.CreateFanmeeting.Modal";
+// import axios from "axios";
 
 // drag and drop 할 때 형식
 interface Corner {
@@ -310,16 +311,16 @@ function CreateFanmeeting() {
   };
 
   const submitCreateFanmeeting = () => {
-    const [hours, minutes] = selectedDuration.split(":").map(Number);
     // 해당 결과를 back으로 전송
+    const [hours, minutes] = selectedDuration.split(":").map(Number);
     const result = {
       title,
       posterImg: imagePreview,
       notice: description,
       participant: peopleNumber,
       runningtime: hours * 60 + minutes,
-      startDate,
-      openDate: ticketDate,
+      startDate: startDate?.toISOString(),
+      openDate: ticketDate?.toISOString(),
       price: ticketPrice,
       timetable: convertCornersToIndices(corners),
     };
