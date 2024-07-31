@@ -60,7 +60,7 @@ services: # container setting info
   frontend:
     depends_on:
       - spring-application
-    container-name: hifive-react
+    container_name: hifive-react
     build:
       context: ./frontend
       dockerfile: Dockerfile
