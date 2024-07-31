@@ -1,5 +1,8 @@
 package com.ssafy.hifive.domain.reservation.service;
 
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,24 +24,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class FanmeetingPayService {
+	private final RedisTemplate<String, Integer> redisTemplate;
 	private final ReservationRepository reservationRepository;
 	private final PointRepository pointRepository;
 	private final MemberRepository memberRepository;
+	private final ReservationValidService reservationValidService;
 
-	public int checkRemainedTicket(Fanmeeting fanmeeting) {
-		int participant = fanmeeting.getParticipant();
-		log.info("participant: {}", participant);
-		int reservedTicketCount = reservationRepository.reservedTicketCountByFanmeetingId(fanmeeting.getFanmeetingId());
-		log.info("reservedTicketCount: {}", reservedTicketCount);
-		return participant - reservedTicketCount;
+	public int checkRemainingTicket(Fanmeeting fanmeeting) {
+		String cacheKey = "remainingTicketCountForFanmeetingId" + fanmeeting.getFanmeetingId();
+		Integer remainingTicket = redisTemplate.opsForValue().get(cacheKey);
+
+		if(remainingTicket == null) {
+			int participant = fanmeeting.getParticipant();
+			int reservedTicketCount = reservationRepository.reservedTicketCountByFanmeetingId(fanmeeting.getFanmeetingId());
+			remainingTicket = participant - reservedTicketCount;
+			redisTemplate.opsForValue().set(cacheKey, remainingTicket, 10, TimeUnit.MINUTES);
+		}
+		return remainingTicket;
 	}
 
 	@Transactional
-	public void payTicket(Fanmeeting fanmeeting, Member member) {
+	public void payTicket(Fanmeeting fanmeeting, Member member, int remainingTicket) {
+
+		reservationValidService.ReservationIsValid(remainingTicket); //결제 전 한 번 더 점검하는 로직
+
 		int price = fanmeeting.getPrice();
 		String detail = fanmeeting.getTitle();
-
-		log.info("point: {}", member.getPoint());
 
 		if(price <= member.getPoint()){
 			member.updatePoint(member.getPoint() - price);
@@ -51,6 +62,10 @@ public class FanmeetingPayService {
 				.type(TransactionType.MINUS)
 				.build();
 			pointRepository.save(point);
+
+			decreaseTicketCount(fanmeeting.getFanmeetingId(), remainingTicket);
+
+
 		} else {
 			throw new DataNotFoundException(ErrorCode.WANT_FOR_MONEY);
 		}
@@ -65,5 +80,8 @@ public class FanmeetingPayService {
 		reservationRepository.save(reservation);
 	}
 
-	//레디스 카운트 감소 로직
+	private void decreaseTicketCount(long fanmeetingId, int remainingTicket) {
+		String cacheKey = "remainingTicketCountForFanmeetingId" + fanmeetingId;
+		redisTemplate.opsForValue().set(cacheKey, remainingTicket - 1, 10, TimeUnit.MINUTES);
+	}
 }

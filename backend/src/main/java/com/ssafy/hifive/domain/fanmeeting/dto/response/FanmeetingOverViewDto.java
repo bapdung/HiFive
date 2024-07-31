@@ -11,6 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FanmeetingOverViewDto {
 
+	private long fanmeetingId;
 	private String title;
 	private String posterImg;
 	private LocalDateTime openDate;
@@ -18,6 +19,7 @@ public class FanmeetingOverViewDto {
 
 	public static FanmeetingOverViewDto from(Fanmeeting fanmeeting) {
 		return new FanmeetingOverViewDto(
+			fanmeeting.getFanmeetingId(),
 			fanmeeting.getTitle(),
 			fanmeeting.getPosterImg(),
 			fanmeeting.getOpenDate(),
