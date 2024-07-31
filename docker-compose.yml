@@ -77,7 +77,7 @@ services: # container setting info
     ports:
       - 80:80
     depends_on:
-      - backend
+      - spring-application
       - frontend
 
 volumes:
