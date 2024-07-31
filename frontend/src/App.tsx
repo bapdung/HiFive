@@ -10,6 +10,7 @@ import TicketList from "./pages/TicketPage/TicketPage.List";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
+import CreatorList from "./pages/CreatorListPage/CreatorListPage";
 import CreatorOnly from "./pages/CreatorOnly/CreatorOnly.MyFanmeeting";
 import CreateFanmeeting from "./pages/CreatorOnly/CreatorOnly.CreateFanmeeting";
 
@@ -39,6 +40,7 @@ function App() {
           />
           <Route path="/creator-only" element={<CreatorOnly />} />
           <Route path="/creator-only/new" element={<CreateFanmeeting />} />
+          <Route path="/creator/list" element={<CreatorList />} />
         </Routes>
       </main>
       <Footer />
