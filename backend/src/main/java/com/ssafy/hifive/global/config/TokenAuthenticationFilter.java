@@ -2,6 +2,7 @@ package com.ssafy.hifive.global.config;
 
 import java.io.IOException;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,8 +14,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
+@ComponentScan
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
@@ -31,11 +35,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 		if (tokenProvider.validToken(token)) {
 			Authentication authentication = tokenProvider.getAuthentication(token);
+			log.info(String.valueOf(authentication));
+			log.info(authentication.getName());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 
 		filterChain.doFilter(request, response);
-
+		log.info(request.toString());
 	}
 
 	private String getAccessToken(String authorizationHeader) {

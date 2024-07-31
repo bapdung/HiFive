@@ -5,7 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hifive.domain.member.entity.Member;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class FollowService {
 
 	@Transactional
