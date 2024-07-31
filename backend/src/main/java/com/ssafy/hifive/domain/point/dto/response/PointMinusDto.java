@@ -9,14 +9,16 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public final class PointResponseDto {
-	private String type;
-	private int point;
+public class PointMinusDto {
 	private LocalDateTime transactionDate;
 	private String detail;
+	private int point;
 
-	public static PointResponseDto from(Point point) {
-		return new PointResponseDto(point.getType().name(), point.getPoint(), point.getCreatedDate(),
-			point.getDetail());
+	public static PointMinusDto from(Point point){
+		return new PointMinusDto(
+			point.getCreatedDate(),
+			point.getDetail(),
+			point.getPoint()
+		);
 	}
 }
