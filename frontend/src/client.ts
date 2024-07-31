@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
-const client = (token: string | null): AxiosInstance => {
+const client = (token: string): AxiosInstance => {
   const ENDPOINT = process.env.REACT_APP_END_POINT;
 
   if (!ENDPOINT) {
