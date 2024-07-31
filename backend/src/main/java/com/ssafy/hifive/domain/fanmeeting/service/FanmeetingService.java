@@ -16,17 +16,16 @@ import com.ssafy.hifive.domain.category.repository.CategoryRepository;
 import com.ssafy.hifive.domain.fanmeeting.dto.param.FanmeetingParam;
 import com.ssafy.hifive.domain.fanmeeting.dto.request.FanmeetingRequestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingDetailDto;
-import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingLatestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingOverViewDto;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.reservation.service.FanmeetingPayService;
 import com.ssafy.hifive.domain.timetable.entity.Timetable;
 import com.ssafy.hifive.domain.timetable.repository.TimetableRepository;
 import com.ssafy.hifive.domain.timetable.service.TimetableService;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
-import com.ssafy.hifive.global.error.type.ForbiddenException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,47 +39,38 @@ public class FanmeetingService {
 	private final CategoryRepository categoryRepository;
 	private final TimetableRepository timetableRepository;
 	private final TimetableService timetableService;
-
-	private void validateCreator(Member member) {
-		if (!member.isCreator()) {
-			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-		}
-	}
+	private final FanmeetingValidService fanmeetingValidService;
+	private final FanmeetingPayService fanmeetingPayService;
 
 	private final static int PAGE_SIZE = 30;
 
 	private Pageable createPageable(FanmeetingParam param) {
 		return PageRequest.of(0, PAGE_SIZE,
 			Sort.by(Sort.Direction.fromString(param.getSort()), "startDate"));
-
-	}
-
-	private void validateFanmeetingCreator(Fanmeeting fanmeeting, Member member) {
-		if (fanmeeting.getCreator().getMemberId() != member.getMemberId()) {
-			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-		}
 	}
 
 	public FanmeetingDetailDto getFanmeetingDetail(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findByIdWithTimetable(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		// 티켓 잔여 확인 로직 -> 레디스 확인
-		int remainingTickets = fanmeeting.getParticipant();
+		//1. 티켓이 남아있는지 확인하는 로직
+		//만약 redis에 ticketcount가 저장되어있지 않다면
+		int remainingTickets = fanmeetingPayService.checkRemainedTicket(fanmeeting);
 
 		return FanmeetingDetailDto.from(fanmeeting, remainingTickets);
 	}
 
-	public FanmeetingLatestDto getLatestFanmeeting() {
-		Fanmeeting latestFanmeeting = fanmeetingRepository.findTopByOrderByStartDateDesc()
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
+	public List<FanmeetingOverViewDto> getScheduledFanmeetingAllForFan(Member member) {
+		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId())
+			.stream()
+			.map(FanmeetingOverViewDto::from)
+			.collect(Collectors.toList());
 
-		return FanmeetingLatestDto.from(latestFanmeeting);
 	}
 
 	@Transactional
 	public void createFanmeeting(FanmeetingRequestDto fanmeetingRequestDto, Member member) {
-		validateCreator(member);
+		fanmeetingValidService.validateCreator(member);
 
 		if (fanmeetingRequestDto.getTitle() == null || fanmeetingRequestDto.getTitle().isEmpty()) {
 			throw new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND);
@@ -106,12 +96,12 @@ public class FanmeetingService {
 
 	@Transactional
 	public void updateFanmeeting(long fanmeetingId, FanmeetingRequestDto fanmeetingRequestDto, Member member) {
-		validateCreator(member);
+		fanmeetingValidService.validateCreator(member);
 
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		validateFanmeetingCreator(fanmeeting, member);
+		fanmeetingValidService.validateFanmeetingCreator(fanmeeting, member);
 
 		fanmeeting.updateFanmeeting(fanmeetingRequestDto);
 
@@ -128,12 +118,12 @@ public class FanmeetingService {
 
 	@Transactional
 	public void deleteFanmeeting(long fanmeetingId, Member member) {
-		validateCreator(member);
+		fanmeetingValidService.validateCreator(member);
 
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		validateFanmeetingCreator(fanmeeting, member);
+		fanmeetingValidService.validateFanmeetingCreator(fanmeeting, member);
 
 		timetableService.deleteByTimetableId(fanmeetingId);
 		fanmeetingRepository.delete(fanmeeting);
@@ -176,16 +166,34 @@ public class FanmeetingService {
 			.collect(Collectors.toList());
 	}
 
-	// todo : reservation 작업 후 연결
-	// public List<FanmeetingOverViewDto> getFanmeetingForUser(FanmeetingParam param) {
-	//
-	// 	Slice<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsForUserWithScrolling(
-	// 		param.getTop(),
-	// 		param.getSort(),
-	// 		createPageable(param));
-	//
-	// 	return fanmeetings.stream()
-	// 		.map(FanmeetingOverViewDto::from)
-	// 		.collect(Collectors.toList());
-	// }
+	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(FanmeetingParam param, Member member) {
+		Fanmeeting fanmeeting = fanmeetingRepository.findById(param.getTop())
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
+		LocalDateTime topDate = fanmeeting.getStartDate();
+
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByFanWithScrolling(
+			member.getMemberId(),
+			topDate,
+			param.getSort(),
+			true);
+
+		return fanmeetings.stream()
+			.map(FanmeetingOverViewDto::from)
+			.collect(Collectors.toList());
+	}
+
+	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(FanmeetingParam param, Member member) {
+
+		LocalDateTime top = fanmeetingValidService.validateTop(param.getTop());
+
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByFanWithScrolling(
+			member.getMemberId(),
+			top,
+			param.getSort(),
+			false);
+
+		return fanmeetings.stream()
+			.map(FanmeetingOverViewDto::from)
+			.collect(Collectors.toList());
+	}
 }
