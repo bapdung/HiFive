@@ -36,6 +36,7 @@ function Question() {
   );
 
   // 모든 질문 불러오는 api 호출
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchAllQuestions = async () => {
     const params = { page: 0 };
     try {
@@ -55,7 +56,7 @@ function Question() {
   // mount 될 때 모든 질문을 불러옴
   useEffect(() => {
     fetchAllQuestions();
-  }, [fanmeetingId, token]);
+  }, [fanmeetingId, fetchAllQuestions, token]);
 
   // toggle 시 토글 api 호출
   const toggleQuestion = async (id: number) => {

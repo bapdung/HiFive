@@ -51,6 +51,7 @@ module.exports = {
     "react/prop-types": "off",
     "import/no-unresolved": "off",
     "no-console": "off",
+    "no-alert": "off",
   },
 
   settings: {
