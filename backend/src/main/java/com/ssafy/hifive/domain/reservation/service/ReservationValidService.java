@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ReservationValidService {
-	private final ReservationRedisService reservationRedisService;
+	private final ReservationQueueService reservationQueueService;
 
 	public void ReservationIsValid(int remainingTicket) {
 		if (remainingTicket <= 0) {
@@ -25,10 +25,10 @@ public class ReservationValidService {
 		}
 	}
 
-	public void addToPayingQueueIsValid(Long queueSize, Long fanmeetingId, Long memberId) {
-		if (queueSize != null && queueSize >= 100) {
-			reservationRedisService.addToWaitingQueue(fanmeetingId, memberId);
-			throw new BadRequestException(ErrorCode.WAITING_IN_QUEUE);
-		}
-	}
+	// public void addToPayingQueueIsValid(Long queueSize, Long fanmeetingId, Long memberId) {
+	// 	if (queueSize != null && queueSize >= 100) {
+	// 		reservationQueueService.addToWaitingQueue(fanmeetingId, memberId);
+	// 		throw new BadRequestException(ErrorCode.WAITING_IN_QUEUE);
+	// 	}
+	// }
 }

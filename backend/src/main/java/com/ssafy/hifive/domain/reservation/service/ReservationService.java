@@ -18,7 +18,7 @@ public class ReservationService {
 	private final FanmeetingRepository fanmeetingRepository;
 	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
 	private final ReservationFanmeetingReserveService reservationFanmeetingReserveService;
-	private final ReservationRedisService reservationRedisService;
+	private final ReservationQueueService reservationQueueService;
 	private final ReservationValidService reservationValidService;
 	private final RedisTemplate<String, Object> redisTemplate;
 
@@ -27,19 +27,20 @@ public class ReservationService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
 		reservationFanmeetingReserveService.checkReservation(fanmeeting, member);
+		String queueKey = "fanmeeting:" + fanmeetingId + ":queue";
 
-		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
-		Long queueSize = redisTemplate.opsForList().size(payingQueueKey);
+		reservationQueueService.addToQueue(queueKey, member.getMemberId());
 
-		reservationValidService.addToPayingQueueIsValid(queueSize, fanmeetingId, member.getMemberId());
-
-		reservationRedisService.addToPayingQueue(payingQueueKey, member.getMemberId());
+		// String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+		// Long queueSize = redisTemplate.opsForList().size(payingQueueKey);
+		//
+		// reservationValidService.addToPayingQueueIsValid(queueSize, fanmeetingId, member.getMemberId());
+		//
+		// reservationQueueService.addToPayingQueue(payingQueueKey, member.getMemberId());
 	}
 
 	@Transactional
 	public void pay(long fanmeetingId, Member member) {
-		String queueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
-
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
@@ -48,9 +49,6 @@ public class ReservationService {
 		reservationFanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
 
 		reservationFanmeetingPayService.recordReservation(fanmeeting, member);
-		reservationRedisService.removeFromPayingQueue(queueKey, member.getMemberId());
-
-
 
 	}
 }
