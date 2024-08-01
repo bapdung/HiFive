@@ -1,18 +1,10 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { kakaoLogin, handleKakaoCallback } from "../../service/authService";
+import { kakaoLogin } from "../../service/authService";
 
 import logo from "../../assets/icons/logo/logo.png";
 
 function Navbar() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (window.location.pathname === "/kakao/auth") {
-      handleKakaoCallback();
-    }
-    navigate("/");
-  }, []);
 
   return (
     <div className="z-10 bg-white flex w-screen justify-between items-center h-20 px-10 py-2 shadow-nav-shadow">
@@ -28,7 +20,7 @@ function Navbar() {
       </div>
       <div className="flex items-center">
         <div
-          className="text-primary-text text-medium m-7"
+          className="text-primary-text text-large font-bold m-10"
           onClick={kakaoLogin}
           onKeyDown={kakaoLogin}
           role="presentation"

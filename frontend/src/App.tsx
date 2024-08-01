@@ -1,4 +1,6 @@
 import { Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import useAuthStore from "./store/useAuthStore";
 
 import Navbar from "./components/Navbar/Navbar";
 import CreatorNavbar from "./components/Navbar/CreatorNavbar";
@@ -10,13 +12,28 @@ import TicketList from "./pages/TicketPage/TicketPage.List";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
+import MainPage from "./pages/MainPage/MainPage";
 import CreatorList from "./pages/CreatorListPage/CreatorListPage";
+import JoinCreator from "./pages/JoinCreatorPage/JoinCreatorPage";
 import CreatorOnly from "./pages/CreatorOnly/CreatorOnly.MyFanmeeting";
 import CreateFanmeeting from "./pages/CreatorOnly/CreatorOnly.CreateFanmeeting";
 import Settings from "./pages/CreatorOnly/CreatorOnly.Settings";
 
 function App() {
   const location = useLocation();
+  const fetchTokens = useAuthStore((state) => state.fetchTokens);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("accessToken");
+
+    if (!localToken) {
+      fetchTokens();
+    } else {
+      setAccessToken(localToken);
+    }
+  }, [fetchTokens, setAccessToken]);
+
   return (
     <div className="App">
       {location.pathname.startsWith("/creator-only") ? (
@@ -53,7 +70,9 @@ function App() {
             path="/creator-only/:fanmeetingId/story"
             element={<Settings />}
           />
+          <Route path="/main" element={<MainPage />} />
           <Route path="/creator/list" element={<CreatorList />} />
+          <Route path="/parther" element={<JoinCreator />} />
         </Routes>
       </main>
       <Footer />
