@@ -15,6 +15,14 @@ interface Ticket {
 
 const tickets: Ticket[] = [
   {
+    id: 0,
+    poster: "",
+    stamp: "",
+    barcode: "",
+    event: "",
+    startTime: "",
+  },
+  {
     id: 1,
     poster,
     stamp,
@@ -37,6 +45,22 @@ const tickets: Ticket[] = [
     barcode,
     event: "하이파이브 한 번 해요! by Dasut and Hana",
     startTime: "2024.07.31 20:00 (2H)",
+  },
+  {
+    id: 3,
+    poster,
+    stamp,
+    barcode,
+    event: "하이파이브 한 번 해요! by Dasut and Hana",
+    startTime: "2024.07.31 20:00 (2H)",
+  },
+  {
+    id: 4,
+    poster: "",
+    stamp: "",
+    barcode: "",
+    event: "",
+    startTime: "",
   },
 ];
 
