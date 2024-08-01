@@ -1,4 +1,8 @@
 package com.ssafy.hifive.domain.category.repository;
 
-public interface CategoryRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ssafy.hifive.domain.category.entity.Category;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 }

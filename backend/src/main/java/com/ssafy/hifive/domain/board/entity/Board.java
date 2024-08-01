@@ -35,6 +35,11 @@ public class Board extends BaseTimeEntity {
 	@Column(nullable = false, length = 1000)
 	private String contents;
 
+	public void updateBoard(String contents, String boardImg) {
+		this.contents = contents;
+		this.boardImg = boardImg;
+	}
+
 	@Builder
 	private Board(Member creator, String boardImg, String contents) {
 		this.creator = creator;
