@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import kakaoLogin from "../../service/authService";
+import { kakaoLogin } from "../../service/authService";
 
 import logo from "../../assets/icons/logo/logo.png";
 
