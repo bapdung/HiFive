@@ -19,7 +19,11 @@ public class CookieUtil {
 		cookie.setMaxAge(maxAge);
 		cookie.setSecure(secure);
 
-		response.addCookie(cookie);
+		String sameSite = "None";
+		response.addHeader("Set-Cookie",
+			String.format("%s=%s; Max-Age=%d; Path=%s; Secure=%s; HttpOnly=%s; SameSite=%s",
+				cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath(),
+				cookie.getSecure() ? "Secure" : "", cookie.isHttpOnly() ? "HttpOnly" : "", sameSite));
 	}
 
 	public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
