@@ -33,16 +33,14 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 		String email = getKakaoEmail(attributes);
 		String nickname = getKakaoNickname(attributes);
 		String profileImg = getKakaoProfileImage(attributes);
+		String name = getKakaoName(attributes);
 
 		Member member = memberRepository.findByEmail(email)
-			.map(entity -> {
-				entity.update(nickname, profileImg);
-				return entity;
-			})
 			.orElse(Member.builder()
 				.email(email)
 				.nickname(nickname)
 				.profileImg(profileImg)
+				.name(name)
 				.build());
 
 		memberRepository.save(member);
@@ -61,5 +59,10 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 	private String getKakaoProfileImage(Map<String, Object> attributes) {
 		Map<String, Object> properties = (Map<String, Object>)attributes.get("properties");
 		return (String)properties.get("profile_image");
+	}
+
+	private String getKakaoName(Map<String, Object> attributes) {
+		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
+		return (String)kakaoAccount.get("name");
 	}
 }

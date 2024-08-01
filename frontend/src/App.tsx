@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import useAuthStore from "./store/useAuthStore";
 
 import Navbar from "./components/Navbar/Navbar";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
@@ -14,6 +16,19 @@ import CreatorList from "./pages/CreatorListPage/CreatorListPage";
 import JoinCreator from "./pages/JoinCreatorPage/JoinCreatorPage";
 
 function App() {
+  const fetchTokens = useAuthStore((state) => state.fetchTokens);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("accessToken");
+
+    if (!localToken) {
+      fetchTokens();
+    } else {
+      setAccessToken(localToken);
+    }
+  }, [fetchTokens, setAccessToken]);
+
   return (
     <div className="App">
       <Navbar />
