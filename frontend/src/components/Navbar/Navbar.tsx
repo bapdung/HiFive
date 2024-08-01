@@ -1,13 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { kakaoLogin } from "../../service/authService";
 
 import logo from "../../assets/icons/logo/logo.png";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isLanding = location.pathname === "/";
 
   return (
-    <div className="z-10 bg-white flex w-screen justify-between items-center h-20 px-10 py-2 shadow-nav-shadow">
+    <div
+      className={`z-10 bg-white flex w-screen justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-[rgba(255,255,255,0.6)] backdrop-blur-xl shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
+    >
       <div>
         <img
           src={logo}
