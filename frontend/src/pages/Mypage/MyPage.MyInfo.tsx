@@ -1,11 +1,67 @@
+import { useEffect, useState } from "react";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
+
 import cameraIcon from "../../assets/icons/pink-cameraIcon.png";
 
+type User = {
+  creaotr: boolean;
+  email: string;
+  memberId: number;
+  name: string | null;
+  nickname: string;
+  point: number;
+  profileImg: string;
+};
+
 function MyInfo() {
+  const token = useAuthStore((state) => state.accessToken);
+
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [nickname, setNickname] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const getMemberInfo = async () => {
+      try {
+        if (token) {
+          const response = await client(token).get("/api/member");
+          setUserInfo(response.data);
+          setNickname(userInfo?.nickname);
+        }
+      } catch (error) {
+        console.error("Error 발생", error);
+      }
+    };
+
+    getMemberInfo();
+  }, [token]);
+
+  const inputNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value);
+  };
+
+  const changeNickname = async () => {
+    if (token) {
+      const response = await client(token).post("/api/member/valid", {
+        nickname,
+      });
+      console.log(response.data);
+    }
+  };
+
+  if (!userInfo) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col h-[900px] justify-center">
       <div className="flex w-[800px] justify-between">
         <div className="flex flex-col items-center pl-5">
-          <div className="w-64 h-64 bg-gray-300 rounded-full" />
+          <img
+            src={userInfo.profileImg}
+            alt="프로필이미지"
+            className="w-64 h-64 bg-gray-300 rounded-full"
+          />
           <button
             type="button"
             className="btn-outline-lg flex items-center mt-4"
@@ -22,13 +78,13 @@ function MyInfo() {
           <div className="flex flex-col">
             <span className="text-h6">이름</span>
             <span className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
-              서지흔
+              {userInfo.name}
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-h6">이메일 주소</span>
             <span className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
-              example@hifive.com
+              {userInfo.email}
             </span>
           </div>
           <div className="flex flex-col">
@@ -37,15 +93,20 @@ function MyInfo() {
               {/* <span className="text-green text-small">
                 사용 가능한 닉네임입니다.
               </span> */}
-              <span className="text-red text-small">중복된 닉네임입니다.</span>
+              {/* <span className="text-red text-small">중복된 닉네임입니다.</span> */}
             </div>
             <input
               type="text"
-              defaultValue="현재 닉네임"
+              defaultValue={userInfo.nickname}
               id="nickname"
               className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2"
+              onChange={inputNickname}
             />
-            <button type="button" className="btn-light-lg mt-3">
+            <button
+              type="button"
+              className="btn-light-lg mt-3"
+              onClick={changeNickname}
+            >
               중복 확인
             </button>
           </div>
