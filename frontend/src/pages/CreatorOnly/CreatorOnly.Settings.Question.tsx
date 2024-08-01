@@ -16,16 +16,21 @@ function Question() {
   const fanmeetingId = location.pathname.split("/")[1];
   const [typeOfQuestion, setTypeOfQuestion] = useState("all");
   const [allQuestions, setAllQuestions] = useState<QuestionItem[]>([]);
+  const [filteredQuestions, setFilteredQuestions] = useState<QuestionItem[]>(
+    [],
+  );
 
   const tempQuestion = [
     { questionId: 1, nickname: "민채", contents: "내용1", isPicked: false },
-    { questionId: 2, nickname: "민채", contents: "내용2", isPicked: false },
+    { questionId: 2, nickname: "민채", contents: "내용2", isPicked: true },
     { questionId: 3, nickname: "민채", contents: "내용3", isPicked: false },
-    { questionId: 4, nickname: "민채", contents: "내용4", isPicked: false },
+    { questionId: 4, nickname: "민채", contents: "내용4", isPicked: true },
     { questionId: 5, nickname: "민채", contents: "내용5", isPicked: false },
     { questionId: 6, nickname: "민채", contents: "내용6", isPicked: false },
     { questionId: 7, nickname: "민채", contents: "내용7", isPicked: false },
   ];
+
+  // 모든 질문 불러오는 api 호출
   const fetchAllQuestions = async () => {
     const params = {
       sort: "desc",
@@ -39,38 +44,62 @@ function Question() {
         },
       );
       setAllQuestions(response.data);
-      console.log(allQuestions);
+      console.log(allQuestions, "모든 질문들");
       console.log("Response:", response.data);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Fetch All Question Error:", error);
     }
   };
+
+  // mount 될 때 모든 질문을 불러옴
   useOnMounted(() => fetchAllQuestions);
 
-  const handleTypeOfQuestion = (type: string) => {
-    setTypeOfQuestion(type);
-  };
-
-  const toggleQuestion = async (questionId: number) => {
+  // toggle 시 토글 api 호출
+  const toggleQuestion = async (id: number) => {
+    // 임시 테스트 코드
+    const questionIndex = tempQuestion.findIndex((q) => q.questionId === id);
+    console.log(questionIndex, "찾은 id", id);
+    if (questionIndex !== -1) {
+      tempQuestion[questionIndex].isPicked =
+        !tempQuestion[questionIndex].isPicked;
+      console.log("Updated Question:", allQuestions[questionIndex]);
+    } else {
+      console.error("Question not found");
+    }
     try {
-      const response = await client(token).patch(
-        `/api/question/${questionId}/toggle`,
-      );
-      console.log("Response:", response.data);
+      const response = await client(token).patch(`/api/question/${id}/toggle`);
+      console.log("Toggle Question Response:", response.data);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  const filteredQuestions = tempQuestion.filter((question) => {
-    if (typeOfQuestion === "selected") {
-      return question.isPicked;
-    }
-    if (typeOfQuestion === "unselected") {
-      return !question.isPicked;
-    }
-    return true;
-  });
+  // 전체 / 선택 / 미선택 클릭시 filter 적용
+  const filterQuestions = (type: string) => {
+    const filtered = tempQuestion.filter((question) => {
+      if (type === "selected") {
+        return question.isPicked;
+      }
+      if (type === "unselected") {
+        return !question.isPicked;
+      }
+      return true;
+    });
+    setFilteredQuestions(filtered);
+  };
+
+  // 질문 토글
+  const handleToggleQuestion = (id: number, type: string) => {
+    toggleQuestion(id);
+    console.log(id);
+    filterQuestions(type);
+  };
+
+  // 전체 / 선택 / 미선택 클릭시 동작
+  const handleTypeOfQuestion = (type: string) => {
+    filterQuestions(type);
+    setTypeOfQuestion(type);
+  };
 
   return (
     <div className="flex flex-col w-full items-center">
@@ -117,7 +146,9 @@ function Question() {
               <button
                 className="creator-btn-light-md"
                 type="button"
-                onClick={() => toggleQuestion(question.questionId)}
+                onClick={() =>
+                  handleToggleQuestion(question.questionId, typeOfQuestion)
+                }
               >
                 선택 취소
               </button>
@@ -125,7 +156,9 @@ function Question() {
               <button
                 className="creator-btn-md"
                 type="button"
-                onClick={() => toggleQuestion(question.questionId)}
+                onClick={() =>
+                  handleToggleQuestion(question.questionId, typeOfQuestion)
+                }
               >
                 질문 선택
               </button>
