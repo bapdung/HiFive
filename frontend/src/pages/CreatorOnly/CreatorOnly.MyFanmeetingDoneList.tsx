@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 import MyFanmeetingItem from "./CreatorOnly.MyFanmeetingItem";
 import client from "../../client";
-import useOnMounted from "../../utils/useOnMounted";
 
 interface MyFanmeetingDoneListProps {
   isRecent: boolean;
@@ -13,35 +12,37 @@ interface Fanmeeting {
   title: string;
   posterImg: string;
   startDate: string;
+  fanmeetingId: number;
 }
 
 const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
   isRecent,
 }) => {
+  // const [lastFanmeeting, setLastFanmeeting] = useState<number | null>();
+  const params = {
+    sort: isRecent ? "desc" : "asc",
+  };
   const location = useLocation();
   const creatorId = parseInt(location.pathname.split("/")[3], 10);
   const [fanmeetings, setFanmeetings] = useState<Fanmeeting[]>([]);
   const fetchFanmeetings = async () => {
     const token = process.env.REACT_APP_AUTHORIZATION as string;
-    const params = {
-      sort: isRecent ? "desc" : "asc",
-      top: 0,
-    };
     try {
       if (!token) {
         return;
       }
       const response = await client(token).get(
-        `/api/fanmeeting/completed/creator/${creatorId}`,
+        `/api/fanmeeting/completed/creator/2`,
         { params },
       );
       setFanmeetings(response.data);
-      console.log(fanmeetings);
+      if (response.data.length > 0) {
+        // setLastFanmeeting(response.data[response.data.length - 1].fanmeetingId);
+      }
     } catch (error) {
       console.error("Error sending post request:", error);
     }
   };
-  useOnMounted(() => fetchFanmeetings);
 
   useEffect(() => {
     fetchFanmeetings();
@@ -56,8 +57,9 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
       ) : null}
       {fanmeetings.map((fanmeeting) => (
         <MyFanmeetingItem
-          key={fanmeeting.title}
+          key={fanmeeting.fanmeetingId}
           isDone
+          fanmeetingId={fanmeeting.fanmeetingId}
           title={fanmeeting.title}
           posterImg={fanmeeting.posterImg}
           startDate={fanmeeting.startDate}

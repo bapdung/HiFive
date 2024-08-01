@@ -6,16 +6,17 @@ interface MyFanmeetingItemProps {
   title: string;
   posterImg: string;
   startDate: string;
+  fanmeetingId: number;
 }
 
 const MyFanmeetingItem: React.FC<MyFanmeetingItemProps> = ({
   isDone,
   title,
+  fanmeetingId,
   posterImg,
   startDate,
 }) => {
   const navigate = useNavigate();
-  const fanmeetingId = 1;
   const navigateToSettings = () => {
     navigate(`/creator-only/${fanmeetingId}/question`);
   };
@@ -46,5 +47,6 @@ MyFanmeetingItem.propTypes = {
   title: propTypes.string.isRequired,
   posterImg: propTypes.string.isRequired,
   startDate: propTypes.string.isRequired,
+  fanmeetingId: propTypes.number.isRequired,
 };
 export default MyFanmeetingItem;

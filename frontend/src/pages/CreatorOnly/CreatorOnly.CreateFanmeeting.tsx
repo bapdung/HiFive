@@ -176,11 +176,26 @@ function CreateFanmeeting() {
   };
 
   // 이미지 받아옴
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImagePreview(imageUrl);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          const base64String = (reader.result as string)
+            .replace("data:", "")
+            .replace(/^.+,/, "");
+          // 서버로 base64String을 전송
+          // 예: await uploadImageToServer(base64String);
+          console.log(base64String); // 테스트용으로 출력
+          setImagePreview("testimage.png");
+        } else {
+          console.error("FileReader result is null");
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -285,8 +300,9 @@ function CreateFanmeeting() {
   // backend 에 제출하기 위해 데이터 형식 변경 (코너)
   const convertCornersToIndices = (cornerArray: Corner[]): CornerIndex[] =>
     cornerArray.map((corner, index) => ({
-      categoryId: typeOfCorners.indexOf(corner.content),
+      categoryId: typeOfCorners.indexOf(corner.content) + 1,
       sequence: index + 1,
+      detailName: "fdsfdsfd",
     }));
 
   // 팬미팅 생성시 유효성 확인
