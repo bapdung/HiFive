@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import useOnMounted from "../../utils/useOnMounted";
 import client from "../../client";
+import QuestionItem from "./CreatorOnly.Settings.QuestionItem";
 
-interface QuestionItem {
+interface Question {
   questionId: number;
   nickname: string;
   contents: string;
@@ -13,70 +13,64 @@ interface QuestionItem {
 function Question() {
   const token = process.env.REACT_APP_AUTHORIZATION as string;
   const location = useLocation();
-  const fanmeetingId = location.pathname.split("/")[1];
+  const fanmeetingId = location.pathname.split("/")[2];
   const [typeOfQuestion, setTypeOfQuestion] = useState("all");
-  const [allQuestions, setAllQuestions] = useState<QuestionItem[]>([]);
-  const [filteredQuestions, setFilteredQuestions] = useState<QuestionItem[]>(
-    [],
-  );
-
-  const tempQuestion = [
-    { questionId: 1, nickname: "민채", contents: "내용1", isPicked: false },
-    { questionId: 2, nickname: "민채", contents: "내용2", isPicked: true },
-    { questionId: 3, nickname: "민채", contents: "내용3", isPicked: false },
-    { questionId: 4, nickname: "민채", contents: "내용4", isPicked: true },
-    { questionId: 5, nickname: "민채", contents: "내용5", isPicked: false },
-    { questionId: 6, nickname: "민채", contents: "내용6", isPicked: false },
-    { questionId: 7, nickname: "민채", contents: "내용7", isPicked: false },
-  ];
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
 
   // 모든 질문 불러오는 api 호출
   const fetchAllQuestions = async () => {
-    const params = {
-      sort: "desc",
-      page: 0,
-    };
+    const params = { page: 0 };
     try {
       const response = await client(token).get(
         `/api/question/${fanmeetingId}`,
-        {
-          params,
-        },
+        { params },
       );
       setAllQuestions(response.data);
-      console.log(allQuestions, "모든 질문들");
-      console.log("Response:", response.data);
+      setFilteredQuestions(response.data); // 초기 로드 시 모든 질문을 필터링된 질문으로 설정
+      console.log("Question Response:", response.data);
     } catch (error) {
+      console.log(fanmeetingId);
       console.error("Fetch All Question Error:", error);
     }
   };
 
   // mount 될 때 모든 질문을 불러옴
-  useOnMounted(() => fetchAllQuestions);
+  useEffect(() => {
+    fetchAllQuestions();
+  }, [fanmeetingId, token]);
 
   // toggle 시 토글 api 호출
   const toggleQuestion = async (id: number) => {
-    // 임시 테스트 코드
-    const questionIndex = tempQuestion.findIndex((q) => q.questionId === id);
-    console.log(questionIndex, "찾은 id", id);
-    if (questionIndex !== -1) {
-      tempQuestion[questionIndex].isPicked =
-        !tempQuestion[questionIndex].isPicked;
-      console.log("Updated Question:", allQuestions[questionIndex]);
-    } else {
-      console.error("Question not found");
-    }
     try {
       const response = await client(token).patch(`/api/question/${id}/toggle`);
       console.log("Toggle Question Response:", response.data);
+
+      // 로컬 상태 업데이트
+      setAllQuestions((prevQuestions) =>
+        prevQuestions.map((question) =>
+          question.questionId === id
+            ? { ...question, isPicked: !question.isPicked }
+            : question,
+        ),
+      );
+
+      // 필터링 상태 업데이트
+      setFilteredQuestions((prevQuestions) =>
+        prevQuestions.map((question) =>
+          question.questionId === id
+            ? { ...question, isPicked: !question.isPicked }
+            : question,
+        ),
+      );
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   // 전체 / 선택 / 미선택 클릭시 filter 적용
-  const filterQuestions = (type: string) => {
-    const filtered = tempQuestion.filter((question) => {
+  const doFilterQuestions = (type: string) => {
+    const filtered = allQuestions.filter((question) => {
       if (type === "selected") {
         return question.isPicked;
       }
@@ -89,15 +83,18 @@ function Question() {
   };
 
   // 질문 토글
-  const handleToggleQuestion = (id: number, type: string) => {
-    toggleQuestion(id);
-    console.log(id);
-    filterQuestions(type);
+  const handleToggleQuestion = async (id: number, type: string) => {
+    try {
+      await toggleQuestion(id);
+      doFilterQuestions(type); // 필터 적용
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   // 전체 / 선택 / 미선택 클릭시 동작
   const handleTypeOfQuestion = (type: string) => {
-    filterQuestions(type);
+    doFilterQuestions(type);
     setTypeOfQuestion(type);
   };
 
@@ -136,34 +133,12 @@ function Question() {
       </p>
       <div className="w-3/4 flex flex-wrap justify-center gap-6">
         {filteredQuestions.map((question) => (
-          <div
+          <QuestionItem
             key={question.questionId}
-            className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[0.5rem] px-10 justify-between bg-white"
-          >
-            <p className="text-large">{question.nickname}</p>
-            <p className="text-large text-gray-700">{question.contents}</p>
-            {question.isPicked ? (
-              <button
-                className="creator-btn-light-md"
-                type="button"
-                onClick={() =>
-                  handleToggleQuestion(question.questionId, typeOfQuestion)
-                }
-              >
-                선택 취소
-              </button>
-            ) : (
-              <button
-                className="creator-btn-md"
-                type="button"
-                onClick={() =>
-                  handleToggleQuestion(question.questionId, typeOfQuestion)
-                }
-              >
-                질문 선택
-              </button>
-            )}
-          </div>
+            question={question}
+            typeOfQuestion={typeOfQuestion}
+            handleToggleQuestion={handleToggleQuestion}
+          />
         ))}
       </div>
     </div>
