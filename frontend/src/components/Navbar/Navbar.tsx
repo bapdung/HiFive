@@ -20,7 +20,7 @@ function Navbar() {
       </div>
       <div className="flex items-center">
         <div
-          className="text-primary-text text-medium m-7"
+          className="text-primary-text text-large font-bold m-10"
           onClick={kakaoLogin}
           onKeyDown={kakaoLogin}
           role="presentation"

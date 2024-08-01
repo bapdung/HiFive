@@ -11,7 +11,9 @@ import TicketList from "./pages/TicketPage/TicketPage.List";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
+import MainPage from "./pages/MainPage/MainPage";
 import CreatorList from "./pages/CreatorListPage/CreatorListPage";
+import JoinCreator from "./pages/JoinCreatorPage/JoinCreatorPage";
 
 function App() {
   const fetchTokens = useAuthStore((state) => state.fetchTokens);
@@ -45,7 +47,9 @@ function App() {
             path="/fanmeeting/:fanmeetingId/story"
             element={<StoryForm />}
           />
+          <Route path="/main" element={<MainPage />} />
           <Route path="/creator/list" element={<CreatorList />} />
+          <Route path="/parther" element={<JoinCreator />} />
         </Routes>
       </main>
       <Footer />
