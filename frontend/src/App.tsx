@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import useAuthStore from "./store/useAuthStore";
 
 import Navbar from "./components/Navbar/Navbar";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
@@ -12,6 +14,12 @@ import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
 import CreatorList from "./pages/CreatorListPage/CreatorListPage";
 
 function App() {
+  const fetchTokens = useAuthStore((state) => state.fetchTokens);
+
+  useEffect(() => {
+    fetchTokens();
+  }, [fetchTokens]);
+
   return (
     <div className="App">
       <Navbar />

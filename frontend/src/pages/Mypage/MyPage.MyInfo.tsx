@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
 import cameraIcon from "../../assets/icons/pink-cameraIcon.png";
 
@@ -14,13 +15,13 @@ type User = {
 };
 
 function MyInfo() {
+  const token = useAuthStore((state) => state.accessToken);
+
   const [userInfo, setUserInfo] = useState<User | null>(null);
 
   useEffect(() => {
     const getMemberInfo = async () => {
       try {
-        const token = process.env.REACT_APP_AUTHORIZATION;
-
         if (token) {
           const response = await client(token).get("/api/member");
           setUserInfo(response.data);

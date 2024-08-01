@@ -5,16 +5,22 @@ export const kakaoLogin = () => {
   window.location.href = REDIRECT_URI;
 };
 
-export const getRefreshToken = () => {
-  const refreshToken = document.cookie;
-  return refreshToken;
-};
+export const getAccessToken = async () => {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_END_POINT}/api/auth/refresh`,
+      {},
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
-export const getAccessToken = async (refreshToken: string) => {
-  const response = await axios.post(
-    `${process.env.REACT_APP_END_POINT}/api/auth/refresh`,
-    refreshToken,
-  );
-
-  return response.data.accessToken;
+    return response.data.accessToken;
+  } catch (error) {
+    console.error("Failed to get access token", error);
+    return null;
+  }
 };
