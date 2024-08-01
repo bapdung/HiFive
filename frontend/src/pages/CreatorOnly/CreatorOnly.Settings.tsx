@@ -30,10 +30,6 @@ function Settings() {
     console.log("퀴즈 모달 닫힘");
     setIsQuizModalOpen(false);
   };
-  const handleQuizSubmit = () => {
-    console.log("제출");
-    handleQuizClose();
-  };
 
   return (
     <>
@@ -90,10 +86,7 @@ function Settings() {
         ) : null}
       </div>
       {isQuizModalOpen ? (
-        <QuizCreateModal
-          handleQuizSubmit={handleQuizSubmit}
-          handleQuizClose={handleQuizClose}
-        />
+        <QuizCreateModal handleQuizClose={handleQuizClose} />
       ) : null}
     </>
   );
