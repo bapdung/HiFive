@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -26,16 +27,16 @@ import lombok.RequiredArgsConstructor;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
-	public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
 	public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
-	public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(2);
-	public static final String REDIRECT_PATH = "/";
 
 	private final TokenProvider tokenProvider;
 	private final TokenRepository tokenRepository;
 	private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 	private final MemberService memberService;
 	private final ObjectMapper objectMapper;
+
+	@Value("${spring.oauth2.redirect-uri}")
+	private String redirectUri;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -48,11 +49,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		saveRefreshToken(member, refreshToken);
 		addRefreshToken(request, response, refreshToken);
 
-		String accessToken = tokenProvider.generateToken(member, ACCESS_TOKEN_DURATION);
-
 		clearAuthenticationAttributes(request, response);
 
-		getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
+		getRedirectStrategy().sendRedirect(request, response, redirectUri);
 
 	}
 
@@ -80,15 +79,4 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 		return (String)kakaoAccount.get("email");
 	}
-
-	private void sendJsonResponse(HttpServletResponse response, String accessToken) throws IOException {
-		Map<String, Object> responseBody = Map.of(
-			"accessToken", accessToken
-		);
-
-		response.setContentType("application/json;charset=UTF-8");
-		response.setStatus(HttpServletResponse.SC_OK);
-		objectMapper.writeValue(response.getWriter(), responseBody);
-	}
-
 }
