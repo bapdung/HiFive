@@ -1,5 +1,6 @@
 package com.ssafy.hifive.domain.reservation.service;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,31 +16,41 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReservationService {
 	private final FanmeetingRepository fanmeetingRepository;
-	private final FanmeetingPayService fanmeetingPayService;
-	private final FanmeetingReserveService fanmeetingReserveService;
+	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
+	private final ReservationFanmeetingReserveService reservationFanmeetingReserveService;
+	private final ReservationRedisService reservationRedisService;
+	private final ReservationValidService reservationValidService;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public void reserve(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		//1. 이미 예약했는지 여부 확인
-		fanmeetingReserveService.checkReservation(fanmeeting, member);
+		reservationFanmeetingReserveService.checkReservation(fanmeeting, member);
 
-		//레디스 queue등록 필요
+		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+		Long queueSize = redisTemplate.opsForList().size(payingQueueKey);
+
+		reservationValidService.addToPayingQueueIsValid(queueSize, fanmeetingId, member.getMemberId());
+
+		reservationRedisService.addToPayingQueue(payingQueueKey, member.getMemberId());
 	}
 
 	@Transactional
 	public void pay(long fanmeetingId, Member member) {
+		String queueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		int remainingTicket = fanmeetingPayService.checkRemainingTicket(fanmeeting);
+		int remainingTicket = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
 
-		//2. 결제로직
-		fanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
+		reservationFanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
 
-		//3. 예약기록
-		fanmeetingPayService.recordReservation(fanmeeting, member);
+		reservationFanmeetingPayService.recordReservation(fanmeeting, member);
+		reservationRedisService.removeFromPayingQueue(queueKey, member.getMemberId());
+
+
 
 	}
 }

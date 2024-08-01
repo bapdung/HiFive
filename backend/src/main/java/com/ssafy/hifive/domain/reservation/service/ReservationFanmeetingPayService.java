@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FanmeetingPayService {
+public class ReservationFanmeetingPayService {
 	private final RedisTemplate<String, Integer> redisTemplate;
 	private final ReservationRepository reservationRepository;
 	private final PointRepository pointRepository;
@@ -29,7 +29,7 @@ public class FanmeetingPayService {
 	private final ReservationValidService reservationValidService;
 
 	public int checkRemainingTicket(Fanmeeting fanmeeting) {
-		String cacheKey = "remainingTicketCountForFanmeetingId" + fanmeeting.getFanmeetingId();
+		String cacheKey = "fanmeeting:" + fanmeeting.getFanmeetingId() + ":remaining-ticket";
 		Integer remainingTicket = redisTemplate.opsForValue().get(cacheKey);
 
 		if(remainingTicket == null) {
@@ -75,7 +75,7 @@ public class FanmeetingPayService {
 	}
 
 	private void decreaseTicketCount(long fanmeetingId, int remainingTicket) {
-		String cacheKey = "remainingTicketCountForFanmeetingId" + fanmeetingId;
+		String cacheKey ="fanmeeting:" + fanmeetingId + ":remaining-ticket";
 		redisTemplate.opsForValue().set(cacheKey, remainingTicket - 1, 10, TimeUnit.MINUTES);
 	}
 }
