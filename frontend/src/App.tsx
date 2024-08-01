@@ -24,7 +24,7 @@ function App() {
       ) : (
         <Navbar />
       )}
-      <main>
+      <main className="relative">
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
           <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />

@@ -1,4 +1,10 @@
-function Quiz() {
+import propTypes from "prop-types";
+
+interface QuizProps {
+  handleQuizOpen: () => void;
+}
+
+const Quiz: React.FC<QuizProps> = ({ handleQuizOpen }) => {
   const tempQuiz = [
     { id: 1, sequence: 1, detail: "설명", problem: "문제내용", answer: true },
     { id: 2, sequence: 2, detail: "설명", problem: "문제내용", answer: false },
@@ -8,7 +14,11 @@ function Quiz() {
   ];
   return (
     <div className="flex flex-col items-center">
-      <button type="button" className="my-8 w-1/4 creator-btn-md">
+      <button
+        type="button"
+        className="my-8 w-1/4 creator-btn-md"
+        onClick={handleQuizOpen}
+      >
         퀴즈 생성하기
       </button>
       <div className="w-3/4 flex flex-wrap justify-center gap-6">
@@ -40,6 +50,10 @@ function Quiz() {
       </div>
     </div>
   );
-}
+};
+
+Quiz.propTypes = {
+  handleQuizOpen: propTypes.func.isRequired,
+};
 
 export default Quiz;
