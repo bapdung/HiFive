@@ -18,6 +18,7 @@ function MyInfo() {
   const token = useAuthStore((state) => state.accessToken);
 
   const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [nickname, setNickname] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const getMemberInfo = async () => {
@@ -25,6 +26,7 @@ function MyInfo() {
         if (token) {
           const response = await client(token).get("/api/member");
           setUserInfo(response.data);
+          setNickname(userInfo?.nickname);
         }
       } catch (error) {
         console.error("Error 발생", error);
@@ -33,6 +35,19 @@ function MyInfo() {
 
     getMemberInfo();
   }, [token]);
+
+  const inputNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value);
+  };
+
+  const changeNickname = async () => {
+    if (token) {
+      const response = await client(token).post("/api/member/valid", {
+        nickname,
+      });
+      console.log(response.data);
+    }
+  };
 
   if (!userInfo) {
     return null;
@@ -78,15 +93,20 @@ function MyInfo() {
               {/* <span className="text-green text-small">
                 사용 가능한 닉네임입니다.
               </span> */}
-              <span className="text-red text-small">중복된 닉네임입니다.</span>
+              {/* <span className="text-red text-small">중복된 닉네임입니다.</span> */}
             </div>
             <input
               type="text"
               defaultValue={userInfo.nickname}
               id="nickname"
               className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2"
+              onChange={inputNickname}
             />
-            <button type="button" className="btn-light-lg mt-3">
+            <button
+              type="button"
+              className="btn-light-lg mt-3"
+              onClick={changeNickname}
+            >
               중복 확인
             </button>
           </div>
