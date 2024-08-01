@@ -42,7 +42,7 @@ public class FanmeetingService {
 	private final FanmeetingValidService fanmeetingValidService;
 	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
 
-	private final static int PAGE_SIZE = 5;
+	private final static int PAGE_SIZE = 10;
 
 	private Pageable createPageable(FanmeetingParam param) {
 		return PageRequest.of(0, PAGE_SIZE,
