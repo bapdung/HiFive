@@ -50,4 +50,11 @@ public class Quiz extends BaseTimeEntity {
 		this.sequence = sequence;
 		this.detail = detail;
 	}
+
+	public void updateQuiz(String problem, boolean answer, String detail, int sequence) {
+		this.problem = problem;
+		this.answer = answer;
+		this.sequence = sequence;
+		this.detail = detail;
+	}
 }
