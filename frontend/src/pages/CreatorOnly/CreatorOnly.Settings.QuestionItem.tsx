@@ -5,7 +5,7 @@ interface QuestionItemProps {
     questionId: number;
     nickname: string;
     contents: string;
-    isPicked: boolean;
+    picked: boolean;
   };
   typeOfQuestion: string;
   handleToggleQuestion: (id: number, type: string) => void;
@@ -19,7 +19,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   <div className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[0.5rem] px-10 justify-between bg-white">
     <p className="text-large">{question.nickname}</p>
     <p className="text-large text-gray-700">{question.contents}</p>
-    {question.isPicked ? (
+    {question.picked ? (
       <button
         className="creator-btn-light-md"
         type="button"
