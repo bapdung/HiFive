@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import client from "../../client";
 import QuestionItem from "./CreatorOnly.Settings.QuestionItem";
@@ -7,7 +7,7 @@ interface Question {
   questionId: number;
   nickname: string;
   contents: string;
-  isPicked: boolean;
+  picked: boolean;
 }
 
 function Question() {
@@ -18,6 +18,23 @@ function Question() {
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
 
+  // 전체 / 선택 / 미선택 클릭시 filter 적용
+  const doFilterQuestions = useCallback(
+    (type: string, questions = allQuestions) => {
+      const filtered = questions.filter((question) => {
+        if (type === "selected") {
+          return question.picked;
+        }
+        if (type === "unselected") {
+          return !question.picked;
+        }
+        return true;
+      });
+      setFilteredQuestions(filtered);
+    },
+    [allQuestions],
+  );
+
   // 모든 질문 불러오는 api 호출
   const fetchAllQuestions = async () => {
     const params = { page: 0 };
@@ -27,7 +44,7 @@ function Question() {
         { params },
       );
       setAllQuestions(response.data);
-      setFilteredQuestions(response.data); // 초기 로드 시 모든 질문을 필터링된 질문으로 설정
+      doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
       console.log("Question Response:", response.data);
     } catch (error) {
       console.log(fanmeetingId);
@@ -50,16 +67,7 @@ function Question() {
       setAllQuestions((prevQuestions) =>
         prevQuestions.map((question) =>
           question.questionId === id
-            ? { ...question, isPicked: !question.isPicked }
-            : question,
-        ),
-      );
-
-      // 필터링 상태 업데이트
-      setFilteredQuestions((prevQuestions) =>
-        prevQuestions.map((question) =>
-          question.questionId === id
-            ? { ...question, isPicked: !question.isPicked }
+            ? { ...question, picked: !question.picked }
             : question,
         ),
       );
@@ -68,25 +76,10 @@ function Question() {
     }
   };
 
-  // 전체 / 선택 / 미선택 클릭시 filter 적용
-  const doFilterQuestions = (type: string) => {
-    const filtered = allQuestions.filter((question) => {
-      if (type === "selected") {
-        return question.isPicked;
-      }
-      if (type === "unselected") {
-        return !question.isPicked;
-      }
-      return true;
-    });
-    setFilteredQuestions(filtered);
-  };
-
   // 질문 토글
-  const handleToggleQuestion = async (id: number, type: string) => {
+  const handleToggleQuestion = async (id: number) => {
     try {
       await toggleQuestion(id);
-      doFilterQuestions(type); // 필터 적용
     } catch (error) {
       console.error("Error:", error);
     }
@@ -94,9 +87,14 @@ function Question() {
 
   // 전체 / 선택 / 미선택 클릭시 동작
   const handleTypeOfQuestion = (type: string) => {
-    doFilterQuestions(type);
     setTypeOfQuestion(type);
+    doFilterQuestions(type);
   };
+
+  // 상태 업데이트 후 필터링 적용
+  useEffect(() => {
+    doFilterQuestions(typeOfQuestion);
+  }, [allQuestions, typeOfQuestion, doFilterQuestions]);
 
   return (
     <div className="flex flex-col w-full items-center">
