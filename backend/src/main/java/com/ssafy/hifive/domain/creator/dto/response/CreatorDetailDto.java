@@ -14,12 +14,12 @@ public final class CreatorDetailDto {
 	private String creatorName;
 	private String link;
 	private String description;
-	private int follower;
-	private int boardCount;
+	private long follower;
+	private long boardCount;
 	private LocalDateTime createdDate;
-	private int fanmeetingCount;
+	private long fanmeetingCount;
 
-	public static CreatorDetailDto from(Creator creator, int boardCount, int fanmeetingCount) {
+	public static CreatorDetailDto from(Creator creator, long boardCount, long fanmeetingCount) {
 		return new CreatorDetailDto(
 			creator.getCreatorProfileId(),
 			creator.getCreatorName(),

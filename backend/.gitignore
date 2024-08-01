@@ -333,8 +333,7 @@ gradle-app.setting
 # Ignore redis binary dump (dump.rdb) files
 
 *.rdb
-application-private.yml
-
+*.yml
 *.xml
 *.iml
 *.name

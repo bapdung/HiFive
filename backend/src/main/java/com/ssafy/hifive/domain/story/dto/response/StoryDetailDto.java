@@ -9,14 +9,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public final class StoryDetailDto {
 	private String title;
-	private String contents;
+	private String content;
 	private String nickname;
 	private boolean isPicked;
 
 	public static StoryDetailDto from(final Story story) {
 		return new StoryDetailDto(
 			story.getTitle(),
-			story.getContents(),
+			story.getContent(),
 			story.getFan().getNickname(),
 			story.isPicked()
 		);

@@ -7,8 +7,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PointParam {
-	@Schema(description = "transaction Month", allowableValues = {
-		"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"
+	@Schema(description = "최근 n달 조회", allowableValues = {
+		"3", "6", "12"
 	})
-	public int requestMonth;
+	public Integer period;
+
+	@Schema(description = "페이지")
+	private Integer page;
 }
