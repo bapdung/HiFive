@@ -68,8 +68,10 @@ export default {
           "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 15px 20px 0px rgba(0, 0, 0, 0.25)",
         "inner-shadow":
           "inset -10px -10px 20px rgba(0, 0, 0, 0.15), inset 10px 10px 20px rgba(0, 0, 0, 0.15)",
+        "pink-shadow":
+          "0px 2px 8px 0px rgba(255, 99, 146, 0.30), 0px -1px 1px 0px #FF6392 inset",
       },
     },
   },
-  plugins: [require("tailwind-scrollbar-hide")],
+  plugins: ["tailwind-scrollbar-hide"],
 };
