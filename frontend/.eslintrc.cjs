@@ -50,6 +50,7 @@ module.exports = {
     "react/function-component-definition": "off",
     "react/prop-types": "off",
     "import/no-unresolved": "off",
+    "no-console": "off",
   },
 
   settings: {
