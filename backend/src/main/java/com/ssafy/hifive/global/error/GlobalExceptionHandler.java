@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.hifive.global.error.response.AcceptedResponse;
 import com.ssafy.hifive.global.error.response.ErrorResponse;
+import com.ssafy.hifive.global.error.type.AcceptedException;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.BusinessException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -17,9 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
 	private ResponseEntity<ErrorResponse> createErrorResponse(ErrorCode errorCode) {
 		return new ResponseEntity<>(ErrorResponse.of(errorCode.getCode(), errorCode.getMessage()),
 			errorCode.getHttpStatus());
+	}
+
+	private ResponseEntity<AcceptedResponse> createAcceptedResponse(AcceptedCode acceptedCode) {
+		return new ResponseEntity<>(AcceptedResponse.of(acceptedCode.getCode(), acceptedCode.getMessage()),
+			acceptedCode.getHttpStatus());
 	}
 
 	@ExceptionHandler(UserNotFoundException.class)
@@ -51,6 +59,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
 		log.error("Error: ", e);
 		return createErrorResponse(e.getErrorCode());
+	}
+
+	@ExceptionHandler(AcceptedException.class)
+	public ResponseEntity<AcceptedResponse> handleAcceptedException(AcceptedException e) {
+		log.error("AcceptedException: ", e);
+		return createAcceptedResponse(e.getAcceptedCode());
 	}
 
 	@ExceptionHandler(Exception.class)
