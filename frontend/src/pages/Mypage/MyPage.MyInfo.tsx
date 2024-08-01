@@ -1,9 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import client from "../../client";
 
 import cameraIcon from "../../assets/icons/pink-cameraIcon.png";
 
+type User = {
+  creaotr: boolean;
+  email: string;
+  memberId: number;
+  name: string | null;
+  nickname: string;
+  point: number;
+  profileImg: string;
+};
+
 function MyInfo() {
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+
   useEffect(() => {
     const getMemberInfo = async () => {
       try {
@@ -11,7 +23,7 @@ function MyInfo() {
 
         if (token) {
           const response = await client(token).get("/api/member");
-          console.log(response.data);
+          setUserInfo(response.data);
         }
       } catch (error) {
         console.error("Error 발생", error);
@@ -21,11 +33,19 @@ function MyInfo() {
     getMemberInfo();
   }, []);
 
+  if (!userInfo) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col h-[900px] justify-center">
       <div className="flex w-[800px] justify-between">
         <div className="flex flex-col items-center pl-5">
-          <div className="w-64 h-64 bg-gray-300 rounded-full" />
+          <img
+            src={userInfo.profileImg}
+            alt="프로필이미지"
+            className="w-64 h-64 bg-gray-300 rounded-full"
+          />
           <button
             type="button"
             className="btn-outline-lg flex items-center mt-4"
@@ -42,13 +62,13 @@ function MyInfo() {
           <div className="flex flex-col">
             <span className="text-h6">이름</span>
             <span className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
-              서지흔
+              {userInfo.name}
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-h6">이메일 주소</span>
             <span className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
-              example@hifive.com
+              {userInfo.email}
             </span>
           </div>
           <div className="flex flex-col">
@@ -61,7 +81,7 @@ function MyInfo() {
             </div>
             <input
               type="text"
-              defaultValue="현재 닉네임"
+              defaultValue={userInfo.nickname}
               id="nickname"
               className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2"
             />
