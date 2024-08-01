@@ -26,7 +26,7 @@ function MyInfo() {
         if (token) {
           const response = await client(token).get("/api/member");
           setUserInfo(response.data);
-          setNickname(userInfo?.nickname);
+          setNickname(response.data.nickname);
         }
       } catch (error) {
         console.error("Error 발생", error);
