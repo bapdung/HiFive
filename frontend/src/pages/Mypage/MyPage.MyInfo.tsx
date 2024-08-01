@@ -32,7 +32,7 @@ function MyInfo() {
     };
 
     getMemberInfo();
-  }, []);
+  }, [token]);
 
   if (!userInfo) {
     return null;

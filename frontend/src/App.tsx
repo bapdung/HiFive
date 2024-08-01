@@ -15,10 +15,17 @@ import CreatorList from "./pages/CreatorListPage/CreatorListPage";
 
 function App() {
   const fetchTokens = useAuthStore((state) => state.fetchTokens);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
   useEffect(() => {
-    fetchTokens();
-  }, [fetchTokens]);
+    const localToken = localStorage.getItem("accessToken");
+
+    if (!localToken) {
+      fetchTokens();
+    } else {
+      setAccessToken(localToken);
+    }
+  }, [fetchTokens, setAccessToken]);
 
   return (
     <div className="App">
