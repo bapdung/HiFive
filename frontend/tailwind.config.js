@@ -57,6 +57,8 @@ export default {
           "linear-gradient(90deg, #FFFBFB 0%, #FFF1F5 100%)",
         "vertical-gradient":
           "linear-gradient(180deg, #FFF 0%, #FCEBF0 30%, #FFE7EE 100%)",
+        "vivid-gradient":
+          "linear-gradient(113deg, #FFE45E 25.38%, #FF6392 63.65%)",
       },
       boxShadow: {
         "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
@@ -64,6 +66,8 @@ export default {
         "mypage-shadow": "0px 2px 10px 0px rgba(0, 0, 0, 0.10)",
         "ticket-shadow":
           "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 15px 20px 0px rgba(0, 0, 0, 0.25)",
+        "inner-shadow":
+          "inset -10px -10px 20px rgba(0, 0, 0, 0.15), inset 10px 10px 20px rgba(0, 0, 0, 0.15)",
       },
     },
   },
