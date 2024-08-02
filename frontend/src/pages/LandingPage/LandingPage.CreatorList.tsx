@@ -26,7 +26,11 @@ const creators: Creator[] = [
 ];
 
 const CreatorList: React.FC = () => {
-  const repeatedCreators = [...creators, ...creators, ...creators];
+  const repeatedCreators = creators.flatMap((creator) =>
+    Array(3)
+      .fill(creator)
+      .map((item, index) => ({ ...item, uniqueId: `${item.id}-${index}` })),
+  );
 
   return (
     <div className="flex flex-col items-center w-full bg-white py-20">
@@ -41,7 +45,10 @@ const CreatorList: React.FC = () => {
       <div className="flex overflow-hidden w-full">
         <div className="flex animate-scroll">
           {repeatedCreators.map((creator) => (
-            <div key={creator.id} className="flex flex-col items-center mx-5">
+            <div
+              key={creator.uniqueId}
+              className="flex flex-col items-center mx-5"
+            >
               <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                 <img
                   src={creator.src}
