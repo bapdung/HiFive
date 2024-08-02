@@ -115,7 +115,11 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedOrigins(Arrays.asList(
+			"http://i11a107.p.ssafy.io",
+			"https://i11a107.p.ssafy.io",
+			"http://i11a107.p.ssafy.io:8080",
+			"http://i11a107.p.ssafy.io:8080"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 		configuration.setExposedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
@@ -125,5 +129,5 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
-	
+
 }
