@@ -1,6 +1,6 @@
 import FanmeetingInfo from "../../components/FanmeetingInfo";
-import preIcon from "../../assets/icons/preIcon.png";
-import nextIcon from "../../assets/icons/nextIcon.png";
+import preIcon from "../../assets/icons/preIcon.svg";
+import nextIcon from "../../assets/icons/nextIcon.svg";
 
 function Fanmeeting() {
   return (
