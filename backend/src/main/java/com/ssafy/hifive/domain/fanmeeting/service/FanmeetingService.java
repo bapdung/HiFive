@@ -189,5 +189,4 @@ public class FanmeetingService {
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
-
 }
