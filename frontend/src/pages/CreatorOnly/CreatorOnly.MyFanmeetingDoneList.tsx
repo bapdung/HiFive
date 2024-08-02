@@ -25,6 +25,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
   const location = useLocation();
   const creatorId = parseInt(location.pathname.split("/")[3], 10);
   const [fanmeetings, setFanmeetings] = useState<Fanmeeting[]>([]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchFanmeetings = async () => {
     const token = process.env.REACT_APP_AUTHORIZATION as string;
     try {
@@ -43,7 +44,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
 
   useEffect(() => {
     fetchFanmeetings();
-  }, [creatorId, isRecent]);
+  }, [creatorId, fetchFanmeetings, isRecent]);
 
   return (
     <div className="w-full flex flex-wrap">
