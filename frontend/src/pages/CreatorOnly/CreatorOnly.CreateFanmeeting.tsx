@@ -114,7 +114,7 @@ function CreateFanmeeting() {
   const checkStartDateValidation = (date: Date) => {
     const today = new Date();
     const difference = differenceInDays(date, today);
-    if (difference <= 7) {
+    if (difference < 7) {
       alert("일주일 뒤 날짜만 선택 가능합니다.");
       return false;
     }
