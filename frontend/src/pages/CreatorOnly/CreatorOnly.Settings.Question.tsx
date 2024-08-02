@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import client from "../../client";
 import QuestionItem from "./CreatorOnly.Settings.QuestionItem";
+import useAuthStore from "../../store/useAuthStore";
 
 interface Question {
   questionId: number;
@@ -11,7 +12,7 @@ interface Question {
 }
 
 function Question() {
-  const token = process.env.REACT_APP_AUTHORIZATION as string;
+  const token = useAuthStore((state) => state.accessToken);
   const location = useLocation();
   const fanmeetingId = location.pathname.split("/")[2];
   const [typeOfQuestion, setTypeOfQuestion] = useState("all");
