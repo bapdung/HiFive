@@ -8,9 +8,7 @@ import org.springframework.util.SerializationUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class CookieUtil {
 
 	public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, boolean httpOnly,
@@ -20,31 +18,9 @@ public class CookieUtil {
 		cookie.setPath("/");
 		cookie.setMaxAge(maxAge);
 		cookie.setSecure(secure);
-
-		// 쿠키 추가
+		cookie.setAttribute("SameSite", "None");
 		response.addCookie(cookie);
 
-		// SameSite 설정을 위한 헤더 추가
-		String sameSite = "None";
-		StringBuilder headerValue = new StringBuilder()
-			.append(
-				String.format("%s=%s; Max-Age=%d; Path=%s; ", cookie.getName(), cookie.getValue(), cookie.getMaxAge(),
-					cookie.getPath()));
-
-		if (secure) {
-			headerValue.append("Secure; ");
-		}
-
-		if (httpOnly) {
-			headerValue.append("HttpOnly; ");
-		}
-
-		headerValue.append("SameSite=").append(sameSite);
-
-		response.addHeader("Set-Cookie", headerValue.toString());
-
-		// 쿠키 설정 로그 추가
-		log.info("Set-Cookie header: " + headerValue.toString());
 	}
 
 	public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
