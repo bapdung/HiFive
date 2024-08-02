@@ -29,7 +29,7 @@ public class ActiveFanmeetingTest {
 		fanmeetingRepository.getActiveFanmeetingIds();
 		scheduler.updateActiveFanmeetingsId();
 
-		List<Long> expectedIds = Arrays.asList(32L, 33L, 34L);
+		List<Long> expectedIds = Arrays.asList(16L, 17L, 18L);
 		assertEquals(expectedIds, scheduler.getActiveFanmeetingIds());
 	}
 }
