@@ -3,8 +3,8 @@ import Ticket from "./MainPage.Ticket";
 import poster from "../../assets/img/poster.jpg";
 import stamp from "../../assets/img/ticket-stamp.png";
 import barcode from "../../assets/img/ticket-barcode.png";
-import prev from "../../assets/icons/preIcon.png";
-import next from "../../assets/icons/nextIcon.png";
+import prev from "../../assets/icons/preIcon.svg";
+import next from "../../assets/icons/nextIcon.svg";
 
 const Carousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(1); // Start from the first actual ticket
@@ -96,20 +96,20 @@ const Carousel: React.FC = () => {
         <button
           type="button"
           onClick={handlePrevClick}
-          className=" bg-gray-100 text-gray-900 px-[7px] py-[1px] rounded-full mr-5"
+          className=" bg-gray-100 text-gray-900 px-[1px] py-[1px] rounded-full mr-5"
           disabled={currentIndex === 1}
         >
           <span className="sr-only">Previous</span>
-          <img src={prev} alt="Previous" className="scale-50 mr-[2px]" />
+          <img src={prev} alt="Previous" className=" mr-[2px]" />
         </button>
         <button
           type="button"
           onClick={handleNextClick}
-          className=" bg-gray-100 text-gray-900 px-[7px] py-[1px] rounded-full"
+          className=" bg-gray-100 text-gray-900 px-[1px] py-[1px] rounded-full"
           disabled={currentIndex === tickets.length - 2}
         >
           <span className="sr-only">Next</span>
-          <img src={next} alt="Next" className="scale-50 ml-[2px]" />
+          <img src={next} alt="Next" className=" ml-[2px]" />
         </button>
       </div>
     </div>

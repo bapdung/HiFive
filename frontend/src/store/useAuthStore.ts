@@ -20,6 +20,7 @@ const useAuthStore = create<AuthState>((set) => ({
       if (newAccessToken) {
         localStorage.setItem("accessToken", newAccessToken);
         set({ accessToken: newAccessToken });
+        window.location.reload();
       }
     } catch (error) {
       console.error("Failed to fetch tokens:", error);
