@@ -8,7 +8,9 @@ import org.springframework.util.SerializationUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CookieUtil {
 
 	public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, boolean httpOnly,
@@ -20,10 +22,24 @@ public class CookieUtil {
 		cookie.setSecure(secure);
 
 		String sameSite = "None";
-		response.addHeader("Set-Cookie",
-			String.format("%s=%s; Max-Age=%d; Path=%s; Secure=%s; HttpOnly=%s; SameSite=%s",
-				cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath(),
-				cookie.getSecure() ? "Secure" : "", cookie.isHttpOnly() ? "HttpOnly" : "", sameSite));
+		StringBuilder headerValue = new StringBuilder()
+			.append(
+				String.format("%s=%s; Max-Age=%d; Path=%s; ", cookie.getName(), cookie.getValue(), cookie.getMaxAge(),
+					cookie.getPath()));
+
+		if (secure) {
+			headerValue.append("Secure; ");
+		}
+
+		if (httpOnly) {
+			headerValue.append("HttpOnly; ");
+		}
+
+		headerValue.append("SameSite=").append(sameSite);
+
+		response.addHeader("Set-Cookie", headerValue.toString());
+
+		log.info("Set-Cookie header: " + headerValue.toString());
 	}
 
 	public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
