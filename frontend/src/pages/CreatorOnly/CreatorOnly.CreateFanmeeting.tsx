@@ -184,12 +184,12 @@ function CreateFanmeeting() {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          const base64String = (reader.result as string)
-            .replace("data:", "")
-            .replace(/^.+,/, "");
+          // const base64String = (reader.result as string)
+          //   .replace("data:", "")
+          //   .replace(/^.+,/, "");
           // 서버로 base64String을 전송
           // 예: await uploadImageToServer(base64String);
-          console.log(base64String); // 테스트용으로 출력
+          // console.log(base64String); // 테스트용으로 출력
           setImagePreview("testimage.png");
         } else {
           console.error("FileReader result is null");
