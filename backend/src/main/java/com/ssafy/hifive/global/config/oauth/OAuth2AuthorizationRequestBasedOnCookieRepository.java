@@ -30,7 +30,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 		Cookie cookie = WebUtils.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
 
 		log.info(cookie.toString());
-		
+		log.info("Authorization request cookie value: " + cookie.getValue());
 		return CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class);
 	}
 
