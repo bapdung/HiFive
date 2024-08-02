@@ -46,7 +46,7 @@ public class FanmeetingService {
 
 	private Pageable createPageable(FanmeetingParam param) {
 		return PageRequest.of(0, PAGE_SIZE,
-			Sort.by(Sort.Direction.fromString(param.getSort()), "startDate"));
+			Sort.by(Sort.Direction.fromString(param.getSort() != null ? param.getSort() : "desc"), "startDate"));
 	}
 
 	public FanmeetingDetailDto getFanmeetingDetail(long fanmeetingId, Member member) {
@@ -163,13 +163,11 @@ public class FanmeetingService {
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(FanmeetingParam param, Member member) {
-		Fanmeeting fanmeeting = fanmeetingRepository.findById(param.getTop())
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
-		LocalDateTime topDate = fanmeeting.getStartDate();
+		LocalDateTime top = fanmeetingValidService.validateTop(param.getTop());
 
 		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByFanWithScrolling(
 			member.getMemberId(),
-			topDate,
+			top,
 			param.getSort(),
 			true);
 
