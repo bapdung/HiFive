@@ -11,7 +11,7 @@ function Navbar() {
 
   return (
     <div
-      className={`z-10 bg-white flex w-screen justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-[rgba(255,255,255,0.6)] backdrop-blur-xl shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
+      className={`z-10 bg-white flex w-screen justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-[rgba(255,255,255,0.9)] backdrop-blur-md shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
     >
       <div>
         <img
