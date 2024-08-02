@@ -47,8 +47,7 @@ function Navbar() {
           src={logo}
           alt="Logo"
           className="w-[164.72px] h-[44px]"
-          onClick={() => navigate("/")}
-          onKeyDown={() => navigate("/")}
+          onClick={() => navigate("/main")}
           role="presentation"
         />
       </div>
