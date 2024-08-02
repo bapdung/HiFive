@@ -119,10 +119,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 			"http://i11a107.p.ssafy.io",
 			"https://i11a107.p.ssafy.io",
 			"http://i11a107.p.ssafy.io:8080",
-			"http://i11a107.p.ssafy.io:8080",
-			"http://localhost:8080",
-			"http://localhost:3000"));
-		// configuration.addAllowedOriginPattern("*");
+			"http://i11a107.p.ssafy.io:8080"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 		configuration.setExposedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
