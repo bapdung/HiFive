@@ -68,6 +68,6 @@ public class TokenService {
 
 	private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
 		CookieUtil.addCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken,
-			(int)REFRESH_TOKEN_DURATION.toSeconds(), true, false);
+			(int)REFRESH_TOKEN_DURATION.toSeconds(), false, false);
 	}
 }
