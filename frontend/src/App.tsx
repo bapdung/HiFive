@@ -18,6 +18,7 @@ import JoinCreator from "./pages/JoinCreatorPage/JoinCreatorPage";
 import CreatorOnly from "./pages/CreatorOnly/CreatorOnly.MyFanmeeting";
 import CreateFanmeeting from "./pages/CreatorOnly/CreatorOnly.CreateFanmeeting";
 import Settings from "./pages/CreatorOnly/CreatorOnly.Settings";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 function App() {
   const location = useLocation();
@@ -73,6 +74,7 @@ function App() {
           <Route path="/main" element={<MainPage />} />
           <Route path="/creator/list" element={<CreatorList />} />
           <Route path="/parther" element={<JoinCreator />} />
+          <Route path="/" element={<LandingPage />} />
         </Routes>
       </main>
       <Footer />
