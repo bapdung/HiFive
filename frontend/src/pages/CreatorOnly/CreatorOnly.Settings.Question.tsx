@@ -41,13 +41,15 @@ function Question() {
   const fetchAllQuestions = async () => {
     const params = { page: 0 };
     try {
-      const response = await client(token).get(
-        `/api/question/${fanmeetingId}`,
-        { params },
-      );
-      setAllQuestions(response.data);
-      doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
-      // console.log("Question Response:", response.data);
+      if (token) {
+        const response = await client(token).get(
+          `/api/question/${fanmeetingId}`,
+          { params },
+        );
+        setAllQuestions(response.data);
+        doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
+        // console.log("Question Response:", response.data);
+      }
     } catch (error) {
       // console.log(fanmeetingId);
       console.error("Fetch All Question Error:", error);
@@ -62,16 +64,18 @@ function Question() {
   // toggle 시 토글 api 호출
   const toggleQuestion = async (id: number) => {
     try {
-      await client(token).patch(`/api/question/${id}/toggle`);
+      if (token) {
+        await client(token).patch(`/api/question/${id}/toggle`);
 
-      // 로컬 상태 업데이트
-      setAllQuestions((prevQuestions) =>
-        prevQuestions.map((question) =>
-          question.questionId === id
-            ? { ...question, picked: !question.picked }
-            : question,
-        ),
-      );
+        // 로컬 상태 업데이트
+        setAllQuestions((prevQuestions) =>
+          prevQuestions.map((question) =>
+            question.questionId === id
+              ? { ...question, picked: !question.picked }
+              : question,
+          ),
+        );
+      }
     } catch (error) {
       console.error("Error:", error);
     }
