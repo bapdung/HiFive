@@ -20,6 +20,7 @@ import {
 import Modal from "./CreatorOnly.CreateFanmeeting.Modal";
 // import axios from "axios";
 import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
 // drag and drop 할 때 형식
 interface Corner {
@@ -327,6 +328,7 @@ function CreateFanmeeting() {
     return true;
   };
 
+  const token = useAuthStore((state) => state.accessToken);
   const submitCreateFanmeeting = async () => {
     // 해당 결과를 back으로 전송
     const [hours, minutes] = selectedDuration.split(":").map(Number);
@@ -342,9 +344,8 @@ function CreateFanmeeting() {
       timetable: convertCornersToIndices(corners),
     };
 
-    const token = process.env.REACT_APP_AUTHORIZATION as string;
-    console.log(result);
-    console.log(token);
+    // console.log(result);
+    // console.log(token);
     try {
       if (!token) {
         return;

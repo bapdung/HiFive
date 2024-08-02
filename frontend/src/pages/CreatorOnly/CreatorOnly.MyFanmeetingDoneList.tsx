@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import MyFanmeetingItem from "./CreatorOnly.MyFanmeetingItem";
 import client from "../../client";
 import formatDate from "../../utils/formatDate";
+import useAuthStore from "../../store/useAuthStore";
 
 interface MyFanmeetingDoneListProps {
   isRecent: boolean;
@@ -25,9 +26,10 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
   const location = useLocation();
   const creatorId = parseInt(location.pathname.split("/")[3], 10);
   const [fanmeetings, setFanmeetings] = useState<Fanmeeting[]>([]);
+  const token = useAuthStore((state) => state.accessToken);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchFanmeetings = async () => {
-    const token = process.env.REACT_APP_AUTHORIZATION as string;
     try {
       if (!token) {
         return;
