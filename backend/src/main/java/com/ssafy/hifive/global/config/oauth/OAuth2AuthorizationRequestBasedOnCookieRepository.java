@@ -26,11 +26,8 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 
 	@Override
 	public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
-		log.info(request.toString());
 		Cookie cookie = WebUtils.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
 
-		log.info(cookie.toString());
-		log.info("Authorization request cookie value: " + cookie.getValue());
 		return CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class);
 	}
 
@@ -44,7 +41,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 		}
 
 		CookieUtil.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME,
-			CookieUtil.serialize(authorizationRequest), COOKIE_EXPIRE_SECONDS, true, true);
+			CookieUtil.serialize(authorizationRequest), COOKIE_EXPIRE_SECONDS, true, false);
 	}
 
 	public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
