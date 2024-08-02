@@ -52,9 +52,9 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 
 	private BooleanExpression isScheduledFanmeeting(boolean isScheduled) {
 		if (isScheduled) {
-			return fanmeeting.startDate.loe(LocalDateTime.now());
-		} else {
 			return fanmeeting.startDate.goe(LocalDateTime.now());
+		} else {
+			return fanmeeting.startDate.loe(LocalDateTime.now());
 		}
 	}
 
