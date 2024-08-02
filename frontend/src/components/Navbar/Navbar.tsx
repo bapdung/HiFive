@@ -39,7 +39,13 @@ function Navbar() {
       <div className="flex items-center">
         {login ? (
           <>
-            <div className="text-primary-text text-medium m-7">마이페이지</div>
+            <div
+              className="text-primary-text text-medium m-7"
+              onClick={() => navigate("/mypage")}
+              role="presentation"
+            >
+              마이페이지
+            </div>
             <div className="btn-light-lg">로그아웃</div>
           </>
         ) : (
