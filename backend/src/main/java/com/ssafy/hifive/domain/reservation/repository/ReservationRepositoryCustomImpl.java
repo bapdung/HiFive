@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReservationRepositoryCustomImpl implements ReservationRepositoryCustom {
 
-	private final JPAQueryFactory jpaQueryFactory;
 	private final JPAQueryFactory queryFactory;
 
 	@Override

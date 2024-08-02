@@ -14,8 +14,6 @@ import com.ssafy.hifive.domain.point.entity.TransactionType;
 import com.ssafy.hifive.domain.point.repository.PointRepository;
 import com.ssafy.hifive.domain.reservation.entity.Reservation;
 import com.ssafy.hifive.domain.reservation.repository.ReservationRepository;
-import com.ssafy.hifive.global.error.ErrorCode;
-import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FanmeetingPayService {
+public class ReservationFanmeetingPayService {
 	private final RedisTemplate<String, Integer> redisTemplate;
 	private final ReservationRepository reservationRepository;
 	private final PointRepository pointRepository;
@@ -31,7 +29,7 @@ public class FanmeetingPayService {
 	private final ReservationValidService reservationValidService;
 
 	public int checkRemainingTicket(Fanmeeting fanmeeting) {
-		String cacheKey = "remainingTicketCountForFanmeetingId" + fanmeeting.getFanmeetingId();
+		String cacheKey = "fanmeeting:" + fanmeeting.getFanmeetingId() + ":remaining-ticket";
 		Integer remainingTicket = redisTemplate.opsForValue().get(cacheKey);
 
 		if(remainingTicket == null) {
@@ -51,24 +49,20 @@ public class FanmeetingPayService {
 		int price = fanmeeting.getPrice();
 		String detail = fanmeeting.getTitle();
 
-		if(price <= member.getPoint()){
-			member.updatePoint(member.getPoint() - price);
-			memberRepository.save(member);
+		reservationValidService.PointIsValid(member, price);
 
-			Point point = Point.builder()
-				.member(member)
-				.detail(detail)
-				.point(price)
-				.type(TransactionType.MINUS)
-				.build();
-			pointRepository.save(point);
+		member.updatePoint(member.getPoint() - price);
+		memberRepository.save(member);
 
-			decreaseTicketCount(fanmeeting.getFanmeetingId(), remainingTicket);
+		Point point = Point.builder()
+			.member(member)
+			.detail(detail)
+			.point(price)
+			.type(TransactionType.MINUS)
+			.build();
+		pointRepository.save(point);
 
-
-		} else {
-			throw new DataNotFoundException(ErrorCode.WANT_FOR_MONEY);
-		}
+		decreaseTicketCount(fanmeeting.getFanmeetingId(), remainingTicket);
 	}
 
 	@Transactional
@@ -81,7 +75,7 @@ public class FanmeetingPayService {
 	}
 
 	private void decreaseTicketCount(long fanmeetingId, int remainingTicket) {
-		String cacheKey = "remainingTicketCountForFanmeetingId" + fanmeetingId;
+		String cacheKey ="fanmeeting:" + fanmeetingId + ":remaining-ticket";
 		redisTemplate.opsForValue().set(cacheKey, remainingTicket - 1, 10, TimeUnit.MINUTES);
 	}
 }
