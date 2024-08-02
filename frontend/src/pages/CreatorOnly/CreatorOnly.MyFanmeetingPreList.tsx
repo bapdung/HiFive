@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import MyFanmeetingItem from "./CreatorOnly.MyFanmeetingItem";
 import client from "../../client";
 import formatDate from "../../utils/formatDate";
+import useAuthStore from "../../store/useAuthStore";
 // import useOnMounted from "../../utils/useOnMounted";
 
 interface Fanmeeting {
@@ -14,11 +15,12 @@ interface Fanmeeting {
 }
 
 function MyFanmeetingPreList() {
+  const token = useAuthStore((state) => state.accessToken);
   // const location = useLocation();
   // const creatorId = parseInt(location.pathname.split("/")[3], 10);
   const [prevFanmeetings, setPrevFanmeetings] = useState<Fanmeeting[]>([]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchPrevFanmeetings = async () => {
-    const token = process.env.REACT_APP_AUTHORIZATION as string;
     try {
       if (!token) {
         return;
@@ -35,7 +37,7 @@ function MyFanmeetingPreList() {
   };
   useEffect(() => {
     fetchPrevFanmeetings();
-  }, []);
+  }, [fetchPrevFanmeetings]);
 
   return (
     <div className="w-full flex flex-wrap">
