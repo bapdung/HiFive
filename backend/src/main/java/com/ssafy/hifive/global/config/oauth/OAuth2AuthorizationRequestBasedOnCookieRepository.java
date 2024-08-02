@@ -9,7 +9,9 @@ import com.ssafy.hifive.global.util.CookieUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class OAuth2AuthorizationRequestBasedOnCookieRepository implements AuthorizationRequestRepository {
 
 	public final static String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
@@ -25,6 +27,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 	@Override
 	public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
 		Cookie cookie = WebUtils.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
+
 		return CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class);
 	}
 
@@ -38,7 +41,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 		}
 
 		CookieUtil.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME,
-			CookieUtil.serialize(authorizationRequest), COOKIE_EXPIRE_SECONDS, true, true);
+			CookieUtil.serialize(authorizationRequest), COOKIE_EXPIRE_SECONDS, false, false);
 	}
 
 	public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {

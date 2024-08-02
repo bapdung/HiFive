@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 function Board() {
+  const navigate = useNavigate();
   return (
     <div className="bg-white px-10 py-7 rounded-3xl mt-9">
       <div className="flex justify-between">
@@ -9,7 +12,11 @@ function Board() {
             <span className="text-small text-gray-700">2024. 07. 15</span>
           </div>
         </div>
-        <div className="btn-light-md h-8 flex justify-center items-center">
+        <div
+          className="btn-light-md h-8 flex justify-center items-center"
+          onClick={() => navigate("/creator/1/1")}
+          role="presentation"
+        >
           자세히보기
         </div>
       </div>
