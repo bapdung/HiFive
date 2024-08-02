@@ -3,7 +3,7 @@ import { getAccessToken } from "../service/authService";
 
 interface AuthState {
   accessToken: string | null;
-  setAccessToken: (token: string) => void;
+  setAccessToken: (token: string | null) => void;
   fetchTokens: () => Promise<void>;
 }
 

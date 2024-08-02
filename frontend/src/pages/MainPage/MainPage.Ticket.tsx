@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 interface TicketProps {
   key: number;
   poster: string;
@@ -17,6 +19,8 @@ const Ticket: React.FC<TicketProps> = ({
   startTime,
   isActive,
 }) => {
+  const navigate = useNavigate();
+
   if (!event && !startTime) {
     if (key) {
       return <div className="w-[762px] h-[544px]" />;
@@ -29,7 +33,13 @@ const Ticket: React.FC<TicketProps> = ({
       className={`flex mb-8 mr-8 transition-transform duration-500 ${isActive ? "opacity-100" : "opacity-40 scale-95"}`}
     >
       <div className="w-[414px] h-[544px] flex flex-col bg-primary-100 rounded-2xl py-8 items-center justify-center shadow-ticket-shadow">
-        <img src={poster} alt="poster" className="rounded-2xl" />
+        <img
+          src={poster}
+          alt="poster"
+          className="rounded-2xl"
+          onClick={() => navigate("/ticket/1")}
+          role="presentation"
+        />
       </div>
       <div className="relative w-[348px] h-[544px] flex flex-col bg-white rounded-2xl items-center shadow-ticket-shadow">
         <img src={stamp} alt="stamp" className="mt-3" />

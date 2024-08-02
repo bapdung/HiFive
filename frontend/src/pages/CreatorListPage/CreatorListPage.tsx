@@ -28,7 +28,7 @@ function CreatorList() {
           현재 HiFive에서 활동하고 있는 크리에이터 전체 목록입니다.
         </h3>
       </div>
-      <div className="mt-52 w-screen flex flex-col items-center">
+      <div className="mt-72 w-screen flex flex-col items-center">
         <div className="flex relative items-center">
           <input
             className="w-[1200px] h-[75px] px-5 pr-20 rounded-full shadow-pink-shadow z-50 focus:outline-none text-h5"
