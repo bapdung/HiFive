@@ -49,7 +49,7 @@ spring:
             user-name-attribute: id
 
   oauth2:
-    redirect-uri: http://localhost:3000
+    redirect-uri: http://i11a107.p.ssafy.io:3000
 
   jwt:
     issuer: ${jwt.issuer}
