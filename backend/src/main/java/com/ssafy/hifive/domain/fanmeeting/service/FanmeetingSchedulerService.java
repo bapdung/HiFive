@@ -31,4 +31,5 @@ public class FanmeetingSchedulerService {
 			.collect(Collectors.toList());
 		log.info("fanmeeting ids: {}", activeFanmeetingIds);
 	}
+
 }
