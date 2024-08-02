@@ -1,13 +1,26 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { kakaoLogin } from "../../service/authService";
 
 import logo from "../../assets/icons/logo/logo.png";
 
 function Navbar() {
+  const [login, setLogin] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const isLanding = location.pathname === "/";
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("accessToken");
+
+    if (localToken) {
+      setLogin(true);
+    } else {
+      setLogin(false);
+    }
+  }, []);
 
   return (
     <div
@@ -24,20 +37,25 @@ function Navbar() {
         />
       </div>
       <div className="flex items-center">
-        <div
-          className="text-primary-text text-large font-bold m-10"
-          onClick={kakaoLogin}
-          onKeyDown={kakaoLogin}
-          role="presentation"
-        >
-          로그인
-        </div>
-        <div className="btn-lg">회원가입</div>
+        {login ? (
+          <>
+            <div className="text-primary-text text-medium m-7">마이페이지</div>
+            <div className="btn-light-lg">로그아웃</div>
+          </>
+        ) : (
+          <>
+            <div
+              className="text-primary-text text-large font-bold m-10"
+              onClick={kakaoLogin}
+              onKeyDown={kakaoLogin}
+              role="presentation"
+            >
+              로그인
+            </div>
+            <div className="btn-lg">회원가입</div>
+          </>
+        )}
       </div>
-      {/* <div className="flex items-center">
-        <div className="text-primary-text text-medium m-7">마이페이지</div>
-        <div className="btn-light-lg">로그아웃</div>
-      </div> */}
     </div>
   );
 }
