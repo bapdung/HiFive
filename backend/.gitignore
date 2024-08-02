@@ -338,4 +338,6 @@ gradle-app.setting
 *.iml
 *.name
 
+src/main/resources/static/*
+
 # End of https://www.toptal.com/developers/gitignore/api/redis
