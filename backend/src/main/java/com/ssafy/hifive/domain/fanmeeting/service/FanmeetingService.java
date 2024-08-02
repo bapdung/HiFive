@@ -53,7 +53,7 @@ public class FanmeetingService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findByIdWithTimetable(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		return FanmeetingDetailDto.from(fanmeeting);
+		return FanmeetingDetailDto.from(fanmeeting, member);
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingAllForFan(Member member) {
