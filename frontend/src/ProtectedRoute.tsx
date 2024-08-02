@@ -10,13 +10,11 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredCreator = false,
 }) => {
-  const [isCreator, setIsCreator] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const token = useAuthStore((state) => state.accessToken);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("컴포넌트확인");
     const fetchUser = async () => {
       try {
         if (!token) {
@@ -24,10 +22,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           return;
         }
         const response = await client(token).get("api/member");
-        console.log("success : 유저 정보 Fetch");
-        console.log(response.data);
-        if (response.data.creator) {
-          setIsCreator(true);
+        if (response.data.creator !== requiredCreator) {
+          navigate(-1);
         }
       } catch (error) {
         console.error("Fetch User Error :", error);
@@ -35,17 +31,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         setIsLoading(false);
       }
     };
-
     fetchUser();
-  }, [token]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (requiredCreator && !isCreator) {
-        navigate(-1); // 이전 페이지로 이동
-      }
-    }
-  }, [isLoading, requiredCreator, isCreator, navigate]);
+  }, [navigate, requiredCreator, token]);
 
   if (isLoading) {
     return <div>Loading...</div>;
