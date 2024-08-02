@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ProfileImg from "../../assets/temp/profile.svg";
 import PosterImg from "../../assets/temp/poster.svg";
@@ -7,9 +8,13 @@ import Info from "./TicketPage.DetailInfo";
 
 function Detail() {
   const [isReserved, setIsReserved] = useState(false);
+
+  const navigate = useNavigate();
+
   function toggleReserved() {
     setIsReserved(!isReserved);
   }
+
   return (
     <div className="my-10 flex justify-center w-full">
       <div className="w-[60%] bg-white rounded-[25px] p-10">
@@ -84,10 +89,18 @@ function Detail() {
                 아래 링크를 통해 질문과 사연을 남겨주세요.
               </p>
               <div className="mb-2.5">
-                <button type="button" className="mr-6 btn-outline-md">
+                <button
+                  type="button"
+                  className="mr-6 btn-outline-md"
+                  onClick={() => navigate("/fanmeeting/1/question")}
+                >
                   질문 작성
                 </button>
-                <button type="button" className="btn-outline-md">
+                <button
+                  type="button"
+                  className="btn-outline-md"
+                  onClick={() => navigate("/fanmeeting/1/story")}
+                >
                   사연 작성
                 </button>
               </div>
