@@ -44,7 +44,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 		}
 
 		CookieUtil.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME,
-			CookieUtil.serialize(authorizationRequest), COOKIE_EXPIRE_SECONDS, false, true);
+			CookieUtil.serialize(authorizationRequest), COOKIE_EXPIRE_SECONDS, false, false);
 	}
 
 	public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
