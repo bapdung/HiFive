@@ -148,7 +148,22 @@ body {
 }
 
 main {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
   margin: 0 auto;
   min-width: 1600px;
   max-width: 1920px;
+}
+
+@layer utilities {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
 }
