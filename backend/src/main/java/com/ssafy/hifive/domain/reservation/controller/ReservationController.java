@@ -4,8 +4,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +32,7 @@ public class ReservationController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> reserve(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
 		reservationService.reserve(fanmeetingId, member);
@@ -44,7 +44,7 @@ public class ReservationController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/{fanmeetingId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/{fanmeetingId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> pay(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
 		reservationService.pay(fanmeetingId, member);
