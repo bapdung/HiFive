@@ -17,6 +17,7 @@ function MyFanmeetingPreList() {
   // const location = useLocation();
   // const creatorId = parseInt(location.pathname.split("/")[3], 10);
   const [prevFanmeetings, setPrevFanmeetings] = useState<Fanmeeting[]>([]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchPrevFanmeetings = async () => {
     const token = process.env.REACT_APP_AUTHORIZATION as string;
     try {
@@ -35,7 +36,7 @@ function MyFanmeetingPreList() {
   };
   useEffect(() => {
     fetchPrevFanmeetings();
-  }, []);
+  }, [fetchPrevFanmeetings]);
 
   return (
     <div className="w-full flex flex-wrap">
