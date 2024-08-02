@@ -23,7 +23,6 @@ public class CookieUtil {
 		cookie.setAttribute("SameSite", "None");
 		response.addCookie(cookie);
 
-		String sameSite = "None";
 		StringBuilder headerValue = new StringBuilder()
 			.append(
 				String.format("%s=%s; Max-Age=%d; Path=%s; ", cookie.getName(), cookie.getValue(), cookie.getMaxAge(),
@@ -36,8 +35,6 @@ public class CookieUtil {
 		if (httpOnly) {
 			headerValue.append("HttpOnly; ");
 		}
-
-		headerValue.append("SameSite=").append(sameSite);
 
 		response.addHeader("Set-Cookie", headerValue.toString());
 
