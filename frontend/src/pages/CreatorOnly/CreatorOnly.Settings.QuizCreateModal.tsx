@@ -2,6 +2,7 @@ import propTypes from "prop-types";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
 interface QuizCreateModalProps {
   handleQuizClose: React.MouseEventHandler<HTMLButtonElement>;
@@ -37,10 +38,10 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   };
 
   const sequence = 1;
+  const token = useAuthStore((state) => state.accessToken);
 
   const handleQuizSubmit = async () => {
     if (validateSubmit()) {
-      const token = process.env.REACT_APP_AUTHORIZATION as string;
       try {
         if (!token) {
           return;

@@ -20,6 +20,7 @@ import {
 import Modal from "./CreatorOnly.CreateFanmeeting.Modal";
 // import axios from "axios";
 import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
 // drag and drop 할 때 형식
 interface Corner {
@@ -114,7 +115,7 @@ function CreateFanmeeting() {
   const checkStartDateValidation = (date: Date) => {
     const today = new Date();
     const difference = differenceInDays(date, today);
-    if (difference <= 7) {
+    if (difference < 7) {
       alert("일주일 뒤 날짜만 선택 가능합니다.");
       return false;
     }
@@ -184,12 +185,12 @@ function CreateFanmeeting() {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          const base64String = (reader.result as string)
-            .replace("data:", "")
-            .replace(/^.+,/, "");
+          // const base64String = (reader.result as string)
+          //   .replace("data:", "")
+          //   .replace(/^.+,/, "");
           // 서버로 base64String을 전송
           // 예: await uploadImageToServer(base64String);
-          console.log(base64String); // 테스트용으로 출력
+          // console.log(base64String); // 테스트용으로 출력
           setImagePreview("testimage.png");
         } else {
           console.error("FileReader result is null");
@@ -327,6 +328,7 @@ function CreateFanmeeting() {
     return true;
   };
 
+  const token = useAuthStore((state) => state.accessToken);
   const submitCreateFanmeeting = async () => {
     // 해당 결과를 back으로 전송
     const [hours, minutes] = selectedDuration.split(":").map(Number);
@@ -342,9 +344,8 @@ function CreateFanmeeting() {
       timetable: convertCornersToIndices(corners),
     };
 
-    const token = process.env.REACT_APP_AUTHORIZATION as string;
-    console.log(result);
-    console.log(token);
+    // console.log(result);
+    // console.log(token);
     try {
       if (!token) {
         return;

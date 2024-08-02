@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import client from "../../client";
 import QuestionItem from "./CreatorOnly.Settings.QuestionItem";
+import useAuthStore from "../../store/useAuthStore";
 
 interface Question {
   questionId: number;
@@ -11,7 +12,7 @@ interface Question {
 }
 
 function Question() {
-  const token = process.env.REACT_APP_AUTHORIZATION as string;
+  const token = useAuthStore((state) => state.accessToken);
   const location = useLocation();
   const fanmeetingId = location.pathname.split("/")[2];
   const [typeOfQuestion, setTypeOfQuestion] = useState("all");
@@ -36,16 +37,19 @@ function Question() {
   );
 
   // 모든 질문 불러오는 api 호출
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchAllQuestions = async () => {
     const params = { page: 0 };
     try {
-      const response = await client(token).get(
-        `/api/question/${fanmeetingId}`,
-        { params },
-      );
-      setAllQuestions(response.data);
-      doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
-      // console.log("Question Response:", response.data);
+      if (token) {
+        const response = await client(token).get(
+          `/api/question/${fanmeetingId}`,
+          { params },
+        );
+        setAllQuestions(response.data);
+        doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
+        // console.log("Question Response:", response.data);
+      }
     } catch (error) {
       // console.log(fanmeetingId);
       console.error("Fetch All Question Error:", error);
@@ -55,7 +59,7 @@ function Question() {
   // mount 될 때 모든 질문을 불러옴
   useEffect(() => {
     fetchAllQuestions();
-  }, [fanmeetingId, token]);
+  }, [fanmeetingId, fetchAllQuestions, token]);
 
   // toggle 시 토글 api 호출
   const toggleQuestion = async (id: number) => {
