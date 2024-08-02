@@ -78,7 +78,14 @@ public enum ErrorCode {
 	/**
 	 * Photo
 	 */
-	PHOTO_NOT_FOUND(BAD_REQUEST, "PHOTO-001", "해당하는 사진을 찾을 수 없습니다.");
+	PHOTO_NOT_FOUND(BAD_REQUEST, "PHOTO-001", "해당하는 사진을 찾을 수 없습니다."),
+
+	/**
+	 * WebSocket
+	 */
+	WEBSOCKET_CONNECTION_ERROR(INTERNAL_SERVER_ERROR, "WEBSOCKET-001", "웹소켓 연결 오류가 발생했습니다."),
+	WEBSOCKET_MESSAGE_SEND_ERROR(INTERNAL_SERVER_ERROR, "WEBSOCKET-002", "웹소켓 메시지 전송 오류가 발생했습니다.");
+
 
 	private final HttpStatus httpStatus;
 	private final String code;

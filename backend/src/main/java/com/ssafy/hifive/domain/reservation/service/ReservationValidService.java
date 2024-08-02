@@ -24,4 +24,11 @@ public class ReservationValidService {
 			throw new BadRequestException(ErrorCode.WANT_FOR_MONEY);
 		}
 	}
+
+	public boolean addToPayingQueueIsValid(String queueKey){
+		if(	reservationQueueService.getQueueSize(queueKey) < 100){
+			return true;
+		}
+		return false;
+	}
 }
