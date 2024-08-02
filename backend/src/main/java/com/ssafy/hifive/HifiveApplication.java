@@ -13,5 +13,4 @@ public class HifiveApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HifiveApplication.class, args);
 	}
-
 }

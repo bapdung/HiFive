@@ -1,6 +1,5 @@
 package com.ssafy.hifive.domain.reservation.service;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
@@ -15,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReservationFanmeetingReserveService {
 	private final ReservationRepository reservationRepository;
-	private final RedisTemplate<String, Object> redisTemplate;
-	private final ReservationValidService reservationValidService;
 
 	public void checkReservation(Fanmeeting fanmeeting, Member member) {
 		if(reservationRepository.checkReservation(fanmeeting.getFanmeetingId(), member.getMemberId()))

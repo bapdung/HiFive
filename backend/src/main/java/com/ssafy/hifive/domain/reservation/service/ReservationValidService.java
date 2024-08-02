@@ -24,11 +24,4 @@ public class ReservationValidService {
 			throw new BadRequestException(ErrorCode.WANT_FOR_MONEY);
 		}
 	}
-
-	// public void addToPayingQueueIsValid(Long queueSize, Long fanmeetingId, Long memberId) {
-	// 	if (queueSize != null && queueSize >= 100) {
-	// 		reservationQueueService.addToWaitingQueue(fanmeetingId, memberId);
-	// 		throw new BadRequestException(ErrorCode.WAITING_IN_QUEUE);
-	// 	}
-	// }
 }
