@@ -69,7 +69,6 @@ public enum ErrorCode {
 	WANT_FOR_MONEY(BAD_REQUEST, "RESERVATION-002", "결제할 돈이 부족합니다."),
 	ALREADY_RESERVATION(FORBIDDEN, "RESERVATION-003", "한 사람 당 하나의 티켓만 구매 가능합니다."),
 	TICKET_SOLD_OUT(BAD_REQUEST, "RESERVATION-004", "티켓이 매진되었습니다."),
-	WAITING_IN_QUEUE(BAD_REQUEST, "RESERVATION-005", "현재 대기 인원이 많습니다. 잠시만 기다려주세요."),
 
 	/**
 	 * Category
