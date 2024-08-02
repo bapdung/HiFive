@@ -1,16 +1,32 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { kakaoLogin } from "../../service/authService";
+import useAuthStore from "../../store/useAuthStore";
 
 import logo from "../../assets/icons/logo/logo.png";
+import client from "../../client";
 
 function Navbar() {
+  const token = useAuthStore((state) => state.accessToken);
   const [login, setLogin] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const isLanding = location.pathname === "/";
+
+  const handleLogout = async () => {
+    if (token) {
+      const response = await client(token).get("/api/member/logout");
+
+      if (response.status === 200) {
+        useAuthStore.getState().setAccessToken(null);
+        localStorage.removeItem("accessToken");
+        setLogin(false);
+        navigate("/");
+      }
+    }
+  };
 
   useEffect(() => {
     const localToken = localStorage.getItem("accessToken");
@@ -46,7 +62,13 @@ function Navbar() {
             >
               마이페이지
             </div>
-            <div className="btn-light-lg">로그아웃</div>
+            <div
+              className="btn-light-lg"
+              onClick={handleLogout}
+              role="presentation"
+            >
+              로그아웃
+            </div>
           </>
         ) : (
           <>
