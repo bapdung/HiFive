@@ -41,13 +41,15 @@ function Question() {
   const fetchAllQuestions = async () => {
     const params = { page: 0 };
     try {
-      const response = await client(token).get(
-        `/api/question/${fanmeetingId}`,
-        { params },
-      );
-      setAllQuestions(response.data);
-      doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
-      // console.log("Question Response:", response.data);
+      if (token) {
+        const response = await client(token).get(
+          `/api/question/${fanmeetingId}`,
+          { params },
+        );
+        setAllQuestions(response.data);
+        doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
+        // console.log("Question Response:", response.data);
+      }
     } catch (error) {
       // console.log(fanmeetingId);
       console.error("Fetch All Question Error:", error);
