@@ -116,6 +116,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 		CorsConfiguration configuration = new CorsConfiguration();
 
 		configuration.setAllowedOrigins(Arrays.asList(
+			"http://localhost:3000",
 			"http://i11a107.p.ssafy.io",
 			"https://i11a107.p.ssafy.io",
 			"http://i11a107.p.ssafy.io:8080",
