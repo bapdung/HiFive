@@ -1,5 +1,5 @@
-import preIcon from "../../assets/icons/preIcon.png";
-import nextIcon from "../../assets/icons/nextIcon.png";
+import preIcon from "../../assets/icons/preIcon.svg";
+import nextIcon from "../../assets/icons/nextIcon.svg";
 
 function Table() {
   return (
@@ -62,13 +62,13 @@ function Table() {
       </table>
       <div className="my-3.5 flex justify-center">
         <div className="flex justify-between items-center w-80 text-h6">
-          <img src={preIcon} alt="이전버튼" className="w-[7.41px] h-[12px]" />
+          <img src={preIcon} alt="이전버튼" className="w-[1rem] h-[1rem]" />
           <div className="text-primary-700">1</div>
           <div>2</div>
           <div>3</div>
           <div>4</div>
           <div>5</div>
-          <img src={nextIcon} alt="다음버튼" className="w-[7.41px] h-[12px]" />
+          <img src={nextIcon} alt="다음버튼" className="w-[1rem] h-[1rem]" />
         </div>
       </div>
     </>
