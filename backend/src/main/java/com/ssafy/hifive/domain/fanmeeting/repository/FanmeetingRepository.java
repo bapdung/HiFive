@@ -44,4 +44,10 @@ public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long>, F
 		@Param("top") Long top,
 		@Param("sort") String sort,
 		Pageable pageable);
+
+	@Query("""
+		select f from Fanmeeting f
+		where DATE(f.openDate) = CURRENT_DATE
+	""")
+	List<Fanmeeting> getActiveFanmeetingIds();
 }
