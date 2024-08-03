@@ -1,4 +1,3 @@
-// src/service/websocket.ts
 type Listener = (data: any) => void;
 
 class WebSocketService {
@@ -14,8 +13,8 @@ class WebSocketService {
     this.listeners = {};
   }
 
-  connect() {
-    this.socket = new WebSocket(this.url);
+  connect(memberId: string) {
+    this.socket = new WebSocket(`${this.url}?memberId=${memberId}`);
 
     this.socket.onopen = () => {
       console.log("WebSocket Connected");
