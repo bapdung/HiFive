@@ -9,6 +9,7 @@ import MyFanmeetingPreList from "./CreatorOnly.MyFanmeetingPreList";
 function MyFanmeeting() {
   const [isRecent, setIsRecent] = useState(true);
   const [userId, setUserId] = useState<number | null>(null);
+  const setStoreUserID = useAuthStore((state) => state.setStoreUserID);
   const token = useAuthStore((state) => state.accessToken);
   const orderRecent = () => {
     setIsRecent(true);
@@ -27,6 +28,7 @@ function MyFanmeeting() {
       if (!token) return;
       const response = await client(token).get("api/member");
       setUserId(response.data.memberId);
+      setStoreUserID(response.data.memberId);
     };
     fetchUsers();
   }, [token]);
