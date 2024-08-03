@@ -20,6 +20,7 @@ public class ReservationQueueService {
 	public void addToWaitingQueue(String queueKey, Long memberId) {
 		long score = System.currentTimeMillis();
 		redisTemplate.opsForZSet().add(queueKey, memberId, score);
+
 	}
 
 	public Long removeFromWaitingQueue(String queueKey, Long memberId) {
@@ -30,7 +31,7 @@ public class ReservationQueueService {
 		long score = System.currentTimeMillis();
 		redisTemplate.opsForZSet().add(queueKey, memberId, score);
 		try {
-			reservationWebSocketHandler.sendMessageToSession( (Long) memberId, "결제창으로 이동합니다.");
+			reservationWebSocketHandler.sendMessageToSession((Long)memberId, "결제창으로 이동합니다.");
 		} catch (Exception e) {
 			throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 		}
@@ -50,8 +51,8 @@ public class ReservationQueueService {
 		Set<Object> members = redisTemplate.opsForZSet().range(waitingQueueKey, 0, count - 1);
 		if (members != null) {
 			for (Object memberId : members) {
-				redisTemplate.opsForZSet().remove(waitingQueueKey, (Long) memberId);
-				addToPayingQueue(payingQueueKey, (Long) memberId);
+				redisTemplate.opsForZSet().remove(waitingQueueKey, (Long)memberId);
+				addToPayingQueue(payingQueueKey, (Long)memberId);
 
 			}
 		}
