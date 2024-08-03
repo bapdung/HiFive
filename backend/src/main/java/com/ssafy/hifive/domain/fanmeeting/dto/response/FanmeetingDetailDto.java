@@ -17,7 +17,7 @@ public class FanmeetingDetailDto {
 
 	private long creatorId;
 	private long memberId;
-	private String name;
+	private String creatorName;
 	private String creatorImg;
 	private String title;
 	private String posterImg;
