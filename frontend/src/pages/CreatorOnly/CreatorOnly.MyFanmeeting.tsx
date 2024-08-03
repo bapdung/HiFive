@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
 import MyFanmeetingDoneList from "./CreatorOnly.MyFanmeetingDoneList";
 import MyFanmeetingPreList from "./CreatorOnly.MyFanmeetingPreList";
 
 function MyFanmeeting() {
   const [isRecent, setIsRecent] = useState(true);
+  const [userId, setUserId] = useState<number | null>(null);
+  const token = useAuthStore((state) => state.accessToken);
   const orderRecent = () => {
     setIsRecent(true);
   };
@@ -17,6 +21,16 @@ function MyFanmeeting() {
   const goCreateFanmeeting = () => {
     navigate("/creator-only/new");
   };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (!token) return;
+      const response = await client(token).get("api/member");
+      setUserId(response.data.memberId);
+    };
+    fetchUsers();
+  }, [token]);
+
   return (
     <div className="w-full flex flex-col items-center">
       <div className="my-10 w-4/5 bg-white p-10 rounded-[25px] flex flex-col items-center">
@@ -28,7 +42,7 @@ function MyFanmeeting() {
         >
           새로운 팬미팅 생성하기
         </button>
-        <MyFanmeetingPreList />
+        <MyFanmeetingPreList userId={userId} />
       </div>
       <div className="my-10 w-4/5 bg-white p-10 rounded-[25px] flex flex-col items-center">
         <p className="text-h4">종료된 팬미팅</p>
@@ -49,7 +63,7 @@ function MyFanmeeting() {
             오래된순
           </button>
         </div>
-        <MyFanmeetingDoneList isRecent={isRecent} />
+        <MyFanmeetingDoneList isRecent={isRecent} userId={userId} />
       </div>
     </div>
   );
