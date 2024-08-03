@@ -20,7 +20,7 @@ public class ReservationSchedulerService {
 	private final RedisPublisher redisPublisher;
 	private final ObjectMapper objectMapper;
 
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 100000)
 	public void checkWaiting() {
 		List<Long> activeFanmeetingIds = fanmeetingSchedulerService.getActiveFanmeetingIds();
 		// for (Long fanmeetingId : activeFanmeetingIds) {
