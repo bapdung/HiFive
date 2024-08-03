@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../custom-datepicker.css";
 import { useNavigate } from "react-router-dom";
+
 import { format, differenceInDays, addDays, isBefore, isAfter } from "date-fns"; // 날짜를 특정 형식으로 표시하는 라이브러리
 import { ko } from "date-fns/locale"; // 날짜 한국어 패치
 import {
@@ -35,6 +36,7 @@ interface CornerIndex {
 }
 
 function CreateFanmeeting() {
+  const token = useAuthStore((state) => state.accessToken);
   const [title, setTitle] = useState("");
   const [peopleNumber, setPeopleNumber] = useState(0);
   const [isFanmeetingCalendarOpen, setIsFanmeetingCalendarOpen] = // 팬미팅 날짜 캘린더 토글
@@ -176,22 +178,36 @@ function CreateFanmeeting() {
     setTicketPrice(intValue);
   };
 
-  // 이미지 받아옴
+  // 이미지 업로드 핸들러
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    if (!token) {
+      return;
+    }
+    const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+    const fileName = `image-${timestamp}`;
+    const response = await client(token).post(`api/s3/upload/${fileName}`, {
+      prefix: fileName,
+    });
+    const imageUrl = response.data.path;
+    console.log(imageUrl, "받아온 이미지 url");
     const file = event.target.files?.[0];
     if (file) {
+      // 이미지 Blob 미리보기 설정
+      const imageBlobUrl = URL.createObjectURL(file);
+      setImagePreview(imageBlobUrl);
+
+      // 파일을 Base64 형식으로 변환
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          // const base64String = (reader.result as string)
-          //   .replace("data:", "")
-          //   .replace(/^.+,/, "");
-          // 서버로 base64String을 전송
-          // 예: await uploadImageToServer(base64String);
-          // console.log(base64String); // 테스트용으로 출력
-          setImagePreview("testimage.png");
+          const base64String = (reader.result as string)
+            .replace("data:", "")
+            .replace(/^.+,/, "");
+          // 서버로 base64String 전송
+          // uploadImageToServer(base64String);
+          console.log(base64String); // 테스트용으로 출력
         } else {
           console.error("FileReader result is null");
         }
@@ -328,7 +344,6 @@ function CreateFanmeeting() {
     return true;
   };
 
-  const token = useAuthStore((state) => state.accessToken);
   const submitCreateFanmeeting = async () => {
     // 해당 결과를 back으로 전송
     const [hours, minutes] = selectedDuration.split(":").map(Number);
