@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config.Redis;
+package com.ssafy.hifive.global.config.redis;
 
 import java.time.Duration;
 
@@ -83,20 +83,20 @@ public class RedisConfig {
 	}
 
 	@Bean
-	RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
+	public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
-		container.addMessageListener(listenerAdapter, new PatternTopic("fanmeeting:1"));
+		container.addMessageListener(listenerAdapter, new PatternTopic("fanmeeting:*"));
 		return container;
 	}
 
 	@Bean
-	MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
+	public MessageListenerAdapter listenerAdapter(com.ssafy.hifive.global.config.redis.RedisSubscriber subscriber) {
 		return new MessageListenerAdapter(subscriber, "onMessage");
 	}
 
 	@Bean
-	StringRedisTemplate redisTemplate(RedisConnectionFactory connectionFactory) {
+	public StringRedisTemplate redisTemplate(RedisConnectionFactory connectionFactory) {
 		return new StringRedisTemplate(connectionFactory);
 	}
 }
