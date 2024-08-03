@@ -8,8 +8,8 @@ type Fanmeeting = {
   fanmeetingId: number;
   title: string;
   posterImg: string;
-  creatorName: string;
-  startTime: string;
+  openDate: string;
+  startDate: string;
 };
 
 type FanmeetingList = Fanmeeting[];

@@ -2,8 +2,8 @@ type Fanmeeting = {
   fanmeetingId: number;
   title: string;
   posterImg: string;
-  creatorName: string;
-  startTime: string;
+  openDate: string;
+  startDate: string;
 };
 
 interface FanmeetingInfoProps {
@@ -11,7 +11,10 @@ interface FanmeetingInfoProps {
 }
 
 function FanmeetingInfo({ fanmeeting }: FanmeetingInfoProps) {
-  const { title, posterImg, startTime } = fanmeeting;
+  const { title, posterImg, startDate } = fanmeeting;
+
+  const [splitDate] = startDate.split("T");
+  const date = splitDate.replaceAll("-", ". ");
 
   return (
     <div className="w-56 mb-5">
@@ -22,7 +25,7 @@ function FanmeetingInfo({ fanmeeting }: FanmeetingInfoProps) {
       />
       <div className="flex flex-col items-center mt-2.5">
         <h4 className="text-h5">{title}</h4>
-        <span className="text-h6 text-gray-600">{startTime}</span>
+        <span className="text-h6 text-gray-600">{date}</span>
       </div>
     </div>
   );
