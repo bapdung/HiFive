@@ -11,28 +11,35 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredCreator = false,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const token = useAuthStore((state) => state.accessToken);
+  const { accessToken, setIsCreator } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if (!token) {
+        if (!accessToken) {
           setIsLoading(false);
           return;
         }
-        const response = await client(token).get("api/member");
+        setIsLoading(false);
+        const response = await client(accessToken).get("api/member");
         if (response.data.creator !== requiredCreator) {
           navigate(-1);
+        } else {
+          setIsCreator(response.data.creator);
         }
       } catch (error) {
         console.error("Fetch User Error :", error);
+        navigate(-1);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchUser();
-  }, [navigate, requiredCreator, token]);
+
+    if (isLoading) {
+      fetchUser();
+    }
+  }, [accessToken, requiredCreator, navigate, setIsCreator, isLoading]);
 
   if (isLoading) {
     return <div>Loading...</div>;
