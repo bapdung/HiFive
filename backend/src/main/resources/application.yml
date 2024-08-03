@@ -38,7 +38,7 @@ spring:
             client-secret: ${kakao.client-secret}
             redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
             authorization-grant-type: authorization_code
-            scope: profile_nickname, account_email, profile_image, name
+            scope: profile_nickname, account_email, profile_image
             client-authentication-method: client_secret_post
 
         provider:
@@ -49,7 +49,7 @@ spring:
             user-name-attribute: id
 
   oauth2:
-    redirect-uri: http://localhost:3000
+    redirect-uri: http://localhost:3000/main
 
   jwt:
     issuer: ${jwt.issuer}

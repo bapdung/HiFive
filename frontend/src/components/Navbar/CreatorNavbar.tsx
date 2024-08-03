@@ -7,7 +7,9 @@ function CreatorNavbar() {
         <img src={creatorLogo} alt="Logo" className="w-[265.27px] h-[44px]" />
       </div>
       <div className="flex items-center">
-        <div className="text-secondary text-medium m-7">마이페이지</div>
+        <div className="text-secondary text-large font-bold m-10">
+          마이페이지
+        </div>
         <div className="creator-btn-light-lg">로그아웃</div>
       </div>
     </div>

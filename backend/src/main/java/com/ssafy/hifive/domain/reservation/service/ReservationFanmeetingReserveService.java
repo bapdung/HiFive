@@ -12,13 +12,11 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class FanmeetingReserveService {
+public class ReservationFanmeetingReserveService {
 	private final ReservationRepository reservationRepository;
 
 	public void checkReservation(Fanmeeting fanmeeting, Member member) {
 		if(reservationRepository.checkReservation(fanmeeting.getFanmeetingId(), member.getMemberId()))
 			throw new ForbiddenException(ErrorCode.ALREADY_RESERVATION);
 	}
-
-
 }
