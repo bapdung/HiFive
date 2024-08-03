@@ -33,7 +33,7 @@ module.exports = {
       1,
       { extensions: [".js", ".jsx", ".ts", ".tsx"] },
     ],
-    'import/no-extraneous-dependencies': 'off',
+    "import/no-extraneous-dependencies": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
     "@typescript-eslint/no-unused-vars": "error",
@@ -48,6 +48,16 @@ module.exports = {
       },
     ],
     "react/function-component-definition": "off",
+    "react/prop-types": "off",
+    "import/no-unresolved": "off",
+    "no-console": "off",
+    "no-alert": "off",
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        some: ["nesting", "id"],
+      },
+    ],
   },
 
   settings: {
