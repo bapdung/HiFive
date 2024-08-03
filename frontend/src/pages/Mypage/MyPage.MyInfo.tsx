@@ -19,6 +19,7 @@ function MyInfo() {
 
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [nickname, setNickname] = useState<string | undefined>(undefined);
+  const [checkNickname, setCheckNickname] = useState<string | null>(null);
 
   useEffect(() => {
     const getMemberInfo = async () => {
@@ -45,7 +46,12 @@ function MyInfo() {
       const response = await client(token).post("/api/member/valid", {
         nickname,
       });
-      console.log(response.data);
+
+      if (response.status === 200) {
+        setCheckNickname(response.data);
+      } else if (response.status === 202) {
+        setCheckNickname(response.data.acceptedMessage);
+      }
     }
   };
 
@@ -90,10 +96,11 @@ function MyInfo() {
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
               <span className="text-h6">닉네임</span>
-              {/* <span className="text-green text-small">
-                사용 가능한 닉네임입니다.
-              </span> */}
-              {/* <span className="text-red text-small">중복된 닉네임입니다.</span> */}
+              <span
+                className={`text-small ${checkNickname === "사용 가능한 닉네임입니다." ? "text-green" : "text-red"}`}
+              >
+                {checkNickname}
+              </span>
             </div>
             <input
               type="text"
