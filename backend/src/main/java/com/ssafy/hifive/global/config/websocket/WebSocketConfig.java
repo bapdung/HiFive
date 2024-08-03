@@ -18,7 +18,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(webSocketHandler, "/ws/ticket")
+		registry.addHandler(webSocketHandler, "/ws/ticket/{fanmeetingId}")
 			.setAllowedOrigins("*")
 			.addInterceptors(new CustomHandshakeInterceptor()); // 인터셉터 추가
 	}

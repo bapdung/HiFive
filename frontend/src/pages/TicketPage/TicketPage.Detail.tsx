@@ -51,7 +51,7 @@ function Detail() {
 
         // WebSocket 연결 설정
         if (data.memberId) {
-          webSocketService.connect(data.memberId.toString()); // memberId를 WebSocket 연결 시 사용
+          webSocketService.connect(data.memberId.toString(), "1"); // memberId를 WebSocket 연결 시 사용
         }
       } catch (error) {
         console.error("Error fetching details:", error);
