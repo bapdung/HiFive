@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.domain.reservation.handler.ReservationWebSocketHandler;
+import com.ssafy.hifive.global.config.websocket.ReservationWebSocketHandler;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -32,7 +32,7 @@ public class ReservationService {
 		String queueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		if(reservationValidService.addToPayingQueueIsValid(payingQueueKey)){
-			reservationQueueService.addToPayingQueue(payingQueueKey, member.getMemberId());
+			reservationQueueService.addToPayingQueue(payingQueueKey, member.getMemberId(), fanmeetingId);
 		} else {
 			reservationQueueService.addToWaitingQueue(queueKey, member.getMemberId());
 		}
@@ -59,7 +59,6 @@ public class ReservationService {
 		}
 	}
 
-	//이걸 스케줄링으로 처리할지, 지금처럼 한 명 나가면 체크하는 로직으로 짤지 고민 중
 	private void checkAndMoveQueues(long fanmeetingId) {
 		String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
@@ -69,7 +68,7 @@ public class ReservationService {
 
 		if (slotsAvailable > 0) {
 			try {
-				reservationQueueService.moveFromWaitingToPayingQueue(waitingQueueKey, payingQueueKey, slotsAvailable);
+				reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId,waitingQueueKey, payingQueueKey, slotsAvailable);
 			} catch (Exception e) {
 				throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 			}
