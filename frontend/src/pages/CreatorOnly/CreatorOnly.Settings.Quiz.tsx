@@ -9,19 +9,27 @@ interface QuizProps {
   handleQuizSequence: (sequence: number) => void;
 }
 
+interface Quiz {
+  id: number;
+  sequence: number;
+  detail: string;
+  problem: string;
+  answer: boolean;
+}
+
 const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
   const location = useLocation();
   const token = useAuthStore((state) => state.accessToken);
-  const [allQuizzes, setAllQuizzes] = useState([]);
+  const [allQuizzes, setAllQuizzes] = useState<Quiz[]>([]);
   const fanmeetingId = parseInt(location.pathname.split("/")[2], 10);
-  console.log(fanmeetingId);
+  // console.log(fanmeetingId);
   useEffect(() => {
     const fetchAllQuizzes = async () => {
       if (!token) {
         return;
       }
       const response = await client(token).get(`api/quiz/${fanmeetingId}`);
-      console.log(response.data);
+      // console.log(response.data);
       setAllQuizzes(response.data);
       handleQuizSequence(allQuizzes.length - 1);
     };
@@ -39,14 +47,14 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
       >
         퀴즈 생성하기
       </button>
-      {/* <div className="w-3/4 flex flex-wrap justify-center gap-6">
-        {tempQuiz.map((quiz) => (
+      <div className="w-3/4 flex flex-wrap justify-center gap-6">
+        {allQuizzes.map((quiz, index) => (
           <div
             key={quiz.id}
             className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[1rem] px-8 justify-between bg-white"
           >
             <p className="text-h5 flex justify-between w-full">
-              <span>문제 {quiz.sequence}</span>{" "}
+              <span>문제 {index + 1}</span>{" "}
               <span
                 className={quiz.answer ? "text-secondary" : "text-primary-text"}
               >
@@ -65,7 +73,7 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
             </div>
           </div>
         ))}
-      </div> */}
+      </div>
     </div>
   );
 };
