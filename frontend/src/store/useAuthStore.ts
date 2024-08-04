@@ -7,14 +7,11 @@ interface AuthState {
   fetchTokens: () => Promise<void>;
   isCreator: boolean | null;
   setIsCreator: (bool: boolean) => void;
-  storeUserId: number | null;
-  setStoreUserID: (storeUserId: number) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
   isCreator: false,
-  storeUserId: null,
 
   setAccessToken: (token) => {
     set({ accessToken: token });
@@ -22,10 +19,6 @@ const useAuthStore = create<AuthState>((set) => ({
 
   setIsCreator: (bool: boolean) => {
     set({ isCreator: bool });
-  },
-
-  setStoreUserID: (id: number) => {
-    set({ storeUserId: id });
   },
 
   fetchTokens: async () => {
