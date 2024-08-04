@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hifive.domain.fanmeeting.service.FanmeetingSchedulerService;
-import com.ssafy.hifive.global.config.redis.RedisPublisher;
+import com.ssafy.hifive.global.config.redisss.RedisPublisher;
 import com.ssafy.hifive.global.config.websocket.WebSocketMessage;
 
 import lombok.RequiredArgsConstructor;
