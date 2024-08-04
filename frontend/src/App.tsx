@@ -20,6 +20,7 @@ import CreateFanmeeting from "./pages/CreatorOnly/CreatorOnly.CreateFanmeeting";
 import Settings from "./pages/CreatorOnly/CreatorOnly.Settings";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
+import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 
 function App() {
   const location = useLocation();
@@ -72,6 +73,10 @@ function App() {
             <Route
               path="/creator-only/:fanmeetingId/story"
               element={<Settings />}
+            />
+            <Route
+              path="/creator-only/:fanmeetingId/story/:storyId"
+              element={<StoryDetail />}
             />
           </Route>
           <Route path="/main" element={<MainPage />} />
