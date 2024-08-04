@@ -5,7 +5,7 @@ import java.util.Set;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.hifive.domain.reservation.handler.ReservationWebSocketHandler;
+import com.ssafy.hifive.global.config.websocket.ReservationWebSocketHandler;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 
@@ -20,17 +20,18 @@ public class ReservationQueueService {
 	public void addToWaitingQueue(String queueKey, Long memberId) {
 		long score = System.currentTimeMillis();
 		redisTemplate.opsForZSet().add(queueKey, memberId, score);
+
 	}
 
-	public Long removeFromWaitingQueue(String queueKey, Long memberId) {
-		return redisTemplate.opsForZSet().remove(queueKey, memberId);
+	public void removeFromWaitingQueue(String queueKey, Long memberId) {
+		redisTemplate.opsForZSet().remove(queueKey, memberId);
 	}
 
-	public void addToPayingQueue(String queueKey, Long memberId) {
+	public void addToPayingQueue(String queueKey, Long memberId, Long fanmeetingId) {
 		long score = System.currentTimeMillis();
 		redisTemplate.opsForZSet().add(queueKey, memberId, score);
 		try {
-			reservationWebSocketHandler.sendMessageToSession( (Long) memberId, "결제창으로 이동합니다.");
+			reservationWebSocketHandler.sendMessageToSession(fanmeetingId ,(Long)memberId, "결제창으로 이동합니다.", "moveToPayment");
 		} catch (Exception e) {
 			throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 		}
@@ -46,12 +47,12 @@ public class ReservationQueueService {
 
 	}
 
-	public void moveFromWaitingToPayingQueue(String waitingQueueKey, String payingQueueKey, int count) {
+	public void moveFromWaitingToPayingQueue(Long fanmeetingId, String waitingQueueKey, String payingQueueKey, int count) {
 		Set<Object> members = redisTemplate.opsForZSet().range(waitingQueueKey, 0, count - 1);
 		if (members != null) {
 			for (Object memberId : members) {
-				redisTemplate.opsForZSet().remove(waitingQueueKey, (Long) memberId);
-				addToPayingQueue(payingQueueKey, (Long) memberId);
+				removeFromWaitingQueue(waitingQueueKey, (Long) memberId);
+				addToPayingQueue(payingQueueKey, (Long)memberId, fanmeetingId);
 
 			}
 		}
