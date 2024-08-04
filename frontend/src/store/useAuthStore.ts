@@ -11,7 +11,6 @@ interface AuthState {
 }
 
 const useAuthStore = create<AuthState>((set) => ({
-  accessToken: localStorage.getItem("accessToken"),
   accessToken: null,
   isCreator: false,
 
