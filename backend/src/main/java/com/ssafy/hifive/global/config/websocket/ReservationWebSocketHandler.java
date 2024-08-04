@@ -58,7 +58,7 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 		log.info("fanmeetingId : " + fanmeetingId);
 	}
 
-	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event) throws Exception {
+	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event){
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
 		WebSocketSession session = sessions.get(fanmeetingId).get(sessionId);
 		if (session != null && session.isOpen()) {
