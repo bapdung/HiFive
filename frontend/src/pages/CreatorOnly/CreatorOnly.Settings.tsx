@@ -12,6 +12,7 @@ function Settings() {
   const { fanmeetingId } = useParams();
   const [currentPath, serCurrentPath] = useState("question");
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [quizSequence, setQuizSequence] = useState<number | null>(null);
 
   useEffect(() => {
     serCurrentPath(location.pathname.split("/").pop() || "question");
@@ -19,7 +20,7 @@ function Settings() {
 
   const handleLocation = (path: string) => {
     navigate(`/creator-only/${fanmeetingId}/${path}`);
-    console.log(currentPath);
+    // console.log(currentPath);
   };
 
   const handleQuizOpen = () => {
@@ -27,8 +28,11 @@ function Settings() {
   };
 
   const handleQuizClose = () => {
-    console.log("퀴즈 모달 닫힘");
     setIsQuizModalOpen(false);
+  };
+
+  const handleQuizSequence = (sequence: number) => {
+    setQuizSequence(sequence);
   };
 
   return (
@@ -82,11 +86,17 @@ function Settings() {
         {currentPath === "question" ? <Question /> : null}
         {currentPath === "story" ? <Story /> : null}
         {currentPath === "quiz" ? (
-          <Quiz handleQuizOpen={handleQuizOpen} />
+          <Quiz
+            handleQuizOpen={handleQuizOpen}
+            handleQuizSequence={handleQuizSequence}
+          />
         ) : null}
       </div>
       {isQuizModalOpen ? (
-        <QuizCreateModal handleQuizClose={handleQuizClose} />
+        <QuizCreateModal
+          handleQuizClose={handleQuizClose}
+          quizSequence={quizSequence}
+        />
       ) : null}
     </>
   );
