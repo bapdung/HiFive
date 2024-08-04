@@ -114,6 +114,14 @@ function MyInfo() {
   };
 
   const postInfo = async () => {
+    if (
+      nickname !== userInfo?.nickname &&
+      checkNickname !== "사용 가능한 닉네임입니다."
+    ) {
+      alert("닉네임 중복확인 먼저 진행해주세요");
+      return;
+    }
+
     const modifyInfo: ModifyInfo = {};
 
     if (tempProfileName) {
@@ -130,9 +138,12 @@ function MyInfo() {
     }
 
     if (modifyInfo && token) {
-      console.log(modifyInfo);
       const response = await client(token).patch("/api/member", modifyInfo);
-      console.log(response);
+
+      if (response.status === 200) {
+        alert("프로필 수정이 완료되었습니다.");
+        setCheckNickname(null);
+      }
     }
   };
 
@@ -195,7 +206,7 @@ function MyInfo() {
               type="text"
               defaultValue={userInfo.nickname}
               id="nickname"
-              className="w-96 h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2"
+              className="w-96 h-11 bg-gray-100 rounded-3xl  flex items-center pl-5 mt-2"
               onChange={inputNickname}
             />
             <button
