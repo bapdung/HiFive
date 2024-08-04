@@ -61,7 +61,7 @@ public class FanmeetingService {
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingAllForFan(Member member) {
-		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId())
+		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(), "desc")
 			.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
@@ -167,18 +167,19 @@ public class FanmeetingService {
 			.collect(Collectors.toList());
 	}
 
-	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member) {
+	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member, FanmeetingParam param ) {
 
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId());
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(), param.getSort());
 
 		return fanmeetings.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
-	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(Member member) {
+	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(Member member, FanmeetingParam param) {
 
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingAllByFan(member.getMemberId());
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingAllByFan(member.getMemberId(),
+			param.getSort());
 
 		return fanmeetings.stream()
 			.map(FanmeetingOverViewDto::from)
