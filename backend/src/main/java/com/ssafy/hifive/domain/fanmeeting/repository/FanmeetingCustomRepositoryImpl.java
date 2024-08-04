@@ -18,25 +18,6 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<Fanmeeting> findFanmeetingsByFanWithScrolling(long fanId,
-		LocalDateTime top,
-		String sort, boolean isScheduled) {
-
-		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
-
-		return jpaQueryFactory.selectFrom(fanmeeting)
-			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
-			.where(
-				isScheduledFanmeeting(isScheduled),
-				getFromFanId(fanId),
-				afterCursor(top, sort)
-			)
-			.orderBy(orderSpecifier)
-			.limit(10)
-			.fetch();
-	}
-
-	@Override
 	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId) {
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
 
@@ -44,6 +25,20 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
 			.where(
 				isScheduledFanmeeting(true),
+				getFromFanId(fanId)
+			)
+			.orderBy(orderSpecifier)
+			.fetch();
+	}
+
+	@Override
+	public List<Fanmeeting> findCompletedFanmeetingAllByFan(long fanId) {
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
+
+		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
+			.where(
+				isScheduledFanmeeting(false),
 				getFromFanId(fanId)
 			)
 			.orderBy(orderSpecifier)
