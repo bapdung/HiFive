@@ -72,6 +72,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
         setIsLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [token, isRecent, userId],
   );
 
