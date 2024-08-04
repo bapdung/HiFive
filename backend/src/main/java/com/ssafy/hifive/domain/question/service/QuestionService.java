@@ -3,6 +3,7 @@ package com.ssafy.hifive.domain.question.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,8 +42,13 @@ public class QuestionService {
 		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
-		return questionRepository.findByFanmeeting_FanmeetingId(fanmeetingId, pageable).getContent().stream()
-			.map(QuestionResponseDto::from).collect(Collectors.toList());
+		Page<Question> questionPage = questionRepository.findByFanmeeting_FanmeetingId(fanmeetingId, pageable);
+
+		int totalPages = questionPage.getTotalPages();
+
+		return questionPage.getContent().stream()
+			.map(question -> QuestionResponseDto.from(question, totalPages))
+			.collect(Collectors.toList());
 	}
 
 	public List<QuestionResponseDto> getQuestionSelected(long fanmeetingId, QuestionParam param, Member member) {
@@ -50,17 +56,28 @@ public class QuestionService {
 
 		Pageable pageable = createPageable(param);
 
-		return questionRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, true, pageable)
-			.getContent().stream().map(QuestionResponseDto::from).collect(Collectors.toList());
+		Page<Question> questionPage = questionRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, true,
+			pageable);
 
+		int totalPages = questionPage.getTotalPages();
+
+		return questionPage.getContent().stream()
+			.map(question -> QuestionResponseDto.from(question, totalPages))
+			.collect(Collectors.toList());
 	}
 
 	public List<QuestionResponseDto> getQuestionUnselected(long fanmeetingId, QuestionParam param, Member member) {
 		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
-		return questionRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, false, pageable)
-			.getContent().stream().map(QuestionResponseDto::from).collect(Collectors.toList());
+		Page<Question> questionPage = questionRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, false,
+			pageable);
+
+		int totalPages = questionPage.getTotalPages();
+
+		return questionPage.getContent().stream()
+			.map(question -> QuestionResponseDto.from(question, totalPages))
+			.collect(Collectors.toList());
 	}
 
 	@Transactional
@@ -80,8 +97,12 @@ public class QuestionService {
 	}
 
 	public List<QuestionResponseDto> getMyQuestion(long fanmeetingId, Member member) {
-		return questionRepository.findByFanmeeting_FanmeetingIdAndFan_MemberId(fanmeetingId,
-			member.getMemberId()).stream().map(QuestionResponseDto::from).collect(Collectors.toList());
+		List<Question> questions = questionRepository.findByFanmeeting_FanmeetingIdAndFan_MemberId(fanmeetingId,
+			member.getMemberId());
+		int totalPages = (int)Math.ceil((double)questions.size() / PAGE_SIZE);
+		return questions.stream()
+			.map(question -> QuestionResponseDto.from(question, totalPages))
+			.collect(Collectors.toList());
 	}
 
 	@Transactional
