@@ -43,7 +43,6 @@ public class ReservationFanmeetingPayService {
 
 	@Transactional
 	public void payTicket(Fanmeeting fanmeeting, Member member, int remainingTicket) {
-
 		reservationValidService.ReservationIsValid(remainingTicket); //결제 전 한 번 더 점검하는 로직
 
 		int price = fanmeeting.getPrice();
