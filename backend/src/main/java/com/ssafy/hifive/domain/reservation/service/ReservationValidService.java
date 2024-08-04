@@ -1,5 +1,8 @@
 package com.ssafy.hifive.domain.reservation.service;
 
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.member.entity.Member;
@@ -12,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReservationValidService {
 	private final ReservationQueueService reservationQueueService;
+	private final RedisTemplate redisTemplateForObject;
 
 	public void ReservationIsValid(int remainingTicket) {
 		if (remainingTicket <= 0) {
@@ -30,5 +34,15 @@ public class ReservationValidService {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isPaymentSessionExpired(String queueKey, Long memberId) {
+		Double score = redisTemplateForObject.opsForZSet().score(queueKey, memberId.toString());
+		if (score == null) {
+			return true;
+		}
+		long currentTime = System.currentTimeMillis();
+		long timeout = TimeUnit.MINUTES.toMillis(5);
+		return currentTime - score > timeout;
 	}
 }

@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,16 +30,14 @@ public class PhotoController {
 
 	private final PhotoService photoService;
 
-	@Operation(summary = "사진 조회", description = "팬미팅에서 찍은 사진을 조회한다.")
+	@Operation(summary = "사진 조회", description = "사용자가 참석한 전체 팬미팅에서 찍은 사진을 조회한다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PhotoOverViewDto>> getPhotosByFanmeeting(@PathVariable long fanmeetingId,
-		@AuthenticationPrincipal Member member) {
-
-		return ResponseEntity.ok(photoService.getPhotosByFanmeeting(fanmeetingId, member));
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PhotoOverViewDto>> getPhotosByMember(@AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(photoService.getPhotosByMember(member));
 	}
 
 }

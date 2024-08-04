@@ -13,8 +13,10 @@ class WebSocketService {
     this.listeners = {};
   }
 
-  connect(memberId: string) {
-    this.socket = new WebSocket(`${this.url}?memberId=${memberId}`);
+  connect(memberId: string, fanmeetingId: string) {
+    this.socket = new WebSocket(
+      `${this.url}/${fanmeetingId}?memberId=${memberId}`,
+    );
 
     this.socket.onopen = () => {
       console.log("WebSocket Connected");
@@ -22,6 +24,7 @@ class WebSocketService {
 
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("WebSocket Message Received:", data); // 수신된 메시지를 콘솔에 출력
       this.notifyListeners(data);
     };
 
