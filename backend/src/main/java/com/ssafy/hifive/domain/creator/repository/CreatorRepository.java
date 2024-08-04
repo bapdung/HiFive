@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,22 +22,6 @@ public interface CreatorRepository extends JpaRepository<Creator, Long>, Creator
 			where c.creator.memberId = :creatorId
 		""")
 	Optional<Creator> findByMemberId(@Param("creatorId") long creatorId);
-
-	@Query("""
-		    select c from Creator c
-		    where (:name is null or c.creatorName like %:name%)
-		    AND (
-		        (:condition = 'createDate' and (:topId is null or (:sort = 'desc' and c.creatorProfileId < :topId) or (:sort = 'asc' and c.creatorProfileId > :topId)))
-		        OR
-		        (:condition = 'creatorName' and (:topName is null or (:sort = 'desc' and c.creatorName < :topName) or (:sort = 'asc' and c.creatorName > :topName)))
-		    )
-		""")
-	Slice<Creator> findCreatorsWithScrolling(@Param("name") String name,
-		@Param("topId") Long topId,
-		@Param("topName") String topName,
-		@Param("condition") String condition,
-		@Param("sort") String sort,
-		Pageable pageable);
 
 	@Query("""
 			select c 
