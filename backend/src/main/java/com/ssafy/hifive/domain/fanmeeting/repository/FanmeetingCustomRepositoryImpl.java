@@ -18,8 +18,8 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId) {
-		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
+	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId, String sort) {
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
@@ -51,8 +51,8 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 	}
 
 	@Override
-	public List<Fanmeeting> findCompletedFanmeetingAllByFan(long fanId) {
-		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
+	public List<Fanmeeting> findCompletedFanmeetingAllByFan(long fanId, String sort) {
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
