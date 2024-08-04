@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config.redisss;
+package com.ssafy.hifive.global.config.redis;
 
 import java.time.Duration;
 
