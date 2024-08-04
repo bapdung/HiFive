@@ -33,8 +33,8 @@ public class ReservationSchedulerService {
 		for (Long fanmeetingId : activeFanmeetingIds) {
 			String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 
-			try {
-				Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
+		try {
+			Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
 
 				if (currentWaitingQueueSize > 0) {
 					WebSocketMessage message = new WebSocketMessage(
