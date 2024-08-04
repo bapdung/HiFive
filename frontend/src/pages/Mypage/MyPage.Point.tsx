@@ -85,9 +85,9 @@ function Point() {
         </div>
       </div>
       <div className="w-2/3 p-10">
-        <Table type="plus" />
+        <Table type="plus" key={`plus-${totalPoint}`} />
         <div className="mt-16" />
-        <Table type="minus" />
+        <Table type="minus" key={`minus-${totalPoint}`} />
       </div>
     </div>
   );
