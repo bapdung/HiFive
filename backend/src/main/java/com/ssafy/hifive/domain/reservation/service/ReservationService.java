@@ -47,14 +47,8 @@ public class ReservationService {
 
 		reservationFanmeetingPayService.recordReservation(fanmeeting, member);
 
-
-		try {
-			reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
-			checkAndMoveQueues(fanmeetingId);
-
-		} catch (Exception e) {
-			throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
-		}
+		reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
+		checkAndMoveQueues(fanmeetingId);
 	}
 
 	private void checkAndMoveQueues(long fanmeetingId) {
