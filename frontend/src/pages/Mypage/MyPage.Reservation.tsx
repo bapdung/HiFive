@@ -20,18 +20,12 @@ function Reservation() {
   const [fanmeetingList, setFanmeetingList] = useState<FanmeetingList>([]);
   const [status, setStatus] = useState("scheduled");
   const [sort, setSort] = useState("desc");
-  const [top, setTop] = useState(0);
 
   useEffect(() => {
     const getFanmeeting = async () => {
       const params: {
         sort: string;
-        top?: number;
       } = { sort };
-
-      if (top) {
-        params.top = top;
-      }
 
       if (token) {
         const response = await client(token).get(
@@ -41,8 +35,7 @@ function Reservation() {
           },
         );
 
-        setFanmeetingList([...fanmeetingList, ...response.data]);
-        setTop(top + response.data.length);
+        setFanmeetingList(response.data);
       }
     };
 
@@ -58,7 +51,6 @@ function Reservation() {
     } else if (content === "지난 팬미팅") {
       setStatus("completed");
     }
-    setTop(0);
     setFanmeetingList([]);
   };
 
@@ -70,7 +62,6 @@ function Reservation() {
     } else if (content === "과거순") {
       setSort("asc");
     }
-    setTop(0);
     setFanmeetingList([]);
   };
 
