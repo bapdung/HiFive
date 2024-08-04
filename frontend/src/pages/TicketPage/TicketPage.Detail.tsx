@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import ProfileImg from "../../assets/temp/profile.svg";
 import PosterImg from "../../assets/temp/poster.svg";
 import TimeTable from "./TicketPage.DetailTimetable";
 import Info from "./TicketPage.DetailInfo";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
-import webSocketService from "../../service/websocket"; // WebSocketService 가져오기
-// import WaitingModal from "./TicketPage.WaitingModal";
+import webSocketService from "../../service/websocket";
 import Payment from "./TicketPage.PaymentModal";
-// import SuccessModal from "./TicketPage.SuccessModal";
+import WaitingModal from "./TicketPage.WaitingModal"; // WaitingModal 추가
 
 interface TimeTableItem {
   categoryName: string;
@@ -28,67 +27,89 @@ interface FanMeetingDetails {
   runningTime: number;
   price: number;
   participant: number;
+  remainingTickets: number;
+  isReserved: boolean; // isReserved 추가
   timetable: TimeTableItem[];
 }
 
 function Detail() {
+  const { fanmeetingId } = useParams<{ fanmeetingId: string }>(); // URL 파라미터에서 fanmeetingId 가져오기
   const [isReserved, setIsReserved] = useState(false);
   const [fanMeetingDetails, setFanMeetingDetails] =
     useState<FanMeetingDetails | null>(null);
   const navigate = useNavigate();
   const [showPaymentModal, setShowPaymentModal] = useState(false); // 결제 모달 상태 추가
-  const accessToken = useAuthStore((state) => state.accessToken);
+  const [showWaitingModal, setShowWaitingModal] = useState(false); // 대기 모달 상태 추가
+  const token = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     const fetchFanmeetingDetails = async () => {
       try {
-        const apiClient = client(accessToken || "");
-        const response =
-          await apiClient.get<FanMeetingDetails>("/api/fanmeeting/1");
-        const { data } = response;
-        data.startDate = new Date(data.startDate);
-        setFanMeetingDetails(response.data);
-
-        // WebSocket 연결 설정
-        if (data.memberId) {
-          webSocketService.connect(data.memberId.toString(), "1"); // memberId를 WebSocket 연결 시 사용
+        if (token) {
+          const response = await client(token).get<FanMeetingDetails>(
+            `/api/fanmeeting/${fanmeetingId!}`,
+          ); // fanmeetingId를 문자열로 강제 변환
+          const { data } = response;
+          data.startDate = new Date(data.startDate);
+          setFanMeetingDetails(data);
+          setIsReserved(data.isReserved); // 초기 예약 상태 설정
         }
       } catch (error) {
         console.error("Error fetching details:", error);
       }
     };
 
-    if (accessToken) {
+    if (token && fanmeetingId) {
       fetchFanmeetingDetails();
     }
 
     const handleWebSocketMessage = (data: any) => {
       console.log("WebSocket Message Received:", data);
-      // 수신된 메시지에 대한 추가 처리
       if (data.event === "moveToPayment") {
-        alert(data.message);
         setShowPaymentModal(true); // 결제 모달 표시
+      } else if (data.event === "moveToWaiting") {
+        setShowWaitingModal(true); // 대기 모달 표시
+      } else if (data.event === "alreadyReserved") {
+        alert(data.message); // 이미 예약된 경우 알림 표시
       }
     };
 
-    webSocketService.addListener("moveToPayment", handleWebSocketMessage); // 메시지 이벤트 리스너 등록
+    webSocketService.addListener("moveToPayment", handleWebSocketMessage); // 결제 이벤트 리스너 등록
+    webSocketService.addListener("moveToWaiting", handleWebSocketMessage); // 대기 이벤트 리스너 등록
+    webSocketService.addListener("alreadyReserved", handleWebSocketMessage); // 예약된 경우 이벤트 리스너 등록
 
     return () => {
-      webSocketService.disconnect(); // 컴포넌트 언마운트 시 WebSocket 연결 해제
-      webSocketService.removeListener("moveToPayment", handleWebSocketMessage); // 메시지 이벤트 리스너 해제
+      webSocketService.removeListener("moveToPayment", handleWebSocketMessage); // 이벤트 리스너 해제
+      webSocketService.removeListener("moveToWaiting", handleWebSocketMessage); // 이벤트 리스너 해제
+      webSocketService.removeListener(
+        "alreadyReserved",
+        handleWebSocketMessage,
+      ); // 이벤트 리스너 해제
     };
-  }, [accessToken]);
+  }, [token, fanmeetingId]); // 팬미팅 ID 의존성 추가
 
-  function toggleReserved() {
-    setIsReserved(!isReserved);
-    if (!isReserved && fanMeetingDetails) {
-      webSocketService.sendMessage(
-        JSON.stringify({
-          event: "reserve",
-          memberId: fanMeetingDetails.memberId,
-          fanMeetingId: 1, // 필요한 경우 팬미팅 ID 추가
-        }),
-      ); // 예매 메시지 보내기
+  async function toggleReserved() {
+    if (!isReserved && fanMeetingDetails && token) {
+      try {
+        // WebSocket 연결 설정
+        webSocketService.connect(
+          fanMeetingDetails.memberId.toString(),
+          fanmeetingId!,
+        ); // memberId와 fanmeetingId를 문자열로 강제 변환하여 WebSocket 연결 시 사용
+
+        await client(token).post(`/api/fanmeeting/${fanmeetingId!}`);
+
+        // 예매 성공 시 WebSocket 메시지 전송
+        webSocketService.sendMessage(
+          JSON.stringify({
+            event: "reserve",
+            memberId: fanMeetingDetails.memberId,
+            fanMeetingId: fanmeetingId, // fanmeetingId를 문자열로 강제 변환하여 사용
+          }),
+        ); // 예매 메시지 보내기
+      } catch (error) {
+        console.error("Error during reservation:", error);
+      }
     }
   }
 
@@ -114,6 +135,11 @@ function Detail() {
       {showPaymentModal && ( // 결제 모달 조건부 렌더링
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
           <Payment />
+        </div>
+      )}
+      {showWaitingModal && ( // 대기 모달 조건부 렌더링
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <WaitingModal />
         </div>
       )}
       <div className="w-[60%] bg-white rounded-[25px] p-10">
@@ -218,13 +244,23 @@ function Detail() {
             <p className="text-gray-500 text-sm text-center mb-1">
               잠깐! 예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
             </p>
-            <button
-              type="button"
-              className="btn-lg w-full"
-              onClick={toggleReserved}
-            >
-              예매하기
-            </button>
+            {fanMeetingDetails.remainingTickets === 0 ? (
+              <button
+                type="button"
+                className="creator-btn-light-lg  w-full"
+                disabled
+              >
+                매진
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn-lg w-full"
+                onClick={toggleReserved}
+              >
+                예매하기
+              </button>
+            )}
           </div>
         )}
       </div>
