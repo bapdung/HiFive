@@ -20,9 +20,9 @@ public class PhotoService {
 
 	private final PhotoRepository photoRepository;
 
-	public List<PhotoOverViewDto> getPhotosByFanmeeting(long fanmeetingId, Member member) {
-		List<Photo> photos = photoRepository.findByFanmeeting_FanmeetingIdAndFan_MemberId(fanmeetingId,
-			member.getMemberId());
+	public List<PhotoOverViewDto> getPhotosByMember(Member member) {
+
+		List<Photo> photos = photoRepository.findByFan_MemberId(member.getMemberId());
 
 		if (photos.isEmpty()) {
 			throw new DataNotFoundException(ErrorCode.PHOTO_NOT_FOUND);
