@@ -11,7 +11,7 @@ function Point() {
             <input
               type="text"
               placeholder="충전할 포인트 입력(1,000P 단위 입력 가능)"
-              className="flex justify-center items-center border border-1 w-full h-12 placeholder py-3.5 px-10 text-small rounded-3xl mt-3.5"
+              className="flex justify-center items-center border border-1 w-full h-12 placeholder py-3.5 px-6 text-small rounded-3xl mt-3.5"
             />
           </div>
           <div className="flex justify-end mt-3.5 text-small">
@@ -25,7 +25,7 @@ function Point() {
             </div>
           </div>
           <button type="button" className="btn-lg mt-3.5">
-            카카오페이로 충전하기
+            충전하기
           </button>
         </div>
       </div>
