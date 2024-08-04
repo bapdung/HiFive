@@ -7,6 +7,7 @@ import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.error.ErrorCode;
+import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -15,17 +16,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReservationService {
 	private final FanmeetingRepository fanmeetingRepository;
-	private final FanmeetingPayService fanmeetingPayService;
-	private final FanmeetingReserveService fanmeetingReserveService;
+	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
+	private final ReservationQueueService reservationQueueService;
+	private final ReservationFanmeetingReserveService reservationFanmeetingReserveService;
+	private final ReservationValidService reservationValidService;
 
 	public void reserve(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		//1. 이미 예약했는지 여부 확인
-		fanmeetingReserveService.checkReservation(fanmeeting, member);
+		reservationFanmeetingReserveService.checkReservation(fanmeeting, member);
 
-		//레디스 queue등록 필요
+		addToQueue(fanmeetingId, member.getMemberId());
 	}
 
 	@Transactional
@@ -33,13 +35,46 @@ public class ReservationService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		int remainingTicket = fanmeetingPayService.checkRemainingTicket(fanmeeting);
+		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+		if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
+			checkAndMoveQueues(fanmeetingId);
+			throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+		}
 
-		//2. 결제로직
-		fanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
+		int remainingTicket = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
 
-		//3. 예약기록
-		fanmeetingPayService.recordReservation(fanmeeting, member);
+		reservationFanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
 
+		reservationFanmeetingPayService.recordReservation(fanmeeting, member);
+
+		reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
+		checkAndMoveQueues(fanmeetingId);
+	}
+
+	private void checkAndMoveQueues(long fanmeetingId) {
+		String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
+		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
+
+		int slotsAvailable = 100 - currentPayingQueueSize.intValue();
+
+		if (slotsAvailable > 0) {
+			try {
+				reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId,waitingQueueKey, payingQueueKey, slotsAvailable);
+			} catch (Exception e) {
+				throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
+			}
+
+		}
+	}
+
+	public void addToQueue(Long fanmeetingId, Long memberId) {
+		String queueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
+		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+		if(reservationValidService.addToPayingQueueIsValid(payingQueueKey)){
+			reservationQueueService.addToPayingQueue(payingQueueKey, memberId, fanmeetingId);
+		} else {
+			reservationQueueService.addToWaitingQueue(queueKey, memberId);
+		}
 	}
 }

@@ -69,6 +69,8 @@ public enum ErrorCode {
 	WANT_FOR_MONEY(BAD_REQUEST, "RESERVATION-002", "결제할 돈이 부족합니다."),
 	ALREADY_RESERVATION(FORBIDDEN, "RESERVATION-003", "한 사람 당 하나의 티켓만 구매 가능합니다."),
 	TICKET_SOLD_OUT(BAD_REQUEST, "RESERVATION-004", "티켓이 매진되었습니다."),
+	PAYMENT_SESSION_EXPIRED(BAD_REQUEST, "RESERVATION-005", "결제 시간이 만료되었습니다."),
+
 	/**
 	 * Category
 	 */
@@ -77,7 +79,14 @@ public enum ErrorCode {
 	/**
 	 * Photo
 	 */
-	PHOTO_NOT_FOUND(BAD_REQUEST, "PHOTO-001", "해당하는 사진을 찾을 수 없습니다.");
+	PHOTO_NOT_FOUND(BAD_REQUEST, "PHOTO-001", "해당하는 사진을 찾을 수 없습니다."),
+
+	/**
+	 * WebSocket
+	 */
+	WEBSOCKET_CONNECTION_ERROR(INTERNAL_SERVER_ERROR, "WEBSOCKET-001", "웹소켓 연결 오류가 발생했습니다."),
+	WEBSOCKET_MESSAGE_SEND_ERROR(INTERNAL_SERVER_ERROR, "WEBSOCKET-002", "웹소켓 메시지 전송 오류가 발생했습니다.");
+
 
 	private final HttpStatus httpStatus;
 	private final String code;

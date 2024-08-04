@@ -18,27 +18,8 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<Fanmeeting> findFanmeetingsByFanWithScrolling(long fanId,
-		LocalDateTime top,
-		String sort, boolean isScheduled) {
-
+	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId, String sort) {
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
-
-		return jpaQueryFactory.selectFrom(fanmeeting)
-			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
-			.where(
-				isScheduledFanmeeting(isScheduled),
-				getFromFanId(fanId),
-				afterCursor(top, sort)
-			)
-			.orderBy(orderSpecifier)
-			.limit(10)
-			.fetch();
-	}
-
-	@Override
-	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId) {
-		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
@@ -50,11 +31,44 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 			.fetch();
 	}
 
+	@Override
+	public List<Fanmeeting> findFanmeetingsByCreatorWithScrolling(long creatorId,
+		LocalDateTime top,
+		String sort,
+		boolean isScheduled) {
+
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
+
+		return jpaQueryFactory.selectFrom(fanmeeting)
+			.where(
+				fanmeeting.creator.memberId.eq(creatorId),
+				isScheduledFanmeeting(isScheduled),
+				afterCursor(top, sort)
+			)
+			.orderBy(orderSpecifier)
+			.limit(10)
+			.fetch();
+	}
+
+	@Override
+	public List<Fanmeeting> findCompletedFanmeetingAllByFan(long fanId, String sort) {
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
+
+		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
+			.where(
+				isScheduledFanmeeting(false),
+				getFromFanId(fanId)
+			)
+			.orderBy(orderSpecifier)
+			.fetch();
+	}
+
 	private BooleanExpression isScheduledFanmeeting(boolean isScheduled) {
 		if (isScheduled) {
-			return fanmeeting.startDate.loe(LocalDateTime.now());
-		} else {
 			return fanmeeting.startDate.goe(LocalDateTime.now());
+		} else {
+			return fanmeeting.startDate.loe(LocalDateTime.now());
 		}
 	}
 
