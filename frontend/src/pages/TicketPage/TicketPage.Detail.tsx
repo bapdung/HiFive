@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 import ProfileImg from "../../assets/temp/profile.svg";
 import PosterImg from "../../assets/temp/poster.svg";
 import TimeTable from "./TicketPage.DetailTimetable";
 import Info from "./TicketPage.DetailInfo";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
+import webSocketService from "../../service/websocket"; // WebSocketService 가져오기
+// import WaitingModal from "./TicketPage.WaitingModal";
+import Payment from "./TicketPage.PaymentModal";
+// import SuccessModal from "./TicketPage.SuccessModal";
 
 interface TimeTableItem {
   categoryName: string;
@@ -15,6 +18,10 @@ interface TimeTableItem {
 }
 
 interface FanMeetingDetails {
+  creatorId: number;
+  memberId: number;
+  creatorImg: string;
+  creatorName: string;
   title: string;
   notice: string;
   startDate: Date;
@@ -29,6 +36,7 @@ function Detail() {
   const [fanMeetingDetails, setFanMeetingDetails] =
     useState<FanMeetingDetails | null>(null);
   const navigate = useNavigate();
+  const [showPaymentModal, setShowPaymentModal] = useState(false); // 결제 모달 상태 추가
   const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
@@ -39,8 +47,22 @@ function Detail() {
           await apiClient.get<FanMeetingDetails>("/api/fanmeeting/1");
         const { data } = response;
         data.startDate = new Date(data.startDate);
-
         setFanMeetingDetails(response.data);
+
+        // WebSocket 연결 설정
+        if (data.memberId) {
+          webSocketService.connect(data.memberId.toString(), "1"); // memberId를 WebSocket 연결 시 사용
+        }
+
+        // 지흔 수정
+        const reservationResponse = await apiClient.post("/api/reservation/1");
+        if (reservationResponse.status === 200) {
+          console.log(
+            "팬미팅 정보 유효, 사용자 구매 정보 유효, 대기열 진입 성공",
+          );
+        } else {
+          console.log("예약 실패");
+        }
       } catch (error) {
         console.error("Error fetching details:", error);
       }
@@ -49,10 +71,35 @@ function Detail() {
     if (accessToken) {
       fetchFanmeetingDetails();
     }
+
+    const handleWebSocketMessage = (data: any) => {
+      console.log("WebSocket Message Received:", data);
+      // 수신된 메시지에 대한 추가 처리
+      if (data.event === "moveToPayment") {
+        alert(data.message);
+        setShowPaymentModal(true); // 결제 모달 표시
+      }
+    };
+
+    webSocketService.addListener("moveToPayment", handleWebSocketMessage); // 메시지 이벤트 리스너 등록
+
+    return () => {
+      webSocketService.disconnect(); // 컴포넌트 언마운트 시 WebSocket 연결 해제
+      webSocketService.removeListener("moveToPayment", handleWebSocketMessage); // 메시지 이벤트 리스너 해제
+    };
   }, [accessToken]);
 
   function toggleReserved() {
     setIsReserved(!isReserved);
+    if (!isReserved && fanMeetingDetails) {
+      webSocketService.sendMessage(
+        JSON.stringify({
+          event: "reserve",
+          memberId: fanMeetingDetails.memberId,
+          fanMeetingId: 1, // 필요한 경우 팬미팅 ID 추가
+        }),
+      ); // 예매 메시지 보내기
+    }
   }
 
   if (!fanMeetingDetails) {
@@ -61,7 +108,7 @@ function Detail() {
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
-    const month = date.getMonth();
+    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
     const day = date.getDate();
     return `${year}년 ${month}월 ${day}일`;
   };
@@ -74,6 +121,11 @@ function Detail() {
 
   return (
     <div className="my-10 flex justify-center w-full">
+      {showPaymentModal && ( // 결제 모달 조건부 렌더링
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <Payment />
+        </div>
+      )}
       <div className="w-[60%] bg-white rounded-[25px] p-10">
         <div className="w-full flex">
           <img
@@ -95,10 +147,15 @@ function Detail() {
                 />
                 <div className="ml-8 mt-auto mb-auto">
                   <p className="text-gray-700 text-large">
-                    크리에이터 <span className="text-gray-800">개복어</span>
+                    크리에이터{" "}
+                    <span className="text-gray-800">
+                      {fanMeetingDetails.creatorName}
+                    </span>
                   </p>
                   <button className="btn-light-md mt-1.5" type="button">
-                    프로필 보러가기
+                    <Link to={`/creator/${fanMeetingDetails.creatorId}`}>
+                      프로필 보러가기
+                    </Link>
                   </button>
                 </div>
               </div>

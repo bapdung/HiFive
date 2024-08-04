@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
@@ -84,7 +83,7 @@ public class MemberController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createIdentification(@RequestPart
+	public ResponseEntity<Void> createIdentification(@RequestBody
 	MemberIdentificationDto memberIdentificationDto,
 		@AuthenticationPrincipal Member member) {
 		memberService.createIdentification(memberIdentificationDto, member);

@@ -24,8 +24,5 @@ public class CreatorParam {
 	public String sort;
 
 	@Schema(description = "가장 마지막에 불러온 creator_id")
-	public Long topId;
-
-	@Schema(description = "가장 마지막에 불러온 creator_name")
-	public String topName;
+	public Long top;
 }
