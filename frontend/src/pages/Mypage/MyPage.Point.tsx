@@ -16,6 +16,16 @@ function Point() {
   };
 
   const postPoint = async () => {
+    if (money === 0) {
+      alert("충전할 포인트를 입력해주세요.");
+      return;
+    }
+
+    if (typeof money !== "number") {
+      alert("유효한 숫자를 입력해주세요");
+      return;
+    }
+
     if (token) {
       const response = await client(token).post("/api/point", {
         money,
@@ -28,6 +38,7 @@ function Point() {
           setTotalPoint(money);
         }
         alert(`${money} 포인트 충전이 완료되었습니다!`);
+        setMoney(undefined);
       }
     }
   };
@@ -52,7 +63,8 @@ function Point() {
             <h6 className="text-h6 text-gray-700 mt-3.5">충전 금액</h6>
             <input
               type="text"
-              placeholder="충전할 포인트 입력(1,000P 단위 입력 가능)"
+              value={money ?? ""}
+              placeholder="충전할 포인트를 입력해주세요."
               onChange={inputMoney}
               className="flex justify-center items-center border border-1 w-full h-12 placeholder py-3.5 px-6 text-small rounded-3xl mt-3.5"
             />
