@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Listener = (data: any) => void;
 
 class WebSocketService {
@@ -19,21 +20,23 @@ class WebSocketService {
     );
 
     this.socket.onopen = () => {
-      console.log("WebSocket Connected");
+      // console.log("WebSocket Connected");
     };
 
     this.socket.onmessage = (event) => {
+      // console.log("Raw WebSocket Message Received:", event.data);
+
       const data = JSON.parse(event.data);
-      console.log("WebSocket Message Received:", data); // 수신된 메시지를 콘솔에 출력
+      // console.log("WebSocket Message Received:", data);
       this.notifyListeners(data);
     };
 
-    this.socket.onerror = (error) => {
-      console.error("WebSocket Error: ", error);
+    this.socket.onerror = () => {
+      // console.error("WebSocket Error: ", error);
     };
 
     this.socket.onclose = () => {
-      console.log("WebSocket Disconnected");
+      // console.log("WebSocket Disconnected");
     };
   }
 
@@ -65,6 +68,7 @@ class WebSocketService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private notifyListeners(data: any) {
     const listeners = this.listeners[data.event];
     if (listeners) {
