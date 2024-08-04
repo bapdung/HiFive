@@ -13,12 +13,14 @@ public class PointMinusDto {
 	private LocalDateTime transactionDate;
 	private String detail;
 	private int point;
+	private int totalPages;
 
-	public static PointMinusDto from(Point point){
+	public static PointMinusDto from(Point point, int totalPages) {
 		return new PointMinusDto(
 			point.getCreatedDate(),
 			point.getDetail(),
-			point.getPoint()
+			point.getPoint(),
+			totalPages
 		);
 	}
 }
