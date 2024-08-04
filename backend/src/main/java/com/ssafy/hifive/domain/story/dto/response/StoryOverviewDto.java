@@ -12,13 +12,15 @@ public final class StoryOverviewDto {
 	private String nickname;
 	private String title;
 	private boolean isPicked;
+	private int totalPages;
 
-	public static StoryOverviewDto from(Story story) {
+	public static StoryOverviewDto from(Story story, int totalPages) {
 		return new StoryOverviewDto(
 			story.getStoryId(),
 			story.getFan().getNickname(),
 			story.getTitle(),
-			story.isPicked()
+			story.isPicked(),
+			totalPages
 		);
 	}
 }

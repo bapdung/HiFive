@@ -3,6 +3,7 @@ package com.ssafy.hifive.domain.board.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,19 +34,27 @@ public class BoardService {
 
 	private final static int PAGE_SIZE = 5;
 
-	public List<BoardResponseDto> getBoardAll(long creatorId, BoardParam param) {
-		Pageable pageable = PageRequest.of(param.getPage() != null ? param.getPage() : 0, PAGE_SIZE,
+	private Pageable createPageable(BoardParam param) {
+		return PageRequest.of(param.getPage() != null ? param.getPage() : 0, PAGE_SIZE,
 			param.getSort() != null && param.getSort().equalsIgnoreCase("asc") ?
 				Sort.by("createdDate").ascending() : Sort.by("createdDate").descending());
+	}
 
-		return boardRepository.findByCreatorId(creatorId, pageable).getContent().stream()
-			.map(BoardResponseDto::from)
+	public List<BoardResponseDto> getBoardAll(long creatorId, BoardParam param) {
+		Pageable pageable = createPageable(param);
+
+		Page<Board> boardPage = boardRepository.findByCreatorId(creatorId, pageable);
+
+		int totalPages = boardPage.getTotalPages();
+
+		return boardPage.getContent().stream()
+			.map(board -> BoardResponseDto.from(board, totalPages))
 			.collect(Collectors.toList());
 	}
 
 	public BoardResponseDto getBoardDetail(long boardId) {
 		return boardRepository.findById(boardId)
-			.map(BoardResponseDto::from)
+			.map(board -> BoardResponseDto.from(board, 1))
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND, "유효하지 않은 boardId입니다."));
 	}
 
@@ -61,7 +70,7 @@ public class BoardService {
 	@Transactional
 	public void updateBoard(long boardId, BoardRequestDto boardRequestDto, Member member) {
 		Board board = boardRepository.findById(boardId)
-				.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
 		if (!member.isCreator() || board.getCreator().getMemberId() != member.getMemberId())
 			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
@@ -72,7 +81,7 @@ public class BoardService {
 	@Transactional
 	public void deleteBoard(long boardId, Member member) {
 		Board board = boardRepository.findById(boardId)
-				.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
 		if (!member.isCreator() || board.getCreator().getMemberId() != member.getMemberId())
 			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
@@ -81,3 +90,4 @@ public class BoardService {
 		boardRepository.delete(board);
 	}
 }
+

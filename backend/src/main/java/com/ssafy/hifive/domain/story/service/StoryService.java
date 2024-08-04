@@ -3,6 +3,7 @@ package com.ssafy.hifive.domain.story.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -47,25 +48,33 @@ public class StoryService {
 		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
-		return storyRepository.findByFanmeeting_FanmeetingId(fanmeetingId, pageable).getContent().stream()
-			.map(StoryOverviewDto::from).collect(Collectors.toList());
+		Page<Story> storyPage = storyRepository.findByFanmeeting_FanmeetingId(fanmeetingId, pageable);
+
+		return storyPage.getContent().stream()
+			.map(story -> StoryOverviewDto.from(story, storyPage.getTotalPages()))
+			.collect(Collectors.toList());
 	}
 
 	public List<StoryOverviewDto> getStorySelected(long fanmeetingId, StoryParam param, Member member) {
 		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
-		return storyRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, true, pageable)
-			.getContent().stream().map(StoryOverviewDto::from).collect(Collectors.toList());
+		Page<Story> storyPage = storyRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, true, pageable);
 
+		return storyPage.getContent().stream()
+			.map(story -> StoryOverviewDto.from(story, storyPage.getTotalPages()))
+			.collect(Collectors.toList());
 	}
 
 	public List<StoryOverviewDto> getStoryUnselected(long fanmeetingId, StoryParam param, Member member) {
 		fanmeetingValidator.validateCreator(fanmeetingId, member);
 		Pageable pageable = createPageable(param);
 
-		return storyRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, false, pageable)
-			.getContent().stream().map(StoryOverviewDto::from).collect(Collectors.toList());
+		Page<Story> storyPage = storyRepository.findByFanmeeting_FanmeetingIdAndIsPicked(fanmeetingId, false, pageable);
+
+		return storyPage.getContent().stream()
+			.map(story -> StoryOverviewDto.from(story, storyPage.getTotalPages()))
+			.collect(Collectors.toList());
 	}
 
 	@Transactional
@@ -85,8 +94,10 @@ public class StoryService {
 	}
 
 	public List<StoryOverviewDto> getMyStory(long fanmeetingId, Member member) {
-		return storyRepository.findByFanmeeting_FanmeetingIdAndFan_MemberId(fanmeetingId, member.getMemberId())
-			.stream().map(StoryOverviewDto::from).collect(Collectors.toList());
+		List<Story> stories = storyRepository.findByFanmeeting_FanmeetingIdAndFan_MemberId(fanmeetingId,
+			member.getMemberId());
+		int totalPages = (int)Math.ceil((double)stories.size() / PAGE_SIZE);
+		return stories.stream().map(story -> StoryOverviewDto.from(story, totalPages)).collect(Collectors.toList());
 	}
 
 	public StoryDetailDto getStoryDetail(long storyId, Member member) {
@@ -125,3 +136,4 @@ public class StoryService {
 		storyRepository.delete(story);
 	}
 }
+

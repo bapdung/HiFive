@@ -24,18 +24,27 @@ import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 
 function App() {
   const location = useLocation();
-  const fetchTokens = useAuthStore((state) => state.fetchTokens);
+  const validateAndGetToken = useAuthStore(
+    (state) => state.validateAndGetToken,
+  );
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
   useEffect(() => {
-    const localToken = localStorage.getItem("accessToken");
+    const checkLogin = async () => {
+      const localToken = localStorage.getItem("accessToken");
 
-    if (!localToken) {
-      fetchTokens();
-    } else {
-      setAccessToken(localToken);
-    }
-  }, [fetchTokens, setAccessToken]);
+      if (!localToken) {
+        const newToken = await validateAndGetToken();
+        if (newToken) {
+          setAccessToken(newToken);
+        }
+      } else {
+        setAccessToken(localToken);
+      }
+    };
+
+    checkLogin();
+  }, [validateAndGetToken, setAccessToken]);
 
   return (
     <div className="App">

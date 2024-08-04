@@ -146,9 +146,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/scheduled/fan", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingForFan(
-		@ModelAttribute FanmeetingParam param, @AuthenticationPrincipal Member member) {
-		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getScheduledFanmeetingForFan(param, member);
+	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingForFan(@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
+		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getScheduledFanmeetingForFan(member, param);
 		return ResponseEntity.ok(fanmeetings);
 	}
 
@@ -159,9 +158,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/completed/fan", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingForFan(
-		@ModelAttribute FanmeetingParam param, @AuthenticationPrincipal Member member) {
-		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getCompletedFanmeetingForFan(param, member);
+	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingForFan(@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
+		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getCompletedFanmeetingForFan(member, param);
 		return ResponseEntity.ok(fanmeetings);
 	}
 
