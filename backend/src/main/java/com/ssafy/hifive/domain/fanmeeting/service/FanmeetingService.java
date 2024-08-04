@@ -53,10 +53,9 @@ public class FanmeetingService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findByIdWithTimetable(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		//1. 티켓이 남아있는지 확인하는 로직
 		int remainingTickets = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
 
-		return FanmeetingDetailDto.from(fanmeeting, remainingTickets);
+		return FanmeetingDetailDto.from(fanmeeting, member, remainingTickets);
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingAllForFan(Member member) {

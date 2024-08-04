@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config;
+package com.ssafy.hifive.global.config.websocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.WebSocketHandler;
@@ -18,7 +18,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(webSocketHandler, "/ws/ticket").setAllowedOrigins("*");
+		registry.addHandler(webSocketHandler, "/ws/ticket/{fanmeetingId}")
+			.setAllowedOrigins("*")
+			.addInterceptors(new CustomHandshakeInterceptor()); // 인터셉터 추가
 	}
-
 }
