@@ -1,11 +1,56 @@
+// import { useEffect, useState } from "react";
+// import client from "../../client";
+// import useAuthStore from "../../store/useAuthStore";
+
 import preIcon from "../../assets/icons/preIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
 
-function Table() {
+// type Point = {
+//   transactionDate: string;
+//   money: number;
+//   point: number;
+// };
+
+interface TypeProps {
+  type: string;
+}
+
+function Table({ type }: TypeProps) {
+  // const token = useAuthStore((state) => state.accessToken);
+
+  // const [plusPoint, setPlusPoint] = useState<Point[] | null>(null);
+
+  // const getPlusPoint = async () => {
+  //   const params: {
+  //     perid: number;
+  //     page: number;
+  //   } = {
+  //     perid: 3,
+  //     page: 0,
+  //   };
+
+  //   if (token) {
+  //     const response = await client(token).get(`/api/point/plus`, {
+  //       params,
+  //     });
+  //     if (plusPoint) {
+  //       setPlusPoint([...plusPoint, ...response.data]);
+  //     } else {
+  //       setPlusPoint(response.data);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getPlusPoint();
+  // }, []);
+
   return (
     <>
       <div className="w-full flex justify-between">
-        <h5 className="text-h5">충전 내역 조회</h5>
+        <h5 className="text-h5">
+          {type === "plus" ? "충전 내역 조회" : "사용 내역 조회"}
+        </h5>
         <select name="period" className="text-small">
           <option value="3">최근 3개월</option>
           <option value="6">최근 6개월</option>

@@ -30,9 +30,9 @@ function Point() {
         </div>
       </div>
       <div className="w-2/3 p-10">
-        <Table />
+        <Table type="plus" />
         <div className="mt-16" />
-        <Table />
+        <Table type="minus" />
       </div>
     </div>
   );
