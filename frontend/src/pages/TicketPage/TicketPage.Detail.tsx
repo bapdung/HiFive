@@ -50,7 +50,7 @@ function Detail() {
         setFanMeetingDetails(response.data);
 
         // 지흔 수정
-        const reservationResponse = await apiClient.get("/api/reservation/1");
+        const reservationResponse = await apiClient.post("/api/reservation/1");
         if (reservationResponse.status === 200) {
           console.log(
             "팬미팅 정보 유효, 사용자 구매 정보 유효, 대기열 진입 성공",
