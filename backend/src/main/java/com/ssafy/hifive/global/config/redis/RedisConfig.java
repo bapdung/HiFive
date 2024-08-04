@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config.Redis;
+package com.ssafy.hifive.global.config.redis;
 
 import java.time.Duration;
 
@@ -12,6 +12,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -47,6 +49,15 @@ public class RedisConfig {
 	}
 
 	@Bean
+	public RedisMessageListenerContainer redisMessageListener(RedisConnectionFactory connectionFactory,
+		RedisSubscriber redisSubscriber) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.addMessageListener(redisSubscriber, new PatternTopic("fanmeeting:*"));
+		return container;
+	}
+
+	@Bean
 	public RedisTemplate<String, Object> redisTemplateForObject() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
@@ -74,7 +85,8 @@ public class RedisConfig {
 	public CacheManager cacheManager(RedisConnectionFactory factory) {
 		RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
 			.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-			.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+			.serializeValuesWith(
+				RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
 			.entryTtl(Duration.ofMinutes(1L));
 
 		return RedisCacheManager.builder(factory)

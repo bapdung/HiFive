@@ -28,7 +28,7 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 	public void afterConnectionEstablished(final WebSocketSession session) throws Exception {
 		Long fanmeetingId = Long.parseLong(session.getUri().getPath().split("/")[3]);
 		String sessionId = session.getId();
-		Long memberId = (Long) session.getAttributes().get("memberId");
+		Long memberId = (Long)session.getAttributes().get("memberId");
 
 		sessions.putIfAbsent(fanmeetingId, new ConcurrentHashMap<>());
 		memberSessionMap.putIfAbsent(fanmeetingId, new ConcurrentHashMap<>());
@@ -47,7 +47,7 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 	public void afterConnectionClosed(final WebSocketSession session, final CloseStatus status) throws Exception {
 		Long fanmeetingId = Long.parseLong(session.getUri().getPath().split("/")[3]);
 		String sessionId = session.getId();
-		Long memberId = (Long) session.getAttributes().get("memberId");
+		Long memberId = (Long)session.getAttributes().get("memberId");
 
 		if (sessions.containsKey(fanmeetingId)) {
 			sessions.get(fanmeetingId).remove(sessionId);
@@ -58,7 +58,7 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 		log.info("fanmeetingId : " + fanmeetingId);
 	}
 
-	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event){
+	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event) {
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
 		WebSocketSession session = sessions.get(fanmeetingId).get(sessionId);
 		if (session != null && session.isOpen()) {
@@ -77,9 +77,12 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 
 	public void broadcastMessageToFanmeeting(Long fanmeetingId, WebSocketMessage webSocketMessage) throws Exception {
 		ConcurrentMap<String, WebSocketSession> fanmeetingSessions = sessions.get(fanmeetingId);
+		log.info("Attempting to broadcast message to fanmeeting: {}, message: {}", fanmeetingId, webSocketMessage);
+
 		if (fanmeetingSessions != null) {
 			String jsonMessage = jacksonObjectMapper.writeValueAsString(webSocketMessage);
 			TextMessage textMessage = new TextMessage(jsonMessage);
+			log.info(textMessage.toString());
 			for (WebSocketSession session : fanmeetingSessions.values()) {
 				if (session.isOpen()) {
 					session.sendMessage(textMessage);
