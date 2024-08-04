@@ -76,6 +76,15 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
     fetchAllQuizzes();
   };
 
+  const deleteQuiz = async (quiz: Quiz) => {
+    console.log(quiz.id);
+    if (!token) {
+      return;
+    }
+    await client(token).delete(`/api/quiz/${quiz.id}`);
+    fetchAllQuizzes();
+  };
+
   return (
     <div className="flex flex-col items-center">
       <button
@@ -173,7 +182,11 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
               >
                 수정하기
               </button>
-              <button type="button" className="btn-light-md ml-2">
+              <button
+                type="button"
+                className="btn-light-md ml-2"
+                onClick={() => deleteQuiz(quiz)}
+              >
                 삭제하기
               </button>
             </div>
