@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hifive.domain.creator.entity.Creator;
 
 @Repository
-public interface CreatorRepository extends JpaRepository<Creator, Long> {
+public interface CreatorRepository extends JpaRepository<Creator, Long>, CreatorCustomRepository{
 
 	@Query("""
 			select c
