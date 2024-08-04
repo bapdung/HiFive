@@ -1,17 +1,35 @@
 import propTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
 interface QuizProps {
   handleQuizOpen: () => void;
+  handleQuizSequence: (sequence: number) => void;
 }
 
-const Quiz: React.FC<QuizProps> = ({ handleQuizOpen }) => {
-  const tempQuiz = [
-    { id: 1, sequence: 1, detail: "설명", problem: "문제내용", answer: true },
-    { id: 2, sequence: 2, detail: "설명", problem: "문제내용", answer: false },
-    { id: 3, sequence: 3, detail: "설명", problem: "문제내용", answer: true },
-    { id: 4, sequence: 4, detail: "설명", problem: "문제내용", answer: false },
-    { id: 5, sequence: 5, detail: "설명", problem: "문제내용", answer: true },
-  ];
+const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
+  const location = useLocation();
+  const token = useAuthStore((state) => state.accessToken);
+  const [allQuizzes, setAllQuizzes] = useState([]);
+  const fanmeetingId = parseInt(location.pathname.split("/")[2], 10);
+  console.log(fanmeetingId);
+  useEffect(() => {
+    const fetchAllQuizzes = async () => {
+      if (!token) {
+        return;
+      }
+      const response = await client(token).get(`api/quiz/${fanmeetingId}`);
+      console.log(response.data);
+      setAllQuizzes(response.data);
+      handleQuizSequence(allQuizzes.length - 1);
+    };
+
+    fetchAllQuizzes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, fanmeetingId, allQuizzes.length]);
+
   return (
     <div className="flex flex-col items-center">
       <button
@@ -21,7 +39,7 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen }) => {
       >
         퀴즈 생성하기
       </button>
-      <div className="w-3/4 flex flex-wrap justify-center gap-6">
+      {/* <div className="w-3/4 flex flex-wrap justify-center gap-6">
         {tempQuiz.map((quiz) => (
           <div
             key={quiz.id}
@@ -47,7 +65,7 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen }) => {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
