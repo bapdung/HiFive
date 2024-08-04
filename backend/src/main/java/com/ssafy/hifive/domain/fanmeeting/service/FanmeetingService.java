@@ -157,31 +157,18 @@ public class FanmeetingService {
 			.collect(Collectors.toList());
 	}
 
-	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(FanmeetingParam param, Member member) {
-		Fanmeeting fanmeeting = fanmeetingRepository.findById(param.getTop())
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
-		LocalDateTime topDate = fanmeeting.getStartDate();
+	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member) {
 
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByFanWithScrolling(
-			member.getMemberId(),
-			topDate,
-			param.getSort(),
-			true);
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId());
 
 		return fanmeetings.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
-	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(FanmeetingParam param, Member member) {
+	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(Member member) {
 
-		LocalDateTime top = fanmeetingValidService.validateTop(param.getTop());
-
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByFanWithScrolling(
-			member.getMemberId(),
-			top,
-			param.getSort(),
-			false);
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingAllByFan(member.getMemberId());
 
 		return fanmeetings.stream()
 			.map(FanmeetingOverViewDto::from)
