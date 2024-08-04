@@ -9,7 +9,6 @@ type User = {
   memberId: number;
   name: string | null;
   nickname: string;
-
   point: number;
   profileImg: string;
 };
