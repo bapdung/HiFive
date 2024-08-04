@@ -49,6 +49,16 @@ function Detail() {
         data.startDate = new Date(data.startDate);
         setFanMeetingDetails(response.data);
 
+        // 지흔 수정
+        const reservationResponse = await apiClient.get("/api/reservation/1");
+        if (reservationResponse.status === 200) {
+          console.log(
+            "팬미팅 정보 유효, 사용자 구매 정보 유효, 대기열 진입 성공",
+          );
+        } else {
+          console.log("예약 실패");
+        }
+
         // WebSocket 연결 설정
         if (data.memberId) {
           webSocketService.connect(data.memberId.toString(), "1"); // memberId를 WebSocket 연결 시 사용
