@@ -9,10 +9,6 @@ import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 
 @Repository
 public interface FanmeetingCustomRepository {
-	List<Fanmeeting> findFanmeetingsByFanWithScrolling(long fanId,
-		LocalDateTime top,
-		String sort,
-		boolean isScheduled);
 
 	List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId);
 
@@ -20,6 +16,8 @@ public interface FanmeetingCustomRepository {
 		LocalDateTime top,
 		String sort,
 		boolean isScheduled);
+
+	List<Fanmeeting> findCompletedFanmeetingAllByFan(long fanId);
 }
 
 
