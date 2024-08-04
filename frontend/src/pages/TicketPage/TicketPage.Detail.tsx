@@ -54,6 +54,16 @@ function Detail() {
           setFanMeetingDetails(data);
           setIsReserved(data.isReserved); // 초기 예약 상태 설정
         }
+
+        // 지흔 수정
+        const reservationResponse = await apiClient.post("/api/reservation/1");
+        if (reservationResponse.status === 200) {
+          console.log(
+            "팬미팅 정보 유효, 사용자 구매 정보 유효, 대기열 진입 성공",
+          );
+        } else {
+          console.log("예약 실패");
+        }
       } catch (error) {
         console.error("Error fetching details:", error);
       }
