@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +19,7 @@ import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingOverViewDto;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.reservation.repository.ReservationRepository;
 import com.ssafy.hifive.domain.reservation.service.ReservationFanmeetingPayService;
 import com.ssafy.hifive.domain.timetable.entity.Timetable;
 import com.ssafy.hifive.domain.timetable.repository.TimetableRepository;
@@ -38,6 +38,7 @@ public class FanmeetingService {
 	private final FanmeetingRepository fanmeetingRepository;
 	private final CategoryRepository categoryRepository;
 	private final TimetableRepository timetableRepository;
+	private final ReservationRepository reservationRepository;
 	private final TimetableService timetableService;
 	private final FanmeetingValidService fanmeetingValidService;
 	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
@@ -46,7 +47,7 @@ public class FanmeetingService {
 
 	private Pageable createPageable(FanmeetingParam param) {
 		return PageRequest.of(0, PAGE_SIZE,
-			Sort.by(Sort.Direction.fromString(param.getSort() != null ? param.getSort() : "desc"), "startDate"));
+			Sort.by(Sort.Direction.fromString(param.getSort()), "startDate"));
 	}
 
 	public FanmeetingDetailDto getFanmeetingDetail(long fanmeetingId, Member member) {
@@ -54,8 +55,9 @@ public class FanmeetingService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
 		int remainingTickets = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
+		boolean isReservation = reservationRepository.checkReservation(fanmeetingId, member.getMemberId());
 
-		return FanmeetingDetailDto.from(fanmeeting, member, remainingTickets);
+		return FanmeetingDetailDto.from(fanmeeting, member, remainingTickets, isReservation);
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingAllForFan(Member member) {
@@ -148,15 +150,19 @@ public class FanmeetingService {
 
 	public List<FanmeetingOverViewDto> getCompletedFanmeetingByCreator(long creatorId, FanmeetingParam param) {
 
-		String sort = param.getSort() != null ? param.getSort() : "asc";
+		Fanmeeting fanmeeting = fanmeetingRepository.findById(param.getTop())
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
-		Slice<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingsByCreatorWithScrolling(
+		LocalDateTime topDate = fanmeeting.getStartDate();
+
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByCreatorWithScrolling(
 			creatorId,
-			param.getTop(),
-			sort,
-			createPageable(param)
+			topDate,
+			param.getSort(),
+			false
 		);
-		return fanmeetings.getContent().stream()
+
+		return fanmeetings.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
@@ -178,4 +184,5 @@ public class FanmeetingService {
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
+
 }
