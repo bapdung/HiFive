@@ -1,7 +1,6 @@
 package com.ssafy.hifive.domain.fanmeeting.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FanmeetingSchedulerService {
 	private final FanmeetingService fanmeetingService;
 	private final FanmeetingRepository fanmeetingRepository;
-	// private List<Long> activeFanmeetingIds = new ArrayList<>();
-	private List<Long> activeFanmeetingIds = new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L, 5L));
+	private List<Long> activeFanmeetingIds = new ArrayList<>();
 
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void updateActiveFanmeetingsId() {

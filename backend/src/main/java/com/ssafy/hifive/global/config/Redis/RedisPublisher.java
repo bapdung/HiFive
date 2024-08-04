@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config.Redis;
+package com.ssafy.hifive.global.config.redis;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
