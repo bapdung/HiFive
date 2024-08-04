@@ -162,29 +162,18 @@ public class FanmeetingService {
 			.collect(Collectors.toList());
 	}
 
-	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(FanmeetingParam param, Member member) {
-		LocalDateTime top = fanmeetingValidService.validateTop(param.getTop());
+	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member) {
 
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByFanWithScrolling(
-			member.getMemberId(),
-			top,
-			param.getSort(),
-			true);
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId());
 
 		return fanmeetings.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
-	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(FanmeetingParam param, Member member) {
+	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(Member member) {
 
-		LocalDateTime top = fanmeetingValidService.validateTop(param.getTop());
-
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByFanWithScrolling(
-			member.getMemberId(),
-			top,
-			param.getSort(),
-			false);
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingAllByFan(member.getMemberId());
 
 		return fanmeetings.stream()
 			.map(FanmeetingOverViewDto::from)
