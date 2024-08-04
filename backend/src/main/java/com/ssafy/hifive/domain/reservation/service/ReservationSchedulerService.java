@@ -20,30 +20,30 @@ public class ReservationSchedulerService {
 	private final RedisPublisher redisPublisher;
 	private final ObjectMapper objectMapper;
 
-	@Scheduled(fixedRate = 100000)
+	@Scheduled(fixedRate = 100000000)
 	public void checkWaiting() {
 		List<Long> activeFanmeetingIds = fanmeetingSchedulerService.getActiveFanmeetingIds();
 		// for (Long fanmeetingId : activeFanmeetingIds) {
-			String waitingQueueKey = "fanmeeting:" + 1 + ":waiting-queue";
+		String waitingQueueKey = "fanmeeting:" + 1 + ":waiting-queue";
 
-			try {
-				Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
+		try {
+			Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
 
-				// WebSocketMessage 객체 생성
-				WebSocketMessage message = new WebSocketMessage(
-					"현재 대기자 수: " + currentWaitingQueueSize,
-					"currentQueueSize");
+			// WebSocketMessage 객체 생성
+			WebSocketMessage message = new WebSocketMessage(
+				"현재 대기자 수: " + currentWaitingQueueSize,
+				"currentQueueSize");
 
-				// 메시지를 JSON 형식으로 변환
-				String jsonMessage = objectMapper.writeValueAsString(message);
+			// 메시지를 JSON 형식으로 변환
+			String jsonMessage = objectMapper.writeValueAsString(message);
 
-				// Redis에 메시지 발행
-				redisPublisher.publish(1L, jsonMessage);
+			// Redis에 메시지 발행
+			redisPublisher.publish(1L, jsonMessage);
 
-			} catch (Exception e) {
-				// 예외 처리 로직
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			// 예외 처리 로직
+			e.printStackTrace();
+		}
 		// }
 	}
 

@@ -15,6 +15,11 @@ public interface FanmeetingCustomRepository {
 		boolean isScheduled);
 
 	List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId);
+
+	List<Fanmeeting> findFanmeetingsByCreatorWithScrolling(long creatorId,
+		LocalDateTime top,
+		String sort,
+		boolean isScheduled);
 }
 
 
