@@ -69,6 +69,20 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 			.fetch();
 	}
 
+	@Override
+	public List<Fanmeeting> findCompletedFanmeetingAllByFan(long fanId) {
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
+
+		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
+			.where(
+				isScheduledFanmeeting(false),
+				getFromFanId(fanId)
+			)
+			.orderBy(orderSpecifier)
+			.fetch();
+	}
+
 	private BooleanExpression isScheduledFanmeeting(boolean isScheduled) {
 		if (isScheduled) {
 			return fanmeeting.startDate.goe(LocalDateTime.now());

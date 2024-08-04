@@ -39,8 +39,8 @@ public class MemberService {
 
 	@Transactional
 	public void updateMember(MemberUpdateDto memberUpdateDto, Member member) {
-		member.updateMember(memberUpdateDto.getProfileImg(), memberUpdateDto.getNickname());
-		// memberRepository.save(member);
+		member.updateMember(memberUpdateDto.getProfileImg()!=null ? memberUpdateDto.getProfileImg() : member.getProfileImg(), memberUpdateDto.getNickname()!=null ? memberUpdateDto.getNickname() : member.getNickname());
+		memberRepository.save(member);
 	}
 
 	@Transactional
