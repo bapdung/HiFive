@@ -37,6 +37,25 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 	}
 
 	@Override
+	public List<Fanmeeting> findFanmeetingsByCreatorWithScrolling(long creatorId,
+		LocalDateTime top,
+		String sort,
+		boolean isScheduled) {
+
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
+
+		return jpaQueryFactory.selectFrom(fanmeeting)
+			.where(
+				fanmeeting.creator.memberId.eq(creatorId),
+				isScheduledFanmeeting(isScheduled),
+				afterCursor(top, sort)
+			)
+			.orderBy(orderSpecifier)
+			.limit(10)
+			.fetch();
+	}
+
+	@Override
 	public List<Fanmeeting> findScheduledFanmeetingAllByFan(long fanId) {
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("desc");
 
