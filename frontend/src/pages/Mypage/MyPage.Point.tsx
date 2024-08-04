@@ -1,6 +1,31 @@
+import { useState } from "react";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
+
 import Table from "./MyPage.Point.Table";
 
 function Point() {
+  const [money, setMoney] = useState<number>();
+
+  const token = useAuthStore((state) => state.accessToken);
+
+  const inputMoney = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const stringMoney = e.target.value;
+    setMoney(Number(stringMoney));
+  };
+
+  const postPoint = async () => {
+    if (token) {
+      const response = await client(token).post("/api/point", {
+        money,
+      });
+
+      if (response.status === 201) {
+        alert(`${money} 포인트 충전이 완료되었습니다!`);
+      }
+    }
+  };
+
   return (
     <div className="w-full flex rounded-3xl">
       <div className="bg-primary-100 w-1/3 p-10 rounded-s-3xl">
@@ -11,20 +36,21 @@ function Point() {
             <input
               type="text"
               placeholder="충전할 포인트 입력(1,000P 단위 입력 가능)"
+              onChange={inputMoney}
               className="flex justify-center items-center border border-1 w-full h-12 placeholder py-3.5 px-6 text-small rounded-3xl mt-3.5"
             />
           </div>
           <div className="flex justify-end mt-3.5 text-small">
             <div className="flex flex-col items-end">
-              <span>충전 가능 금액</span>
+              {/* <span>충전 가능 금액</span> */}
               <span>현재 보유중인 포인트</span>
             </div>
             <div className="flex flex-col items-end">
-              <span className="text-primary-text ml-7">500,000</span>
+              {/* <span className="text-primary-text ml-7">500,000</span> */}
               <span className=" ml-7">78,000</span>
             </div>
           </div>
-          <button type="button" className="btn-lg mt-3.5">
+          <button type="button" className="btn-lg mt-3.5" onClick={postPoint}>
             충전하기
           </button>
         </div>
