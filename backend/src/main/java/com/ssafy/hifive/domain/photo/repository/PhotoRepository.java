@@ -10,6 +10,5 @@ import com.ssafy.hifive.domain.photo.entity.Photo;
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
-	List<Photo> findByFanmeeting_FanmeetingIdAndFan_MemberId(Long fanmeetingId, Long memberId);
-
+	List<Photo> findByFan_MemberId(Long memberId);
 }

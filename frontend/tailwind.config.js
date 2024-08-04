@@ -72,6 +72,7 @@ export default {
           "inset -10px -10px 20px rgba(0, 0, 0, 0.15), inset 10px 10px 20px rgba(0, 0, 0, 0.15)",
         "pink-shadow":
           "0px 2px 8px 0px rgba(255, 99, 146, 0.30), 0px -1px 1px 0px #FF6392 inset",
+        "table-shadow": "0 0 0 1px #B9B9B9",
       },
       keyframes: {
         "slide-in": {
