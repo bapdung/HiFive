@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 
@@ -6,6 +6,7 @@ import Table from "./MyPage.Point.Table";
 
 function Point() {
   const [money, setMoney] = useState<number>();
+  const [totalPoint, setTotalPoint] = useState<number>();
 
   const token = useAuthStore((state) => state.accessToken);
 
@@ -21,10 +22,26 @@ function Point() {
       });
 
       if (response.status === 201) {
+        if (totalPoint && money) {
+          setTotalPoint(totalPoint + money);
+        } else {
+          setTotalPoint(money);
+        }
         alert(`${money} 포인트 충전이 완료되었습니다!`);
       }
     }
   };
+
+  useEffect(() => {
+    const getTotalPoint = async () => {
+      if (token) {
+        const response = await client(token).get("/api/member");
+        setTotalPoint(response.data.point);
+      }
+    };
+
+    getTotalPoint();
+  }, [token, totalPoint]);
 
   return (
     <div className="w-full flex rounded-3xl">
@@ -47,7 +64,7 @@ function Point() {
             </div>
             <div className="flex flex-col items-end">
               {/* <span className="text-primary-text ml-7">500,000</span> */}
-              <span className=" ml-7">78,000</span>
+              <span className=" ml-7">{totalPoint}</span>
             </div>
           </div>
           <button type="button" className="btn-lg mt-3.5" onClick={postPoint}>
