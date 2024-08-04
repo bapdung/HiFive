@@ -68,9 +68,7 @@ function IdCard() {
         const [idCardImg] = url.split("?");
 
         const response = await client(token).post("/api/member", {
-          memberIdentificationDto: {
-            identificationImg: idCardImg,
-          },
+          identificationImg: idCardImg,
         });
 
         if (response.status) {
