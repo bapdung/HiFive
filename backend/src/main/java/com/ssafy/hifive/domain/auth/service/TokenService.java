@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class TokenService {
 
-	private static final Duration ACCESS_TOKEN_DURATION = Duration.ofHours(1);
+	private static final Duration ACCESS_TOKEN_DURATION = Duration.ofHours(12);
 	private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(7);
 	private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
