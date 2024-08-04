@@ -40,7 +40,7 @@ public class MemberService {
 	@Transactional
 	public void updateMember(MemberUpdateDto memberUpdateDto, Member member) {
 		member.updateMember(memberUpdateDto.getProfileImg(), memberUpdateDto.getNickname());
-		// memberRepository.save(member);
+		memberRepository.save(member);
 	}
 
 	@Transactional
