@@ -8,7 +8,9 @@ import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 import webSocketService from "../../service/websocket";
 import Payment from "./TicketPage.PaymentModal";
-import WaitingModal from "./TicketPage.WaitingModal"; // WaitingModal 추가
+import WaitingModal from "./TicketPage.WaitingModal";
+import SuccessModal from "./TicketPage.SuccessModal";
+import FailureModal from "./TicketPage.FailureModal";
 
 interface TimeTableItem {
   categoryName: string;
@@ -28,18 +30,33 @@ interface FanMeetingDetails {
   price: number;
   participant: number;
   remainingTickets: number;
-  isReserved: boolean; // isReserved 추가
+  reservation: boolean;
   timetable: TimeTableItem[];
 }
 
+interface ReservationMemberDto {
+  nickname: string;
+  email: string;
+}
+
+interface WebSocketMessage {
+  message: string;
+  event: string;
+}
+
 function Detail() {
-  const { fanmeetingId } = useParams<{ fanmeetingId: string }>(); // URL 파라미터에서 fanmeetingId 가져오기
+  const { fanmeetingId } = useParams<{ fanmeetingId: string }>();
   const [isReserved, setIsReserved] = useState(false);
   const [fanMeetingDetails, setFanMeetingDetails] =
     useState<FanMeetingDetails | null>(null);
+  const [reservationMember, setReservationMember] =
+    useState<ReservationMemberDto | null>(null);
+  const [currentQueueSize, setCurrentQueueSize] = useState<number | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showFailureModal, setShowFailureModal] = useState(false);
   const navigate = useNavigate();
-  const [showPaymentModal, setShowPaymentModal] = useState(false); // 결제 모달 상태 추가
-  const [showWaitingModal, setShowWaitingModal] = useState(false); // 대기 모달 상태 추가
   const token = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
@@ -52,18 +69,8 @@ function Detail() {
           const { data } = response;
           data.startDate = new Date(data.startDate);
           setFanMeetingDetails(data);
-          setIsReserved(data.isReserved);
+          setIsReserved(data.reservation);
         }
-
-        // 지흔 수정
-        // const reservationResponse = await apiClient.post("/api/reservation/1");
-        // if (reservationResponse.status === 200) {
-        //   console.log(
-        //     "팬미팅 정보 유효, 사용자 구매 정보 유효, 대기열 진입 성공",
-        //   );
-        // } else {
-        //   console.log("예약 실패");
-        // }
       } catch (error) {
         console.error("Error fetching details:", error);
       }
@@ -73,41 +80,55 @@ function Detail() {
       fetchFanmeetingDetails();
     }
 
-    const handleWebSocketMessage = (data: any) => {
+    const handleWebSocketMessage = (data: WebSocketMessage) => {
       console.log("WebSocket Message Received:", data);
       if (data.event === "moveToPayment") {
         setShowPaymentModal(true);
-      } else if (data.event === "moveToWaiting") {
-        setShowWaitingModal(true);
+      } else if (data.event === "currentQueueSize") {
+        const queueSize = parseInt(data.message.split(":")[1].trim(), 10);
+        console.log(queueSize);
+        setCurrentQueueSize(queueSize);
+        if (queueSize > 0) {
+          setShowWaitingModal(true);
+        }
       } else if (data.event === "alreadyReserved") {
         alert(data.message);
       }
     };
 
     webSocketService.addListener("moveToPayment", handleWebSocketMessage);
-    webSocketService.addListener("moveToWaiting", handleWebSocketMessage);
+    webSocketService.addListener("currentQueueSize", handleWebSocketMessage);
     webSocketService.addListener("alreadyReserved", handleWebSocketMessage);
 
     return () => {
       webSocketService.removeListener("moveToPayment", handleWebSocketMessage);
-      webSocketService.removeListener("moveToWaiting", handleWebSocketMessage);
+      webSocketService.removeListener(
+        "currentQueueSize",
+        handleWebSocketMessage,
+      );
       webSocketService.removeListener(
         "alreadyReserved",
         handleWebSocketMessage,
-      ); // 이벤트 리스너 해제
+      );
     };
   }, [token, fanmeetingId]);
 
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token) {
       try {
-        // WebSocket 연결 설정
         webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
           fanmeetingId!,
         );
 
-        await client(token).post(`/api/reservation/${fanmeetingId!}`);
+        console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
+
+        const response = await client(token).post<ReservationMemberDto>(
+          `/api/reservation/${fanmeetingId!}`,
+        );
+
+        const { nickname, email } = response.data;
+        setReservationMember({ nickname, email });
 
         webSocketService.sendMessage(
           JSON.stringify({
@@ -122,15 +143,27 @@ function Detail() {
     }
   }
 
+  async function handlePayment() {
+    try {
+      // 결제 로직 추가
+      setShowPaymentModal(false);
+      setShowSuccessModal(true);
+    } catch (error) {
+      setShowPaymentModal(false);
+      setShowFailureModal(true);
+    }
+  }
+
   if (!fanMeetingDetails) {
     return null;
   }
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
+    const month = date.getMonth() + 1;
     const day = date.getDate();
-    return `${year}년 ${month}월 ${day}일`;
+    const dayOfWeek = date.toLocaleDateString("ko-KR", { weekday: "short" });
+    return `${year}년 ${month}월 ${day}일 (${dayOfWeek})`;
   };
 
   const formatTime = (date: Date) => {
@@ -139,16 +172,43 @@ function Detail() {
     return `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
   };
 
+  const startDate = new Date(fanMeetingDetails.startDate);
+  const formattedStartDate = `${formatDate(startDate)} ${formatTime(startDate)}`;
+  const cancelDeadline = new Date(startDate.getTime() - 23 * 60 * 60 * 1000);
+  const formattedCancelDeadline = `${cancelDeadline.getFullYear()}년 ${cancelDeadline.getMonth() + 1}월 ${cancelDeadline.getDate()}일 ${cancelDeadline.getHours()}시`;
+
   return (
     <div className="my-10 flex justify-center w-full">
-      {showPaymentModal && ( // 결제 모달 조건부 렌더링
+      {showPaymentModal && reservationMember && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-          <Payment />
+          <Payment
+            fanmeetingId={fanmeetingId!}
+            nickname={reservationMember.nickname}
+            email={reservationMember.email}
+            title={fanMeetingDetails.title}
+            startDate={formattedStartDate}
+            cancelDeadline={formattedCancelDeadline}
+            onClose={() => setShowPaymentModal(false)}
+            // eslint-disable-next-line react/jsx-no-bind
+            onPayment={handlePayment}
+          />
         </div>
       )}
-      {showWaitingModal && ( // 대기 모달 조건부 렌더링
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-          <WaitingModal />
+      {showWaitingModal &&
+        currentQueueSize !== null &&
+        currentQueueSize > 0 && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+            <WaitingModal queueSize={currentQueueSize} />
+          </div>
+        )}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <SuccessModal memberId={fanMeetingDetails.memberId} />
+        </div>
+      )}
+      {showFailureModal && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <FailureModal onClose={() => setShowFailureModal(false)} />
         </div>
       )}
       <div className="w-[60%] bg-white rounded-[25px] p-10">
@@ -254,11 +314,7 @@ function Detail() {
               잠깐! 예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
             </p>
             {fanMeetingDetails.remainingTickets === 0 ? (
-              <button
-                type="button"
-                className="creator-btn-light-lg  w-full"
-                disabled
-              >
+              <button type="button" className="btn-gray w-full" disabled>
                 매진
               </button>
             ) : (

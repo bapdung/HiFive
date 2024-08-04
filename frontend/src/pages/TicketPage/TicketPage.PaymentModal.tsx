@@ -1,4 +1,42 @@
-function Payment() {
+import React, { useState } from "react";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
+
+interface PaymentProps {
+  fanmeetingId: string;
+  nickname: string;
+  email: string;
+  title: string;
+  startDate: string;
+  cancelDeadline: string;
+  onClose: () => void;
+  onPayment: () => void;
+}
+
+const Payment: React.FC<PaymentProps> = ({
+  fanmeetingId,
+  nickname,
+  email,
+  title,
+  startDate,
+  cancelDeadline,
+  onClose,
+  onPayment,
+}) => {
+  const token = useAuthStore((state) => state.accessToken);
+  const [isAgreed, setIsAgreed] = useState(false);
+
+  const handlePayment = async () => {
+    try {
+      const apiClient = client(token || "");
+      await apiClient.post(`/api/reservation/${fanmeetingId}/payment`);
+      onPayment(); // 결제가 완료된 후 onPayment 호출
+      onClose();
+    } catch (error) {
+      console.error("Error during payment:", error);
+    }
+  };
+
   return (
     <div className="w-[1200px] h-[675px] bg-primary-300 flex p-[50px]">
       <div className="bg-white w-[700px] rounded-2xl p-[50px]">
@@ -7,11 +45,11 @@ function Payment() {
           <div className="border-2 border-solid border-gray-700 rounded-xl p-[10px] text-medium">
             <div className="flex">
               <span className="flex w-[70px]">이름</span>
-              <span>서지흔</span>
+              <span>{nickname}</span>
             </div>
             <div className="flex">
               <span className="flex w-[70px]">이메일</span>
-              <span>test@gmail.com</span>
+              <span>{email}</span>
             </div>
           </div>
         </div>
@@ -50,7 +88,7 @@ function Payment() {
             </tr>
           </table>
           <ul className="list-disc ml-5 mt-3">
-            <li className="text-red">취소기한 : 2024년 7월 14일(일) 17:00</li>
+            <li className="text-red">취소기한 : {cancelDeadline}</li>
             <li className="text-red">
               예매수수료는 예매일 이후 취소시에는 환불되지 않는다.
             </li>
@@ -65,7 +103,9 @@ function Payment() {
             type="checkbox"
             name="agree"
             id="agree"
-            className="w-[17px] h-[17px] mr-2 "
+            className="w-[17px] h-[17px] mr-2"
+            checked={isAgreed}
+            onChange={(e) => setIsAgreed(e.target.checked)}
           />
           <label htmlFor="agree" className="text-medium">
             (필수) 취소수수료/취소기한을 확인하였으며, 동의합니다.
@@ -77,15 +117,15 @@ function Payment() {
           <h4 className="text-h4 mb-[20px]">결제정보</h4>
           <div className="mb-[5px] flex">
             <span className="flex w-[100px]">팬미팅</span>
-            <span>어쩌면 팬미팅</span>
+            <span>{title}</span>
           </div>
           <div className="mb-[5px] flex">
             <span className="w-[100px] flex">일시</span>
-            <span>2024년 7월 15일 (월) 18:00</span>
+            <span>{startDate}</span>
           </div>
           <div className="mb-[5px] flex">
             <span className="w-[100px] flex">취소기한</span>
-            <span className="text-red">2024년 7월 14일 (일) 17:00</span>
+            <span className="text-red">{cancelDeadline}</span>
           </div>
           <div className="mb-[5px] flex">
             <span className="w-[100px] flex">취소 수수료</span>
@@ -101,12 +141,32 @@ function Payment() {
           <span>총 결제 포인트</span>
           <span className="text-primary">5,000</span>
         </div>
-        <button type="button" className="btn-lg px-[50px]">
-          결제하기
+        <div className="relative">
+          <button
+            type="button"
+            className={`btn-lg px-[60px] ${isAgreed ? "bg-primary text-white" : "bg-gray-400 text-gray-200 cursor-not-allowed"}`}
+            onClick={handlePayment}
+            disabled={!isAgreed}
+          >
+            결제하기
+          </button>
+          {!isAgreed && (
+            <div className="absolute bottom-full mb-2 p-2 bg-gray-700 text-white text-xs rounded-md w-max">
+              취소수수료/취소기한에 동의해야 결제가 가능합니다.
+            </div>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="btn-gray px-[30px] mt-5"
+          onClick={onClose}
+        >
+          닫기
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default Payment;
