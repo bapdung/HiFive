@@ -48,22 +48,22 @@ function Detail() {
         if (token) {
           const response = await client(token).get<FanMeetingDetails>(
             `/api/fanmeeting/${fanmeetingId!}`,
-          ); // fanmeetingId를 문자열로 강제 변환
+          );
           const { data } = response;
           data.startDate = new Date(data.startDate);
           setFanMeetingDetails(data);
-          setIsReserved(data.isReserved); // 초기 예약 상태 설정
+          setIsReserved(data.isReserved);
         }
 
         // 지흔 수정
-        const reservationResponse = await apiClient.post("/api/reservation/1");
-        if (reservationResponse.status === 200) {
-          console.log(
-            "팬미팅 정보 유효, 사용자 구매 정보 유효, 대기열 진입 성공",
-          );
-        } else {
-          console.log("예약 실패");
-        }
+        // const reservationResponse = await apiClient.post("/api/reservation/1");
+        // if (reservationResponse.status === 200) {
+        //   console.log(
+        //     "팬미팅 정보 유효, 사용자 구매 정보 유효, 대기열 진입 성공",
+        //   );
+        // } else {
+        //   console.log("예약 실패");
+        // }
       } catch (error) {
         console.error("Error fetching details:", error);
       }
@@ -76,27 +76,27 @@ function Detail() {
     const handleWebSocketMessage = (data: any) => {
       console.log("WebSocket Message Received:", data);
       if (data.event === "moveToPayment") {
-        setShowPaymentModal(true); // 결제 모달 표시
+        setShowPaymentModal(true);
       } else if (data.event === "moveToWaiting") {
-        setShowWaitingModal(true); // 대기 모달 표시
+        setShowWaitingModal(true);
       } else if (data.event === "alreadyReserved") {
-        alert(data.message); // 이미 예약된 경우 알림 표시
+        alert(data.message);
       }
     };
 
-    webSocketService.addListener("moveToPayment", handleWebSocketMessage); // 결제 이벤트 리스너 등록
-    webSocketService.addListener("moveToWaiting", handleWebSocketMessage); // 대기 이벤트 리스너 등록
-    webSocketService.addListener("alreadyReserved", handleWebSocketMessage); // 예약된 경우 이벤트 리스너 등록
+    webSocketService.addListener("moveToPayment", handleWebSocketMessage);
+    webSocketService.addListener("moveToWaiting", handleWebSocketMessage);
+    webSocketService.addListener("alreadyReserved", handleWebSocketMessage);
 
     return () => {
-      webSocketService.removeListener("moveToPayment", handleWebSocketMessage); // 이벤트 리스너 해제
-      webSocketService.removeListener("moveToWaiting", handleWebSocketMessage); // 이벤트 리스너 해제
+      webSocketService.removeListener("moveToPayment", handleWebSocketMessage);
+      webSocketService.removeListener("moveToWaiting", handleWebSocketMessage);
       webSocketService.removeListener(
         "alreadyReserved",
         handleWebSocketMessage,
       ); // 이벤트 리스너 해제
     };
-  }, [token, fanmeetingId]); // 팬미팅 ID 의존성 추가
+  }, [token, fanmeetingId]);
 
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token) {
@@ -105,18 +105,17 @@ function Detail() {
         webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
           fanmeetingId!,
-        ); // memberId와 fanmeetingId를 문자열로 강제 변환하여 WebSocket 연결 시 사용
+        );
 
-        await client(token).post(`/api/fanmeeting/${fanmeetingId!}`);
+        await client(token).post(`/api/reservation/${fanmeetingId!}`);
 
-        // 예매 성공 시 WebSocket 메시지 전송
         webSocketService.sendMessage(
           JSON.stringify({
             event: "reserve",
             memberId: fanMeetingDetails.memberId,
-            fanMeetingId: fanmeetingId, // fanmeetingId를 문자열로 강제 변환하여 사용
+            fanMeetingId: fanmeetingId,
           }),
-        ); // 예매 메시지 보내기
+        );
       } catch (error) {
         console.error("Error during reservation:", error);
       }
@@ -143,12 +142,12 @@ function Detail() {
   return (
     <div className="my-10 flex justify-center w-full">
       {showPaymentModal && ( // 결제 모달 조건부 렌더링
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <Payment />
         </div>
       )}
       {showWaitingModal && ( // 대기 모달 조건부 렌더링
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <WaitingModal />
         </div>
       )}
@@ -162,7 +161,7 @@ function Detail() {
           <div>
             <h1 className="text-h3 text-gray-900">{fanMeetingDetails.title}</h1>
             <p className="text-large text-gray-700 mb-6 mt-0.5">
-              개복어 님의 HiFive 온라인 팬미팅
+              {fanMeetingDetails.creatorName} 님의 HiFive 온라인 팬미팅
             </p>
             <div className="bg-gray-100 px-8 py-6 rounded-[20px]">
               <div className="flex">
