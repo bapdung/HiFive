@@ -52,9 +52,11 @@ function CreateFanmeeting() {
     {},
   );
   const [description, setDescription] = useState(""); // 팬미팅 상세설명(공지)
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // 팬미팅 포스터
+  // const [imagePreview, setImagePreview] = useState<string | null>(null); // 팬미팅 포스터
   const [showModal, setShowModal] = useState(false);
+  const [posterFile, setPosterFile] = useState<File | null>(null);
   const [posterSrc, setPosterSrc] = useState<string | ArrayBuffer | null>(null);
+  const [posterName, setPosterName] = useState<string | null>(null);
   const naviate = useNavigate();
 
   // 진행시간
@@ -179,46 +181,61 @@ function CreateFanmeeting() {
     setTicketPrice(intValue);
   };
 
-  // S3 URL 가져오기
-  const getS3url = async () => {
-    const fileName = `image`;
-    if (fileName && token && fileName) {
-      const response = await client(token).post(`/api/s3/upload/${fileName}`, {
-        prefix: "test",
-      });
-      const { path } = response.data;
-      // const url = uploadS3(path, idCardFile);
-      console.log("S3Url", path);
-      return path;
-    }
-    return null;
-  };
-
-  // 이미지 업로드 핸들러
-  const handleImageUpload = async (
+  const inputImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (!token) {
       return;
     }
-    getS3url();
     const file = event.target.files?.[0];
     if (file) {
       // 이미지 Blob 미리보기 설정
-      const imageBlobUrl = URL.createObjectURL(file);
-      setImagePreview(imageBlobUrl);
-      // 파일을 Base64 형식으로 변환
+      // const imageBlobUrl = URL.createObjectURL(file);
+      // setImagePreview(imageBlobUrl);
+      // S3로 이미지 업로드
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
           setPosterSrc(reader.result);
-          console.log(posterSrc); // 테스트용으로 출력
+          // console.log(posterSrc); // 테스트용으로 출력
         } else {
           console.error("FileReader result is null");
         }
       };
       reader.readAsDataURL(file);
+      setPosterName(file.name);
+      setPosterFile(file);
     }
+  };
+
+  const uploadS3 = async (path: string, file: File) => {
+    const response = await fetch(
+      new Request(path, {
+        method: "PUT",
+        body: file,
+        headers: new Headers({
+          "Content-Type": file.type,
+        }),
+      }),
+    );
+
+    return response.url;
+  };
+
+  // S3 URL 가져오기
+  const getS3url = async () => {
+    if (posterName && token && posterFile) {
+      const response = await client(token).post(
+        `/api/s3/upload/${posterName}`,
+        {
+          prefix: "test",
+        },
+      );
+      const { path } = response.data;
+      const url = uploadS3(path, posterFile);
+      return url;
+    }
+    return null;
   };
 
   // 코너를 drag 공간에 추가
@@ -340,7 +357,7 @@ function CreateFanmeeting() {
       !startDate ||
       !ticketDate ||
       !selectedDuration ||
-      !imagePreview
+      !posterSrc
     ) {
       alert("미입력한 항목이 있습니다.");
       return false;
@@ -349,12 +366,17 @@ function CreateFanmeeting() {
     return true;
   };
 
+  // 해당 결과를 back으로 전송
   const submitCreateFanmeeting = async () => {
-    // 해당 결과를 back으로 전송
     const [hours, minutes] = selectedDuration.split(":").map(Number);
+    const url = await getS3url();
+    if (!url || !token) {
+      return;
+    }
+    const [posterImg] = url.split("?");
     const result = {
       title,
-      posterImg: imagePreview,
+      posterImg,
       notice: description,
       participant: peopleNumber,
       runningtime: hours * 60 + minutes,
@@ -589,14 +611,14 @@ function CreateFanmeeting() {
                       type="file"
                       id="photoFile"
                       accept="image/*"
-                      onChange={handleImageUpload}
+                      onChange={inputImageUpload}
                       className="hidden"
                     />
                   </label>
                   <div>
-                    {imagePreview && (
+                    {posterSrc && (
                       <img
-                        src={imagePreview}
+                        src={posterSrc as string}
                         alt="Preview"
                         className="max-w-full max-h-full"
                       />
