@@ -52,7 +52,7 @@ const StoryList: React.FC<StoryListProps> = ({
               <td className="w-[20%] py-2.5 px-5 font-semibold">선택 여부</td>
             </tr>
           </thead>
-          <tbody className="border-b-2 border-secondary py-2">
+          <tbody className="border-b-2 border-secondary py-2 hover:cursor-pointer">
             {allStory.length > 0
               ? allStory.map((story) => (
                   <tr
