@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RedisSubscriber implements MessageListener {
 
+	// ?
 	private final ReservationWebSocketHandler webSocketHandler;
 	private final ObjectMapper objectMapper;
 
