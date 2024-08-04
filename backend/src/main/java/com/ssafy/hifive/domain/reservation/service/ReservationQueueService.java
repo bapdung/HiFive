@@ -1,6 +1,7 @@
 package com.ssafy.hifive.domain.reservation.service;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,12 @@ public class ReservationQueueService {
 	public void addToWaitingQueue(String queueKey, Long memberId) {
 		long score = System.currentTimeMillis();
 		redisTemplateForObject.opsForZSet().add(queueKey, memberId.toString(), score);
+		redisTemplateForObject.expire(queueKey, 5, TimeUnit.MINUTES);
 	}
 
 	public void removeFromWaitingQueue(String queueKey, Long memberId) {
 		redisTemplateForObject.opsForZSet().remove(queueKey, memberId.toString());
+		redisTemplateForObject.expire(queueKey, 30, TimeUnit.MINUTES);
 	}
 
 	public void addToPayingQueue(String queueKey, Long memberId, Long fanmeetingId) {
