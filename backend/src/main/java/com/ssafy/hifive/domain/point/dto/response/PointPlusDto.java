@@ -13,12 +13,14 @@ public class PointPlusDto {
 	private LocalDateTime transactionDate;
 	private int money;
 	private int point;
+	private int totalPages;
 
-	public static PointPlusDto from(Point point){
+	public static PointPlusDto from(Point point, int totalPages) {
 		return new PointPlusDto(
 			point.getCreatedDate(),
 			point.getPoint(),
-			point.getPoint()
+			point.getPoint(),
+			totalPages
 		);
 	}
 }
