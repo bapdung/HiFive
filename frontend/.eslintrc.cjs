@@ -52,6 +52,12 @@ module.exports = {
     "import/no-unresolved": "off",
     "no-console": "off",
     "no-alert": "off",
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        some: ["nesting", "id"],
+      },
+    ],
   },
 
   settings: {
