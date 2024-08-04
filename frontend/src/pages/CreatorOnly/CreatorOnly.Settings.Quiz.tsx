@@ -62,6 +62,11 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
   };
 
   const updateQuiz = async (buttonOfQuiz: Quiz) => {
+    if (!isEditing || buttonOfQuiz !== currentQuiz) {
+      setIsEditing(true);
+      setCurrentQuiz(buttonOfQuiz);
+      return;
+    }
     if (!token || !currentQuiz || currentQuiz !== buttonOfQuiz) {
       return;
     }
