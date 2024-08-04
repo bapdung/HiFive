@@ -35,13 +35,19 @@ public class ReservationService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
+		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+		if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
+			checkAndMoveQueues(fanmeetingId);
+			throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+		}
+
 		int remainingTicket = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
 
 		reservationFanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
 
 		reservationFanmeetingPayService.recordReservation(fanmeeting, member);
 
-		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+
 		try {
 			reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
 			checkAndMoveQueues(fanmeetingId);
