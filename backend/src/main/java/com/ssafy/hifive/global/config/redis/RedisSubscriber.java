@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config.redisss;
+package com.ssafy.hifive.global.config.redis;
 
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
