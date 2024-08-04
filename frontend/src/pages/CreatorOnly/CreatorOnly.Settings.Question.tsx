@@ -64,8 +64,6 @@ function Question() {
     try {
       if (token) {
         await client(token).patch(`/api/question/${id}/toggle`);
-
-        // 로컬 상태 업데이트
         setAllQuestions((prevQuestions) =>
           prevQuestions.map((question) =>
             question.questionId === id
@@ -98,7 +96,6 @@ function Question() {
   useEffect(() => {
     doFilterQuestions(typeOfQuestion);
   }, [allQuestions, typeOfQuestion, doFilterQuestions]);
-
   return (
     <div className="flex flex-col w-full items-center">
       <p className="text-h4 w-1/3 flex justify-around my-10">
