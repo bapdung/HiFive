@@ -22,6 +22,7 @@ function Navbar() {
       if (response.status === 200) {
         useAuthStore.getState().setAccessToken(null);
         localStorage.removeItem("accessToken");
+        document.cookie = "refresh_token=; path=/; max-age=0;";
         setLogin(false);
         navigate("/");
       }

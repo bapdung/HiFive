@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
-
 import cameraIcon from "../../assets/icons/pink-cameraIcon.png";
 
 type User = {
@@ -10,6 +9,7 @@ type User = {
   memberId: number;
   name: string | null;
   nickname: string;
+
   point: number;
   profileImg: string;
 };
