@@ -14,13 +14,15 @@ public final class BoardResponseDto {
 	private String boardImg;
 	private LocalDateTime createdDate;
 	private String contents;
+	private int totalPages;
 
-	public static BoardResponseDto from(Board board) {
+	public static BoardResponseDto from(Board board, int totalPages) {
 		return new BoardResponseDto(
 			board.getBoardId(),
 			board.getBoardImg(),
 			board.getCreatedDate(),
-			board.getContents()
+			board.getContents(),
+			totalPages
 		);
 	}
 }

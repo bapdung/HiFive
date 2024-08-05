@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hifive.domain.fanmeeting.service.FanmeetingSchedulerService;
-import com.ssafy.hifive.global.config.Redis.RedisPublisher;
+import com.ssafy.hifive.global.config.redis.RedisPublisher;
 import com.ssafy.hifive.global.config.websocket.WebSocketMessage;
 
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ public class ReservationSchedulerService {
 		for (Long fanmeetingId : activeFanmeetingIds) {
 			String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 
-		try {
-			Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
+			try {
+				Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
 
 				if (currentWaitingQueueSize > 0) {
 					WebSocketMessage message = new WebSocketMessage(
@@ -61,10 +61,11 @@ public class ReservationSchedulerService {
 
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
-				Set<ZSetOperations.TypedTuple<Object>> members = redisTemplateForObject.opsForZSet().rangeWithScores(queueKey, 0, -1);
+				Set<ZSetOperations.TypedTuple<Object>> members = redisTemplateForObject.opsForZSet()
+					.rangeWithScores(queueKey, 0, -1);
 				if (members != null) {
 					for (ZSetOperations.TypedTuple<Object> member : members) {
-						Long memberId = Long.valueOf((String) member.getValue());
+						Long memberId = Long.valueOf((String)member.getValue());
 						Double score = member.getScore();
 						if (score != null) {
 							long elapsedTime = currentTime - score.longValue();

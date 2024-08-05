@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.reservation.dto.response.ReservationMemberDto;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -21,13 +22,15 @@ public class ReservationService {
 	private final ReservationFanmeetingReserveService reservationFanmeetingReserveService;
 	private final ReservationValidService reservationValidService;
 
-	public void reserve(long fanmeetingId, Member member) {
+	public ReservationMemberDto reserve(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
 		reservationFanmeetingReserveService.checkReservation(fanmeeting, member);
 
 		addToQueue(fanmeetingId, member.getMemberId());
+
+		return ReservationMemberDto.from(member);
 	}
 
 	@Transactional
@@ -47,14 +50,8 @@ public class ReservationService {
 
 		reservationFanmeetingPayService.recordReservation(fanmeeting, member);
 
-
-		try {
-			reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
-			checkAndMoveQueues(fanmeetingId);
-
-		} catch (Exception e) {
-			throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
-		}
+		reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
+		checkAndMoveQueues(fanmeetingId);
 	}
 
 	private void checkAndMoveQueues(long fanmeetingId) {
@@ -66,7 +63,8 @@ public class ReservationService {
 
 		if (slotsAvailable > 0) {
 			try {
-				reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId,waitingQueueKey, payingQueueKey, slotsAvailable);
+				reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId, waitingQueueKey, payingQueueKey,
+					slotsAvailable);
 			} catch (Exception e) {
 				throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 			}
@@ -77,7 +75,7 @@ public class ReservationService {
 	public void addToQueue(Long fanmeetingId, Long memberId) {
 		String queueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
-		if(reservationValidService.addToPayingQueueIsValid(payingQueueKey)){
+		if (reservationValidService.addToPayingQueueIsValid(payingQueueKey)) {
 			reservationQueueService.addToPayingQueue(payingQueueKey, memberId, fanmeetingId);
 		} else {
 			reservationQueueService.addToWaitingQueue(queueKey, memberId);
