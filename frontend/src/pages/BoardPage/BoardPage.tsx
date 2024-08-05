@@ -3,8 +3,8 @@ import { useLocation } from "react-router-dom";
 import client from "../../client";
 import Content from "./BoardPage.Content";
 import CommentList from "./BoardPage.CommentList";
-import DeleteModal from "./BoardPage.DeleteModal";
 import useAuthStore from "../../store/useAuthStore";
+import DeleteModal from "./BoardPage.DeleteModal";
 
 interface Board {
   boardId: number;
@@ -24,13 +24,16 @@ const BoardPage: React.FC = () => {
   const [message, setMessage] = useState<string>("게시글");
   const [isEditing, setEditing] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<number>(0);
 
-  const handleModal = (stateOfModal: boolean, msg = "게시글"): void => {
+  const handleModal = (stateOfModal: boolean, id: number, msg = "게시글") => {
+    console.log("handlemodal");
     if (msg === "게시글" && !canEdit) {
       return;
     }
     setOpen(stateOfModal);
     setMessage(msg);
+    setSelectedId(id);
   };
 
   const handleEdit = (editingState: boolean): void => {
@@ -99,8 +102,10 @@ const BoardPage: React.FC = () => {
       </div>
       <DeleteModal
         isOpen={isOpen}
-        onClose={() => handleModal(false, "게시글")}
+        onClose={() => handleModal(false, selectedId, message)}
+        id={selectedId}
         message={message}
+        fetchDetail={fetchDetail}
       />
     </div>
   );
