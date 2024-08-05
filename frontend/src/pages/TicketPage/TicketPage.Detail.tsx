@@ -197,17 +197,17 @@ function Detail() {
       {showWaitingModal &&
         currentQueueSize !== null &&
         currentQueueSize > 0 && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
             <WaitingModal queueSize={currentQueueSize} />
           </div>
         )}
       {showSuccessModal && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <SuccessModal memberId={fanMeetingDetails.memberId} />
         </div>
       )}
       {showFailureModal && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <FailureModal onClose={() => setShowFailureModal(false)} />
         </div>
       )}

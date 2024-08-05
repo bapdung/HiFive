@@ -21,7 +21,7 @@ function Photo({ photo }: PhotoProps) {
       </div>
       <div className="flex w-full justify-between px-10">
         {photo.photoImg.map((img: string) => (
-          <div key={img} className="relative">
+          <div key={img + Date.now() + Math.random()} className="relative">
             <img
               src={img}
               alt="사진"
