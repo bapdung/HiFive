@@ -29,6 +29,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ fetchComments }) => {
         contents: comment,
       });
       fetchComments();
+      setComment("");
     } catch (error) {
       console.error("Error sending post request:", error);
     }
