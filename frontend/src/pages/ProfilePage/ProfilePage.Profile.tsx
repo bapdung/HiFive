@@ -1,9 +1,49 @@
 // import ModifyModal from "./ProfilePage.Modify.Modal";
 
-// import fullHeart from "../../assets/icons/full-heart.png";
-// import heart from "../../assets/icons/heart.png";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
+
+import fullHeart from "../../assets/icons/full-heart.png";
+import heart from "../../assets/icons/heart.png";
 
 function Profile() {
+  const token = useAuthStore((state) => state.accessToken);
+  const creatorId = useParams();
+
+  const [myProfile, setMyProfile] = useState<boolean>(false);
+  const [follow, setFollow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      if (token) {
+        const response = await client(token).get("/api/member");
+
+        if (response.data.memberId === creatorId) {
+          setMyProfile(true);
+        }
+      }
+    };
+
+    const getFollow = async () => {
+      if (token) {
+        const res = await client(token).get("/api/creator/follow");
+        const followList = res.data;
+
+        for (let idx = 0; idx < followList.length - 1; idx += 1) {
+          if (followList[idx].creatorId === creatorId) {
+            setFollow(true);
+            return;
+          }
+        }
+      }
+    };
+
+    getUser();
+    getFollow();
+  }, [token, creatorId]);
+
   return (
     <>
       {/* <ModifyModal /> */}
@@ -11,17 +51,24 @@ function Profile() {
         <div className="w-2/5 h-64 flex flex-col justify-center">
           <div className="flex items-center">
             <div className="text-h2 mr-5">이름</div>
-            <div className="creator-btn-outline-md h-8 flex items-center">
-              프로필 수정
-            </div>
-            {/* <div className="btn-outline-md h-8 flex items-center">
-              <img src={fullHeart} alt="하트" className="mr-1  w-3 h-3" />
-              팔로잉 중
-            </div> */}
-            {/* <div className="btn-md h-8 flex items-center">
-              <img src={heart} alt="하트" className="mr-1 w-3 h-3" />
-              팔로우
-            </div> */}
+            {follow ? (
+              <div className="btn-outline-md h-8 flex items-center">
+                <img src={fullHeart} alt="하트" className="mr-1  w-3 h-3" />
+                팔로잉 중
+              </div>
+            ) : (
+              <div className="btn-md h-8 flex items-center">
+                <img src={heart} alt="하트" className="mr-1 w-3 h-3" />
+                팔로우
+              </div>
+            )}
+            {myProfile ? (
+              <div className="creator-btn-outline-md h-8 flex items-center ml-3">
+                프로필 수정
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <p className="text-medium my-5 text-gray-600">
             안녕하세요! 🐡 복하복하~ 개복어입니다! 여러분과 함께하는 웃음 가득한
