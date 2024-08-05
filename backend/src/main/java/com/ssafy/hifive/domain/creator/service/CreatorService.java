@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.board.repository.BoardRepository;
@@ -35,17 +34,14 @@ public class CreatorService {
 	private final CreatorRepository creatorRepository;
 	private final FanmeetingRepository fanmeetingRepository;
 	private final BoardRepository boardRepository;
+	private final CreatorConditionService creatorConditionService;
 
 	public List<CreatorOverviewDto> getCreatorAll(CreatorParam param) {
 		String condition = param.getCondition() != null ? param.getCondition() : "creatorName";
 		String sort = param.getSort() != null ? param.getSort() : "asc";
 
-		Pageable pageable = PageRequest.of(0, PAGE_SIZE,
-			sort.equalsIgnoreCase("desc") ? Sort.by(condition).descending() : Sort.by(condition).ascending());
-
-		return creatorRepository.findCreatorsWithScrolling(param.getName(), param.getTopId(), param.getTopName(),
-				condition, sort, pageable)
-			.getContent().stream()
+		return creatorConditionService.getCreators(param.getTop(), condition, param.getName(), sort)
+			.stream()
 			.map(CreatorOverviewDto::from)
 			.collect(Collectors.toList());
 	}
@@ -84,6 +80,15 @@ public class CreatorService {
 		long boardCount = boardRepository.countByCreatorId(creatorId);
 
 		return CreatorDetailDto.from(creator, boardCount, fanmeetingCount);
+	}
+
+	public List<CreatorOverviewDto> getTopCreators(){
+		Pageable pageable = PageRequest.of(0, 20);
+		return creatorRepository.findTopCreators(pageable)
+			.stream()
+			.map(CreatorOverviewDto::from)
+			.collect(Collectors.toList());
+
 	}
 
 	@Transactional

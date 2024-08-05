@@ -4,16 +4,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.member.repository.MemberRepository;
 import com.ssafy.hifive.domain.point.dto.param.PointParam;
 import com.ssafy.hifive.domain.point.dto.request.PointRequestDto;
 import com.ssafy.hifive.domain.point.dto.response.PointMinusDto;
 import com.ssafy.hifive.domain.point.dto.response.PointPlusDto;
+import com.ssafy.hifive.domain.point.entity.Point;
 import com.ssafy.hifive.domain.point.entity.TransactionType;
 import com.ssafy.hifive.domain.point.repository.PointRepository;
 
@@ -28,43 +31,52 @@ public class PointService {
 	private final PointValidService pointValidService;
 
 	private final static int PAGE_SIZE = 6;
+	private final MemberRepository memberRepository;
+
+	private Pageable createPageable(PointParam param) {
+		return PageRequest.of(param.getPage() != null ? param.getPage() : 0, PAGE_SIZE,
+			Sort.by("createdDate").descending());
+	}
+
+	private LocalDateTime getStartDate(PointParam param) {
+		return pointValidService.periodSetting(param.getPeriod());
+	}
 
 	public List<PointPlusDto> getPlusTransaction(PointParam param, Member member) {
 
-		LocalDateTime startDate = pointValidService.periodSetting(param.getPeriod());
+		LocalDateTime startDate = getStartDate(param);
 
-		Pageable pageable = PageRequest.of(param.getPage() != null ? param.getPage() : 0, PAGE_SIZE,
-			Sort.by("createdDate").descending());
+		Pageable pageable = createPageable(param);
 
-		TransactionType transactionType = TransactionType.getTransactionType("plus");
+		Page<Point> transactionPage = pointRepository.findPointTranscationByMemberIdWithPaging(
+			member.getMemberId(), TransactionType.getTransactionType("plus"), startDate, pageable);
 
-		log.info(transactionType.toString());
+		int totalPages = transactionPage.getTotalPages();
 
-		return pointRepository.findPointTranscationByMemberIdWithPaging(member.getMemberId(), transactionType, startDate, pageable)
-			.getContent()
-			.stream()
-			.map(PointPlusDto::from)
+		return transactionPage.getContent().stream()
+			.map(transaction -> PointPlusDto.from(transaction, totalPages))
 			.collect(Collectors.toList());
 	}
 
 	public List<PointMinusDto> getMinusTransaction(PointParam param, Member member) {
 
-		LocalDateTime startDate = pointValidService.periodSetting(param.getPeriod());
+		LocalDateTime startDate = getStartDate(param);
 
-		Pageable pageable = PageRequest.of(param.getPage() != null ? param.getPage() : 0, PAGE_SIZE,
-			Sort.by("createdDate").descending());
+		Pageable pageable = createPageable(param);
 
-		TransactionType transactionType = TransactionType.getTransactionType("minus");
+		Page<Point> transactionPage = pointRepository.findPointTranscationByMemberIdWithPaging(
+			member.getMemberId(), TransactionType.getTransactionType("minus"), startDate, pageable);
 
-		return pointRepository.findPointTranscationByMemberIdWithPaging(member.getMemberId(), transactionType, startDate, pageable)
-			.getContent()
-			.stream()
-			.map(PointMinusDto::from)
+		int totalPages = transactionPage.getTotalPages();
+
+		return transactionPage.getContent().stream()
+			.map(transaction -> PointMinusDto.from(transaction, totalPages))
 			.collect(Collectors.toList());
 	}
 
 	public void chargePoint(PointRequestDto pointRequestDto, Member member) {
+		member.updatePoint(pointRequestDto.getMoney() + member.getPoint());
+		memberRepository.save(member);
 		pointRepository.save(pointRequestDto.toEntity(member));
 	}
-
 }
