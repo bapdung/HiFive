@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.reservation.dto.response.ReservationMemberDto;
 import com.ssafy.hifive.domain.reservation.service.ReservationService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,10 +34,9 @@ public class ReservationController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@PostMapping(path = "/{fanmeetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> reserve(@PathVariable long fanmeetingId,
+	public ResponseEntity<ReservationMemberDto> reserve(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
-		reservationService.reserve(fanmeetingId, member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(reservationService.reserve(fanmeetingId, member));
 	}
 
 	@Operation(summary = "팬미팅 결제", description = "특정 팬미팅을 결제한다.")

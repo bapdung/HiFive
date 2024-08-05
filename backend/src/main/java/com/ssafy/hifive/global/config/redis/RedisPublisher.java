@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config.Redis;
+package com.ssafy.hifive.global.config.redis;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RedisPublisher {
-
+	//?
 	private final StringRedisTemplate redisTemplate;
 
 	public void publish(Long fanmeetingId, String message) {
