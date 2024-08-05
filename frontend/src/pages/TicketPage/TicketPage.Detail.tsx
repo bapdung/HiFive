@@ -82,15 +82,15 @@ function Detail() {
 
     const handleWebSocketMessage = (data: WebSocketMessage) => {
       console.log("WebSocket Message Received:", data);
-      if (data.event === "moveToPayment") {
-        setShowPaymentModal(true);
-      } else if (data.event === "currentQueueSize") {
+      if (data.event === "currentQueueSize") {
         const queueSize = parseInt(data.message.split(":")[1].trim(), 10);
         console.log(queueSize);
         setCurrentQueueSize(queueSize);
-        if (queueSize > 0) {
-          setShowWaitingModal(true);
-        }
+        setShowWaitingModal(true);
+      } else if (data.event === "moveToPayment") {
+        webSocketService.disconnect();
+        setShowWaitingModal(false);
+        setShowPaymentModal(true);
       } else if (data.event === "alreadyReserved") {
         alert(data.message);
       }
