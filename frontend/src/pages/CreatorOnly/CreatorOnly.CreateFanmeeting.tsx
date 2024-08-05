@@ -382,7 +382,7 @@ function CreateFanmeeting() {
       posterImg,
       notice: description,
       participant: peopleNumber,
-      runningtime: hours * 60 + minutes,
+      runningTime: hours * 60 + minutes,
       startDate: startDate?.toISOString(),
       openDate: ticketDate?.toISOString(),
       price: ticketPrice,
