@@ -27,7 +27,7 @@ function StoryForm() {
       const apiClient = client(accessToken || "");
       const response = await apiClient.get(`/api/story/my/${fanmeetingId}`);
       if (response.data.length > 0) {
-        const { storyId } = response.data[0]; // 여기서 storyId를 가져옴
+        const { storyId } = response.data[0];
         const storyDetail = await apiClient.get(`/api/story/detail/${storyId}`);
         setStory({ id: storyId, ...storyDetail.data });
         setTitle(storyDetail.data.title || "");
@@ -56,7 +56,7 @@ function StoryForm() {
     try {
       const apiClient = client(accessToken || "");
       if (editMode && story) {
-        await apiClient.patch(`/api/story/${story.id}`, { title, content }); // story.id 사용
+        await apiClient.patch(`/api/story/${story.id}`, { title, content });
       } else {
         await apiClient.post(`/api/story/${fanmeetingId}`, { title, content });
       }
