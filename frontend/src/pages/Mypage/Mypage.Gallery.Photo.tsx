@@ -1,14 +1,14 @@
 import download from "../../assets/icons/download.png";
 
-type PhotoType = {
+type Photo = {
   creatorName: string;
   title: string;
   fanmeetingStartDate: string;
-  photoImg: string;
+  photoImg: string[];
 };
 
 interface PhotoProps {
-  photo: PhotoType;
+  photo: Photo;
 }
 
 function Photo({ photo }: PhotoProps) {
@@ -20,34 +20,20 @@ function Photo({ photo }: PhotoProps) {
         {date} - [{photo.creatorName}] {photo.title}
       </div>
       <div className="flex w-full justify-between px-10">
-        <div className="w-[300px] h-[230px] bg-primary-300 relative">
-          <img
-            src={download}
-            alt="다운로드 아이콘"
-            className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5"
-          />
-        </div>
-        <div className="w-[300px] h-[230px] bg-secondary-300 relative">
-          <img
-            src={download}
-            alt="다운로드 아이콘"
-            className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5"
-          />
-        </div>
-        <div className="w-[300px] h-[230px] bg-primary-300 relative">
-          <img
-            src={download}
-            alt="다운로드 아이콘"
-            className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5"
-          />
-        </div>
-        <div className="w-[300px] h-[230px] bg-secondary-300 relative">
-          <img
-            src={download}
-            alt="다운로드 아이콘"
-            className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5"
-          />
-        </div>
+        {photo.photoImg.map((img: string) => (
+          <div key={img} className="relative">
+            <img
+              src={img}
+              alt="사진"
+              className="w-[300px] h-[230px] bg-primary-300"
+            />
+            <img
+              src={download}
+              alt="다운로드 아이콘"
+              className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5 z-30"
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

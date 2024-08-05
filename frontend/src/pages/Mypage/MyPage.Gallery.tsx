@@ -7,7 +7,7 @@ type PhotoType = {
   creatorName: string;
   title: string;
   fanmeetingStartDate: string;
-  photoImg: string;
+  photoImg: string[];
 };
 
 function Gallery() {
@@ -29,7 +29,7 @@ function Gallery() {
     };
 
     getPhoto();
-  }, []);
+  }, [token]);
 
   return (
     <>
@@ -39,8 +39,8 @@ function Gallery() {
         <span className="text-h6 text-gray-700 ml-2.5">과거순</span>
       </div>
       <div className="mt-10 bg-page-background pt-10 w-full mb-10">
-        {photoList?.map((photo) => (
-          <Photo photo={photo} key={photo.photoImg} />
+        {photoList?.map((photo: PhotoType) => (
+          <Photo photo={photo} key={photo.photoImg[0]} />
         ))}
       </div>
     </>
