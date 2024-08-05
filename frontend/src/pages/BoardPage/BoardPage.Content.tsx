@@ -14,7 +14,7 @@ interface Board {
 }
 
 interface ContentProps {
-  handleModal: (stateOfModal: boolean, msg?: string) => void;
+  handleModal: (stateOfModal: boolean, boardId: number, msg: string) => void;
   handleEdit: (isEditing: boolean) => void;
   fetchDetail: () => void;
   isCanEdit: boolean;
@@ -190,7 +190,9 @@ const Content: React.FC<ContentProps> = ({
               <button
                 className="btn-light-md px-[2.5]"
                 type="button"
-                onClick={() => handleModal(true, "게시글")}
+                onClick={() => {
+                  handleModal(true, boardId, "게시글");
+                }}
               >
                 삭제
               </button>
