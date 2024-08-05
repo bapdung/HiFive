@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberNicknameDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
+import com.ssafy.hifive.domain.member.dto.response.MemberIdentificationResponseDto;
 import com.ssafy.hifive.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.repository.MemberRepository;
@@ -47,6 +48,13 @@ public class MemberService {
 	public void createIdentification(MemberIdentificationDto memberIdentificationDto, Member member) {
 		member.updateIdentification(memberIdentificationDto.getIdentificationImg());
 	}
+
+	public MemberIdentificationResponseDto getIdentification(Member member) {
+		return memberRepository.findById(member.getMemberId())
+			.map(MemberIdentificationResponseDto::from)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+	}
+
 
 	@Transactional
 	public void deleteMember(Member member) {
