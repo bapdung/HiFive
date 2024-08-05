@@ -17,23 +17,31 @@ interface Board {
 const BoardPage: React.FC = () => {
   const location = useLocation();
   const boardId = parseInt(location.pathname.split("/")[3], 10);
+  const creatorId = parseInt(location.pathname.split("/")[2], 10);
   const token = useAuthStore((state) => state.accessToken);
   const [board, setBoard] = useState<Board | null>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("게시글");
   const [isEditing, setEditing] = useState<boolean>(false);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const handleModal = (stateOfModal: boolean, msg = "게시글"): void => {
+    if (msg === "게시글" && !canEdit) {
+      return;
+    }
     setOpen(stateOfModal);
     setMessage(msg);
   };
 
   const handleEdit = (editingState: boolean): void => {
+    if (!canEdit) {
+      return;
+    }
     setEditing(editingState);
   };
 
   const fetchDetail = async () => {
-    if (!token) {
+    if (!token || !boardId) {
       return;
     }
     try {
@@ -47,7 +55,26 @@ const BoardPage: React.FC = () => {
   useEffect(() => {
     fetchDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, boardId, board]);
+  }, [token, boardId, creatorId]);
+
+  const fetchUser = async () => {
+    if (!token) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/member`);
+      if (response.data.memberId === creatorId) {
+        setCanEdit(true);
+      }
+    } catch (error) {
+      console.error("Error fetching user info :", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, creatorId]);
 
   return (
     <div className="relative w-full flex flex-col items-center pt-[40px] bg-gray-100">
@@ -62,6 +89,7 @@ const BoardPage: React.FC = () => {
           <Content
             handleModal={handleModal}
             handleEdit={handleEdit}
+            isCanEdit={canEdit}
             isEditing={isEditing}
             board={board}
           />
