@@ -339,9 +339,12 @@ function CreateFanmeeting() {
   // backend 에 제출하기 위해 데이터 형식 변경 (코너)
   const convertCornersToIndices = (cornerArray: Corner[]): CornerIndex[] =>
     cornerArray.map((corner, index) => ({
-      categoryId: typeOfCorners.indexOf(corner.content) + 1,
+      categoryId:
+        typeOfCorners.indexOf(corner.content) + 1 === 0
+          ? 7
+          : typeOfCorners.indexOf(corner.content) + 1,
       sequence: index + 1,
-      detailName: "fdsfdsfd",
+      detailName: corner.content,
     }));
 
   // 팬미팅 생성시 유효성 확인
