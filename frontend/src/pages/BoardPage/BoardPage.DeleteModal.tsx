@@ -1,3 +1,4 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 
@@ -17,6 +18,9 @@ const DeleteModal: React.FC<BoardProps> = ({
   fetchDetail,
 }) => {
   const token = useAuthStore((state) => state.accessToken);
+  const location = useLocation();
+  const creatorId = parseInt(location.pathname.split("/")[2], 10);
+  const navigate = useNavigate();
 
   const deleteBoard = async () => {
     try {
@@ -47,6 +51,7 @@ const DeleteModal: React.FC<BoardProps> = ({
     if (message === "게시글") {
       onClose();
       deleteBoard();
+      navigate(`/creator/${creatorId}`);
     } else if (message === "댓글") {
       onClose();
       deleteComment();
