@@ -1,36 +1,35 @@
-import { v4 as uuidv4 } from "uuid";
-import proimg1 from "../../assets/img/minseo.png";
-import proimg2 from "../../assets/img/hyukjin.png";
-import proimg3 from "../../assets/img/minchae.png";
-import proimg4 from "../../assets/img/jiheun.png";
-import proimg5 from "../../assets/img/hee.png";
-import proimg6 from "../../assets/img/me.png";
-import proimg7 from "../../assets/img/bok.png";
-import proimg8 from "../../assets/img/princess.png";
+import { useState, useEffect } from "react";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
-interface Creator {
-  id: string;
-  name: string;
-  src: string;
+interface CreatorData {
+  creatorId: number;
+  creatorName: string;
+  creatorProfile: string;
 }
 
-const creators: Creator[] = [
-  { id: uuidv4(), name: "크리에이터", src: proimg1 },
-  { id: uuidv4(), name: "크리에이터", src: proimg2 },
-  { id: uuidv4(), name: "크리에이터", src: proimg3 },
-  { id: uuidv4(), name: "크리에이터", src: proimg4 },
-  { id: uuidv4(), name: "크리에이터", src: proimg5 },
-  { id: uuidv4(), name: "크리에이터", src: proimg6 },
-  { id: uuidv4(), name: "크리에이터", src: proimg7 },
-  { id: uuidv4(), name: "크리에이터", src: proimg8 },
-];
-
 const CreatorList: React.FC = () => {
-  const repeatedCreators = creators.flatMap((creator) =>
-    Array(3)
-      .fill(creator)
-      .map((item, index) => ({ ...item, uniqueId: `${item.id}-${index}` })),
-  );
+  const [creators, setCreators] = useState<CreatorData[]>([]);
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  useEffect(() => {
+    const fetchCreators = async () => {
+      try {
+        const apiClient = client(accessToken || "");
+        const response = await apiClient.get("/api/creator/main");
+        const fetchedCreators = response.data.map((creator: CreatorData) => ({
+          creatorId: creator.creatorId,
+          creatorName: creator.creatorName,
+          creatorProfile: creator.creatorProfile,
+        }));
+        setCreators(fetchedCreators);
+      } catch (err) {
+        console.error("Error fetching creators", err);
+      }
+    };
+
+    fetchCreators();
+  }, [accessToken]);
 
   return (
     <div className="flex flex-col items-center w-full bg-white py-20">
@@ -44,19 +43,21 @@ const CreatorList: React.FC = () => {
       </div>
       <div className="flex overflow-hidden w-full">
         <div className="flex animate-scroll">
-          {repeatedCreators.map((creator) => (
+          {creators.map((creator) => (
             <div
-              key={creator.uniqueId}
+              key={creator.creatorId} // Changed key to use creatorId
               className="flex flex-col items-center mx-5"
             >
               <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                 <img
-                  src={creator.src}
-                  alt={`Creator ${creator.name}`}
+                  src={creator.creatorProfile}
+                  alt={`Creator ${creator.creatorName}`}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="mt-2 text-h6 text-center">{creator.name}</span>
+              <span className="mt-2 text-h6 text-center">
+                {creator.creatorName}
+              </span>
             </div>
           ))}
         </div>
