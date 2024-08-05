@@ -88,8 +88,10 @@ function IdCard() {
         const response = await client(token).get("/api/member/identification");
 
         if (response.status === 200) {
-          setIdCardSrc(response.data.identificationImg);
-          setStatus(0);
+          if (response.data.identificationImg) {
+            setIdCardSrc(response.data.identificationImg);
+            setStatus(0);
+          }
         }
       }
     };
