@@ -83,7 +83,7 @@ public class MemberController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path="/identification", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> createIdentification(@RequestBody
 	MemberIdentificationDto memberIdentificationDto,
 		@AuthenticationPrincipal Member member) {
