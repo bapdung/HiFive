@@ -74,6 +74,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
         console.log("Loading finished.");
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [token, userId, isRecent, isEnd, top, fanmeetings.length, isLoading],
   );
 
@@ -84,6 +85,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
     setTop(undefined);
     setIsEnd(false);
     fetchFanmeetings(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRecent]);
 
   // 초기 렌더링 시 데이터를 불러오기 위한 useEffect 훅
@@ -92,6 +94,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
       console.log("Initial load...");
       fetchFanmeetings(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, token]);
 
   // 스크롤 이벤트를 감지하여 무한 스크롤 구현
