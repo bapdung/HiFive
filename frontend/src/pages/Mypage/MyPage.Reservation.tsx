@@ -48,6 +48,7 @@ function Reservation() {
 
     if (content === "예정 팬미팅") {
       setStatus("scheduled");
+      setSort("asc");
     } else if (content === "지난 팬미팅") {
       setStatus("completed");
     }
@@ -84,21 +85,28 @@ function Reservation() {
         </span>
       </div>
       <div className="flex w-full justify-end mr-28 mt-6">
-        <span
-          className={`mr-2.5 text-medium ${sort === "desc" ? "text-primary-text" : ""}`}
-          onClick={(e) => changeSort(e)}
-          role="presentation"
-        >
-          최신순
-        </span>
-        <span
-          className={`text-medium ${sort === "asc" ? "text-primary-text" : ""}`}
-          onClick={(e) => changeSort(e)}
-          role="presentation"
-        >
-          과거순
-        </span>
+        {status === "scheduled" ? (
+          ""
+        ) : (
+          <>
+            <span
+              className={`mr-2.5 text-medium ${sort === "desc" ? "text-primary-text" : ""}`}
+              onClick={(e) => changeSort(e)}
+              role="presentation"
+            >
+              최신순
+            </span>
+            <span
+              className={`text-medium ${sort === "asc" ? "text-primary-text" : ""}`}
+              onClick={(e) => changeSort(e)}
+              role="presentation"
+            >
+              과거순
+            </span>
+          </>
+        )}
       </div>
+
       <div className="mt-6 flex flex-wrap px-10 box-border justify-start gap-9">
         {fanmeetingList.map((fanmeeting) => (
           <FanmeetingInfo
