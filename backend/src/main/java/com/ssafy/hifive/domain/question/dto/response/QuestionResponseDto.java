@@ -12,13 +12,16 @@ public final class QuestionResponseDto {
 	private String nickname;
 	private String contents;
 	private boolean isPicked;
+	private int totalPages;
 
-	public static QuestionResponseDto from(Question question) {
+	public static QuestionResponseDto from(Question question, int totalPages) {
 		return new QuestionResponseDto(
 			question.getQuestionId(),
 			question.getFan().getNickname(),
 			question.getContent(),
-			question.isPicked()
+			question.isPicked(),
+			totalPages
+
 		);
 	}
 }

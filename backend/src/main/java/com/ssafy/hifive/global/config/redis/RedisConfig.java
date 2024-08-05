@@ -1,4 +1,4 @@
-package com.ssafy.hifive.global.config;
+package com.ssafy.hifive.global.config.redis;
 
 import java.time.Duration;
 
@@ -11,6 +11,9 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -41,7 +44,17 @@ public class RedisConfig {
 		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
 		redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.afterPropertiesSet();
 		return redisTemplate;
+	}
+
+	@Bean
+	public RedisMessageListenerContainer redisMessageListener(RedisConnectionFactory connectionFactory,
+		RedisSubscriber redisSubscriber) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.addMessageListener(redisSubscriber, new PatternTopic("fanmeeting:*"));
+		return container;
 	}
 
 	@Bean
@@ -49,9 +62,10 @@ public class RedisConfig {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer());
 		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-		redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+		redisTemplate.afterPropertiesSet();
 		return redisTemplate;
 	}
 
@@ -63,6 +77,7 @@ public class RedisConfig {
 		redisTemplate.setValueSerializer(new StringRedisSerializer());
 		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
 		redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+		redisTemplate.afterPropertiesSet();
 		return redisTemplate;
 	}
 
@@ -70,11 +85,17 @@ public class RedisConfig {
 	public CacheManager cacheManager(RedisConnectionFactory factory) {
 		RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
 			.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-			.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+			.serializeValuesWith(
+				RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
 			.entryTtl(Duration.ofMinutes(1L));
 
 		return RedisCacheManager.builder(factory)
 			.cacheDefaults(cacheConfig)
 			.build();
+	}
+
+	@Bean
+	public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
+		return redisTemplate.opsForZSet();
 	}
 }
