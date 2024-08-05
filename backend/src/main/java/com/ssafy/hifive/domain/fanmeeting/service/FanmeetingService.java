@@ -149,16 +149,19 @@ public class FanmeetingService {
 	}
 
 	public List<FanmeetingOverViewDto> getCompletedFanmeetingByCreator(long creatorId, FanmeetingParam param) {
+		LocalDateTime topDate = null;
+		if(param.getTop() != null) {
+			Fanmeeting fanmeeting = fanmeetingRepository.findById(param.getTop())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
+			topDate = fanmeeting.getStartDate();
+		}
 
-		Fanmeeting fanmeeting = fanmeetingRepository.findById(param.getTop())
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
-
-		LocalDateTime topDate = fanmeeting.getStartDate();
+		String sort = param.getSort()!=null?param.getSort():"desc";
 
 		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByCreatorWithScrolling(
 			creatorId,
 			topDate,
-			param.getSort(),
+			sort,
 			false
 		);
 

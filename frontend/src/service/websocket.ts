@@ -20,7 +20,7 @@ class WebSocketService {
     );
 
     this.socket.onopen = () => {
-      // console.log("WebSocket Connected");
+      console.log("WebSocket Connected");
     };
 
     this.socket.onmessage = (event) => {
@@ -36,7 +36,7 @@ class WebSocketService {
     };
 
     this.socket.onclose = () => {
-      // console.log("WebSocket Disconnected");
+      console.log("WebSocket Disconnected");
     };
   }
 

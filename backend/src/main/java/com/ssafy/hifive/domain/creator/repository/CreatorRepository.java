@@ -52,4 +52,12 @@ public interface CreatorRepository extends JpaRepository<Creator, Long>, Creator
 			where c.creator.memberId = :creatorId
 		""")
 	void deleteByCreatorId(@Param("creatorId") long creatorId);
+
+
+	@Query("""
+		select c
+		from Creator c
+		order by c.follower desc
+	""")
+	List<Creator> findTopCreators(Pageable pageable);
 }
