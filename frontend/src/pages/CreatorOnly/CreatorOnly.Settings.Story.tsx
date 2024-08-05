@@ -19,7 +19,7 @@ function Story() {
   const fanmeetingId = parseInt(location.pathname.split("/")[2], 10);
   const [typeOfStory, setTypeOfStory] = useState("all");
   const [allStory, setAllStory] = useState<Story[]>([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
   const fetchStoryList = async () => {
     try {
@@ -27,7 +27,7 @@ function Story() {
         return;
       }
       const response = await client(token).get(
-        `/api/story/${fanmeetingId}?page=${page}`,
+        `/api/story/${fanmeetingId}?page=${page - 1}`,
       );
       setAllStory(response.data);
     } catch (error) {
@@ -41,7 +41,7 @@ function Story() {
         return;
       }
       const response = await client(token).get(
-        `/api/story/${fanmeetingId}/selected?page=${page}`,
+        `/api/story/${fanmeetingId}/selected?page=${page - 1}`,
       );
       setAllStory(response.data);
     } catch (error) {
@@ -55,7 +55,7 @@ function Story() {
         return;
       }
       const response = await client(token).get(
-        `/api/story/${fanmeetingId}/unselected?page=${page}`,
+        `/api/story/${fanmeetingId}/unselected?page=${page - 1}`,
       );
       setAllStory(response.data);
     } catch (error) {
@@ -73,15 +73,15 @@ function Story() {
   const handleTypeOfStory = (type: string) => {
     setTypeOfStory(type);
     if (type === "all") {
-      setPage(0);
+      setPage(1);
       return;
     }
     if (type === "selected") {
-      setPage(0);
+      setPage(1);
       return;
     }
     if (type === "unselected") {
-      setPage(0);
+      setPage(1);
     }
   };
 

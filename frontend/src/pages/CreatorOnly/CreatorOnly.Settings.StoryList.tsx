@@ -11,6 +11,7 @@ interface Story {
   totalPages: number;
   picked: boolean;
 }
+
 interface StoryListProps {
   allStory: Story[];
   handlePage: (pg: number) => void;
@@ -24,21 +25,25 @@ const StoryList: React.FC<StoryListProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const fanmeetingId = parseInt(location.pathname.split("/")[2], 10);
-  const [totalPage, setTotalPage] = useState<number>(0);
-  const [pageCount, setPageCount] = useState<number>(1);
+  const fanmeetingId = parseInt(location.pathname.split("/")[2], 10); // 경로에서 팬미팅 ID를 추출
+  const [totalPage, setTotalPage] = useState<number>(0); // 전체 페이지 수 상태
+  const [pageRange, setPageRange] = useState<number[]>([]); // 페이지 범위 상태
 
+  // 전체 페이지 수 설정
   useEffect(() => {
     if (allStory && allStory.length > 0) {
       setTotalPage(allStory[0].totalPages);
     }
   }, [allStory]);
 
+  // 현재 페이지가 변경될 때마다 페이지 범위 업데이트
   useEffect(() => {
-    if (totalPage > 0) {
-      setPageCount(totalPage >= 3 ? 3 : totalPage);
-    }
-  }, [totalPage]);
+    const startPage = Math.floor((currentPage - 1) / 5) * 5 + 1;
+    const endPage = Math.min(startPage + 4, totalPage);
+    setPageRange(
+      Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i),
+    ); // 페이지 범위 설정
+  }, [currentPage, totalPage]);
 
   return (
     <div className="bg-white rounded-[25px] w-[60%] p-10 pb-5">
@@ -81,7 +86,8 @@ const StoryList: React.FC<StoryListProps> = ({
           </tbody>
         </table>
         <div className="flex row gap-10 my-5">
-          {currentPage !== 0 ? (
+          {/* 이전 페이지 버튼 */}
+          {currentPage > 1 ? (
             <button type="button" onClick={() => handlePage(currentPage - 1)}>
               <img src={Prev} alt="prev" className="w-[1.5rem] opacity-50" />{" "}
             </button>
@@ -91,27 +97,20 @@ const StoryList: React.FC<StoryListProps> = ({
             </span>
           )}
 
-          {Array.from({ length: pageCount || 1 }, (_, index) => (
+          {/* 페이지 번호 버튼들 */}
+          {pageRange.map((page) => (
             <button
-              key={index + 1}
+              key={page}
               type="button"
-              className="text-gray-500"
-              onClick={() => handlePage(index)}
+              className={`text-gray-500 ${page === currentPage ? "font-bold" : ""}`}
+              onClick={() => handlePage(page)}
             >
-              {index + 1}
+              {page}
             </button>
           ))}
-          {totalPage > 4 ? <span className="text-gray-500">...</span> : null}
-          {totalPage <= 3 ? null : (
-            <button
-              type="button"
-              className="text-gray-500"
-              onClick={() => handlePage(totalPage - 1)}
-            >
-              {totalPage}
-            </button>
-          )}
-          {currentPage < totalPage - 1 ? (
+
+          {/* 다음 페이지 버튼 */}
+          {currentPage < totalPage ? (
             <button type="button" onClick={() => handlePage(currentPage + 1)}>
               <img src={Next} alt="next" className="w-[1.5rem] opacity-50" />
             </button>
