@@ -1,7 +1,7 @@
 package com.ssafy.hifive.domain.photo.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -28,9 +28,19 @@ public class PhotoService {
 			throw new DataNotFoundException(ErrorCode.PHOTO_NOT_FOUND);
 		}
 
-		return photos.stream()
-			.map(photo -> PhotoOverViewDto.from(photo, photo.getFanmeeting()))
-			.collect(Collectors.toList());
+		List<PhotoOverViewDto> photoList = new ArrayList<>();
+
+		int size = photos.size() / 4;
+		for (int i = 0; i < size; i++) {
+			List<String> fourcut = new ArrayList<>();
+			fourcut.add(photos.get(i).getPhotoImg());
+			fourcut.add(photos.get(i+1).getPhotoImg());
+			fourcut.add(photos.get(i+2).getPhotoImg());
+			fourcut.add(photos.get(i+3).getPhotoImg());
+			photoList.add(new PhotoOverViewDto( photos.get(i).getFanmeeting().getCreator().getName(), photos.get(i).getFanmeeting().getTitle(), photos.get(i).getFanmeeting().getStartDate(), fourcut));
+		}
+
+		return photoList;
 	}
 
 }
