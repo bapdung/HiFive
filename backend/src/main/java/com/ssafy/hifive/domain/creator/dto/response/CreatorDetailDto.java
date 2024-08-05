@@ -21,7 +21,7 @@ public final class CreatorDetailDto {
 
 	public static CreatorDetailDto from(Creator creator, long boardCount, long fanmeetingCount) {
 		return new CreatorDetailDto(
-			creator.getCreatorProfileId(),
+			creator.getCreator().getMemberId(),
 			creator.getCreatorName(),
 			creator.getLink(),
 			creator.getDescription(),
