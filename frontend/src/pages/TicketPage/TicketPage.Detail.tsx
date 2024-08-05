@@ -26,6 +26,7 @@ interface FanMeetingDetails {
   title: string;
   notice: string;
   startDate: Date;
+  openDate: Date;
   runningTime: number;
   price: number;
   participant: number;
@@ -68,6 +69,8 @@ function Detail() {
           );
           const { data } = response;
           data.startDate = new Date(data.startDate);
+          data.openDate = new Date(data.openDate);
+
           setFanMeetingDetails(data);
           setIsReserved(data.reservation);
         }
@@ -257,12 +260,18 @@ function Detail() {
         <h2 className="text-h2 mb-12">{fanMeetingDetails.title}</h2>
         <div>
           <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">날짜</span>
-            <span>{formatDate(fanMeetingDetails.startDate)}</span>
+            <span className="w-20 text-gray-700">행사일</span>
+            <span>
+              {formatDate(fanMeetingDetails.startDate)}{" "}
+              {formatTime(fanMeetingDetails.startDate)}
+            </span>
           </p>
           <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">시작시간</span>
-            <span>{formatTime(fanMeetingDetails.startDate)}</span>
+            <span className="w-20 text-gray-700">예매일</span>
+            <span>
+              {formatDate(fanMeetingDetails.openDate)}{" "}
+              {formatTime(fanMeetingDetails.openDate)}
+            </span>
           </p>
           <p className="flex mb-2.5">
             <span className="w-20 text-gray-700">진행시간</span>
