@@ -1,7 +1,7 @@
 import React from "react";
 
 interface CommentItemProps {
-  handleModal?: (stateOfModal: boolean, msg: string) => void;
+  handleModal: (stateOfModal: boolean, msg: string) => void;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({ handleModal }) => {
@@ -39,11 +39,6 @@ const CommentItem: React.FC<CommentItemProps> = ({ handleModal }) => {
       </button>
     </div>
   );
-};
-
-// 기본 props 설정
-CommentItem.defaultProps = {
-  handleModal: undefined,
 };
 
 export default CommentItem;
