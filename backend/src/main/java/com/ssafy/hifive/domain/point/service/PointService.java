@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.member.repository.MemberRepository;
 import com.ssafy.hifive.domain.point.dto.param.PointParam;
 import com.ssafy.hifive.domain.point.dto.request.PointRequestDto;
 import com.ssafy.hifive.domain.point.dto.response.PointMinusDto;
@@ -30,6 +31,7 @@ public class PointService {
 	private final PointValidService pointValidService;
 
 	private final static int PAGE_SIZE = 6;
+	private final MemberRepository memberRepository;
 
 	private Pageable createPageable(PointParam param) {
 		return PageRequest.of(param.getPage() != null ? param.getPage() : 0, PAGE_SIZE,
@@ -73,6 +75,8 @@ public class PointService {
 	}
 
 	public void chargePoint(PointRequestDto pointRequestDto, Member member) {
+		member.updatePoint(pointRequestDto.getMoney() + member.getPoint());
+		memberRepository.save(member);
 		pointRepository.save(pointRequestDto.toEntity(member));
 	}
 }
