@@ -1,4 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 import camera from "../../assets/icons/cameraIcon.png";
 
 interface Board {
@@ -12,6 +16,7 @@ interface Board {
 interface ContentProps {
   handleModal: (stateOfModal: boolean, msg?: string) => void;
   handleEdit: (isEditing: boolean) => void;
+  isCanEdit: boolean;
   isEditing: boolean;
   board: Board | null;
 }
@@ -19,9 +24,13 @@ interface ContentProps {
 const Content: React.FC<ContentProps> = ({
   handleModal,
   handleEdit,
+  isCanEdit,
   isEditing,
   board,
 }) => {
+  const location = useLocation();
+  const boardId = parseInt(location.pathname.split("/")[3], 10);
+  const token = useAuthStore((state) => state.accessToken);
   const [inputValue, setInputValue] = useState(board?.contents);
 
   // ref 객체 가져오기 위해서 생성 (높이 때문에)
@@ -49,9 +58,27 @@ const Content: React.FC<ContentProps> = ({
     }
   }, [isEditing]); // 수정버튼 눌렀을 때 높이 조정
 
+  useEffect(() => {
+    setInputValue(board?.contents);
+  }, [board]);
+
+  const updateBoard = async () => {
+    if (!token) {
+      return;
+    }
+    try {
+      await client(token).patch(`/api/board/${boardId}`, {
+        contents: inputValue,
+      });
+    } catch (error) {
+      console.error("Error updating board:", error);
+    }
+  };
+
   const handleSave = () => {
-    // 나중에 save 로직 작성
-    handleEdit(false); // 수정 완료 후 edit 모드 종료
+    updateBoard();
+    window.location.reload();
+    handleEdit(false);
   };
 
   return (
@@ -63,7 +90,7 @@ const Content: React.FC<ContentProps> = ({
           <p className="text-xs">2024. 07. 15</p>
         </div>
         <div className="ml-auto space-x-2.5">
-          {isEditing ? (
+          {isEditing && isCanEdit ? (
             <>
               <button
                 className="creator-btn-light-md px-[2.5]"
@@ -80,7 +107,8 @@ const Content: React.FC<ContentProps> = ({
                 수정 완료
               </button>
             </>
-          ) : (
+          ) : null}
+          {!isEditing && isCanEdit ? (
             <>
               <button
                 className="creator-btn-light-md px-[2.5]"
@@ -97,7 +125,7 @@ const Content: React.FC<ContentProps> = ({
                 삭제
               </button>
             </>
-          )}
+          ) : null}
         </div>
       </div>
       {isEditing ? (
@@ -125,7 +153,7 @@ const Content: React.FC<ContentProps> = ({
       ) : (
         <>
           <p ref={pRef} className="py-5 w-full text-gray-900 text-medium">
-            {inputValue}
+            {board?.contents}
           </p>
           {board?.boardImg ? (
             <img src={board?.boardImg} alt="board-img" />
