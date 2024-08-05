@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberNicknameDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
+import com.ssafy.hifive.domain.member.dto.response.MemberIdentificationResponseDto;
 import com.ssafy.hifive.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.repository.MemberRepository;
@@ -88,6 +89,16 @@ public class MemberController {
 		@AuthenticationPrincipal Member member) {
 		memberService.createIdentification(memberIdentificationDto, member);
 		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "회원 신분증 조회", description = "사용자의 신분증 사진을 조회한다.")
+	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
+		content = @Content(mediaType = "application/json",
+			schema = @Schema(implementation = ErrorResponse.class),
+			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
+	@GetMapping(path="/identification", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MemberIdentificationResponseDto> getIdentification(@AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(memberService.getIdentification(member));
 	}
 
 	@Operation(summary = "회원 삭제", description = "사용자가 웹사이트를 탈퇴한다.")
