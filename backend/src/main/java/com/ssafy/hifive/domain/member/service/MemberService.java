@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberNicknameDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
+import com.ssafy.hifive.domain.member.dto.response.MemberIdentificationResponseDto;
 import com.ssafy.hifive.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.repository.MemberRepository;
 import com.ssafy.hifive.global.error.ErrorCode;
+import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
 import jakarta.transaction.Transactional;
@@ -45,8 +47,19 @@ public class MemberService {
 
 	@Transactional
 	public void createIdentification(MemberIdentificationDto memberIdentificationDto, Member member) {
+		if(member.getIdentificationImg() != null){
+			throw new BadRequestException(ErrorCode.IDENTIFICATION_ALREADY_REGISTERED);
+		}
 		member.updateIdentification(memberIdentificationDto.getIdentificationImg());
+		memberRepository.save(member);
 	}
+
+	public MemberIdentificationResponseDto getIdentification(Member member) {
+		return memberRepository.findById(member.getMemberId())
+			.map(MemberIdentificationResponseDto::from)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+	}
+
 
 	@Transactional
 	public void deleteMember(Member member) {
