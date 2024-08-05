@@ -89,6 +89,7 @@ const BoardPage: React.FC = () => {
           <Content
             handleModal={handleModal}
             handleEdit={handleEdit}
+            fetchDetail={fetchDetail}
             isCanEdit={canEdit}
             isEditing={isEditing}
             board={board}
