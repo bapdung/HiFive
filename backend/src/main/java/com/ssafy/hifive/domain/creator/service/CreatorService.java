@@ -82,6 +82,15 @@ public class CreatorService {
 		return CreatorDetailDto.from(creator, boardCount, fanmeetingCount);
 	}
 
+	public List<CreatorOverviewDto> getTopCreators(){
+		Pageable pageable = PageRequest.of(0, 20);
+		return creatorRepository.findTopCreators(pageable)
+			.stream()
+			.map(CreatorOverviewDto::from)
+			.collect(Collectors.toList());
+
+	}
+
 	@Transactional
 	public void createCreator(CreatorRequestDto creatorRequestDto, Member member) {
 		creatorRepository.save(creatorRequestDto.toEntity(member));
