@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hifive.domain.creator.dto.param.CreatorParam;
 import com.ssafy.hifive.domain.creator.dto.request.CreatorRequestDto;
 import com.ssafy.hifive.domain.creator.dto.response.CreatorDetailDto;
-import com.ssafy.hifive.domain.creator.dto.response.CreatorMainDto;
 import com.ssafy.hifive.domain.creator.dto.response.CreatorOverviewDto;
 import com.ssafy.hifive.domain.creator.service.CreatorService;
 import com.ssafy.hifive.domain.member.entity.Member;
@@ -61,15 +60,15 @@ public class CreatorController {
 		return ResponseEntity.ok(creatorService.getCreatorFollow(member));
 	}
 
-	@Operation(summary = "내가 팔로우한 크리에이터 기준 전체 크리에이터 조회", description = "메인화면에 표시되며 내가 팔로우한 크리에이터 프로필을 우선순위로 전체 크리에이터를 6명 조회한다.")
+	@Operation(summary = "메인페이지 크리에이터 조회", description = "메인화면에 표시될 크리에이터 20명을 불러온다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/main", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CreatorMainDto> getCreatorMain(
+	public ResponseEntity<List<CreatorOverviewDto>> getCreatorMain(
 		@AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(creatorService.getCreatorMain(member));
+		return ResponseEntity.ok(creatorService.getTopCreators());
 	}
 
 	@Operation(summary = "크리에이터 프로필 상세 조회", description = "내가 팔로우한 크리에이터 프로필 상세 내용을 조회한다.")
