@@ -16,6 +16,7 @@ public class FanmeetingOverViewDto {
 	private String posterImg;
 	private LocalDateTime openDate;
 	private LocalDateTime startDate;
+	private int runningTime;
 
 	public static FanmeetingOverViewDto from(Fanmeeting fanmeeting) {
 		return new FanmeetingOverViewDto(
@@ -23,7 +24,8 @@ public class FanmeetingOverViewDto {
 			fanmeeting.getTitle(),
 			fanmeeting.getPosterImg(),
 			fanmeeting.getOpenDate(),
-			fanmeeting.getStartDate()
+			fanmeeting.getStartDate(),
+			fanmeeting.getRunningTime()
 		);
 	}
 }
