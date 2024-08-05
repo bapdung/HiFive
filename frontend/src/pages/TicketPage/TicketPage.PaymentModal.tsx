@@ -30,9 +30,10 @@ const Payment: React.FC<PaymentProps> = ({
     try {
       const apiClient = client(token || "");
       await apiClient.post(`/api/reservation/${fanmeetingId}/payment`);
-      onPayment(); // 결제가 완료된 후 onPayment 호출
+      onPayment();
       onClose();
     } catch (error) {
+      alert("결제 중 오류가 발생했습니다.");
       console.error("Error during payment:", error);
     }
   };
@@ -56,36 +57,40 @@ const Payment: React.FC<PaymentProps> = ({
         <div>
           <h5 className="text-h5 mt-[20px] mb-[10px]">취소 수수료</h5>
           <table>
-            <tr className="bg-gray-100 text-medium border-2 border-solid border-[#B9B9B9]">
-              <th className="w-[200px] border-2 border-solid border-[#B9B9B9] py-1">
-                취소일
-              </th>
-              <th className="w-[200px] py-1">취소수수료</th>
-            </tr>
-            <tr>
-              <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
-                관림일 9일전 ~ 7일전까지
-              </td>
-              <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
-                티켓금액의 10%
-              </td>
-            </tr>
-            <tr>
-              <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
-                관람일 6일전 ~ 3일전까지
-              </td>
-              <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
-                티켓금액의 20%
-              </td>
-            </tr>
-            <tr>
-              <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
-                관람일 2일전
-              </td>
-              <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
-                티켓금액의 30%
-              </td>
-            </tr>
+            <thead>
+              <tr className="bg-gray-100 text-medium border-2 border-solid border-[#B9B9B9]">
+                <th className="w-[200px] border-2 border-solid border-[#B9B9B9] py-1">
+                  취소일
+                </th>
+                <th className="w-[200px] py-1">취소수수료</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
+                  관림일 9일전 ~ 7일전까지
+                </td>
+                <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
+                  티켓금액의 10%
+                </td>
+              </tr>
+              <tr>
+                <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
+                  관람일 6일전 ~ 3일전까지
+                </td>
+                <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
+                  티켓금액의 20%
+                </td>
+              </tr>
+              <tr>
+                <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
+                  관람일 2일전
+                </td>
+                <td className="border-2 border-solid border-[#B9B9B9] pl-[10px] py-[5px]">
+                  티켓금액의 30%
+                </td>
+              </tr>
+            </tbody>
           </table>
           <ul className="list-disc ml-5 mt-3">
             <li className="text-red">취소기한 : {cancelDeadline}</li>
@@ -103,7 +108,7 @@ const Payment: React.FC<PaymentProps> = ({
             type="checkbox"
             name="agree"
             id="agree"
-            className="w-[17px] h-[17px] mr-2"
+            className="w-[17px] h-[17px] mr-2 "
             checked={isAgreed}
             onChange={(e) => setIsAgreed(e.target.checked)}
           />
@@ -144,7 +149,11 @@ const Payment: React.FC<PaymentProps> = ({
         <div className="relative">
           <button
             type="button"
-            className={`btn-lg px-[60px] ${isAgreed ? "bg-primary text-white" : "bg-gray-400 text-gray-200 cursor-not-allowed"}`}
+            className={`btn-lg px-[60px] ${
+              isAgreed
+                ? "bg-primary text-white"
+                : "bg-gray-400 text-gray-200 cursor-not-allowed"
+            }`}
             onClick={handlePayment}
             disabled={!isAgreed}
           >
