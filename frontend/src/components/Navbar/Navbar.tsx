@@ -25,6 +25,7 @@ function Navbar() {
         document.cookie = "refresh_token=; path=/; max-age=0;";
         setLogin(false);
         navigate("/");
+        window.location.reload();
       }
     }
   };
