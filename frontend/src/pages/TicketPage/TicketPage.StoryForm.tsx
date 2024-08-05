@@ -27,9 +27,9 @@ function StoryForm() {
       const apiClient = client(accessToken || "");
       const response = await apiClient.get(`/api/story/my/${fanmeetingId}`);
       if (response.data.length > 0) {
-        const storyId = response.data[0].id;
+        const { storyId } = response.data[0]; // 여기서 storyId를 가져옴
         const storyDetail = await apiClient.get(`/api/story/detail/${storyId}`);
-        setStory(storyDetail.data);
+        setStory({ id: storyId, ...storyDetail.data });
         setTitle(storyDetail.data.title || "");
         setContent(storyDetail.data.content || "");
       }
@@ -56,7 +56,7 @@ function StoryForm() {
     try {
       const apiClient = client(accessToken || "");
       if (editMode && story) {
-        await apiClient.put(`/api/story/${story.id}`, { title, content });
+        await apiClient.patch(`/api/story/${story.id}`, { title, content }); // story.id 사용
       } else {
         await apiClient.post(`/api/story/${fanmeetingId}`, { title, content });
       }
@@ -80,6 +80,10 @@ function StoryForm() {
     } catch (error) {
       console.error("Error deleting story:", error);
     }
+  };
+
+  const handleEditMode = () => {
+    setEditMode(true);
   };
 
   return (
@@ -121,9 +125,9 @@ function StoryForm() {
                 <button
                   type="button"
                   className="btn-md min-w-[9rem] ml-5"
-                  onClick={() => setEditMode(true)}
+                  onClick={editMode ? handleSubmit : handleEditMode}
                 >
-                  수정
+                  {editMode ? "수정 완료" : "수정"}
                 </button>
               </>
             ) : (
@@ -133,15 +137,6 @@ function StoryForm() {
                 onClick={handleSubmit}
               >
                 작성 완료
-              </button>
-            )}
-            {editMode && (
-              <button
-                type="button"
-                className="btn-md min-w-[9rem] ml-5"
-                onClick={handleSubmit}
-              >
-                수정 완료
               </button>
             )}
           </div>
