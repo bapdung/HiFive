@@ -11,8 +11,6 @@ import com.ssafy.hifive.domain.photo.dto.param.PhotoParam;
 import com.ssafy.hifive.domain.photo.dto.response.PhotoOverViewDto;
 import com.ssafy.hifive.domain.photo.entity.Photo;
 import com.ssafy.hifive.domain.photo.repository.PhotoRepository;
-import com.ssafy.hifive.global.error.ErrorCode;
-import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,10 +28,6 @@ public class PhotoService {
 		);
 
 		List<Photo> photos = photoRepository.findByFan_MemberId(member.getMemberId(), sort);
-
-		if (photos.isEmpty()) {
-			throw new DataNotFoundException(ErrorCode.PHOTO_NOT_FOUND);
-		}
 
 		List<PhotoOverViewDto> photoList = new ArrayList<>();
 
