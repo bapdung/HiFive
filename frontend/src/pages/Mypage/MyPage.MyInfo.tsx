@@ -24,6 +24,7 @@ function MyInfo() {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [nickname, setNickname] = useState<string | undefined>(undefined);
   const [checkNickname, setCheckNickname] = useState<string | null>(null);
+  const [check, setCheck] = useState<boolean>(true);
 
   const [tempProfile, setTempProfile] = useState<File | null>(null);
   const [tempProfileName, setTempProfileName] = useState<string | null>(null);
@@ -49,6 +50,7 @@ function MyInfo() {
 
   const inputNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
+    setCheck(false);
   };
 
   const changeNickname = async () => {
@@ -59,6 +61,7 @@ function MyInfo() {
 
       if (response.status === 200) {
         setCheckNickname(response.data);
+        setCheck(true);
       } else if (response.status === 202) {
         setCheckNickname(response.data.acceptedMessage);
         setNickname(userInfo?.nickname);
@@ -113,10 +116,7 @@ function MyInfo() {
   };
 
   const postInfo = async () => {
-    if (
-      nickname !== userInfo?.nickname &&
-      checkNickname !== "사용 가능한 닉네임입니다."
-    ) {
+    if (!check) {
       alert("닉네임 중복확인 먼저 진행해주세요");
       return;
     }
