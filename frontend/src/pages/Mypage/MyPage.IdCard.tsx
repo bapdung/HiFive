@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
@@ -67,17 +67,37 @@ function IdCard() {
       if (url && token) {
         const [idCardImg] = url.split("?");
 
-        const response = await client(token).post("/api/member", {
-          identificationImg: idCardImg,
-        });
+        const response = await client(token).post(
+          "/api/member/identification",
+          {
+            identificationImg: idCardImg,
+          },
+        );
 
-        if (response.status) {
+        if (response.status === 200) {
           setStatus(0);
           alert("신분증 등록이 완료되었습니다.");
         }
       }
     }
   };
+
+  useEffect(() => {
+    const getIdImg = async () => {
+      if (token) {
+        const response = await client(token).get("/api/member/identification");
+
+        if (response.status === 200) {
+          if (response.data.identificationImg) {
+            setIdCardSrc(response.data.identificationImg);
+            setStatus(0);
+          }
+        }
+      }
+    };
+
+    getIdImg();
+  }, [token]);
 
   return (
     <div className="flex justify-between p-10">
