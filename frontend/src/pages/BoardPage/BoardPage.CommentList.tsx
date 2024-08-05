@@ -56,13 +56,14 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
   return (
     <div className="my-12 px-10">
       <p className="text-h5 my-6">댓글</p>
-      <CommentForm />
+      <CommentForm fetchComments={fetchComments} />
       {comments.map((comment) => (
         <CommentItem
           key={comment.commentId}
           handleModal={handleModal}
           comment={comment}
           userNickName={userNickName}
+          fetchComments={fetchComments}
         />
       ))}
     </div>

@@ -11,17 +11,22 @@ interface CommentItemProps {
   handleModal: (stateOfModal: boolean, commentId: number, msg: string) => void;
   comment: Comment;
   userNickName: string;
+  fetchComments: () => void;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
   handleModal,
   comment,
   userNickName,
+  fetchComments,
 }) => {
   const openModal = (commentId: number) => {
     if (handleModal) {
       console.log("오픈 모달");
       handleModal(true, commentId, "댓글");
+      setTimeout(() => {
+        fetchComments();
+      }, 1000);
     }
   };
 
