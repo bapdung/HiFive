@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-
 import MyFanmeetingItem from "./CreatorOnly.MyFanmeetingItem";
 import client from "../../client";
 import formatDate from "../../utils/formatDate";
@@ -28,32 +27,30 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
   userId,
 }) => {
   const [fanmeetings, setFanmeetings] = useState<Fanmeeting[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
+  const [top, setTop] = useState<number | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const token = useAuthStore((state) => state.accessToken);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const lastElementRef = useRef<HTMLDivElement | null>(null);
 
-  // 팬미팅 데이터를 불러오는 함수
   const fetchFanmeetings = useCallback(
     async (reset = false) => {
-      if (!userId) {
-        return;
-      }
-      if (isLoading || isEnd || !token) return;
+      if (!userId) return;
+      if (isEnd || !token || isLoading) return;
 
       try {
         setIsLoading(true);
+        console.log("Fetching fanmeetings...");
+
+        let newTop = top;
+        if (fanmeetings.length > 0 && !reset) {
+          newTop = fanmeetings[fanmeetings.length - 1].fanmeetingId;
+        }
 
         const params: FetchParams = {
           sort: isRecent ? "desc" : "asc",
+          top: newTop,
         };
-        console.log(fanmeetings.length);
-        if (fanmeetings.length !== 0) {
-          params.top = fanmeetings[fanmeetings.length - 1].fanmeetingId;
-          console.log("top설정");
-        }
-        console.log(params);
+
         const response = await client(token).get(
           `/api/fanmeeting/completed/creator/${userId}`,
           { params },
@@ -66,51 +63,52 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
         setFanmeetings((prev) =>
           reset ? response.data : [...prev, ...response.data],
         );
+
+        if (response.data.length > 0) {
+          setTop(response.data[response.data.length - 1].fanmeetingId);
+        }
       } catch (error) {
         console.error("Error fetching fanmeetings:", error);
       } finally {
         setIsLoading(false);
+        console.log("Loading finished.");
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [token, isRecent, userId],
+    [token, userId, isRecent, isEnd, top, fanmeetings.length, isLoading],
   );
-
-  // Intersection Observer 설정
-  useEffect(() => {
-    if (observerRef.current) observerRef.current.disconnect();
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoading && !isEnd) {
-          fetchFanmeetings(false);
-        }
-      },
-      { threshold: 1 },
-    );
-
-    if (lastElementRef.current) {
-      observerRef.current.observe(lastElementRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) observerRef.current.disconnect();
-    };
-  }, [fetchFanmeetings, isLoading, isEnd]);
 
   // isRecent가 변경될 때 데이터를 다시 불러오기 위한 useEffect 훅
   useEffect(() => {
+    console.log("isRecent changed, resetting data...");
     setFanmeetings([]);
+    setTop(undefined);
     setIsEnd(false);
     fetchFanmeetings(true);
-  }, [isRecent, fetchFanmeetings]);
+  }, [isRecent]);
 
   // 초기 렌더링 시 데이터를 불러오기 위한 useEffect 훅
   useEffect(() => {
     if (userId && token) {
+      console.log("Initial load...");
       fetchFanmeetings(true);
     }
-  }, [userId, token, fetchFanmeetings]);
+  }, [userId, token]);
+
+  // 스크롤 이벤트를 감지하여 무한 스크롤 구현
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 100
+      ) {
+        console.log("Scroll detected, loading more...");
+        fetchFanmeetings(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [fetchFanmeetings, isEnd]);
 
   return (
     <div className="w-full flex flex-wrap">
@@ -119,7 +117,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
           종료된 팬미팅이 없습니다.
         </p>
       ) : null}
-      {fanmeetings.map((fanmeeting, index) => (
+      {fanmeetings.map((fanmeeting) => (
         <MyFanmeetingItem
           key={fanmeeting.fanmeetingId}
           isDone
@@ -127,7 +125,6 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
           title={fanmeeting.title}
           posterImg={fanmeeting.posterImg}
           startDate={formatDate(fanmeeting.startDate)}
-          ref={index === fanmeetings.length - 1 ? lastElementRef : null}
         />
       ))}
       {isLoading && <div>Loading...</div>}

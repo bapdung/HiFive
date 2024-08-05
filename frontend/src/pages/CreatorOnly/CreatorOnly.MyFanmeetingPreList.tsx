@@ -37,7 +37,7 @@ const MyFanmeetingPreList: React.FC<MyFanmeetingPreListProps> = ({
           const response = await client(token).get(
             `/api/fanmeeting/scheduled/creator/${userId}`,
           );
-          console.log(response.data);
+          // console.log(response.data);
           setPrevFanmeetings(response.data);
         } catch (error) {
           console.error("Error fetching fanmeetings:", error);
