@@ -117,7 +117,6 @@ function IdCard() {
               <div className="flex justify-center items-center btn-light-lg mt-10 hover:cursor-pointer">
                 {status === 1 ? "사진 선택하기" : "사진 수정하기"}
               </div>
-
               <input
                 type="file"
                 id="idCardImg"
@@ -137,7 +136,7 @@ function IdCard() {
             ) : null}
           </>
         ) : (
-          <div className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white">
+          <div className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white hover:cursor-not-allowed">
             등록 완료
           </div>
         )}
@@ -196,17 +195,6 @@ function IdCard() {
           <ol className="text-small list-decimal ml-6">
             <li>주민등록증</li>
             <li>운전면허증</li>
-            <li>여권 (대한민국 발행)</li>
-            <li>청소년증</li>
-            <li>장애인 복지 카드 (단, 신용 카드 및 직불 카드형 제외)</li>
-            <li>
-              주민등록증 발급 신청 확인서 (유효 기간 이내의 사진 및 주요 정보에
-              테이핑 처리된 것에 한함)
-            </li>
-            <li>
-              청소년증 발급 신청 확인서 (유효 기간 이내의 사진 및 주요 정보에
-              테이핑 처리된 것에 한함)
-            </li>
           </ol>
         </div>
       </div>
