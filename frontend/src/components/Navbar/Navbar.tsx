@@ -42,7 +42,7 @@ function Navbar() {
 
   return (
     <div
-      className={`z-10 bg-white flex w-screen justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-[rgba(255,255,255,0.9)] backdrop-blur-md shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
+      className={`z-10 bg-white flex w-full justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-[rgba(255,255,255,0.9)] backdrop-blur-md shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
     >
       <div>
         <img
@@ -57,7 +57,7 @@ function Navbar() {
         {login ? (
           <>
             <div
-              className="text-primary-text text-medium m-7"
+              className="text-primary-text text-medium font-bold m-10"
               onClick={() => navigate("/mypage")}
               role="presentation"
             >
@@ -74,7 +74,7 @@ function Navbar() {
         ) : (
           <>
             <div
-              className="text-primary-text text-large font-bold m-10"
+              className="text-primary-text text-medium font-bold m-10"
               onClick={kakaoLogin}
               onKeyDown={kakaoLogin}
               role="presentation"

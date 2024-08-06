@@ -53,7 +53,7 @@ const Ticket: React.FC<TicketProps> = ({
         isActive ? "opacity-100" : "opacity-40 scale-95"
       }`}
     >
-      <div className="w-[414px] h-[544px] flex flex-col bg-primary-100 rounded-2xl py-8 items-center justify-center shadow-ticket-shadow">
+      <div className="w-[414px] h-[544px] flex flex-col bg-primary-100 rounded-2xl py-8 items-center justify-center shadow-ticket-shadow-left z-10">
         <img
           src={poster || defaultPoster}
           alt="poster"
