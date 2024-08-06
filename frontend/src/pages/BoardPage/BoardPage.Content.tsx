@@ -122,7 +122,7 @@ const Content: React.FC<ContentProps> = ({
   const getS3url = async () => {
     if (imageName && token && imageFile) {
       const response = await client(token).post(`/api/s3/upload/${imageName}`, {
-        prefix: imageName,
+        prefix: "board",
       });
       const { path } = response.data;
       const url = uploadS3(path, imageFile);

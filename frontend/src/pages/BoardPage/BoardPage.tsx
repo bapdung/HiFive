@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 import client from "../../client";
 import Content from "./BoardPage.Content";
 import CommentList from "./BoardPage.CommentList";
@@ -16,6 +17,7 @@ interface Board {
 
 const BoardPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const boardId = parseInt(location.pathname.split("/")[3], 10);
   const creatorId = parseInt(location.pathname.split("/")[2], 10);
   const token = useAuthStore((state) => state.accessToken);
@@ -53,7 +55,12 @@ const BoardPage: React.FC = () => {
       );
       setBoard(response.data);
     } catch (error) {
-      console.error("Error fetching board details:", error);
+      if (axios.isAxiosError(error)) {
+        // console.error("에러코드입니다 :", error.response?.data);
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
     }
   };
 
@@ -72,7 +79,12 @@ const BoardPage: React.FC = () => {
         setCanEdit(true);
       }
     } catch (error) {
-      console.error("Error fetching user info :", error);
+      if (axios.isAxiosError(error)) {
+        // console.error("에러코드입니다 :", error.response?.data);
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
     }
   };
 
