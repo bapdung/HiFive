@@ -26,6 +26,7 @@ interface FanMeetingDetails {
   title: string;
   notice: string;
   startDate: Date;
+  openDate: Date;
   runningTime: number;
   price: number;
   participant: number;
@@ -62,12 +63,14 @@ function Detail() {
   useEffect(() => {
     const fetchFanmeetingDetails = async () => {
       try {
-        if (token) {
+        if (token && fanmeetingId) {
           const response = await client(token).get<FanMeetingDetails>(
-            `/api/fanmeeting/${fanmeetingId!}`,
+            `/api/fanmeeting/${fanmeetingId}`,
           );
           const { data } = response;
           data.startDate = new Date(data.startDate);
+          data.openDate = new Date(data.openDate);
+
           setFanMeetingDetails(data);
           setIsReserved(data.reservation);
         }
@@ -114,17 +117,17 @@ function Detail() {
   }, [token, fanmeetingId]);
 
   async function toggleReserved() {
-    if (!isReserved && fanMeetingDetails && token) {
+    if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
       try {
         webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
-          fanmeetingId!,
+          fanmeetingId,
         );
 
         console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
 
         const response = await client(token).post<ReservationMemberDto>(
-          `/api/reservation/${fanmeetingId!}`,
+          `/api/reservation/${fanmeetingId}`,
         );
 
         const { nickname, email } = response.data;
@@ -182,6 +185,7 @@ function Detail() {
       {showPaymentModal && reservationMember && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <Payment
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             fanmeetingId={fanmeetingId!}
             nickname={reservationMember.nickname}
             email={reservationMember.email}
@@ -257,12 +261,18 @@ function Detail() {
         <h2 className="text-h2 mb-12">{fanMeetingDetails.title}</h2>
         <div>
           <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">날짜</span>
-            <span>{formatDate(fanMeetingDetails.startDate)}</span>
+            <span className="w-20 text-gray-700">행사일</span>
+            <span>
+              {formatDate(fanMeetingDetails.startDate)}{" "}
+              {formatTime(fanMeetingDetails.startDate)}
+            </span>
           </p>
           <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">시작시간</span>
-            <span>{formatTime(fanMeetingDetails.startDate)}</span>
+            <span className="w-20 text-gray-700">예매일</span>
+            <span>
+              {formatDate(fanMeetingDetails.openDate)}{" "}
+              {formatTime(fanMeetingDetails.openDate)}
+            </span>
           </p>
           <p className="flex mb-2.5">
             <span className="w-20 text-gray-700">진행시간</span>
