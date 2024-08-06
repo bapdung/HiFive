@@ -33,16 +33,8 @@ public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long>, F
 	Optional<Fanmeeting> findByIdWithTimetable(@Param("fanmeetingId") long fanmeetingId);
 
 	@Query("""
-		select f from Fanmeeting f
-		where DATE(f.openDate) = CURRENT_DATE
-	""")
+			select f from Fanmeeting f
+			where DATE(f.openDate) = CURRENT_DATE
+		""")
 	List<Fanmeeting> getActiveFanmeetingIds();
-
-	@Query("""
-		select f
-		from Fanmeeting f
-		where f.startDate >= CURRENT_TIMESTAMP
-		order by f.startDate asc
-  		""")
-	List<Fanmeeting> findScheduledFanmeetingsAll();
 }

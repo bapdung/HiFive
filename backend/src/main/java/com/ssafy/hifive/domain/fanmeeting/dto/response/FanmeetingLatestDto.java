@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.fanmeeting.dto.response;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.hifive.domain.creator.entity.Creator;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 
 import lombok.AllArgsConstructor;
@@ -16,11 +17,11 @@ public class FanmeetingLatestDto {
 	private String creatorName;
 	private LocalDateTime startTime;
 
-	public static FanmeetingLatestDto from(Fanmeeting fanmeeting) {
+	public static FanmeetingLatestDto from(Fanmeeting fanmeeting, Creator creator) {
 		return new FanmeetingLatestDto(
 			fanmeeting.getFanmeetingId(),
 			fanmeeting.getTitle(),
-			fanmeeting.getCreator().getName(),
+			creator.getCreatorName(),
 			fanmeeting.getStartDate()
 		);
 	}
