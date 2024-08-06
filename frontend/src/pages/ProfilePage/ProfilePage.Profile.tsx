@@ -29,6 +29,26 @@ function Profile() {
   const [follow, setFollow] = useState<boolean>(false);
   const [activityDay, setActivityDay] = useState<number>();
 
+  const handleFollow = async () => {
+    if (token) {
+      const response = await client(token).post(`/api/follow/${creatorId}`);
+
+      if (response.status === 200) {
+        setFollow(true);
+      }
+    }
+  };
+
+  const handleUnfollow = async () => {
+    if (token) {
+      const response = await client(token).delete(`/api/follow/${creatorId}`);
+
+      if (response.status === 200) {
+        setFollow(false);
+      }
+    }
+  };
+
   useEffect(() => {
     const getUser = async () => {
       if (token) {
@@ -87,15 +107,23 @@ function Profile() {
           <div className="flex items-center">
             <div className="text-h2 mr-5">{creatorProfile.creatorName}</div>
             {follow ? (
-              <div className="btn-outline-md h-8 flex items-center">
+              <button
+                type="button"
+                className="btn-outline-md h-8 flex items-center"
+                onClick={handleUnfollow}
+              >
                 <img src={fullHeart} alt="하트" className="mr-1  w-3 h-3" />
                 팔로잉 중
-              </div>
+              </button>
             ) : (
-              <div className="btn-md h-8 flex items-center">
+              <button
+                type="button"
+                className="btn-md h-8 flex items-center"
+                onClick={handleFollow}
+              >
                 <img src={heart} alt="하트" className="mr-1 w-3 h-3" />
                 팔로우
-              </div>
+              </button>
             )}
             {myProfile ? (
               <div className="creator-btn-outline-md h-8 flex items-center ml-3">
