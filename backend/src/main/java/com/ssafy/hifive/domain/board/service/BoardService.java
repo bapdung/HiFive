@@ -16,6 +16,7 @@ import com.ssafy.hifive.domain.board.dto.response.BoardResponseDto;
 import com.ssafy.hifive.domain.board.entity.Board;
 import com.ssafy.hifive.domain.board.repository.BoardRepository;
 import com.ssafy.hifive.domain.comment.service.CommentService;
+import com.ssafy.hifive.domain.creator.entity.Creator;
 import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.error.ErrorCode;
@@ -43,8 +44,9 @@ public class BoardService {
 	}
 
 	public List<BoardResponseDto> getBoardAll(long creatorId, BoardParam param, Member member) {
-
-		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId()).get().getCreatorName();
+		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId())
+			.map(Creator::getCreatorName)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND, "CreatorId가 존재하지 않습니다."));
 
 		Pageable pageable = createPageable(param);
 
