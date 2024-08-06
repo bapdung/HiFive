@@ -1,6 +1,8 @@
 package com.ssafy.hifive.domain.fanmeeting.repository;
 
+import static com.ssafy.hifive.domain.creator.entity.QCreator.*;
 import static com.ssafy.hifive.domain.fanmeeting.entity.QFanmeeting.*;
+import static com.ssafy.hifive.domain.member.entity.QMember.*;
 import static com.ssafy.hifive.domain.reservation.entity.QReservation.*;
 
 import java.time.LocalDateTime;
@@ -64,12 +66,31 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 			.fetch();
 	}
 
+	@Override
+	public List<Fanmeeting> findFanmeetingByCreatorName(String creatorName) {
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("asc");
+
+		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(member).on(fanmeeting.creator.memberId.eq(member.memberId))
+			.join(creator1).on(creator1.creator.memberId.eq(member.memberId))
+			.where(
+				getKeyWord(creatorName),
+				isScheduledFanmeeting(true)
+			)
+			.orderBy(orderSpecifier)
+			.fetch();
+	}
+
 	private BooleanExpression isScheduledFanmeeting(boolean isScheduled) {
 		if (isScheduled) {
 			return fanmeeting.startDate.goe(LocalDateTime.now());
 		} else {
 			return fanmeeting.startDate.loe(LocalDateTime.now());
 		}
+	}
+
+	private BooleanExpression getKeyWord(String word) {
+		return word != null ? creator1.creatorName.containsIgnoreCase(word) : null;
 	}
 
 	private BooleanExpression getFromFanId(Long fanId) {
