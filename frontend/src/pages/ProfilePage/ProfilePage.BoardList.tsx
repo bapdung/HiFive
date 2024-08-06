@@ -173,12 +173,12 @@ function BoardList({ creatorName, isMe }: Props) {
       }
     }
 
-    if (!inputBoard) {
+    if (Object.keys(inputBoard).length === 0) {
       alert("글을 먼저 작성해주세요.");
       return;
     }
 
-    if (token && inputBoard) {
+    if (token) {
       const response = await client(token).post(
         `/api/board/${creatorId}`,
         inputBoard,
