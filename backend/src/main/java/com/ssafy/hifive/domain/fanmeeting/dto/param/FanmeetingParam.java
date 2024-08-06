@@ -15,4 +15,7 @@ public class FanmeetingParam {
 
 	@Schema(description = "가장 나중에 불러온 것의 id")
 	public Long top;
+
+	@Schema(description = "조회할 크리에이터 이름")
+	public String name;
 }
