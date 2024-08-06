@@ -108,11 +108,11 @@ const Payment: React.FC<PaymentProps> = ({
             type="checkbox"
             name="agree"
             id="agree"
-            className="w-[17px] h-[17px] mr-2 "
+            className="w-[17px] h-[17px] mr-2 cursor-pointer"
             checked={isAgreed}
             onChange={(e) => setIsAgreed(e.target.checked)}
           />
-          <label htmlFor="agree" className="text-medium">
+          <label htmlFor="agree" className="text-medium cursor-pointer">
             (필수) 취소수수료/취소기한을 확인하였으며, 동의합니다.
           </label>
         </div>
@@ -149,7 +149,7 @@ const Payment: React.FC<PaymentProps> = ({
         <div className="relative">
           <button
             type="button"
-            className={`btn-lg px-[60px] ${
+            className={`btn-lg px-[80px] ${
               isAgreed
                 ? "bg-primary text-white"
                 : "bg-gray-400 text-gray-200 cursor-not-allowed"
@@ -160,7 +160,7 @@ const Payment: React.FC<PaymentProps> = ({
             결제하기
           </button>
           {!isAgreed && (
-            <div className="absolute bottom-full mb-2 p-2 bg-gray-700 text-white text-xs rounded-md w-max">
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 p-2 bg-gray-700 text-white text-xs rounded-md w-max text-center">
               취소수수료/취소기한에 동의해야 결제가 가능합니다.
             </div>
           )}
