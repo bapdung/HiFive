@@ -35,8 +35,13 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
 
   const fetchComments = useCallback(
     async (reset = false) => {
-      if (!token || isLoading || isEnd) return;
-
+      if (!token || isLoading || isEnd) {
+        // console.log(
+        //   "Skipping fetch due to token absence, loading state, or end state",
+        // );
+        return;
+      }
+      // console.log("Fetching comments...");
       setIsLoading(true);
       try {
         let params = {};
@@ -44,15 +49,15 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
           params = { top };
         }
 
-        console.log("Fetching comments with params:", params);
+        // console.log("Fetching comments with params:", params);
 
         const response = await client(token).get(`/api/comment/${boardId}`, {
           params,
         });
 
-        console.log("Fetched comments:", response.data);
+        // console.log("Fetched comments:", response.data);
 
-        if (response.data.length < 5) {
+        if (response.data.length < 10) {
           setIsEnd(true); // 더 이상 불러올 데이터가 없음을 표시
         }
 
@@ -64,10 +69,10 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
           setTop(response.data[response.data.length - 1].commentId);
         }
       } catch (error) {
-        console.error("Error fetching comments:", error);
+        // console.error("Error fetching comments:", error);
       } finally {
         setIsLoading(false);
-        console.log("Loading finished.");
+        // console.log("Loading finished.");
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,10 +82,12 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
   const fetchUser = useCallback(async () => {
     if (!token) return;
     try {
+      // console.log("Fetching user info...");
       const response = await client(token).get(`/api/member`);
+      // console.log("Fetched user:", response.data);
       setUserNickName(response.data.nickname);
     } catch (error) {
-      console.error("Error fetching user:", error);
+      // console.error("Error fetching user:", error);
     }
   }, [token]);
 
@@ -90,7 +97,7 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
 
   useEffect(() => {
     const initializeComments = async () => {
-      console.log("Initial load...");
+      // console.log("Initial load...");
       setComments([]);
       setTop(undefined);
       setIsEnd(false);
@@ -98,16 +105,16 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
     };
     initializeComments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [boardId]);
+  }, [boardId, token]);
 
   useEffect(() => {
     const handleScroll = () => {
-      console.log("Scroll event detected...");
+      // console.log("Scroll event detected...");
       if (
         window.innerHeight + document.documentElement.scrollTop >=
         document.documentElement.scrollHeight - 100
       ) {
-        console.log("Scroll position is near the bottom, loading more...");
+        // console.log("Scroll position is near the bottom, loading more...");
         fetchComments(false);
       }
     };
@@ -119,10 +126,7 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
   return (
     <div className="my-12 px-10">
       <p className="text-h5 my-6">댓글</p>
-      <CommentForm
-        // fetchComments={fetchComments}
-        handleFetchSignal={handleFetchSignal}
-      />
+      <CommentForm handleFetchSignal={handleFetchSignal} />
       {comments.map((comment) => (
         <CommentItem
           key={comment.commentId}
