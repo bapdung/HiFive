@@ -44,7 +44,7 @@ public class BoardService {
 	}
 
 	public List<BoardResponseDto> getBoardAll(long creatorId, BoardParam param, Member member) {
-		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId())
+		String creatorName = creatorRepository.findCreatorByCreatorId(creatorId)
 			.map(Creator::getCreatorName)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND, "CreatorId가 존재하지 않습니다."));
 
@@ -59,11 +59,11 @@ public class BoardService {
 			.collect(Collectors.toList());
 	}
 
-	public BoardResponseDto getBoardDetail(long boardId, Member member) {
-		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId())
+	public BoardResponseDto getBoardDetail(long creatorId, long boardId, Member member) {
+		String creatorName = creatorRepository.findCreatorByCreatorId(creatorId)
 			.map(Creator::getCreatorName)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND, "CreatorId가 존재하지 않습니다."));
-		
+
 		return boardRepository.findById(boardId)
 			.map(board -> BoardResponseDto.from(board, 1, creatorName))
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND, "유효하지 않은 boardId입니다."));
