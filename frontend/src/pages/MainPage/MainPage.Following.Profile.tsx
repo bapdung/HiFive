@@ -1,18 +1,19 @@
 import { Link } from "react-router-dom";
 
 interface FollowingProfileProps {
-  key: number;
+  creatorId: number;
   profileName: string;
   profileImage: string;
 }
 
 const FollowingProfile: React.FC<FollowingProfileProps> = ({
+  creatorId,
   profileName,
   profileImage,
 }) => (
   <div className="flex flex-col items-center">
     <div className="rounded-full overflow-clip bg-primary-100 shadow-lg mb-2">
-      <Link to="/creator/1">
+      <Link to={`/creator/${creatorId}`}>
         <img src={profileImage} alt="Profile" className="w-[150px] h-[150px]" />
       </Link>
     </div>
