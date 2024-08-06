@@ -4,10 +4,11 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
 interface CommentFormProps {
-  fetchComments: () => void;
+  // fetchComments: (reset: boolean) => void;
+  handleFetchSignal: () => void;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ fetchComments }) => {
+const CommentForm: React.FC<CommentFormProps> = ({ handleFetchSignal }) => {
   const [comment, setComment] = useState("");
   const location = useLocation();
   const token = useAuthStore((state) => state.accessToken);
@@ -28,7 +29,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ fetchComments }) => {
       await client(token).post(`/api/comment/${boardId}`, {
         contents: comment,
       });
-      fetchComments();
+      handleFetchSignal();
       setComment("");
     } catch (error) {
       console.error("Error sending post request:", error);
@@ -36,9 +37,12 @@ const CommentForm: React.FC<CommentFormProps> = ({ fetchComments }) => {
   };
 
   return (
-    <div className="flex items-centerw-full mb-12 justify-between">
+    <div className="flex items-center w-full mb-12 justify-between">
       <div className="bg-gray-400 min-w-[50px] h-[50px] rounded-full" />
-      <form className="w-full ml-4 flex justify-between border-b border-solid border-1 pb-2 border-gray-500 ">
+      <form
+        className="w-full ml-4 flex justify-between border-b border-solid border-1 pb-2 border-gray-500"
+        onSubmit={submitComment}
+      >
         <input
           className="bg-transparent text-gray-700 outline-none w-[80%]"
           type="text"
@@ -46,7 +50,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ fetchComments }) => {
           onChange={handleCommentChange}
           value={comment}
         />
-        <button type="submit" className="btn-light-md" onClick={submitComment}>
+        <button type="submit" className="btn-light-md">
           댓글
         </button>
       </form>
