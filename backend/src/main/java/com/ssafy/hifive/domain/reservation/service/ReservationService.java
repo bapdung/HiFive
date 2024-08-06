@@ -12,7 +12,9 @@ import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -58,7 +60,7 @@ public class ReservationService {
 		String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
-		System.out.println(currentPayingQueueSize);
+		//log.info("queue size: {}", currentPayingQueueSize);
 
 		int slotsAvailable = 100 - currentPayingQueueSize.intValue();
 
