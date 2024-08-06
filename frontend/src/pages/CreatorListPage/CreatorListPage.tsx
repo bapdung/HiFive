@@ -59,6 +59,7 @@ function CreatorList() {
     } else if (content === "최신순") {
       if (!(condition === "createdDate" && sort === "desc")) {
         setCreatorList([]);
+        setTop(null);
       }
       setCondition("createdDate");
       setSort("desc");
