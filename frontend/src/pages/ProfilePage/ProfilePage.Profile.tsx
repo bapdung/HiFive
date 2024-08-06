@@ -1,9 +1,9 @@
-// import ModifyModal from "./ProfilePage.Modify.Modal";
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
+
+import ModifyModal from "./ProfilePage.Modify.Modal";
 
 import fullHeart from "../../assets/icons/full-heart.png";
 import heart from "../../assets/icons/heart.png";
@@ -41,6 +41,16 @@ function Profile({ creatorProfile, isMe }: Props) {
   const [follow, setFollow] = useState<boolean>(false);
   const [activityDay, setActivityDay] = useState<number>();
   const [boardList, setBoardList] = useState<Board[]>([]);
+
+  const [openModifyModal, setOpenModifyModal] = useState<boolean>(false);
+
+  const openModal = () => {
+    setOpenModifyModal(true);
+  };
+
+  const closeModal = () => {
+    setOpenModifyModal(false);
+  };
 
   const handleFollow = async () => {
     if (token) {
@@ -103,7 +113,11 @@ function Profile({ creatorProfile, isMe }: Props) {
 
   return (
     <>
-      {/* <ModifyModal /> */}
+      {openModifyModal ? (
+        <ModifyModal creatorProfile={creatorProfile} closeModal={closeModal} />
+      ) : (
+        ""
+      )}
       <div className="flex h-90 px-12 py-10 items-center justify-between w-4/5 rounded-3xl bg-horizontal-gradient">
         <div className="w-2/5 h-64 flex flex-col justify-center">
           <div className="flex items-center">
@@ -128,7 +142,11 @@ function Profile({ creatorProfile, isMe }: Props) {
               </button>
             )}
             {isMe ? (
-              <div className="creator-btn-outline-md h-8 flex items-center ml-3">
+              <div
+                className="creator-btn-outline-md h-8 flex items-center ml-3 hover:cursor-pointer"
+                onClick={openModal}
+                role="presentation"
+              >
                 프로필 수정
               </div>
             ) : (
