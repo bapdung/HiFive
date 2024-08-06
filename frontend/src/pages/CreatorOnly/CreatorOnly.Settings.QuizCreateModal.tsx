@@ -1,21 +1,26 @@
-import propTypes from "prop-types";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 
 interface QuizCreateModalProps {
-  handleQuizClose: React.MouseEventHandler<HTMLButtonElement>;
+  handleQuizClose: () => void;
+  quizSequence: number | null;
+  handleQuizSequence: (seqence: number) => void;
+  handleFetchSignal: () => void;
 }
 
 const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   handleQuizClose,
+  quizSequence,
+  handleQuizSequence,
+  handleFetchSignal,
 }) => {
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
   const [answer, setAnswer] = useState<boolean | null>(null);
   const location = useLocation();
-  const fanmeetingId = location.pathname.split("/")[2];
+  const fanmeetingId = parseInt(location.pathname.split("/")[2], 10);
 
   const handleInputQuestion = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length <= 30) {
@@ -26,7 +31,9 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   const handleInputDescription = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setDescription(event.target.value);
+    if (event.target.value.length <= 50) {
+      setDescription(event.target.value);
+    }
   };
 
   const validateSubmit = () => {
@@ -37,24 +44,26 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
     return true;
   };
 
-  const sequence = 1;
   const token = useAuthStore((state) => state.accessToken);
 
   const handleQuizSubmit = async () => {
+    // console.log(quizSequence);
     if (validateSubmit()) {
       try {
-        if (!token) {
+        if (!token || !quizSequence) {
           return;
         }
         const payload = {
           problem: question,
           answer,
           detail: description,
-          sequence,
+          sequence: quizSequence + 1,
         };
-        console.log(payload);
         await client(token).post(`/api/quiz/${fanmeetingId}`, payload);
-        console.log("success : 퀴즈 생성 성공");
+        // console.log("success : 퀴즈 생성 성공");
+        handleQuizSequence(quizSequence + 1);
+        handleQuizClose();
+        handleFetchSignal();
       } catch (error) {
         console.error("Error sending post request:", error);
       }
@@ -66,7 +75,7 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   };
 
   return (
-    <div className="w-full h-full absolute flex items-center justify-center">
+    <div className="w-full min-h-[50rem] absolute flex items-center justify-center z-50">
       <div className="w-full h-full bg-black absolute opacity-70" />
       <div className="bg-white w-[50rem] h-[22rem] z-10 rounded-3xl flex flex-col items-center justify-between absolute top-1/4 p-12">
         <div className="flex justify-between w-full">
@@ -92,7 +101,9 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
               </button>
               <button
                 type="button"
-                className={answer ? "btn-light-md ml-2" : "btn-md ml-2"}
+                className={
+                  answer === false ? "btn-md ml-2" : "btn-light-md ml-2"
+                }
                 onClick={() => handleInputAnswer(false)}
               >
                 X
@@ -131,7 +142,4 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   );
 };
 
-QuizCreateModal.propTypes = {
-  handleQuizClose: propTypes.func.isRequired,
-};
 export default QuizCreateModal;
