@@ -193,7 +193,7 @@ const Content: React.FC<ContentProps> = ({
         <div className="ml-4">
           <p className="text-h6">{creatorProfile?.creatorName}</p>
           <p className="text-xs">
-            {board ? formatDate(board.createdDate) : null}
+            {board?.createdDate ? formatDate(board.createdDate) : null}
           </p>
         </div>
         <div className="ml-auto space-x-2.5">
