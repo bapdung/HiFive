@@ -29,12 +29,15 @@ type Board = {
   totalPages: number;
 };
 
-function Profile() {
+interface Props {
+  creatorProfile: CreatorInfo;
+  isMe: boolean;
+}
+
+function Profile({ creatorProfile, isMe }: Props) {
   const token = useAuthStore((state) => state.accessToken);
   const { creatorId } = useParams();
 
-  const [myProfile, setMyProfile] = useState<boolean>(false);
-  const [creatorProfile, setCreatorProfile] = useState<CreatorInfo>();
   const [follow, setFollow] = useState<boolean>(false);
   const [activityDay, setActivityDay] = useState<number>();
   const [boardList, setBoardList] = useState<Board[]>([]);
@@ -60,14 +63,14 @@ function Profile() {
   };
 
   useEffect(() => {
-    const getUser = async () => {
-      if (token) {
-        const response = await client(token).get("/api/member");
+    const handleActivityDay = () => {
+      const createdDate = new Date(creatorProfile.createdDate);
+      const currentDate = new Date();
+      const dateDiff = Math.floor(
+        (currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
 
-        if (response.data.memberId === creatorId) {
-          setMyProfile(true);
-        }
-      }
+      setActivityDay(dateDiff);
     };
 
     const getFollow = async () => {
@@ -84,22 +87,6 @@ function Profile() {
       }
     };
 
-    const getCreatorInfo = async () => {
-      if (token) {
-        const response = await client(token).get(`/api/creator/${creatorId}`);
-        setCreatorProfile(response.data);
-
-        const createdDate = new Date(response.data.createdDate);
-        const currentDate = new Date();
-        const dateDiff = Math.floor(
-          (currentDate.getTime() - createdDate.getTime()) /
-            (1000 * 60 * 60 * 24),
-        );
-
-        setActivityDay(dateDiff);
-      }
-    };
-
     const getBoardList = async () => {
       if (token) {
         const response = await client(token).get(
@@ -109,15 +96,10 @@ function Profile() {
       }
     };
 
-    getUser();
     getFollow();
-    getCreatorInfo();
     getBoardList();
-  }, [token, creatorId]);
-
-  if (!creatorProfile) {
-    return null;
-  }
+    handleActivityDay();
+  }, [token, creatorId, creatorProfile.createdDate]);
 
   return (
     <>
@@ -145,7 +127,7 @@ function Profile() {
                 팔로우
               </button>
             )}
-            {myProfile ? (
+            {isMe ? (
               <div className="creator-btn-outline-md h-8 flex items-center ml-3">
                 프로필 수정
               </div>
