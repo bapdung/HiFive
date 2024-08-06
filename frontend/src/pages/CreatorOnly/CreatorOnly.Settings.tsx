@@ -13,6 +13,7 @@ function Settings() {
   const [currentPath, serCurrentPath] = useState("question");
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
   const [quizSequence, setQuizSequence] = useState<number | null>(null);
+  const [fetchSignal, setFetchSignal] = useState<boolean>(false);
 
   useEffect(() => {
     serCurrentPath(location.pathname.split("/").pop() || "question");
@@ -33,6 +34,10 @@ function Settings() {
 
   const handleQuizSequence = (sequence: number) => {
     setQuizSequence(sequence);
+  };
+
+  const handleFetchSignal = () => {
+    setFetchSignal(!fetchSignal);
   };
 
   return (
@@ -89,6 +94,7 @@ function Settings() {
           <Quiz
             handleQuizOpen={handleQuizOpen}
             handleQuizSequence={handleQuizSequence}
+            fetchSignal={fetchSignal}
           />
         ) : null}
       </div>
@@ -97,6 +103,7 @@ function Settings() {
           handleQuizClose={handleQuizClose}
           quizSequence={quizSequence}
           handleQuizSequence={handleQuizSequence}
+          handleFetchSignal={handleFetchSignal}
         />
       ) : null}
     </>
