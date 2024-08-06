@@ -50,6 +50,14 @@ public class Creator extends BaseTimeEntity {
 		this.description = description;
 	}
 
+	public void updateCreatorFollowerPlus() {
+		this.follower += 1;
+	}
+
+	public void updateCreatorFollowerMinus() {
+		this.follower -= 1;
+	}
+
 	@Builder
 	private Creator(Member creator, String creatorImg, String creatorName, String link, String description) {
 		this.creator = creator;

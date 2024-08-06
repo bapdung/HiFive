@@ -1,13 +1,13 @@
 // SuccessModal.tsx
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface SuccessModalProps {
   memberId: number;
 }
 
-const SuccessModal: React.FC<SuccessModalProps> = ({ memberId }) => {
-  const navigate = useNavigate();
+const SuccessModal: React.FC<SuccessModalProps> = () => {
+  const location = useLocation();
 
   return (
     <div className="w-[50rem] bg-white flex flex-col items-center h-[26rem] justify-center rounded-3xl">
@@ -18,17 +18,22 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ memberId }) => {
       <div>
         <button
           type="button"
-          className="btn-outline-md"
-          onClick={() => navigate(`/mypage/${memberId}/reservation`)}
+          className={`btn-outline-md ${location.pathname === "/mypage/reservation" ? "bg-gray-200" : ""}`}
         >
-          예매 확인하기
+          <Link
+            to="/mypage/reservation"
+            className="no-underline text-primary-text"
+          >
+            예매 확인하기
+          </Link>
         </button>
         <button
           type="button"
-          className="btn-light-md ml-6"
-          onClick={() => navigate(`/mypage/${memberId}/idcard`)}
+          className={`btn-light-md ml-6 ${location.pathname === "/mypage/idcard" ? "bg-gray-200" : ""}`}
         >
-          신분증 등록하기
+          <Link to="/mypage/idcard" className="no-underline text-primary-text">
+            신분증 등록하기
+          </Link>
         </button>
       </div>
     </div>

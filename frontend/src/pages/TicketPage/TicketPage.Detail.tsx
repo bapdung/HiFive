@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import ProfileImg from "../../assets/temp/profile.svg";
-import PosterImg from "../../assets/temp/poster.svg";
 import TimeTable from "./TicketPage.DetailTimetable";
 import Info from "./TicketPage.DetailInfo";
 import client from "../../client";
@@ -23,9 +21,11 @@ interface FanMeetingDetails {
   memberId: number;
   creatorImg: string;
   creatorName: string;
+  posterImg: string;
   title: string;
   notice: string;
   startDate: Date;
+  openDate: Date;
   runningTime: number;
   price: number;
   participant: number;
@@ -56,18 +56,21 @@ function Detail() {
   const [showWaitingModal, setShowWaitingModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailureModal, setShowFailureModal] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<string>("");
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     const fetchFanmeetingDetails = async () => {
       try {
-        if (token) {
+        if (token && fanmeetingId) {
           const response = await client(token).get<FanMeetingDetails>(
-            `/api/fanmeeting/${fanmeetingId!}`,
+            `/api/fanmeeting/${fanmeetingId}`,
           );
           const { data } = response;
           data.startDate = new Date(data.startDate);
+          data.openDate = new Date(data.openDate);
+
           setFanMeetingDetails(data);
           setIsReserved(data.reservation);
         }
@@ -76,9 +79,7 @@ function Detail() {
       }
     };
 
-    if (token && fanmeetingId) {
-      fetchFanmeetingDetails();
-    }
+    fetchFanmeetingDetails();
 
     const handleWebSocketMessage = (data: WebSocketMessage) => {
       console.log("WebSocket Message Received:", data);
@@ -113,18 +114,51 @@ function Detail() {
     };
   }, [token, fanmeetingId]);
 
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (fanMeetingDetails) {
+      const updateRemainingTime = () => {
+        const now = new Date().getTime();
+        const openDate = new Date(fanMeetingDetails.openDate).getTime();
+        const timeDiff = openDate - now;
+
+        if (timeDiff > 0) {
+          const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+          const day = Math.floor(hours / 24);
+          const minutes = Math.floor(
+            (timeDiff % (1000 * 60 * 60)) / (1000 * 60),
+          );
+          const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+          if (day > 0) {
+            setTimeRemaining(`D-${day}`);
+          } else {
+            setTimeRemaining(`${hours}시간 ${minutes}분 ${seconds}초`);
+          }
+        } else {
+          setTimeRemaining("");
+        }
+      };
+
+      updateRemainingTime();
+      const timer = setInterval(updateRemainingTime, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [fanMeetingDetails]);
+
   async function toggleReserved() {
-    if (!isReserved && fanMeetingDetails && token) {
+    if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
       try {
         webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
-          fanmeetingId!,
+          fanmeetingId,
         );
 
         console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
 
         const response = await client(token).post<ReservationMemberDto>(
-          `/api/reservation/${fanmeetingId!}`,
+          `/api/reservation/${fanmeetingId}`,
         );
 
         const { nickname, email } = response.data;
@@ -158,6 +192,9 @@ function Detail() {
     return null;
   }
 
+  const now = new Date();
+  const isPastEvent = new Date(fanMeetingDetails.startDate) < now;
+
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -177,11 +214,40 @@ function Detail() {
   const cancelDeadline = new Date(startDate.getTime() - 23 * 60 * 60 * 1000);
   const formattedCancelDeadline = `${cancelDeadline.getFullYear()}년 ${cancelDeadline.getMonth() + 1}월 ${cancelDeadline.getDate()}일 ${cancelDeadline.getHours()}시`;
 
+  const renderReservationButton = () => {
+    if (fanMeetingDetails.remainingTickets === 0) {
+      return (
+        <button type="button" className="btn-gray w-full mt-5" disabled>
+          매진
+        </button>
+      );
+    }
+
+    if (timeRemaining) {
+      return (
+        <button type="button" className="btn-light-lg w-full mt-5" disabled>
+          예매 시작까지 {timeRemaining}
+        </button>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        className="btn-lg w-full mt-5"
+        onClick={toggleReserved}
+      >
+        예매하기
+      </button>
+    );
+  };
+
   return (
     <div className="my-10 flex justify-center w-full">
       {showPaymentModal && reservationMember && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <Payment
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             fanmeetingId={fanmeetingId!}
             nickname={reservationMember.nickname}
             email={reservationMember.email}
@@ -214,7 +280,7 @@ function Detail() {
       <div className="w-[60%] bg-white rounded-[25px] p-10">
         <div className="w-full flex">
           <img
-            src={PosterImg}
+            src={fanMeetingDetails.posterImg}
             alt="poster-img"
             className="w-[35%] mr-10 max-h-80 max-w-[30%]"
           />
@@ -227,7 +293,7 @@ function Detail() {
               <div className="flex">
                 <img
                   className="w-24 h-24 rounded-full"
-                  src={ProfileImg}
+                  src={fanMeetingDetails.creatorImg}
                   alt="profile-img"
                 />
                 <div className="ml-8 mt-auto mb-auto">
@@ -254,79 +320,91 @@ function Detail() {
         <Info />
       </div>
       <div className="bg-white rounded-[25px] p-10 ml-8 max-w-[23%] h-fit sticky top-4">
-        <h2 className="text-h2 mb-12">{fanMeetingDetails.title}</h2>
-        <div>
-          <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">날짜</span>
-            <span>{formatDate(fanMeetingDetails.startDate)}</span>
-          </p>
-          <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">시작시간</span>
-            <span>{formatTime(fanMeetingDetails.startDate)}</span>
-          </p>
-          <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">진행시간</span>
-            <span>{fanMeetingDetails.runningTime}분</span>
-          </p>
-          <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">참가인원</span>
-            <span>{fanMeetingDetails.participant}명</span>
-          </p>
-          <p className="flex mb-2.5">
-            <span className="w-20 text-gray-700">가격</span>
-            <span>{fanMeetingDetails.price}원</span>
-          </p>
-        </div>
-        {isReserved ? (
-          <div id="reserved" className="mt-10">
-            <div className="bg-gray-100 rounded-[10px] flex flex-col items-center w-full p-2">
-              <p className="text-gray-500 my-2.5 text-sm">
-                아래 링크를 통해 질문과 사연을 남겨주세요.
+        {isPastEvent ? (
+          <div className="text-center">
+            <h3 className="text-h3 mb-12">{fanMeetingDetails.title}</h3>
+            <div className="bg-gray-100 rounded-xl py-3">
+              <h4 className="text-h4 mb-3">판매 종료</h4>
+              <p className="text-large text-gray-700">
+                본 상품은 판매 종료되었습니다.
               </p>
-              <div className="mb-2.5">
-                <button
-                  type="button"
-                  className="mr-6 btn-outline-md"
-                  onClick={() => navigate("/fanmeeting/1/question")}
-                >
-                  질문 작성
-                </button>
-                <button
-                  type="button"
-                  className="btn-outline-md"
-                  onClick={() => navigate("/fanmeeting/1/story")}
-                >
-                  사연 작성
-                </button>
-              </div>
             </div>
-            <button
-              onClick={toggleReserved}
-              type="button"
-              className="btn-light-lg w-full mt-8"
-            >
-              예매완료
-            </button>
           </div>
         ) : (
-          <div id="notReserved" className="mt-20">
-            <p className="text-gray-500 text-sm text-center mb-1">
-              잠깐! 예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
-            </p>
-            {fanMeetingDetails.remainingTickets === 0 ? (
-              <button type="button" className="btn-gray w-full" disabled>
-                매진
-              </button>
+          <>
+            <h3 className="text-h3 mb-12">{fanMeetingDetails.title}</h3>
+            <div>
+              <p className="flex mb-2.5">
+                <span className="w-20 text-gray-700">행사일</span>
+                <span>
+                  {formatDate(fanMeetingDetails.startDate)}{" "}
+                  {formatTime(fanMeetingDetails.startDate)}
+                </span>
+              </p>
+              <p className="flex mb-2.5">
+                <span className="w-20 text-gray-700">예매일</span>
+                <span>
+                  {formatDate(fanMeetingDetails.openDate)}{" "}
+                  {formatTime(fanMeetingDetails.openDate)}
+                </span>
+              </p>
+              <p className="flex mb-2.5">
+                <span className="w-20 text-gray-700">진행시간</span>
+                <span>{fanMeetingDetails.runningTime}분</span>
+              </p>
+              <p className="flex mb-2.5">
+                <span className="w-20 text-gray-700">참가인원</span>
+                <span>{fanMeetingDetails.participant}명</span>
+              </p>
+              <p className="flex mb-2.5">
+                <span className="w-20 text-gray-700">가격</span>
+                <span>{fanMeetingDetails.price}원</span>
+              </p>
+            </div>
+            {isReserved ? (
+              <div id="reserved" className="mt-10">
+                <div className="bg-gray-100 rounded-[10px] flex flex-col items-center w-full p-2">
+                  <p className="text-gray-500 my-2.5 text-sm">
+                    아래 링크를 통해 질문과 사연을 남겨주세요.
+                  </p>
+                  <div className="mb-2.5">
+                    <button
+                      type="button"
+                      className="mr-6 btn-outline-md"
+                      onClick={() =>
+                        navigate(`/fanmeeting/${fanmeetingId}/question`)
+                      }
+                    >
+                      질문 작성
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-outline-md"
+                      onClick={() =>
+                        navigate(`/fanmeeting/${fanmeetingId}/story`)
+                      }
+                    >
+                      사연 작성
+                    </button>
+                  </div>
+                </div>
+                <button
+                  onClick={toggleReserved}
+                  type="button"
+                  className="btn-light-lg w-full mt-8"
+                >
+                  예매완료
+                </button>
+              </div>
             ) : (
-              <button
-                type="button"
-                className="btn-lg w-full"
-                onClick={toggleReserved}
-              >
-                예매하기
-              </button>
+              <div id="notReserved" className="mt-20">
+                <p className="text-gray-500 text-sm text-center mb-1">
+                  잠깐! 예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
+                </p>
+                {renderReservationButton()}
+              </div>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>
