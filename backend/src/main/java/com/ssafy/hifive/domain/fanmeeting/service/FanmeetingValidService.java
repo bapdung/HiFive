@@ -32,7 +32,7 @@ public class FanmeetingValidService {
 
 	public LocalDateTime validateTop(Long fanmeetingId) {
 		LocalDateTime topDate = null;
-		if(fanmeetingId != null) {
+		if (fanmeetingId != null) {
 			Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 				.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 			topDate = fanmeeting.getStartDate();
