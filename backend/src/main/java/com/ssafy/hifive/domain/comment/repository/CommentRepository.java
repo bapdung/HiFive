@@ -15,11 +15,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 			delete from Comment c where c.board.boardId =:boardId
 		""")
 	void deleteAllByBoardId(@Param("boardId") Long boardId);
-
-	@Modifying
-	@Query("""
-				delete from Comment c
-				where c.member.memberId = :memberId
-		""")
-	void deleteAllByMemberId(@Param("memberId") Long memberId);
 }
