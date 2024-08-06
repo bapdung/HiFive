@@ -48,7 +48,7 @@ function Navbar() {
         <img
           src={logo}
           alt="Logo"
-          className="w-[164.72px] h-[44px]"
+          className="w-[164.72px] h-[44px] hover:cursor-pointer"
           onClick={() => navigate("/main")}
           role="presentation"
         />
@@ -57,14 +57,14 @@ function Navbar() {
         {login ? (
           <>
             <div
-              className="text-primary-text text-medium m-7"
+              className="text-primary-text text-medium m-7 hover:cursor-pointer"
               onClick={() => navigate("/mypage")}
               role="presentation"
             >
               마이페이지
             </div>
             <div
-              className="btn-light-lg"
+              className="btn-light-lg hover:cursor-pointer"
               onClick={handleLogout}
               role="presentation"
             >
@@ -74,14 +74,14 @@ function Navbar() {
         ) : (
           <>
             <div
-              className="text-primary-text text-large font-bold m-10"
+              className="text-primary-text text-large font-bold m-10 hover:cursor-pointer"
               onClick={kakaoLogin}
               onKeyDown={kakaoLogin}
               role="presentation"
             >
               로그인
             </div>
-            <div className="btn-lg">회원가입</div>
+            <div className="btn-lg hover:cursor-pointer">회원가입</div>
           </>
         )}
       </div>
