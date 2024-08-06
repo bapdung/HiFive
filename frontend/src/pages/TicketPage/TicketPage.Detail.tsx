@@ -63,9 +63,9 @@ function Detail() {
   useEffect(() => {
     const fetchFanmeetingDetails = async () => {
       try {
-        if (token) {
+        if (token && fanmeetingId) {
           const response = await client(token).get<FanMeetingDetails>(
-            `/api/fanmeeting/${fanmeetingId!}`,
+            `/api/fanmeeting/${fanmeetingId}`,
           );
           const { data } = response;
           data.startDate = new Date(data.startDate);
@@ -117,17 +117,17 @@ function Detail() {
   }, [token, fanmeetingId]);
 
   async function toggleReserved() {
-    if (!isReserved && fanMeetingDetails && token) {
+    if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
       try {
         webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
-          fanmeetingId!,
+          fanmeetingId,
         );
 
         console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
 
         const response = await client(token).post<ReservationMemberDto>(
-          `/api/reservation/${fanmeetingId!}`,
+          `/api/reservation/${fanmeetingId}`,
         );
 
         const { nickname, email } = response.data;
@@ -185,6 +185,7 @@ function Detail() {
       {showPaymentModal && reservationMember && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <Payment
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             fanmeetingId={fanmeetingId!}
             nickname={reservationMember.nickname}
             email={reservationMember.email}
