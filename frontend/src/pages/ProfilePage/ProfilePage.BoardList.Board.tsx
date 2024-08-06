@@ -11,9 +11,10 @@ type Board = {
 
 interface BoardProps {
   board: Board;
+  creatorImg: string;
 }
 
-function Board({ board }: BoardProps) {
+function Board({ board, creatorImg }: BoardProps) {
   const navigate = useNavigate();
   const { creatorId } = useParams();
 
@@ -23,14 +24,18 @@ function Board({ board }: BoardProps) {
     <div className="bg-white px-10 py-7 rounded-3xl mt-9">
       <div className="flex justify-between">
         <div className="flex">
-          <div className="w-12 h-12 rounded-full bg-gray-300" />
+          <img
+            src={creatorImg}
+            alt="프로필이미지"
+            className="w-12 h-12 rounded-full bg-gray-300"
+          />
           <div className="flex flex-col ml-3">
             <span className="text-h5">{board.creatorName}</span>
             <span className="text-small text-gray-700">{date}</span>
           </div>
         </div>
         <div
-          className="btn-light-md h-8 flex justify-center items-center"
+          className="btn-light-md h-8 flex justify-center items-center hover:cursor-pointer"
           onClick={() => navigate(`/creator/${creatorId}/${board.boardId}`)}
           role="presentation"
         >

@@ -32,9 +32,10 @@ type InputBoard = {
 interface Props {
   creatorName: string;
   isMe: boolean;
+  creatorImg: string;
 }
 
-function BoardList({ creatorName, isMe }: Props) {
+function BoardList({ creatorName, isMe, creatorImg }: Props) {
   const token = useAuthStore((state) => state.accessToken);
   const { creatorId } = useParams();
 
@@ -78,7 +79,7 @@ function BoardList({ creatorName, isMe }: Props) {
           key={i}
           onClick={() => changePage(i)}
           role="presentation"
-          className={page === i ? "text-primary-700" : ""}
+          className={`${page === i ? "text-primary-700" : ""} hover:cursor-pointer`}
         >
           {i}
         </div>,
@@ -248,7 +249,7 @@ function BoardList({ creatorName, isMe }: Props) {
       <div className="w-3/4 h-px border-b border-solid border-gray-500" />
       <div className="w-3/4 mb-16">
         {boardList.map((board) => (
-          <Board board={board} key={board.boardId} />
+          <Board board={board} key={board.boardId} creatorImg={creatorImg} />
         ))}
       </div>
       {totalPage ? (
@@ -257,7 +258,7 @@ function BoardList({ creatorName, isMe }: Props) {
             <img
               src={preIcon}
               alt="이전버튼"
-              className="w-[1rem] h-[1rem]"
+              className="w-[1rem] h-[1rem] hover:cursor-pointer"
               onClick={handlePreviousPageGroup}
               role="presentation"
             />
@@ -265,7 +266,7 @@ function BoardList({ creatorName, isMe }: Props) {
             <img
               src={nextIcon}
               alt="다음버튼"
-              className="w-[1rem] h-[1rem]"
+              className="w-[1rem] h-[1rem] hover:cursor-pointer"
               onClick={handleNextPageGroup}
               role="presentation"
             />

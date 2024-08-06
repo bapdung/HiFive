@@ -188,7 +188,7 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
         <img
           src={creatorProfile.creatorImg}
           alt="프로필이미지"
-          className="bg-gray-300 w-52 h-52 rounded-full mx-5"
+          className="bg-gray-300 w-52 h-52 rounded-full mx-5 hover:cursor-pointer"
           onClick={() => window.open(creatorProfile.link, "_blank")}
           role="presentation"
         />
