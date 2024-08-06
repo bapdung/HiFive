@@ -1,12 +1,33 @@
 import TextareaAutosize from "react-textarea-autosize";
 
-import cameraIcon from "../../assets/icons/cameraicon.png";
+import cameraIcon from "../../assets/icons/cameraIcon.png";
 
-function ModifyModal() {
+type CreatorInfo = {
+  creatorId: number;
+  creatorName: string;
+  link: string;
+  description: string;
+  follower: number;
+  boardCount: number;
+  createdDate: string;
+  fanmeetingCount: number;
+  creatorImg: string;
+};
+
+interface Props {
+  creatorProfile: CreatorInfo;
+  closeModal: () => void;
+}
+
+function ModifyModal({ creatorProfile, closeModal }: Props) {
   return (
     <div className="z-40 w-screen h-screen absolute top-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
       <div className="z-50 w-2/5 h-3/5 bg-white px-8 py-6 flex flex-col justify-between items-center rounded-3xl">
-        <div className="w-48 h-48 bg-gray-300 rounded-full" />
+        <img
+          src={creatorProfile.creatorImg}
+          alt="프로필이미지"
+          className="w-48 h-48 bg-gray-300 rounded-full"
+        />
         <button
           type="button"
           className="creator-btn-outline-lg flex items-center"
@@ -17,17 +38,20 @@ function ModifyModal() {
         <TextareaAutosize
           className="w-full max-h-20 border-2 border-[#DED8E1] rounded-xl px-5 py-2.5 auto-rows-auto resize-none focus:outline-none font-Pretendard"
           placeholder="간단한 프로필 소개문을 100자 이내로 작성해 주세요."
+          value={creatorProfile.description}
         />
         <input
           type="text"
           className="w-full border-2 border-[#DED8E1] rounded-xl px-5 py-2.5 focus:outline-none font-Pretendard"
           placeholder="프로필과 연결될 YouTube 채널 링크를 입력해주세요."
+          value={creatorProfile.link}
         />
         <div className="w-full flex justify-end">
           <button
             type="button"
             aria-label="취소 버튼"
             className="creator-btn-light-lg mr-2.5"
+            onClick={closeModal}
           >
             취소
           </button>
