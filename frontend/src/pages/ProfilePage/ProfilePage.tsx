@@ -54,7 +54,7 @@ function ProfilePage() {
 
   return (
     <div className="w-full flex flex-col items-center pt-10">
-      <Profile creatorProfile={creatorProfile} isMe={isMe} />
+      <Profile initialCreatorProfile={creatorProfile} isMe={isMe} />
       <div className="w-4/5 mt-8 bg-white p-8 rounded-t-2xl">
         <Fanmeeting />
       </div>
