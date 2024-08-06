@@ -19,6 +19,8 @@ import CreatorOnly from "./pages/CreatorOnly/CreatorOnly.MyFanmeeting";
 import CreateFanmeeting from "./pages/CreatorOnly/CreatorOnly.CreateFanmeeting";
 import Settings from "./pages/CreatorOnly/CreatorOnly.Settings";
 import LandingPage from "./pages/LandingPage/LandingPage";
+import ProtectedRoute from "./ProtectedRoute";
+import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 
 function App() {
   const location = useLocation();
@@ -66,20 +68,26 @@ function App() {
             path="/fanmeeting/:fanmeetingId/story"
             element={<StoryForm />}
           />
-          <Route path="/creator-only" element={<CreatorOnly />} />
-          <Route path="/creator-only/new" element={<CreateFanmeeting />} />
-          <Route
-            path="/creator-only/:fanmeetingId/question"
-            element={<Settings />}
-          />
-          <Route
-            path="/creator-only/:fanmeetingId/quiz"
-            element={<Settings />}
-          />
-          <Route
-            path="/creator-only/:fanmeetingId/story"
-            element={<Settings />}
-          />
+          <Route element={<ProtectedRoute requiredCreator />}>
+            <Route path="/creator-only" element={<CreatorOnly />} />
+            <Route path="/creator-only/new" element={<CreateFanmeeting />} />
+            <Route
+              path="/creator-only/:fanmeetingId/question"
+              element={<Settings />}
+            />
+            <Route
+              path="/creator-only/:fanmeetingId/quiz"
+              element={<Settings />}
+            />
+            <Route
+              path="/creator-only/:fanmeetingId/story"
+              element={<Settings />}
+            />
+            <Route
+              path="/creator-only/:fanmeetingId/story/:storyId"
+              element={<StoryDetail />}
+            />
+          </Route>
           <Route path="/main" element={<MainPage />} />
           <Route path="/creator/list" element={<CreatorList />} />
           <Route path="/parther" element={<JoinCreator />} />
