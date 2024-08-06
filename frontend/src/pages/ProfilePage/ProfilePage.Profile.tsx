@@ -30,18 +30,20 @@ type Board = {
 };
 
 interface Props {
-  creatorProfile: CreatorInfo;
+  initialCreatorProfile: CreatorInfo;
   isMe: boolean;
 }
 
-function Profile({ creatorProfile, isMe }: Props) {
+function Profile({ initialCreatorProfile, isMe }: Props) {
   const token = useAuthStore((state) => state.accessToken);
   const { creatorId } = useParams();
 
+  const [creatorProfile, setCreatorProfile] = useState<CreatorInfo>(
+    initialCreatorProfile,
+  );
   const [follow, setFollow] = useState<boolean>(false);
   const [activityDay, setActivityDay] = useState<number>();
   const [boardList, setBoardList] = useState<Board[]>([]);
-
   const [openModifyModal, setOpenModifyModal] = useState<boolean>(false);
 
   const openModal = () => {
@@ -70,6 +72,10 @@ function Profile({ creatorProfile, isMe }: Props) {
         setFollow(false);
       }
     }
+  };
+
+  const updateCreatorProfile = (updatedProfile: CreatorInfo) => {
+    setCreatorProfile(updatedProfile);
   };
 
   useEffect(() => {
@@ -113,10 +119,12 @@ function Profile({ creatorProfile, isMe }: Props) {
 
   return (
     <>
-      {openModifyModal ? (
-        <ModifyModal creatorProfile={creatorProfile} closeModal={closeModal} />
-      ) : (
-        ""
+      {openModifyModal && (
+        <ModifyModal
+          creatorProfile={creatorProfile}
+          closeModal={closeModal}
+          updateCreatorProfile={updateCreatorProfile}
+        />
       )}
       <div className="flex h-90 px-12 py-10 items-center justify-between w-4/5 rounded-3xl bg-horizontal-gradient">
         <div className="w-2/5 h-64 flex flex-col justify-center">
@@ -141,7 +149,7 @@ function Profile({ creatorProfile, isMe }: Props) {
                 팔로우
               </button>
             )}
-            {isMe ? (
+            {isMe && (
               <div
                 className="creator-btn-outline-md h-8 flex items-center ml-3 hover:cursor-pointer"
                 onClick={openModal}
@@ -149,8 +157,6 @@ function Profile({ creatorProfile, isMe }: Props) {
               >
                 프로필 수정
               </div>
-            ) : (
-              ""
             )}
           </div>
           <p className="text-medium my-5 text-gray-600">
@@ -185,21 +191,17 @@ function Profile({ creatorProfile, isMe }: Props) {
           role="presentation"
         />
         <div className="w-2/5 h-64 flex flex-col justify-between py-6">
-          {boardList[0] ? (
+          {boardList[0] && (
             <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
               <span className="text-large">{creatorProfile.creatorName}</span>
               <p className="text-h6 text-gray-600">{boardList[0].contents}</p>
             </div>
-          ) : (
-            ""
           )}
-          {boardList[1] ? (
+          {boardList[1] && (
             <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
               <span className="text-large">{creatorProfile.creatorName}</span>
               <p className="text-h6 text-gray-600">{boardList[1].contents}</p>
             </div>
-          ) : (
-            ""
           )}
         </div>
       </div>
