@@ -11,13 +11,18 @@ interface Comment {
   nickname: string;
   createdDate: string;
   contents: string;
+  profileImg: string;
 }
 
 interface CommentListProps {
   handleModal: (stateOfModal: boolean, commentId: number, msg: string) => void;
+  deletedComment: number | null;
 }
 
-const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
+const CommentList: React.FC<CommentListProps> = ({
+  handleModal,
+  deletedComment,
+}) => {
   const location = useLocation();
   const boardId = parseInt(location.pathname.split("/")[3], 10);
   const token = useAuthStore((state) => state.accessToken);
@@ -122,6 +127,14 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [fetchComments]);
+
+  useEffect(() => {
+    if (deletedComment !== null) {
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.commentId !== deletedComment),
+      );
+    }
+  }, [deletedComment]);
 
   return (
     <div className="my-12 px-10">
