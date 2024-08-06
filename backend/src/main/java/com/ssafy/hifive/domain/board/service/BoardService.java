@@ -60,7 +60,10 @@ public class BoardService {
 	}
 
 	public BoardResponseDto getBoardDetail(long boardId, Member member) {
-		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId()).get().getCreatorName();
+		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId())
+			.map(Creator::getCreatorName)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND, "CreatorId가 존재하지 않습니다."));
+		
 		return boardRepository.findById(boardId)
 			.map(board -> BoardResponseDto.from(board, 1, creatorName))
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND, "유효하지 않은 boardId입니다."));
