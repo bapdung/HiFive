@@ -26,6 +26,7 @@ public class ReservationSchedulerService {
 	private final RedisPublisher redisPublisher;
 	private final ObjectMapper objectMapper;
 	private final RedisTemplate redisTemplateForObject;
+	private final ReservationService reservationService;
 
 	@Scheduled(fixedRate = 10000)
 	public void checkWaiting() {
@@ -56,11 +57,15 @@ public class ReservationSchedulerService {
 	public void checkExpiredPayments() {
 		String pattern = "fanmeeting:*:paying-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
+		log.info("queueKeySize : {}", queueKeys.size());
 		long currentTime = System.currentTimeMillis();
 		long timeout = TimeUnit.MINUTES.toMillis(5);
 
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
+				String[] parts = queueKey.split(":");
+				Long fanmeetingId = Long.valueOf(parts[1]);
+				int count = 0;
 				Set<ZSetOperations.TypedTuple<Object>> members = redisTemplateForObject.opsForZSet()
 					.rangeWithScores(queueKey, 0, -1);
 				if (members != null) {
@@ -70,9 +75,16 @@ public class ReservationSchedulerService {
 						if (score != null) {
 							long elapsedTime = currentTime - score.longValue();
 							if (elapsedTime > timeout) {
+								count++;
 								reservationQueueService.removeFromPayingQueue(queueKey, memberId);
 								log.info("Removed memberId {} from paying queue {} due to timeout", memberId, queueKey);
 							} else {
+								if(count != 0) {
+									String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
+									log.info("waitingqueue에서 {}명을 이동시킵니다.",count);
+									reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId, waitingQueueKey,
+										queueKey, count);
+								}
 								break;
 							}
 						}
