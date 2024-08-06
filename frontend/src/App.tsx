@@ -71,6 +71,7 @@ function App() {
           <Route element={<ProtectedRoute requiredCreator />}>
             <Route path="/creator-only" element={<CreatorOnly />} />
             <Route path="/creator-only/new" element={<CreateFanmeeting />} />
+            <Route path="/creator-only/:fanmeetingId" element={<Settings />} />
             <Route
               path="/creator-only/:fanmeetingId/question"
               element={<Settings />}
