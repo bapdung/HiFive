@@ -1,4 +1,7 @@
 spring:
+  config:
+    activate:
+      on-profile: prod
   profiles:
     include: private
 
