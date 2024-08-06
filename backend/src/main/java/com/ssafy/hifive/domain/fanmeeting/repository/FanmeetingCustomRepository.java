@@ -19,7 +19,6 @@ public interface FanmeetingCustomRepository {
 
 	List<Fanmeeting> findCompletedFanmeetingAllByFan(long fanId, String sort);
 
-
 	List<Fanmeeting> findFanmeetingByCreatorName(String creatorName);
 }
 
