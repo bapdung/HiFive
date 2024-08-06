@@ -6,6 +6,46 @@ spring:
     include: private
     active: dev # 기본 활성화 프로파일을 dev로 설정
 
+  datasource:
+    url: jdbc:mysql://${db.host}:${db.port}/${db.database}
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${kakao.client-id}
+            client-secret: ${kakao.client-secret}
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, account_email, profile_image
+            client-authentication-method: client_secret_post
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+  jwt:
+    issuer: ${jwt.issuer}
+    secret_key: ${jwt.secret_key}
+
+cloud:
+  s3:
+    bucket: ${aws.bucket}
+  aws:
+    credentials:
+      accessKey: ${aws.accessKey}
+      secretKey: ${aws.secretKey}
+    region:
+      static: ${aws.region}
+    stack:
+      auto: false
+      
 logging:
   level:
     root: INFO
