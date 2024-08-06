@@ -5,7 +5,7 @@ import useAuthStore from "../../store/useAuthStore";
 
 interface QuizCreateModalProps {
   handleQuizClose: () => void;
-  quizSequence: number | null;
+  quizSequence: number;
   handleQuizSequence: (seqence: number) => void;
   handleFetchSignal: () => void;
 }
@@ -47,21 +47,27 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   const token = useAuthStore((state) => state.accessToken);
 
   const handleQuizSubmit = async () => {
-    // console.log(quizSequence);
     if (validateSubmit()) {
+      console.log("ㄹㄹㄹ");
       try {
-        if (!token || !quizSequence) {
+        if (!token) {
+          console.log("return 되지롱");
+          console.log(quizSequence);
           return;
         }
+        const newSequence = quizSequence + 1;
+        console.log("정상", newSequence);
         const payload = {
           problem: question,
           answer,
           detail: description,
-          sequence: quizSequence + 1,
+          sequence: newSequence,
         };
+
+        handleQuizSequence(newSequence);
+
         await client(token).post(`/api/quiz/${fanmeetingId}`, payload);
         // console.log("success : 퀴즈 생성 성공");
-        handleQuizSequence(quizSequence + 1);
         handleQuizClose();
         handleFetchSignal();
       } catch (error) {
