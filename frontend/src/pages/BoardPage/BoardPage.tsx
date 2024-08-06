@@ -27,6 +27,7 @@ const BoardPage: React.FC = () => {
   const [isEditing, setEditing] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number>(0);
+  const [deletedComment, setDeletedComment] = useState<number | null>(null);
 
   const handleModal = (stateOfModal: boolean, id: number, msg = "게시글") => {
     console.log("handlemodal");
@@ -93,6 +94,10 @@ const BoardPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, creatorId]);
 
+  const sendDeleteComment = (id: number) => {
+    setDeletedComment(id);
+  };
+
   return (
     <div className="relative w-full flex flex-col items-center pt-[40px] bg-gray-100">
       {isOpen && <div className="fixed inset-0 bg-black opacity-50 z-10" />}
@@ -111,7 +116,10 @@ const BoardPage: React.FC = () => {
             isEditing={isEditing}
             board={board}
           />
-          <CommentList handleModal={handleModal} />
+          <CommentList
+            handleModal={handleModal}
+            deletedComment={deletedComment}
+          />
         </div>
       </div>
       <DeleteModal
@@ -119,7 +127,7 @@ const BoardPage: React.FC = () => {
         onClose={() => handleModal(false, selectedId, message)}
         id={selectedId}
         message={message}
-        fetchDetail={fetchDetail}
+        sendDeleteComment={sendDeleteComment}
       />
     </div>
   );
