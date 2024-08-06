@@ -18,7 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   useEffect(() => {
     const fetchUser = async () => {
       if (!accessToken) {
-        navigate("/"); // 로그인 페이지로 리다이렉트
+        navigate("/"); // 로그인 안 하면 랜딩페이지
         return;
       }
 
