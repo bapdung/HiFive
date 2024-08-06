@@ -24,6 +24,11 @@ type Params = {
   page: number;
 };
 
+type InputBoard = {
+  contents?: string;
+  boardImg?: string;
+};
+
 function BoardList() {
   const token = useAuthStore((state) => state.accessToken);
   const { creatorId } = useParams();
@@ -33,6 +38,14 @@ function BoardList() {
   const [totalPage, setTotalPage] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const [currentPageGroup, setCurrentPageGroup] = useState<number>(0);
+
+  const [inputContent, setInputContent] = useState<string>();
+
+  const [tempBoardImg, setTempBoardImg] = useState<File | null>(null);
+  const [tempBoardImgName, setTempBoardImgName] = useState<string | null>(null);
+  const [tempBoardImgSrc, setTempBoardImgSrc] = useState<
+    string | ArrayBuffer | null
+  >(null);
 
   const changePage = (newPage: number) => {
     setPage(newPage);
@@ -69,28 +82,115 @@ function BoardList() {
     return pages;
   };
 
-  useEffect(() => {
+  const handelInputContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputContent(e.target.value);
+  };
+
+  const inputBoardImg = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTempBoardImgSrc(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setTempBoardImgName(file.name);
+      setTempBoardImg(file);
+    }
+  };
+
+  const uploadS3 = async (path: string, file: File) => {
+    const response = await fetch(
+      new Request(path, {
+        method: "PUT",
+        body: file,
+        headers: new Headers({
+          "Content-Type": file.type,
+        }),
+      }),
+    );
+
+    return response.url;
+  };
+
+  const getS3url = async () => {
+    if (tempBoardImgName && token && tempBoardImg) {
+      const response = await client(token).post(
+        `/api/s3/upload/${tempBoardImgName}`,
+        {
+          prefix: "test",
+        },
+      );
+
+      const { path } = response.data;
+      const url = uploadS3(path, tempBoardImg);
+
+      return url;
+    }
+
+    return null;
+  };
+
+  const getBoardList = async () => {
     const params: Params = {
       sort: "desc",
       page: page - 1,
     };
 
-    const getBoardList = async () => {
-      if (token) {
-        const response = await client(token).get(`/api/board/${creatorId}`, {
-          params,
-        });
-        setBoardList(response.data);
+    if (token) {
+      const response = await client(token).get(`/api/board/${creatorId}`, {
+        params,
+      });
+      setBoardList(response.data);
 
-        if (response.data.length > 0) {
-          setTotalPage(response.data[0].totalPages);
-        } else {
-          setTotalPage(0);
-        }
+      if (response.data.length > 0) {
+        setTotalPage(response.data[0].totalPages);
+      } else {
+        setTotalPage(0);
       }
-    };
+    }
+  };
 
+  const postBoard = async () => {
+    const inputBoard: InputBoard = {};
+
+    if (inputContent) {
+      inputBoard.contents = inputContent;
+    }
+
+    if (tempBoardImgName) {
+      const url = await getS3url();
+
+      if (url) {
+        const [boardImg] = url.split("?");
+        inputBoard.boardImg = boardImg;
+      }
+    }
+
+    if (!inputBoard) {
+      alert("글을 먼저 작성해주세요.");
+      return;
+    }
+
+    if (token && inputBoard) {
+      const response = await client(token).post(
+        `/api/board/${creatorId}`,
+        inputBoard,
+      );
+
+      if (response.status === 201) {
+        alert("게시글 등록이 완료되었습니다.");
+        getBoardList();
+        setInputContent("");
+        setTempBoardImgSrc(null);
+      }
+    }
+  };
+
+  useEffect(() => {
     getBoardList();
+    // eslint-disable-next-line
   }, [creatorId, token, page]);
 
   return (
@@ -100,13 +200,33 @@ function BoardList() {
         <TextareaAutosize
           className="w-full auto-rows-auto resize-none focus:outline-none"
           placeholder="팬들에게 새로운 소식을 알려주세요!"
+          onChange={(e) => handelInputContent(e)}
+          value={inputContent || ""}
         />
+        {tempBoardImgSrc ? (
+          <img
+            src={tempBoardImgSrc as string}
+            alt="이미지"
+            className="bg-gray-500"
+          />
+        ) : (
+          ""
+        )}
         <div className="flex justify-between mt-6">
-          <button type="button" className="flex items-center">
-            <img src={photoIcon} alt="사진등록" />
-            <div className="text-gray-500">이미지 첨부</div>
-          </button>
-          <button type="button" className="creator-btn-md">
+          <label htmlFor="boardImg">
+            <div className="flex items-center hover:cursor-pointer">
+              <img src={photoIcon} alt="사진등록" />
+              <div className="text-gray-500">이미지 첨부</div>
+              <input
+                type="file"
+                id="boardImg"
+                accept="image/*"
+                className="hidden"
+                onChange={inputBoardImg}
+              />
+            </div>
+          </label>
+          <button type="button" className="creator-btn-md" onClick={postBoard}>
             게시글 등록
           </button>
         </div>
