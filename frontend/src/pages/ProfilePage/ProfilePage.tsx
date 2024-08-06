@@ -59,7 +59,7 @@ function ProfilePage() {
         <Fanmeeting />
       </div>
       <div className="bg-vertical-gradient w-4/5 bg-primary-100 rounded-b-2xl flex flex-col justify-center items-center">
-        <BoardList creatorName={creatorProfile.creatorName} />
+        <BoardList creatorName={creatorProfile.creatorName} isMe={isMe} />
       </div>
     </div>
   );
