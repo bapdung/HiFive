@@ -7,6 +7,8 @@ import client from "../../client";
 
 import photoIcon from "../../assets/icons/photoIcon.png";
 import Board from "./ProfilePage.BoardList.Board";
+import preIcon from "../../assets/icons/preIcon.svg";
+import nextIcon from "../../assets/icons/nextIcon.svg";
 
 type BoardInfo = {
   boardId: number;
@@ -17,24 +19,79 @@ type BoardInfo = {
   totalPages: number;
 };
 
+type Params = {
+  sort: string;
+  page: number;
+};
+
 function BoardList() {
   const token = useAuthStore((state) => state.accessToken);
   const { creatorId } = useParams();
 
   const [boardList, setBoardList] = useState<BoardInfo[]>([]);
 
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const [currentPageGroup, setCurrentPageGroup] = useState<number>(0);
+
+  const changePage = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleNextPageGroup = () => {
+    if ((currentPageGroup + 1) * 5 < totalPage) {
+      setCurrentPageGroup(currentPageGroup + 1);
+    }
+  };
+
+  const handlePreviousPageGroup = () => {
+    if (currentPageGroup > 0) {
+      setCurrentPageGroup(currentPageGroup - 1);
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const startPage = currentPageGroup * 5 + 1;
+    const endPage = Math.min(startPage + 4, totalPage);
+    const pages = [];
+    for (let i = startPage; i <= endPage; i += 1) {
+      pages.push(
+        <div
+          key={i}
+          onClick={() => changePage(i)}
+          role="presentation"
+          className={page === i ? "text-primary-700" : ""}
+        >
+          {i}
+        </div>,
+      );
+    }
+    return pages;
+  };
+
   useEffect(() => {
+    const params: Params = {
+      sort: "desc",
+      page: page - 1,
+    };
+
     const getBoardList = async () => {
       if (token) {
-        const response = await client(token).get(
-          `/api/board/${creatorId}?sort=desc`,
-        );
+        const response = await client(token).get(`/api/board/${creatorId}`, {
+          params,
+        });
         setBoardList(response.data);
+
+        if (response.data.length > 0) {
+          setTotalPage(response.data[0].totalPages);
+        } else {
+          setTotalPage(0);
+        }
       }
     };
 
     getBoardList();
-  }, [creatorId, token]);
+  }, [creatorId, token, page]);
 
   return (
     <>
@@ -60,6 +117,29 @@ function BoardList() {
           <Board board={board} key={board.boardId} />
         ))}
       </div>
+      {totalPage ? (
+        <div className="my-3.5 flex justify-center">
+          <div className="flex justify-between items-center w-80 text-h6">
+            <img
+              src={preIcon}
+              alt="이전버튼"
+              className="w-[1rem] h-[1rem]"
+              onClick={handlePreviousPageGroup}
+              role="presentation"
+            />
+            {renderPageNumbers()}
+            <img
+              src={nextIcon}
+              alt="다음버튼"
+              className="w-[1rem] h-[1rem]"
+              onClick={handleNextPageGroup}
+              role="presentation"
+            />
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
     </>
   );
 }
