@@ -1,7 +1,4 @@
 spring:
-  profiles:
-    include: private
-
   datasource:
     url: jdbc:mysql://${db.host}:${db.port}/${db.database}
     username: ${db.username}

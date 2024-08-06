@@ -2,8 +2,6 @@ spring:
   config:
     activate:
       on-profile: prod
-  profiles:
-    include: private
 
   datasource:
     url: jdbc:mysql://${db.host}:${db.port}/${db.database}
