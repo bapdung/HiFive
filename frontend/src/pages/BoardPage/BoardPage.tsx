@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 import client from "../../client";
 import Content from "./BoardPage.Content";
 import CommentList from "./BoardPage.CommentList";
@@ -16,6 +17,7 @@ interface Board {
 
 const BoardPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const boardId = parseInt(location.pathname.split("/")[3], 10);
   const creatorId = parseInt(location.pathname.split("/")[2], 10);
   const token = useAuthStore((state) => state.accessToken);
@@ -25,6 +27,7 @@ const BoardPage: React.FC = () => {
   const [isEditing, setEditing] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number>(0);
+  const [deletedComment, setDeletedComment] = useState<number | null>(null);
 
   const handleModal = (stateOfModal: boolean, id: number, msg = "게시글") => {
     console.log("handlemodal");
@@ -48,10 +51,17 @@ const BoardPage: React.FC = () => {
       return;
     }
     try {
-      const response = await client(token).get(`api/board/detail/${boardId}`);
+      const response = await client(token).get(
+        `api/board/${creatorId}/detail/${boardId}`,
+      );
       setBoard(response.data);
     } catch (error) {
-      console.error("Error fetching board details:", error);
+      if (axios.isAxiosError(error)) {
+        // console.error("에러코드입니다 :", error.response?.data);
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
     }
   };
 
@@ -70,7 +80,12 @@ const BoardPage: React.FC = () => {
         setCanEdit(true);
       }
     } catch (error) {
-      console.error("Error fetching user info :", error);
+      if (axios.isAxiosError(error)) {
+        // console.error("에러코드입니다 :", error.response?.data);
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
     }
   };
 
@@ -78,6 +93,10 @@ const BoardPage: React.FC = () => {
     fetchUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, creatorId]);
+
+  const sendDeleteComment = (id: number) => {
+    setDeletedComment(id);
+  };
 
   return (
     <div className="relative w-full flex flex-col items-center pt-[40px] bg-gray-100">
@@ -97,7 +116,10 @@ const BoardPage: React.FC = () => {
             isEditing={isEditing}
             board={board}
           />
-          <CommentList handleModal={handleModal} />
+          <CommentList
+            handleModal={handleModal}
+            deletedComment={deletedComment}
+          />
         </div>
       </div>
       <DeleteModal
@@ -105,7 +127,7 @@ const BoardPage: React.FC = () => {
         onClose={() => handleModal(false, selectedId, message)}
         id={selectedId}
         message={message}
-        fetchDetail={fetchDetail}
+        sendDeleteComment={sendDeleteComment}
       />
     </div>
   );
