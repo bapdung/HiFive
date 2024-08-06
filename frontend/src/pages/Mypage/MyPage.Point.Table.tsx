@@ -60,7 +60,12 @@ function Table({ type }: TypeProps) {
         });
 
         setPointList(response.data);
-        setTotalPage(response.data[0].totalPages);
+
+        if (response.data.length > 0) {
+          setTotalPage(response.data[0].totalPages);
+        } else {
+          setTotalPage(0);
+        }
       }
     };
 
@@ -145,25 +150,29 @@ function Table({ type }: TypeProps) {
           )}
         </tbody>
       </table>
-      <div className="my-3.5 flex justify-center">
-        <div className="flex justify-between items-center w-80 text-h6">
-          <img
-            src={preIcon}
-            alt="이전버튼"
-            className="w-[1rem] h-[1rem]"
-            onClick={handlePreviousPageGroup}
-            role="presentation"
-          />
-          {renderPageNumbers()}
-          <img
-            src={nextIcon}
-            alt="다음버튼"
-            className="w-[1rem] h-[1rem]"
-            onClick={handleNextPageGroup}
-            role="presentation"
-          />
+      {totalPage ? (
+        <div className="my-3.5 flex justify-center">
+          <div className="flex justify-between items-center w-80 text-h6">
+            <img
+              src={preIcon}
+              alt="이전버튼"
+              className="w-[1rem] h-[1rem]"
+              onClick={handlePreviousPageGroup}
+              role="presentation"
+            />
+            {renderPageNumbers()}
+            <img
+              src={nextIcon}
+              alt="다음버튼"
+              className="w-[1rem] h-[1rem]"
+              onClick={handleNextPageGroup}
+              role="presentation"
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        ""
+      )}
     </>
   );
 }
