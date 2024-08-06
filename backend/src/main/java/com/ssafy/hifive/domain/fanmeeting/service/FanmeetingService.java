@@ -127,23 +127,22 @@ public class FanmeetingService {
 	}
 
 	public List<FanmeetingOverViewDto> getFanmeetingAll() {
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findAll();
-		return fanmeetings.stream()
+		return fanmeetingRepository.findScheduledFanmeetingsAll()
+			.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
 	public List<FanmeetingOverViewDto> getFanmeetingByCreator(long creatorId) {
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findByCreatorMemberId(creatorId);
-		return fanmeetings.stream()
+		return fanmeetingRepository.findByCreatorMemberId(creatorId)
+			.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingByCreator(long creatorId) {
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findByCreatorMemberIdAndStartDateAfter(creatorId,
-			LocalDateTime.now());
-		return fanmeetings.stream()
+		return fanmeetingRepository.findByCreatorMemberIdAndStartDateAfter(creatorId,
+			LocalDateTime.now()).stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}

@@ -81,6 +81,10 @@ public enum ErrorCode {
 	 * Photo
 	 */
 	PHOTO_NOT_FOUND(BAD_REQUEST, "PHOTO-001", "해당하는 사진을 찾을 수 없습니다."),
+	/**
+	 * Follow
+	 */
+	ALREADY_FOLLOWING(FORBIDDEN, "FOLLOW-001", "이미 팔로우한 크리에이터입니다."),
 
 	/**
 	 * WebSocket
