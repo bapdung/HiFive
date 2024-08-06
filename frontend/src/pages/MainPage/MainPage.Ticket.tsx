@@ -42,9 +42,9 @@ const Ticket: React.FC<TicketProps> = ({
 
   if (!event && !startTime) {
     if (fanmeetingId) {
-      return <div className="w-[762px] h-[544px]" />;
+      return <div className="w-[660px] h-[500px]" />;
     }
-    return <div className="w-[762px] h-[544px] mr-8" />;
+    return <div className="w-[660px] h-[500px] mr-8" />;
   }
 
   return (
@@ -53,7 +53,7 @@ const Ticket: React.FC<TicketProps> = ({
         isActive ? "opacity-100" : "opacity-40 scale-95"
       }`}
     >
-      <div className="w-[414px] h-[544px] flex flex-col bg-primary-100 rounded-2xl py-8 items-center justify-center shadow-ticket-shadow-left z-10">
+      <div className="w-[360px] h-[500px] flex flex-col bg-primary-100 rounded-2xl py-6 items-center justify-center shadow-ticket-shadow-left z-10">
         <img
           src={poster || defaultPoster}
           alt="poster"
@@ -62,7 +62,7 @@ const Ticket: React.FC<TicketProps> = ({
           role="presentation"
         />
       </div>
-      <div className="relative w-[348px] h-[544px] flex flex-col bg-white rounded-2xl items-center shadow-ticket-shadow">
+      <div className="relative w-[300px] h-[500px] flex flex-col bg-white rounded-2xl items-center shadow-ticket-shadow">
         <img src={stamp} alt="stamp" className="mt-3" />
         <div className="mx-10 my-5 w-full">
           <div className="flex flex-start flex-col justify-start mb-5 ml-10 w-full">
@@ -89,7 +89,11 @@ const Ticket: React.FC<TicketProps> = ({
             {canEnter ? "팬 미팅 입장하기" : "입장 가능 시간이 아닙니다"}
           </span>
         </div>
-        <img src={barcode} alt="barcode" className="absolute bottom-[5px]" />
+        <img
+          src={barcode}
+          alt="barcode"
+          className="absolute bottom-[5px] w-5/6"
+        />
       </div>
     </div>
   );

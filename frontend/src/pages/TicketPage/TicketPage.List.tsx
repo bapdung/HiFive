@@ -41,10 +41,17 @@ function MeetingList() {
 
   return (
     <div className="flex flex-col items-center my-10 mx-20">
-      <span className="text-h3 text-gray-900 font-bold">팬미팅 둘러보기</span>
-      <span className="text-small text-gray-600 mt-1">
-        종료된 팬미팅은 크리에이터 프로필에서 확인할 수 있습니다
+      <span className="text-h4 text-gray-900 font-bold">팬미팅 둘러보기</span>
+      <span className="text-small text-gray-600">
+        종료된 팬미팅은 크리에이터 프로필에서 확인하세요!
       </span>
+      <div
+        className="text-primary-text text-small font-bold mt-3"
+        onClick={() => navigate("/creator/list")}
+        role="presentation"
+      >
+        크리에이터 검색하러 가기 &rarr;
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-y-6 my-10">
         {fanMeetings.map((meeting) => (
           <div

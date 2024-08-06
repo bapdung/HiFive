@@ -61,6 +61,8 @@ export default {
           "linear-gradient(160deg, #FFE45E -50%, #FF6392 50%, #FFE45E 150%)",
         "landing-gradient":
           "linear-gradient(90deg, rgba(255, 241, 245, 0.80) 0%, rgba(241, 249, 255, 0.80) 100%)",
+        "waiting-gradient":
+          "linear-gradient(90deg, #5C4369 0%, #7A5A8A 22%, #7A5A8A 78%, #5C4369 100%)",
       },
       boxShadow: {
         "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
@@ -94,6 +96,9 @@ export default {
         "slide-in": "slide-in 0.5s forwards",
         "slide-out": "slide-out 0.5s forwards",
         scroll: "scroll 60s linear infinite",
+      },
+      minHeight: {
+        "screen-with-footer": "calc(100vh + 144px)",
       },
     },
   },

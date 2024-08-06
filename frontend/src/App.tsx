@@ -45,7 +45,7 @@ function App() {
   }, [validateAndGetToken, setAccessToken]);
 
   return (
-    <div className="App w-full min-h-screen">
+    <div className="App w-full min-h-screen-with-footer">
       {location.pathname.startsWith("/creator-only") ? (
         <CreatorNavbar />
       ) : (

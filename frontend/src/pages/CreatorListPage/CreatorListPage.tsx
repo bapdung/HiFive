@@ -131,17 +131,19 @@ function CreatorList() {
   }, [top]);
 
   return (
-    <div className="bg-white pb-20">
-      <div className="absolute top-[80px] left-0 bg-page-background w-screen flex flex-col justify-center items-center p-16 ">
-        <h1 className="text-h1 font-semibold">HiFive Creators</h1>
-        <h3 className="text-h3 font-semibold text-gray-600">
-          현재 HiFive에서 활동하고 있는 크리에이터 전체 목록입니다.
-        </h3>
+    <div className="bg-white pb-20 w-full">
+      <div className="absolute top left-0 h-[228px] bg-landing-gradient w-full flex flex-col pt-12 items-center">
+        <div className="flex flex-col items-center">
+          <span className="text-h1 font-semibold">HiFive Creators</span>
+          <span className="text-h6 font-semibold text-gray-600">
+            현재 HiFive에서 활동하고 있는 크리에이터 전체 목록입니다.
+          </span>
+        </div>
       </div>
-      <div className="mt-72 w-screen flex flex-col items-center">
+      <div className="mt-48 flex flex-col items-center">
         <div className="flex relative items-center">
           <input
-            className="w-[1200px] h-[75px] px-5 pr-20 rounded-full shadow-pink-shadow z-50 focus:outline-none text-h5"
+            className="w-[600px] h-[75px] pl-10 pr-20 rounded-full shadow-pink-shadow z-50 focus:outline-none text-large"
             placeholder="어떤 크리에이터를 찾으시나요?"
             onChange={(e) => onInputKeyword(e)}
             onKeyDown={(e) => onkeydown(e)}
@@ -178,7 +180,7 @@ function CreatorList() {
               활동일순
             </h5>
           </div>
-          <div className="flex flex-wrap w-[1200px] justify-start gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-10 my-10">
             {creatorList.map((creator) => (
               <CreatorInfo creator={creator} key={creator.creatorId} />
             ))}
