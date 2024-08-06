@@ -60,6 +60,7 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
 
       if (response.status === 200) {
         setFollow(true);
+        creatorProfile.follower += 1;
       }
     }
   };
@@ -70,6 +71,7 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
 
       if (response.status === 200) {
         setFollow(false);
+        creatorProfile.follower -= 1;
       }
     }
   };
@@ -115,7 +117,7 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
     getFollow();
     getBoardList();
     handleActivityDay();
-  }, [token, creatorId, creatorProfile.createdDate]);
+  }, [token, creatorId, creatorProfile.createdDate, creatorProfile]);
 
   return (
     <>
