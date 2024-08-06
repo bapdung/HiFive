@@ -11,14 +11,17 @@ import lombok.Getter;
 @AllArgsConstructor
 public final class BoardResponseDto {
 	private long boardId;
+	private String creatorName;
 	private String boardImg;
 	private LocalDateTime createdDate;
 	private String contents;
 	private int totalPages;
 
-	public static BoardResponseDto from(Board board, int totalPages) {
+	public static BoardResponseDto from(Board board, int totalPages, String creatorName) {
+
 		return new BoardResponseDto(
 			board.getBoardId(),
+			creatorName,
 			board.getBoardImg(),
 			board.getCreatedDate(),
 			board.getContents(),

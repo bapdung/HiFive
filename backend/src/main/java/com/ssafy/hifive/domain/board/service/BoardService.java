@@ -16,6 +16,7 @@ import com.ssafy.hifive.domain.board.dto.response.BoardResponseDto;
 import com.ssafy.hifive.domain.board.entity.Board;
 import com.ssafy.hifive.domain.board.repository.BoardRepository;
 import com.ssafy.hifive.domain.comment.service.CommentService;
+import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -33,6 +34,7 @@ public class BoardService {
 	private final BoardRepository boardRepository;
 
 	private final static int PAGE_SIZE = 5;
+	private final CreatorRepository creatorRepository;
 
 	private Pageable createPageable(BoardParam param) {
 		return PageRequest.of(param.getPage() != null ? param.getPage() : 0, PAGE_SIZE,
@@ -40,7 +42,10 @@ public class BoardService {
 				Sort.by("createdDate").ascending() : Sort.by("createdDate").descending());
 	}
 
-	public List<BoardResponseDto> getBoardAll(long creatorId, BoardParam param) {
+	public List<BoardResponseDto> getBoardAll(long creatorId, BoardParam param, Member member) {
+
+		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId()).get().getCreatorName();
+
 		Pageable pageable = createPageable(param);
 
 		Page<Board> boardPage = boardRepository.findByCreatorId(creatorId, pageable);
@@ -48,13 +53,14 @@ public class BoardService {
 		int totalPages = boardPage.getTotalPages();
 
 		return boardPage.getContent().stream()
-			.map(board -> BoardResponseDto.from(board, totalPages))
+			.map(board -> BoardResponseDto.from(board, totalPages, creatorName))
 			.collect(Collectors.toList());
 	}
 
-	public BoardResponseDto getBoardDetail(long boardId) {
+	public BoardResponseDto getBoardDetail(long boardId, Member member) {
+		String creatorName = creatorRepository.findCreatorByCreatorId(member.getMemberId()).get().getCreatorName();
 		return boardRepository.findById(boardId)
-			.map(board -> BoardResponseDto.from(board, 1))
+			.map(board -> BoardResponseDto.from(board, 1, creatorName))
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.BOARD_NOT_FOUND, "유효하지 않은 boardId입니다."));
 	}
 
