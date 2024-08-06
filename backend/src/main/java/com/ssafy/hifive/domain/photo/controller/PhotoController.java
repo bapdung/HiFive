@@ -7,10 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.photo.dto.param.PhotoParam;
 import com.ssafy.hifive.domain.photo.dto.response.PhotoOverViewDto;
 import com.ssafy.hifive.domain.photo.service.PhotoService;
 
@@ -36,8 +38,8 @@ public class PhotoController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PhotoOverViewDto>> getPhotosByMember(@AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(photoService.getPhotosByMember(member));
+	public ResponseEntity<List<PhotoOverViewDto>> getPhotosByMember(@AuthenticationPrincipal Member member, @ModelAttribute PhotoParam param) {
+		return ResponseEntity.ok(photoService.getPhotosByMember(member, param));
 	}
 
 }
