@@ -79,7 +79,7 @@ public class ReservationSchedulerService {
 								reservationQueueService.removeFromPayingQueue(queueKey, memberId);
 								// log.info("Removed memberId {} from paying queue {} due to timeout", memberId, queueKey);
 							} else {
-								if(count != 0) {
+								if (count != 0) {
 									String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 									// log.info("waitingqueue에서 {}명을 이동시킵니다.",count);
 									reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId, waitingQueueKey,

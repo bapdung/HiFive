@@ -29,8 +29,8 @@ public class ReservationValidService {
 		}
 	}
 
-	public boolean addToPayingQueueIsValid(String queueKey){
-		if(	reservationQueueService.getQueueSize(queueKey) < 100){
+	public boolean addToPayingQueueIsValid(String queueKey) {
+		if (reservationQueueService.getQueueSize(queueKey) < 100) {
 			return true;
 		}
 		return false;
