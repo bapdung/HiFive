@@ -7,6 +7,7 @@ import useAuthStore from "../../store/useAuthStore";
 interface QuizProps {
   handleQuizOpen: () => void;
   handleQuizSequence: (sequence: number) => void;
+  fetchSignal: boolean;
 }
 
 interface Quiz {
@@ -17,7 +18,11 @@ interface Quiz {
   answer: boolean;
 }
 
-const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
+const Quiz: React.FC<QuizProps> = ({
+  handleQuizOpen,
+  handleQuizSequence,
+  fetchSignal,
+}) => {
   const location = useLocation();
   const token = useAuthStore((state) => state.accessToken);
   const [allQuizzes, setAllQuizzes] = useState<Quiz[]>([]);
@@ -43,7 +48,7 @@ const Quiz: React.FC<QuizProps> = ({ handleQuizOpen, handleQuizSequence }) => {
   useEffect(() => {
     fetchAllQuizzes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, fanmeetingId, allQuizzes.length]);
+  }, [token, fanmeetingId, allQuizzes.length, fetchSignal]);
 
   const openInput = (quiz: Quiz) => {
     setCurrentQuiz(quiz);

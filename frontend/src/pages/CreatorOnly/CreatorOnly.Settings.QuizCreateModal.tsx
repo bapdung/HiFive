@@ -7,12 +7,14 @@ interface QuizCreateModalProps {
   handleQuizClose: () => void;
   quizSequence: number | null;
   handleQuizSequence: (seqence: number) => void;
+  handleFetchSignal: () => void;
 }
 
 const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   handleQuizClose,
   quizSequence,
   handleQuizSequence,
+  handleFetchSignal,
 }) => {
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
@@ -45,7 +47,7 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   const token = useAuthStore((state) => state.accessToken);
 
   const handleQuizSubmit = async () => {
-    console.log(quizSequence);
+    // console.log(quizSequence);
     if (validateSubmit()) {
       try {
         if (!token || !quizSequence) {
@@ -58,9 +60,10 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
           sequence: quizSequence + 1,
         };
         await client(token).post(`/api/quiz/${fanmeetingId}`, payload);
-        console.log("success : 퀴즈 생성 성공");
+        // console.log("success : 퀴즈 생성 성공");
         handleQuizSequence(quizSequence + 1);
         handleQuizClose();
+        handleFetchSignal();
       } catch (error) {
         console.error("Error sending post request:", error);
       }
