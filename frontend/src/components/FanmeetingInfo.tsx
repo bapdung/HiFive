@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 type Fanmeeting = {
   fanmeetingId: number;
   title: string;
@@ -17,8 +19,14 @@ function FanmeetingInfo({ fanmeeting }: FanmeetingInfoProps) {
   const [splitDate] = startDate.split("T");
   const date = splitDate.replaceAll("-", ". ");
 
+  const navigate = useNavigate();
+
   return (
-    <div className="w-56 mb-5">
+    <div
+      className="w-56 mb-5 hover:cursor-pointer"
+      onClick={() => navigate(`/ticket/${fanmeeting.fanmeetingId}`)}
+      role="presentation"
+    >
       <img
         src={posterImg}
         alt="팬미팅포스터"
