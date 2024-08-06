@@ -70,6 +70,7 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
         console.log("Loading finished.");
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [token, boardId, isLoading, isEnd, top, fetchSignal],
   );
 
@@ -96,6 +97,7 @@ const CommentList: React.FC<CommentListProps> = ({ handleModal }) => {
       await fetchComments(true);
     };
     initializeComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardId]);
 
   useEffect(() => {
