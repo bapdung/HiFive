@@ -18,6 +18,7 @@ public final class CreatorDetailDto {
 	private long boardCount;
 	private LocalDateTime createdDate;
 	private long fanmeetingCount;
+	private String creatorImg;
 
 	public static CreatorDetailDto from(Creator creator, long boardCount, long fanmeetingCount) {
 		return new CreatorDetailDto(
@@ -28,7 +29,8 @@ public final class CreatorDetailDto {
 			creator.getFollower(),
 			boardCount,
 			creator.getCreatedDate(),
-			fanmeetingCount
+			fanmeetingCount,
+			creator.getCreatorImg()
 		);
 	}
 }

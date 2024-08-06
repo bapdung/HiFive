@@ -22,7 +22,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 			.join(comment.member, member).fetchJoin()
 			.where(getFromBoardId(boardId), afterCursor(top))
 			.fetchJoin()
-			.limit(5)
+			.limit(10)
 			.fetch();
 	}
 
