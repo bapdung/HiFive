@@ -78,8 +78,8 @@ function Profile({ creatorProfile, isMe }: Props) {
         const res = await client(token).get("/api/creator/follow");
         const followList = res.data;
 
-        for (let idx = 0; idx < followList.length - 1; idx += 1) {
-          if (followList[idx].creatorId === creatorId) {
+        for (let idx = 0; idx < followList.length; idx += 1) {
+          if (followList[idx].creatorId === Number(creatorId)) {
             setFollow(true);
             return;
           }
