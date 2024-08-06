@@ -17,6 +17,7 @@ type CreatorInfo = {
   boardCount: number;
   createdDate: string;
   fanmeetingCount: number;
+  creatorImg: string;
 };
 
 function Profile() {
@@ -26,6 +27,7 @@ function Profile() {
   const [myProfile, setMyProfile] = useState<boolean>(false);
   const [creatorProfile, setCreatorProfile] = useState<CreatorInfo>();
   const [follow, setFollow] = useState<boolean>(false);
+  const [activityDay, setActivityDay] = useState<number>();
 
   useEffect(() => {
     const getUser = async () => {
@@ -56,6 +58,15 @@ function Profile() {
       if (token) {
         const response = await client(token).get(`/api/creator/${creatorId}`);
         setCreatorProfile(response.data);
+
+        const createdDate = new Date(response.data.createdDate);
+        const currentDate = new Date();
+        const dateDiff = Math.floor(
+          (currentDate.getTime() - createdDate.getTime()) /
+            (1000 * 60 * 60 * 24),
+        );
+
+        setActivityDay(dateDiff);
       }
     };
 
@@ -99,7 +110,7 @@ function Profile() {
           </p>
           <div className="flex">
             <div className="flex flex-col items-center text-small text-gray-600 mr-14">
-              <span className="text-large">0</span>
+              <span className="text-large">{activityDay}</span>
               활동일
             </div>
             <div className="flex flex-col items-center text-small text-gray-600 mr-14">
@@ -118,7 +129,9 @@ function Profile() {
             </div>
           </div>
         </div>
-        <div
+        <img
+          src={creatorProfile.creatorImg}
+          alt="프로필이미지"
           className="bg-gray-300 w-52 h-52 rounded-full mx-5"
           onClick={() => window.open(creatorProfile.link, "_blank")}
           role="presentation"
