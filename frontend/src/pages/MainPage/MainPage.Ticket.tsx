@@ -1,4 +1,6 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FaceVerification from "../../service/FaceVerification";
 
 interface TicketProps {
   key: number;
@@ -20,6 +22,7 @@ const Ticket: React.FC<TicketProps> = ({
   isActive,
 }) => {
   const navigate = useNavigate();
+  const [verifying, setVerifying] = useState(false);
 
   if (!event && !startTime) {
     if (key) {
@@ -27,6 +30,12 @@ const Ticket: React.FC<TicketProps> = ({
     }
     return <div className="w-[762px] h-[544px] mr-8" />; // Empty ticket
   }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      setVerifying(true);
+    }
+  };
 
   return (
     <div
@@ -57,11 +66,27 @@ const Ticket: React.FC<TicketProps> = ({
             </span>
           </div>
         </div>
-        <div className="btn-lg absolute bottom-12">
-          <span className="px-16 text-white">팬 미팅 입장하기</span>
-        </div>
+        <button
+          type="button" // 버튼 타입 명시
+          className="btn-lg absolute bottom-12 px-16 text-white"
+          onClick={() => setVerifying(true)}
+          onKeyDown={handleKeyDown}
+          aria-label="팬 미팅 입장하기"
+        >
+          팬 미팅 입장하기
+        </button>
         <img src={barcode} alt="barcode" className="absolute bottom-[5px]" />
       </div>
+      {verifying && (
+        <FaceVerification
+          isOpen={verifying}
+          onRequestClose={() => setVerifying(false)}
+          onSuccess={() => {
+            setVerifying(false);
+            navigate("/ticket/1");
+          }}
+        />
+      )}
     </div>
   );
 };
