@@ -4,6 +4,7 @@ type Fanmeeting = {
   posterImg: string;
   openDate: string;
   startDate: string;
+  runningTime: number;
 };
 
 interface FanmeetingInfoProps {
