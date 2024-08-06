@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import client from "./client";
@@ -16,30 +17,31 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!accessToken) {
+        navigate("/"); // 로그인 페이지로 리다이렉트
+        return;
+      }
+
       try {
-        if (!accessToken) {
-          setIsLoading(false);
-          return;
-        }
-        setIsLoading(false);
         const response = await client(accessToken).get("api/member");
         if (response.data.creator !== requiredCreator) {
-          navigate(-1);
+          navigate("/error?code=UNAUTHORIZED&message=접근 권한이 없습니다.");
         } else {
           setIsCreator(response.data.creator);
         }
       } catch (error) {
-        console.error("Fetch User Error :", error);
-        navigate(-1);
+        if (axios.isAxiosError(error)) {
+          navigate(
+            `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+          );
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (isLoading) {
-      fetchUser();
-    }
-  }, [accessToken, requiredCreator, navigate, setIsCreator, isLoading]);
+    fetchUser();
+  }, [accessToken, requiredCreator, navigate, setIsCreator]);
 
   if (isLoading) {
     return <div>Loading...</div>;
