@@ -6,11 +6,13 @@ import useAuthStore from "../../store/useAuthStore";
 interface QuizCreateModalProps {
   handleQuizClose: () => void;
   quizSequence: number | null;
+  handleQuizSequence: (seqence: number) => void;
 }
 
 const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   handleQuizClose,
   quizSequence,
+  handleQuizSequence,
 }) => {
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
@@ -43,6 +45,7 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
   const token = useAuthStore((state) => state.accessToken);
 
   const handleQuizSubmit = async () => {
+    console.log(quizSequence);
     if (validateSubmit()) {
       try {
         if (!token || !quizSequence) {
@@ -56,6 +59,7 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
         };
         await client(token).post(`/api/quiz/${fanmeetingId}`, payload);
         console.log("success : 퀴즈 생성 성공");
+        handleQuizSequence(quizSequence + 1);
         handleQuizClose();
       } catch (error) {
         console.error("Error sending post request:", error);
