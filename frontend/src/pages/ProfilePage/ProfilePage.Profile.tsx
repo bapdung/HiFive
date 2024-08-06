@@ -20,6 +20,15 @@ type CreatorInfo = {
   creatorImg: string;
 };
 
+type Board = {
+  boardId: number;
+  creatorName: string;
+  boardImg: string;
+  createdDate: string;
+  contents: string;
+  totalPages: number;
+};
+
 function Profile() {
   const token = useAuthStore((state) => state.accessToken);
   const { creatorId } = useParams();
@@ -28,6 +37,7 @@ function Profile() {
   const [creatorProfile, setCreatorProfile] = useState<CreatorInfo>();
   const [follow, setFollow] = useState<boolean>(false);
   const [activityDay, setActivityDay] = useState<number>();
+  const [boardList, setBoardList] = useState<Board[]>([]);
 
   const handleFollow = async () => {
     if (token) {
@@ -90,9 +100,19 @@ function Profile() {
       }
     };
 
+    const getBoardList = async () => {
+      if (token) {
+        const response = await client(token).get(
+          `/api/board/${creatorId}?sort=desc`,
+        );
+        setBoardList(response.data);
+      }
+    };
+
     getUser();
     getFollow();
     getCreatorInfo();
+    getBoardList();
   }, [token, creatorId]);
 
   if (!creatorProfile) {
@@ -164,21 +184,23 @@ function Profile() {
           onClick={() => window.open(creatorProfile.link, "_blank")}
           role="presentation"
         />
-        <div className="w-2/5 h-64 flex flex-col justify-between">
-          <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
-            <span className="text-large">{creatorProfile.creatorName}</span>
-            <p className="text-h6 text-gray-600">팬미팅에서 곧 만나요~!!!</p>
-          </div>
-          <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
-            <span className="text-large">{creatorProfile.creatorName}</span>
-            <p className="text-h6 text-gray-600">
-              내일 우리 만나는 거 잊지 않으셨죠? 저는 방금 준비 다 끝내고 집에
-              가는 중입니다 ㅎㅎ
-            </p>
-          </div>
-          <div className="text-primary-text flex justify-end text-small">
-            게시글 더보기
-          </div>
+        <div className="w-2/5 h-64 flex flex-col justify-between py-6">
+          {boardList[0] ? (
+            <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
+              <span className="text-large">{creatorProfile.creatorName}</span>
+              <p className="text-h6 text-gray-600">{boardList[0].contents}</p>
+            </div>
+          ) : (
+            ""
+          )}
+          {boardList[1] ? (
+            <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
+              <span className="text-large">{creatorProfile.creatorName}</span>
+              <p className="text-h6 text-gray-600">{boardList[1].contents}</p>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </>
