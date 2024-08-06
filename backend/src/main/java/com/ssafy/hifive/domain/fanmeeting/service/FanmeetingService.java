@@ -1,17 +1,17 @@
 package com.ssafy.hifive.domain.fanmeeting.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hifive.domain.category.entity.Category;
 import com.ssafy.hifive.domain.category.repository.CategoryRepository;
+import com.ssafy.hifive.domain.creator.entity.Creator;
+import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
 import com.ssafy.hifive.domain.fanmeeting.dto.param.FanmeetingParam;
 import com.ssafy.hifive.domain.fanmeeting.dto.request.FanmeetingRequestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingDetailDto;
@@ -42,13 +42,7 @@ public class FanmeetingService {
 	private final TimetableService timetableService;
 	private final FanmeetingValidService fanmeetingValidService;
 	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
-
-	private final static int PAGE_SIZE = 10;
-
-	private Pageable createPageable(FanmeetingParam param) {
-		return PageRequest.of(0, PAGE_SIZE,
-			Sort.by(Sort.Direction.fromString(param.getSort()), "startDate"));
-	}
+	private final CreatorRepository creatorRepository;
 
 	public FanmeetingDetailDto getFanmeetingDetail(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findByIdWithTimetable(fanmeetingId)
@@ -57,15 +51,21 @@ public class FanmeetingService {
 		int remainingTickets = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
 		boolean isReservation = reservationRepository.checkReservation(fanmeetingId, member.getMemberId());
 
-		return FanmeetingDetailDto.from(fanmeeting, member, remainingTickets, isReservation);
+		Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+
+		return FanmeetingDetailDto.from(fanmeeting, member, remainingTickets, isReservation, creator);
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingAllForFan(Member member) {
-		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(), "desc")
-			.stream()
-			.map(FanmeetingOverViewDto::from)
-			.collect(Collectors.toList());
-
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(), "desc");
+		List<FanmeetingOverViewDto> list = new ArrayList<>();
+		for(Fanmeeting fanmeeting : fanmeetings) {
+			Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+			list.add(FanmeetingOverViewDto.from(fanmeeting, creator));
+		}
+		return list;
 	}
 
 	@Transactional
@@ -126,25 +126,39 @@ public class FanmeetingService {
 		fanmeetingRepository.delete(fanmeeting);
 	}
 
-	public List<FanmeetingOverViewDto> getFanmeetingAll() {
-		return fanmeetingRepository.findScheduledFanmeetingsAll()
-			.stream()
-			.map(FanmeetingOverViewDto::from)
-			.collect(Collectors.toList());
+	public List<FanmeetingOverViewDto> getFanmeetingAll(FanmeetingParam param) {
+		System.out.println(param.getName());
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingByCreatorName(param.getName());
+		List<FanmeetingOverViewDto> list = new ArrayList<>();
+		for(Fanmeeting fanmeeting : fanmeetings) {
+			Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+			list.add(FanmeetingOverViewDto.from(fanmeeting, creator));
+		}
+		return list;
 	}
 
 	public List<FanmeetingOverViewDto> getFanmeetingByCreator(long creatorId) {
-		return fanmeetingRepository.findByCreatorMemberId(creatorId)
-			.stream()
-			.map(FanmeetingOverViewDto::from)
-			.collect(Collectors.toList());
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findByCreatorMemberId(creatorId);
+		List<FanmeetingOverViewDto> list = new ArrayList<>();
+		for(Fanmeeting fanmeeting : fanmeetings) {
+			Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+			list.add(FanmeetingOverViewDto.from(fanmeeting, creator));
+		}
+		return list;
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingByCreator(long creatorId) {
-		return fanmeetingRepository.findByCreatorMemberIdAndStartDateAfter(creatorId,
-			LocalDateTime.now()).stream()
-			.map(FanmeetingOverViewDto::from)
-			.collect(Collectors.toList());
+		List<Fanmeeting> fanmeetings = fanmeetingRepository.findByCreatorMemberIdAndStartDateAfter(creatorId,
+			LocalDateTime.now());
+		List<FanmeetingOverViewDto> list = new ArrayList<>();
+		for(Fanmeeting fanmeeting : fanmeetings) {
+			Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+			list.add(FanmeetingOverViewDto.from(fanmeeting, creator));
+		}
+		return list;
 	}
 
 	public List<FanmeetingOverViewDto> getCompletedFanmeetingByCreator(long creatorId, FanmeetingParam param) {
@@ -164,18 +178,26 @@ public class FanmeetingService {
 			false
 		);
 
-		return fanmeetings.stream()
-			.map(FanmeetingOverViewDto::from)
-			.collect(Collectors.toList());
+		List<FanmeetingOverViewDto> list = new ArrayList<>();
+		for(Fanmeeting fanmeeting : fanmeetings) {
+			Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+			list.add(FanmeetingOverViewDto.from(fanmeeting, creator));
+		}
+		return list;
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member, FanmeetingParam param ) {
 
 		List<Fanmeeting> fanmeetings = fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(), param.getSort());
 
-		return fanmeetings.stream()
-			.map(FanmeetingOverViewDto::from)
-			.collect(Collectors.toList());
+		List<FanmeetingOverViewDto> list = new ArrayList<>();
+		for(Fanmeeting fanmeeting : fanmeetings) {
+			Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+			list.add(FanmeetingOverViewDto.from(fanmeeting, creator));
+		}
+		return list;
 	}
 
 	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(Member member, FanmeetingParam param) {
@@ -183,9 +205,13 @@ public class FanmeetingService {
 		List<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingAllByFan(member.getMemberId(),
 			param.getSort());
 
-		return fanmeetings.stream()
-			.map(FanmeetingOverViewDto::from)
-			.collect(Collectors.toList());
+		List<FanmeetingOverViewDto> list = new ArrayList<>();
+		for(Fanmeeting fanmeeting : fanmeetings) {
+			Creator creator = creatorRepository.findCreatorByCreatorId(fanmeeting.getCreator().getMemberId())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
+			list.add(FanmeetingOverViewDto.from(fanmeeting, creator));
+		}
+		return list;
 	}
 
 }
