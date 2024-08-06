@@ -60,8 +60,6 @@ spring:
       host: i11a107.p.ssafy.io
       port: 6380
 
-
-
 cloud:
   s3:
     bucket: ${aws.bucket}
