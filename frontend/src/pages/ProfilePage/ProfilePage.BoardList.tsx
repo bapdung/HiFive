@@ -1,9 +1,41 @@
 import TextareaAutosize from "react-textarea-autosize";
 
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import useAuthStore from "../../store/useAuthStore";
+import client from "../../client";
+
 import photoIcon from "../../assets/icons/photoIcon.png";
 import Board from "./ProfilePage.BoardList.Board";
 
+type BoardInfo = {
+  boardId: number;
+  creatorName: string;
+  boardImg: string;
+  createdDate: string;
+  contents: string;
+  totalPages: number;
+};
+
 function BoardList() {
+  const token = useAuthStore((state) => state.accessToken);
+  const { creatorId } = useParams();
+
+  const [boardList, setBoardList] = useState<BoardInfo[]>([]);
+
+  useEffect(() => {
+    const getBoardList = async () => {
+      if (token) {
+        const response = await client(token).get(
+          `/api/board/${creatorId}?sort=desc`,
+        );
+        setBoardList(response.data);
+      }
+    };
+
+    getBoardList();
+  }, [creatorId, token]);
+
   return (
     <>
       <div className="text-h4 flex justify-center my-7">From. 개복어</div>
@@ -24,9 +56,9 @@ function BoardList() {
       </div>
       <div className="w-3/4 h-px border-b border-solid border-gray-500" />
       <div className="w-3/4 mb-16">
-        <Board />
-        <Board />
-        <Board />
+        {boardList.map((board) => (
+          <Board board={board} key={board.boardId} />
+        ))}
       </div>
     </>
   );
