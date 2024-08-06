@@ -38,7 +38,11 @@ function Board({ board }: BoardProps) {
         </div>
       </div>
       <p className="mt-2.5 text-large">{board.contents}</p>
-      <img src={board.boardImg} alt="본문이미지" className="mt-5" />
+      {board.boardImg ? (
+        <img src={board.boardImg} alt="본문이미지" className="mt-5" />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
