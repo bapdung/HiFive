@@ -25,7 +25,7 @@ type Params = {
 };
 
 type InputBoard = {
-  contents?: string;
+  contents: string;
   boardImg?: string;
 };
 
@@ -158,11 +158,14 @@ function BoardList({ creatorName, isMe }: Props) {
   };
 
   const postBoard = async () => {
-    const inputBoard: InputBoard = {};
-
-    if (inputContent) {
-      inputBoard.contents = inputContent;
+    if (!inputContent) {
+      alert("글을 작성해주세요.");
+      return;
     }
+
+    const inputBoard: InputBoard = {
+      contents: inputContent,
+    };
 
     if (tempBoardImgName) {
       const url = await getS3url();
@@ -171,11 +174,6 @@ function BoardList({ creatorName, isMe }: Props) {
         const [boardImg] = url.split("?");
         inputBoard.boardImg = boardImg;
       }
-    }
-
-    if (Object.keys(inputBoard).length === 0) {
-      alert("글을 먼저 작성해주세요.");
-      return;
     }
 
     if (token) {
