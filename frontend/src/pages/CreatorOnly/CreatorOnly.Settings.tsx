@@ -96,6 +96,7 @@ function Settings() {
         <QuizCreateModal
           handleQuizClose={handleQuizClose}
           quizSequence={quizSequence}
+          handleQuizSequence={handleQuizSequence}
         />
       ) : null}
     </>
