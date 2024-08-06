@@ -89,7 +89,7 @@ function Table({ type }: TypeProps) {
           key={i}
           onClick={() => changePage(i)}
           role="presentation"
-          className={page === i ? "text-primary-700" : ""}
+          className={`${page === i ? "text-primary-700" : ""} hover:cursor-pointer`}
         >
           {i}
         </div>,
@@ -106,7 +106,7 @@ function Table({ type }: TypeProps) {
         </h5>
         <select
           name="period"
-          className="text-small"
+          className="text-small hover:cursor-pointer"
           onChange={(e) => changePeriod(e)}
         >
           <option value="3">최근 3개월</option>
@@ -150,7 +150,7 @@ function Table({ type }: TypeProps) {
           <img
             src={preIcon}
             alt="이전버튼"
-            className="w-[1rem] h-[1rem]"
+            className="w-[1rem] h-[1rem] hover:cursor-pointer"
             onClick={handlePreviousPageGroup}
             role="presentation"
           />
@@ -158,7 +158,7 @@ function Table({ type }: TypeProps) {
           <img
             src={nextIcon}
             alt="다음버튼"
-            className="w-[1rem] h-[1rem]"
+            className="w-[1rem] h-[1rem] hover:cursor-pointer"
             onClick={handleNextPageGroup}
             role="presentation"
           />
