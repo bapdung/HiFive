@@ -60,8 +60,6 @@ spring:
       host: localhost
       port: 6380
 
-
-
 cloud:
   s3:
     bucket: ${aws.bucket}
