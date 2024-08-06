@@ -11,6 +11,7 @@ interface Comment {
   nickname: string;
   createdDate: string;
   contents: string;
+  profileImg: string;
 }
 
 interface CommentListProps {
