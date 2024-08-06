@@ -12,7 +12,7 @@ function Settings() {
   const { fanmeetingId } = useParams();
   const [currentPath, serCurrentPath] = useState("question");
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
-  const [quizSequence, setQuizSequence] = useState<number | null>(null);
+  const [quizSequence, setQuizSequence] = useState<number>(1);
   const [fetchSignal, setFetchSignal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -21,8 +21,8 @@ function Settings() {
 
   const handleLocation = (path: string) => {
     navigate(`/creator-only/${fanmeetingId}/${path}`);
-    // console.log(currentPath);
   };
+  console.log(currentPath);
 
   const handleQuizOpen = () => {
     setIsQuizModalOpen(true);
@@ -88,7 +88,9 @@ function Settings() {
             ) : null}
           </div>
         </div>
-        {currentPath === "question" ? <Question /> : null}
+        {currentPath === undefined || currentPath === "question" ? (
+          <Question />
+        ) : null}
         {currentPath === "story" ? <Story /> : null}
         {currentPath === "quiz" ? (
           <Quiz
