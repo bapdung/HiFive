@@ -12,6 +12,7 @@ import lombok.Getter;
 public final class CommentResponseDto {
 	private long commentId;
 	private String nickname;
+	private String profileImg;
 	private LocalDateTime createdDate;
 	private String contents;
 
@@ -19,6 +20,7 @@ public final class CommentResponseDto {
 		return new CommentResponseDto(
 			comment.getCommentId(),
 			comment.getMember().getNickname(),
+			comment.getMember().getProfileImg(),
 			comment.getCreatedDate(),
 			comment.getContents()
 		);
