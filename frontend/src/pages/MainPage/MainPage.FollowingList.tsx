@@ -4,63 +4,12 @@ import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 
 import FollowingProfile from "./MainPage.Following.Profile";
-// import proimg1 from "../../assets/img/minseo.png";
-// import proimg2 from "../../assets/img/hyukjin.png";
-// import proimg3 from "../../assets/img/minchae.png";
-// import proimg4 from "../../assets/img/jiheun.png";
-// import proimg5 from "../../assets/img/hee.png";
-// import proimg6 from "../../assets/img/me.png";
-// import proimg7 from "../../assets/img/bok.png";
-// import proimg8 from "../../assets/img/princess.png";
 
 type FollowingData = {
   creatorId: number;
   creatorName: string;
-  profile: string;
+  profileImg: string;
 };
-
-// const profiles = [
-//   {
-//     id: 0,
-//     profileName: "강민서",
-//     profileImage: proimg1,
-//   },
-//   {
-//     id: 1,
-//     profileName: "김혁진",
-//     profileImage: proimg2,
-//   },
-//   {
-//     id: 2,
-//     profileName: "김민채",
-//     profileImage: proimg3,
-//   },
-//   {
-//     id: 3,
-//     profileName: "서지흔",
-//     profileImage: proimg4,
-//   },
-//   {
-//     id: 4,
-//     profileName: "서희",
-//     profileImage: proimg5,
-//   },
-//   {
-//     id: 5,
-//     profileName: "조원우",
-//     profileImage: proimg6,
-//   },
-//   {
-//     id: 6,
-//     profileName: "개복어",
-//     profileImage: proimg7,
-//   },
-//   {
-//     id: 7,
-//     profileName: "석양공주님",
-//     profileImage: proimg8,
-//   },
-// ];
 
 function FollowingList() {
   const [followings, setFollowings] = useState<FollowingData[]>([]);
@@ -78,7 +27,7 @@ function FollowingList() {
       }
     };
 
-    fetchFollowings(); // 비동기 함수 호출
+    fetchFollowings();
   }, [accessToken]);
 
   return (
@@ -100,7 +49,7 @@ function FollowingList() {
             <FollowingProfile
               creatorId={following.creatorId}
               profileName={following.creatorName}
-              profileImage={following.profile}
+              profile={following.profileImg}
             />
           </div>
         ))}
