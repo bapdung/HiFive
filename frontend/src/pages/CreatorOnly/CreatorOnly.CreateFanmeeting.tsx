@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../custom-datepicker.css";
 import { useNavigate } from "react-router-dom";
+
 import { format, differenceInDays, addDays, isBefore, isAfter } from "date-fns"; // 날짜를 특정 형식으로 표시하는 라이브러리
 import { ko } from "date-fns/locale"; // 날짜 한국어 패치
 import {
@@ -35,6 +36,7 @@ interface CornerIndex {
 }
 
 function CreateFanmeeting() {
+  const token = useAuthStore((state) => state.accessToken);
   const [title, setTitle] = useState("");
   const [peopleNumber, setPeopleNumber] = useState(0);
   const [isFanmeetingCalendarOpen, setIsFanmeetingCalendarOpen] = // 팬미팅 날짜 캘린더 토글
@@ -50,8 +52,11 @@ function CreateFanmeeting() {
     {},
   );
   const [description, setDescription] = useState(""); // 팬미팅 상세설명(공지)
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // 팬미팅 포스터
+  // const [imagePreview, setImagePreview] = useState<string | null>(null); // 팬미팅 포스터
   const [showModal, setShowModal] = useState(false);
+  const [posterFile, setPosterFile] = useState<File | null>(null);
+  const [posterSrc, setPosterSrc] = useState<string | ArrayBuffer | null>(null);
+  const [posterName, setPosterName] = useState<string | null>(null);
   const naviate = useNavigate();
 
   // 진행시간
@@ -176,28 +181,61 @@ function CreateFanmeeting() {
     setTicketPrice(intValue);
   };
 
-  // 이미지 받아옴
-  const handleImageUpload = async (
+  const inputImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    if (!token) {
+      return;
+    }
     const file = event.target.files?.[0];
     if (file) {
+      // 이미지 Blob 미리보기 설정
+      // const imageBlobUrl = URL.createObjectURL(file);
+      // setImagePreview(imageBlobUrl);
+      // S3로 이미지 업로드
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          // const base64String = (reader.result as string)
-          //   .replace("data:", "")
-          //   .replace(/^.+,/, "");
-          // 서버로 base64String을 전송
-          // 예: await uploadImageToServer(base64String);
-          // console.log(base64String); // 테스트용으로 출력
-          setImagePreview("testimage.png");
+          setPosterSrc(reader.result);
+          // console.log(posterSrc); // 테스트용으로 출력
         } else {
           console.error("FileReader result is null");
         }
       };
       reader.readAsDataURL(file);
+      setPosterName(file.name);
+      setPosterFile(file);
     }
+  };
+
+  const uploadS3 = async (path: string, file: File) => {
+    const response = await fetch(
+      new Request(path, {
+        method: "PUT",
+        body: file,
+        headers: new Headers({
+          "Content-Type": file.type,
+        }),
+      }),
+    );
+
+    return response.url;
+  };
+
+  // S3 URL 가져오기
+  const getS3url = async () => {
+    if (posterName && token && posterFile) {
+      const response = await client(token).post(
+        `/api/s3/upload/${posterName}`,
+        {
+          prefix: "test",
+        },
+      );
+      const { path } = response.data;
+      const url = uploadS3(path, posterFile);
+      return url;
+    }
+    return null;
   };
 
   // 코너를 drag 공간에 추가
@@ -301,9 +339,12 @@ function CreateFanmeeting() {
   // backend 에 제출하기 위해 데이터 형식 변경 (코너)
   const convertCornersToIndices = (cornerArray: Corner[]): CornerIndex[] =>
     cornerArray.map((corner, index) => ({
-      categoryId: typeOfCorners.indexOf(corner.content) + 1,
+      categoryId:
+        typeOfCorners.indexOf(corner.content) + 1 === 0
+          ? 7
+          : typeOfCorners.indexOf(corner.content) + 1,
       sequence: index + 1,
-      detailName: "fdsfdsfd",
+      detailName: corner.content,
     }));
 
   // 팬미팅 생성시 유효성 확인
@@ -319,7 +360,7 @@ function CreateFanmeeting() {
       !startDate ||
       !ticketDate ||
       !selectedDuration ||
-      !imagePreview
+      !posterSrc
     ) {
       alert("미입력한 항목이 있습니다.");
       return false;
@@ -328,16 +369,20 @@ function CreateFanmeeting() {
     return true;
   };
 
-  const token = useAuthStore((state) => state.accessToken);
+  // 해당 결과를 back으로 전송
   const submitCreateFanmeeting = async () => {
-    // 해당 결과를 back으로 전송
     const [hours, minutes] = selectedDuration.split(":").map(Number);
+    const url = await getS3url();
+    if (!url || !token) {
+      return;
+    }
+    const [posterImg] = url.split("?");
     const result = {
       title,
-      posterImg: imagePreview,
+      posterImg,
       notice: description,
       participant: peopleNumber,
-      runningtime: hours * 60 + minutes,
+      runningTime: hours * 60 + minutes,
       startDate: startDate?.toISOString(),
       openDate: ticketDate?.toISOString(),
       price: ticketPrice,
@@ -569,14 +614,14 @@ function CreateFanmeeting() {
                       type="file"
                       id="photoFile"
                       accept="image/*"
-                      onChange={handleImageUpload}
+                      onChange={inputImageUpload}
                       className="hidden"
                     />
                   </label>
                   <div>
-                    {imagePreview && (
+                    {posterSrc && (
                       <img
-                        src={imagePreview}
+                        src={posterSrc as string}
                         alt="Preview"
                         className="max-w-full max-h-full"
                       />

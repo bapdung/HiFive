@@ -36,38 +36,34 @@ function Question() {
     [allQuestions],
   );
 
-  // 모든 질문 불러오는 api 호출
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchAllQuestions = async () => {
-    const params = { page: 0 };
-    try {
-      if (token) {
-        const response = await client(token).get(
-          `/api/question/${fanmeetingId}`,
-          { params },
-        );
-        setAllQuestions(response.data);
-        doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
-        // console.log("Question Response:", response.data);
-      }
-    } catch (error) {
-      // console.log(fanmeetingId);
-      console.error("Fetch All Question Error:", error);
-    }
-  };
-
   // mount 될 때 모든 질문을 불러옴
   useEffect(() => {
+    const fetchAllQuestions = async () => {
+      const params = { page: 0 };
+      try {
+        if (token) {
+          const response = await client(token).get(
+            `/api/question/${fanmeetingId}`,
+            { params },
+          );
+          setAllQuestions(response.data);
+          doFilterQuestions(typeOfQuestion, response.data); // 초기 로드 시 필터링된 질문 목록 설정
+          // console.log("Question Response:", response.data);
+        }
+      } catch (error) {
+        // console.log(fanmeetingId);
+        console.error("Fetch All Question Error:", error);
+      }
+    };
     fetchAllQuestions();
-  }, [fanmeetingId, fetchAllQuestions, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fanmeetingId, token, typeOfQuestion]);
 
   // toggle 시 토글 api 호출
   const toggleQuestion = async (id: number) => {
     try {
       if (token) {
         await client(token).patch(`/api/question/${id}/toggle`);
-
-        // 로컬 상태 업데이트
         setAllQuestions((prevQuestions) =>
           prevQuestions.map((question) =>
             question.questionId === id
@@ -100,7 +96,6 @@ function Question() {
   useEffect(() => {
     doFilterQuestions(typeOfQuestion);
   }, [allQuestions, typeOfQuestion, doFilterQuestions]);
-
   return (
     <div className="flex flex-col w-full items-center">
       <p className="text-h4 w-1/3 flex justify-around my-10">
