@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import errorBird from "../assets/icons/errorBird.svg";
 
 const ErrorPage: React.FC = () => {
   const location = useLocation();
@@ -13,10 +14,15 @@ const ErrorPage: React.FC = () => {
   const errorMessage = getQueryParam("message");
 
   return (
-    <div>
-      <h1>에러페이지입니다요</h1>
-      <p>에러코드: {errorCode}</p>
-      <p>에러메세지: {errorMessage}</p>
+    <div className="flex justify-center items-center">
+      <img src={errorBird} alt="error-img" />
+      <div className="ml-[2rem]">
+        <h1 className="text-[96px] font-bold text-gray-500">404 Error !</h1>
+        <div>
+          <p className="text-h5 my-2.5 text-gray-500">에러코드: {errorCode}</p>
+          <p className="text-h5 text-gray-500">에러메세지: {errorMessage}</p>
+        </div>
+      </div>
     </div>
   );
 };
