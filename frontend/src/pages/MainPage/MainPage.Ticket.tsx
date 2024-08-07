@@ -1,4 +1,6 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FaceVerification from "../../service/FaceVerification";
 import defaultPoster from "../../assets/img/poster.jpg";
 
 interface TicketProps {
@@ -38,40 +40,41 @@ const Ticket: React.FC<TicketProps> = ({
   isActive,
 }) => {
   const navigate = useNavigate();
+  const [verifying, setVerifying] = useState(false);
   const canEnter = isWithin30Minutes(startTime);
 
   if (!event && !startTime) {
     if (fanmeetingId) {
-      return <div className="w-[762px] h-[544px]" />;
+      return <div className="w-[737px] h-[500px]" />;
     }
-    return <div className="w-[762px] h-[544px] mr-8" />;
+    return <div className="w-[737px] h-[500px] mr-6" />; // Empty ticket
   }
 
   return (
     <div
-      className={`flex mb-8 mr-8 transition-transform duration-500 ${
+      className={`flex mb-5 transition-transform duration-500 mr-[60.5px] ${
         isActive ? "opacity-100" : "opacity-40 scale-95"
       }`}
     >
-      <div className="w-[414px] h-[544px] flex flex-col bg-primary-100 rounded-2xl py-8 items-center justify-center shadow-ticket-shadow">
+      <div className="w-[360px] h-[500px] flex flex-col bg-primary-100 rounded-2xl items-center justify-center shadow-ticket-shadow-left z-10">
         <img
           src={poster || defaultPoster}
           alt="poster"
-          className="rounded-2xl"
+          className="rounded-xl w-[320px] h-[460px]"
           onClick={() => navigate(`/ticket/${fanmeetingId}`)}
           role="presentation"
         />
       </div>
-      <div className="relative w-[348px] h-[544px] flex flex-col bg-white rounded-2xl items-center shadow-ticket-shadow">
+      <div className="relative w-[300px] h-[500px] flex flex-col bg-white rounded-2xl items-center shadow-ticket-shadow">
         <img src={stamp} alt="stamp" className="mt-3" />
         <div className="mx-10 my-5 w-full">
-          <div className="flex flex-start flex-col justify-start mb-5 ml-10 w-full">
+          <div className="flex flex-start flex-col justify-start mb-5 ml-8 w-full">
             <span className="text-medium text-gray-500 font-bold">EVENT</span>
             <span className="text-large text-gray-900 font-bold w-full">
               {event}
             </span>
           </div>
-          <div className="flex flex-start flex-col justify-start ml-10 w-full">
+          <div className="flex flex-start flex-col justify-start ml-8 w-full">
             <span className="text-medium text-gray-500 font-bold">
               START TIME
             </span>
@@ -89,8 +92,22 @@ const Ticket: React.FC<TicketProps> = ({
             {canEnter ? "팬 미팅 입장하기" : "입장 가능 시간이 아닙니다"}
           </span>
         </div>
-        <img src={barcode} alt="barcode" className="absolute bottom-[5px]" />
+        <img
+          src={barcode}
+          alt="barcode"
+          className="absolute bottom-[5px] w-5/6"
+        />
       </div>
+      {verifying && (
+        <FaceVerification
+          isOpen={verifying}
+          onRequestClose={() => setVerifying(false)}
+          onSuccess={() => {
+            setVerifying(false);
+            navigate("/ticket/1");
+          }}
+        />
+      )}
     </div>
   );
 };

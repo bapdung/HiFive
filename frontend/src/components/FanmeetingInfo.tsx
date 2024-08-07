@@ -23,7 +23,7 @@ function FanmeetingInfo({ fanmeeting }: FanmeetingInfoProps) {
 
   return (
     <div
-      className="w-56 mb-5 hover:cursor-pointer"
+      className="flex flex-col w-56 mb-5 hover:cursor-pointer items-center"
       onClick={() => navigate(`/ticket/${fanmeeting.fanmeetingId}`)}
       role="presentation"
     >
