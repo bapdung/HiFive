@@ -21,6 +21,7 @@ import Settings from "./pages/CreatorOnly/CreatorOnly.Settings";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
+import Test from "./pages/FanmeetingPage/TestPage";
 
 function App() {
   const location = useLocation();
@@ -93,6 +94,7 @@ function App() {
           <Route path="/creator/list" element={<CreatorList />} />
           <Route path="/parther" element={<JoinCreator />} />
           <Route path="/" element={<LandingPage />} />
+          <Route path="/test" element={<Test />} />
         </Routes>
       </main>
       <Footer />
