@@ -34,7 +34,7 @@ function CreatorNavbar() {
       </div>
       <div className="flex items-center">
         <div
-          className="text-secondary text-medium font-bold m-10 hover:cursor-pointer"
+          className="text-secondary text-medium font-semibold m-10 hover:cursor-pointer"
           onClick={() => navigate("/creator-only")}
           role="presentation"
         >
