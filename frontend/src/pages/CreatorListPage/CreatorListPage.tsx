@@ -150,7 +150,7 @@ function CreatorList() {
           <img
             src={searchIcon}
             alt="검색"
-            className="absolute w-[18px] h-[18px] z-50 right-10"
+            className="absolute w-[18px] h-[18px] z-50 right-10 hover:cursor-pointer"
             onClick={() => onSearch()}
             role="presentation"
           />
@@ -158,21 +158,21 @@ function CreatorList() {
         <div className="mt-8">
           <div className="flex justify-center items-center mb-10">
             <h5
-              className={`text-h5 font-semibold border-solid border-r-2 border-[#EEEEEE] pr-3 ${condition === "creatorName" ? "text-primary-text" : ""}`}
+              className={`text-h5 font-semibold border-solid border-r-2 border-[#EEEEEE] pr-3 ${condition === "creatorName" ? "text-primary-text" : ""} hover:cursor-pointer`}
               onClick={(e) => changeParam(e)}
               role="presentation"
             >
               가나다순
             </h5>
             <h5
-              className={`text-h5 font-semibold border-solid border-r-2 border-[#EEEEEE] px-3 ${condition === "createdDate" && sort === "desc" ? "text-primary-text" : ""}`}
+              className={`text-h5 font-semibold border-solid border-r-2 border-[#EEEEEE] px-3 ${condition === "createdDate" && sort === "desc" ? "text-primary-text" : ""} hover:cursor-pointer`}
               onClick={changeParam}
               role="presentation"
             >
               최신순
             </h5>
             <h5
-              className={`text-h5 font-semibold pl-3 ${condition === "createdDate" && sort === "asc" ? "text-primary-text" : ""}`}
+              className={`text-h5 font-semibold pl-3 ${condition === "createdDate" && sort === "asc" ? "text-primary-text" : ""} hover:cursor-pointer`}
               onClick={changeParam}
               role="presentation"
             >

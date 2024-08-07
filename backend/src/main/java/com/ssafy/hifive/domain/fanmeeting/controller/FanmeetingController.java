@@ -87,8 +87,9 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll(@AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(fanmeetingService.getFanmeetingAll());
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll(@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
+		System.out.println(param.getName());
+		return ResponseEntity.ok(fanmeetingService.getFanmeetingAll(param));
 	}
 
 	@Operation(summary = "특정 크리에이터 팬미팅 전체 조회", description = "특정 크리에이터의 팬미팅을 전체 조회한다.")
