@@ -1,4 +1,4 @@
-import pinkBird from "../assets/icons/loading/pinkBird.svg";
+import pinkBird from "../assets/icons/loading/pinkBird.png";
 
 const LoadingPage: React.FC = () => {
   const message = "Loading...";
