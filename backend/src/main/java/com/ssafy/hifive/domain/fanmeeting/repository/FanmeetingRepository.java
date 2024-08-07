@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,10 +21,13 @@ public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long>, F
 		""")
 	long countByCreatorId(long creatorId);
 
+	@EntityGraph(value = "Fanmeeting.withCreatorProfile", type = EntityGraph.EntityGraphType.LOAD)
 	List<Fanmeeting> findByCreatorMemberId(long creatorId);
 
+	@EntityGraph(value = "Fanmeeting.withCreatorProfile", type = EntityGraph.EntityGraphType.LOAD)
 	List<Fanmeeting> findByCreatorMemberIdAndStartDateAfter(long creatorId, LocalDateTime currentTime);
 
+	@EntityGraph(value = "Fanmeeting.withCreatorProfile", type = EntityGraph.EntityGraphType.LOAD)
 	@Query("""
 		SELECT f 
 		FROM Fanmeeting f 
@@ -32,17 +36,10 @@ public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long>, F
 		""")
 	Optional<Fanmeeting> findByIdWithTimetable(@Param("fanmeetingId") long fanmeetingId);
 
+	@EntityGraph(value = "Fanmeeting.withCreatorProfile", type = EntityGraph.EntityGraphType.LOAD)
 	@Query("""
-		select f from Fanmeeting f
-		where DATE(f.openDate) = CURRENT_DATE
-	""")
+			select f from Fanmeeting f
+			where DATE(f.openDate) = CURRENT_DATE
+		""")
 	List<Fanmeeting> getActiveFanmeetingIds();
-
-	@Query("""
-		select f
-		from Fanmeeting f
-		where f.startDate >= CURRENT_TIMESTAMP
-		order by f.startDate asc
-  		""")
-	List<Fanmeeting> findScheduledFanmeetingsAll();
 }
