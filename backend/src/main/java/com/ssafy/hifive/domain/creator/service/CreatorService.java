@@ -1,6 +1,5 @@
 package com.ssafy.hifive.domain.creator.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +11,6 @@ import com.ssafy.hifive.domain.board.repository.BoardRepository;
 import com.ssafy.hifive.domain.creator.dto.param.CreatorParam;
 import com.ssafy.hifive.domain.creator.dto.request.CreatorRequestDto;
 import com.ssafy.hifive.domain.creator.dto.response.CreatorDetailDto;
-import com.ssafy.hifive.domain.creator.dto.response.CreatorMainDto;
 import com.ssafy.hifive.domain.creator.dto.response.CreatorOverviewDto;
 import com.ssafy.hifive.domain.creator.entity.Creator;
 import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
@@ -51,26 +49,6 @@ public class CreatorService {
 			.stream()
 			.map(CreatorOverviewDto::from)
 			.collect(Collectors.toList());
-	}
-
-	public CreatorMainDto getCreatorMain(Member member) {
-		List<CreatorOverviewDto> follow = creatorRepository.findFollowCreatorByFanId(member.getMemberId())
-			.stream()
-			.map(CreatorOverviewDto::from)
-			.limit(6)
-			.collect(Collectors.toList());
-
-		List<CreatorOverviewDto> unfollow = new ArrayList<>();
-		if (follow.size() < 6) {
-			int needed = 6 - follow.size();
-			Pageable pageable = PageRequest.of(0, needed);
-			unfollow = creatorRepository.findUnfollowCreatorByFanId(member.getMemberId(), pageable)
-				.stream()
-				.map(CreatorOverviewDto::from)
-				.collect(Collectors.toList());
-		}
-
-		return new CreatorMainDto(follow, unfollow);
 	}
 
 	public CreatorDetailDto getCreatorDetail(long creatorId, Member member) {
