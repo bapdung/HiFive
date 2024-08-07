@@ -69,9 +69,9 @@ export default {
         "side-shadow": "1px 0px 5px 0px rgba(0, 0, 0, 0.10)",
         "mypage-shadow": "0px 2px 10px 0px rgba(0, 0, 0, 0.10)",
         "ticket-shadow":
-          "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 15px 20px 0px rgba(0, 0, 0, 0.25)",
+          "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 8px 10px 0px rgba(0, 0, 0, 0.2)",
         "ticket-shadow-left":
-          "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 15px 20px 0px rgba(0, 0, 0, 0.25)",
+          "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 8px 10px 0px rgba(0, 0, 0, 0.2)",
         "inner-shadow":
           "inset -10px -10px 20px rgba(0, 0, 0, 0.15), inset 10px 10px 20px rgba(0, 0, 0, 0.15)",
         "pink-shadow":
