@@ -23,7 +23,7 @@ const Carousel: React.FC = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
 
   const ticketWidth = 660;
-  const margin = 32;
+  const margin = 60.5;
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -45,7 +45,7 @@ const Carousel: React.FC = () => {
 
         setTickets([
           {
-            fanmeetingId: -1,
+            fanmeetingId: 0,
             title: "",
             posterImg: "",
             openDate: "",
@@ -78,7 +78,7 @@ const Carousel: React.FC = () => {
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center">
-      <div className="flex overflow-clip w-full">
+      <div className="flex w-full">
         <div
           className="flex transition-transform duration-300"
           style={{

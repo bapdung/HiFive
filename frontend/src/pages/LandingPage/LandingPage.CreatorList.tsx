@@ -5,7 +5,7 @@ import useAuthStore from "../../store/useAuthStore";
 interface CreatorData {
   creatorId: number;
   creatorName: string;
-  creatorProfile: string;
+  profileImg: string;
 }
 
 const CreatorList: React.FC = () => {
@@ -15,12 +15,16 @@ const CreatorList: React.FC = () => {
   useEffect(() => {
     const fetchCreators = async () => {
       try {
-        const apiClient = client(accessToken || "");
-        const response = await apiClient.get("/api/creator/main");
+        const apiClient = client(accessToken || ""); // Ensure accessToken is passed to client
+        const response = await apiClient.get("/api/creator/main", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         const fetchedCreators = response.data.map((creator: CreatorData) => ({
           creatorId: creator.creatorId,
           creatorName: creator.creatorName,
-          creatorProfile: creator.creatorProfile,
+          profileImg: creator.profileImg, // Ensure correct property name is used
         }));
         setCreators(fetchedCreators);
       } catch (err) {
@@ -35,7 +39,7 @@ const CreatorList: React.FC = () => {
     <div className="flex flex-col items-center w-full bg-white py-20">
       <div className="flex flex-col justify-center items-center py-20">
         <span className="text-h1 text-gray-900 font-bold">
-          하이파이브 크리에이터
+          HiFive 크리에이터
         </span>
         <span className="text-h5 text-gray-900">
           이외에도 많은 분들이 하이파이브에서 활동 중이에요.
@@ -50,7 +54,7 @@ const CreatorList: React.FC = () => {
             >
               <div className="w-[150px] h-[150px] rounded-full overflow-hidden">
                 <img
-                  src={creator.creatorProfile}
+                  src={creator.profileImg}
                   alt={`Creator ${creator.creatorName}`}
                   className="w-full h-full object-cover"
                 />

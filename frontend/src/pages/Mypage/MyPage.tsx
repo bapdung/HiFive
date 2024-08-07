@@ -23,8 +23,8 @@ function Mypage() {
   return (
     <>
       <Sidebar />
-      <div className="w-screen pl-64 flex justify-start">
-        <div className="m-[40px] w-full h-[920px] bg-white rounded-3xl flex flex-col items-center shadow-mypage-shadow overflow-y-auto overflow-x-hidden scrollbar-hide">
+      <div className="w-screen pl-56 flex justify-start">
+        <div className="m-7 w-[100%] h-auto bg-white rounded-3xl flex flex-col items-center shadow-mypage-shadow overflow-y-auto overflow-x-hidden scrollbar-hide">
           <Routes>
             <Route path="reservation" element={<Reservation />} />
             <Route path="my-info" element={<MyInfo />} />
