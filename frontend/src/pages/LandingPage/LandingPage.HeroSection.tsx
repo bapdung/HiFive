@@ -20,7 +20,7 @@ function HeroSection() {
   }, [words.length]);
 
   return (
-    <div className=" flex items-center justify-center w-full h-[1000px] bg-landing-gradient gap-[250px]">
+    <div className=" flex items-center justify-center w-[100%] h-[1000px] bg-landing-gradient gap-[250px]">
       <div className="flex flex-col items-center gap-20">
         <div className="flex flex-col items-center justify-center">
           <span className="text-[64px] text-gray-900 font-bold">

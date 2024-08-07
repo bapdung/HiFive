@@ -82,7 +82,7 @@ public class CreatorService {
 		return CreatorDetailDto.from(creator, boardCount, fanmeetingCount);
 	}
 
-	public List<CreatorOverviewDto> getTopCreators(){
+	public List<CreatorOverviewDto> getTopCreators() {
 		Pageable pageable = PageRequest.of(0, 20);
 		return creatorRepository.findTopCreators(pageable)
 			.stream()
@@ -104,6 +104,12 @@ public class CreatorService {
 		Creator creator = creatorRepository.findByMemberId(member.getMemberId())
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CREATOR_NOT_FOUND));
 
-		creator.updateCreator(creatorRequestDto.getLink(), creatorRequestDto.getDescription());
+		String link = creatorRequestDto.getLink() != null ? creatorRequestDto.getLink() : creator.getLink();
+		String description =
+			creatorRequestDto.getDescription() != null ? creatorRequestDto.getDescription() : creator.getDescription();
+		String creatorImg =
+			creatorRequestDto.getCreatorImg() != null ? creatorRequestDto.getCreatorImg() : creator.getCreatorImg();
+
+		creator.updateCreator(link, description, creatorImg);
 	}
 }

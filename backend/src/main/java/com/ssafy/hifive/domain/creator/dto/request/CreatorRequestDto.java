@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 public final class CreatorRequestDto {
 	private String link;
 	private String description;
+	private String creatorImg;
 
 	public Creator toEntity(Member creator) {
 		return Creator.builder()
 			.creator(creator)
 			.link(link)
 			.description(description)
+			.creatorImg(creatorImg)
 			.build();
 	}
 }

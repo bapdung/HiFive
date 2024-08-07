@@ -1,17 +1,145 @@
+import { useEffect, useState } from "react";
+import useAuthStore from "../../store/useAuthStore";
+import client from "../../client";
+
 import idCard1 from "../../assets/img/idcard-ex1.png";
 import idCard2 from "../../assets/img/idcard-ex2.png";
 
 function IdCard() {
+  const token = useAuthStore((state) => state.accessToken);
+
+  const [status, setStatus] = useState<number>(1); // 사진 선택X(1), 사진 선택O 등록X (2), 사진 등록O(0)
+  const [idCardFile, setIdCardFile] = useState<File | null>(null);
+  const [idCardName, setIdCardName] = useState<string | null>(null);
+  const [idCardSrc, setIdCardSrc] = useState<string | ArrayBuffer | null>(null);
+
+  const inputIdCard = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setIdCardSrc(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setIdCardName(file.name);
+      setIdCardFile(file);
+      setStatus(2);
+    }
+  };
+
+  const uploadS3 = async (path: string, file: File) => {
+    const response = await fetch(
+      new Request(path, {
+        method: "PUT",
+        body: file,
+        headers: new Headers({
+          "Content-Type": file.type,
+        }),
+      }),
+    );
+
+    return response.url;
+  };
+
+  const getS3url = async () => {
+    if (idCardName && token && idCardFile) {
+      const response = await client(token).post(
+        `/api/s3/upload/${idCardName}`,
+        {
+          prefix: "test",
+        },
+      );
+
+      const { path } = response.data;
+      const url = uploadS3(path, idCardFile);
+
+      return url;
+    }
+
+    return null;
+  };
+
+  const postIdCard = async () => {
+    if (idCardName) {
+      const url = await getS3url();
+
+      if (url && token) {
+        const [idCardImg] = url.split("?");
+
+        const response = await client(token).post(
+          "/api/member/identification",
+          {
+            identificationImg: idCardImg,
+          },
+        );
+
+        if (response.status === 200) {
+          setStatus(0);
+          alert("신분증 등록이 완료되었습니다.");
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const getIdImg = async () => {
+      if (token) {
+        const response = await client(token).get("/api/member/identification");
+
+        if (response.status === 200) {
+          if (response.data.identificationImg) {
+            setIdCardSrc(response.data.identificationImg);
+            setStatus(0);
+          }
+        }
+      }
+    };
+
+    getIdImg();
+  }, [token]);
+
   return (
     <div className="flex justify-between p-10">
-      <div className="flex flex-col justify-center mr-14">
-        <div className="w-[500px] h-[300px] bg-gray-300 rounded-3xl" />
-        {/* <button type="button" className="btn-lg  mt-10">
-          등록 하기
-        </button> */}
-        <div className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white">
-          등록 완료
-        </div>
+      <div className="flex flex-col mr-14">
+        {idCardSrc ? (
+          <img
+            src={idCardSrc as string}
+            alt="신분증 이미지"
+            className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
+          />
+        ) : (
+          <div className="w-[500px] h-[300px] bg-gray-300 rounded-3xl" />
+        )}
+        {status !== 0 ? (
+          <>
+            <label htmlFor="idCardImg">
+              <div className="flex justify-center items-center btn-light-lg mt-10 hover:cursor-pointer">
+                {status === 1 ? "사진 선택하기" : "사진 수정하기"}
+              </div>
+              <input
+                type="file"
+                id="idCardImg"
+                accept="image/*"
+                onChange={inputIdCard}
+                className="hidden"
+              />
+            </label>
+            {status === 2 ? (
+              <div
+                className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
+                onClick={postIdCard}
+                role="presentation"
+              >
+                등록하기
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white hover:cursor-not-allowed">
+            등록 완료
+          </div>
+        )}
       </div>
       <div>
         <div className="mb-8">
@@ -67,17 +195,6 @@ function IdCard() {
           <ol className="text-small list-decimal ml-6">
             <li>주민등록증</li>
             <li>운전면허증</li>
-            <li>여권 (대한민국 발행)</li>
-            <li>청소년증</li>
-            <li>장애인 복지 카드 (단, 신용 카드 및 직불 카드형 제외)</li>
-            <li>
-              주민등록증 발급 신청 확인서 (유효 기간 이내의 사진 및 주요 정보에
-              테이핑 처리된 것에 한함)
-            </li>
-            <li>
-              청소년증 발급 신청 확인서 (유효 기간 이내의 사진 및 주요 정보에
-              테이핑 처리된 것에 한함)
-            </li>
           </ol>
         </div>
       </div>
