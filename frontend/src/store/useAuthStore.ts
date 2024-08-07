@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { getAccessToken } from "../service/authService";
 
 interface AuthState {

@@ -61,13 +61,17 @@ export default {
           "linear-gradient(160deg, #FFE45E -50%, #FF6392 50%, #FFE45E 150%)",
         "landing-gradient":
           "linear-gradient(90deg, rgba(255, 241, 245, 0.80) 0%, rgba(241, 249, 255, 0.80) 100%)",
+        "waiting-gradient":
+          "linear-gradient(90deg, #5C4369 0%, #7A5A8A 22%, #7A5A8A 78%, #5C4369 100%)",
       },
       boxShadow: {
         "nav-shadow": "0px 1px 5px 0px rgba(0, 0, 0, 0.10)",
         "side-shadow": "1px 0px 5px 0px rgba(0, 0, 0, 0.10)",
         "mypage-shadow": "0px 2px 10px 0px rgba(0, 0, 0, 0.10)",
         "ticket-shadow":
-          "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 15px 20px 0px rgba(0, 0, 0, 0.25)",
+          "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 8px 10px 0px rgba(0, 0, 0, 0.2)",
+        "ticket-shadow-left":
+          "inset 0px -5px 0.5px rgba(0, 0, 0, 0.25), 0px 8px 10px 0px rgba(0, 0, 0, 0.2)",
         "inner-shadow":
           "inset -10px -10px 20px rgba(0, 0, 0, 0.15), inset 10px 10px 20px rgba(0, 0, 0, 0.15)",
         "pink-shadow":
@@ -92,6 +96,9 @@ export default {
         "slide-in": "slide-in 0.5s forwards",
         "slide-out": "slide-out 0.5s forwards",
         scroll: "scroll 60s linear infinite",
+      },
+      minHeight: {
+        "screen-with-footer": "calc(100vh + 144px)",
       },
     },
   },

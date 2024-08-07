@@ -3,7 +3,7 @@ import Description from "./LandingPage.Description";
 import CreatorList from "./LandingPage.CreatorList";
 
 const LandingPage = () => (
-  <div className="flex flex-col items-center w-full">
+  <div className="flex flex-col items-center w-[100%]">
     <HeroSection />
     <Description />
     <CreatorList />

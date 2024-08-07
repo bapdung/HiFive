@@ -31,13 +31,13 @@ function FollowingList() {
   }, [accessToken]);
 
   return (
-    <div className="flex flex-col bg-white p-10 rounded-3xl w-[1272px] shadow-lg mb-10">
-      <div className="flex items-end justify-between w-[1192px] mb-8">
-        <span className="text-h3 text-gray-900 font-bold">
+    <div className="flex flex-col bg-white px-10 py-8 rounded-3xl w-[1200px] shadow-lg mb-10">
+      <div className="flex items-end justify-between w-[1120px] mb-8">
+        <span className="text-h4 text-gray-900 font-bold">
           팔로우 중인 크리에이터
         </span>
         <Link to="/creator/list">
-          <span className="text-h5 text-gray-700">전체 크리에이터 보기</span>
+          <span className="text-h6 text-gray-700">전체 크리에이터 보기</span>
         </Link>
       </div>
       <div className=" flex flex-wrap justify-start">
