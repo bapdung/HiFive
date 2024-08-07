@@ -30,7 +30,7 @@ function Photo({ photo }: PhotoProps) {
             <img
               src={download}
               alt="다운로드 아이콘"
-              className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5 z-30"
+              className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5 z-30 hover:cursor-pointer"
             />
           </div>
         ))}

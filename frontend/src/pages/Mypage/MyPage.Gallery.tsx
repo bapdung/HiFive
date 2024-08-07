@@ -47,14 +47,14 @@ function Gallery() {
       <div className="text-2xl font-semibold pt-10">나의 갤러리</div>
       <div>
         <span
-          className={`text-h6  mr-2.5 ${sort === "desc" ? "text-primary-text" : "text-gray-700"}`}
+          className={`text-h6  mr-2.5 ${sort === "desc" ? "text-primary-text" : "text-gray-700"} hover:cursor-pointer`}
           onClick={(e) => changeSort(e)}
           role="presentation"
         >
           최신순
         </span>
         <span
-          className={`text-h6 ml-2.5 ${sort === "asc" ? "text-primary-text" : "text-gray-700"}`}
+          className={`text-h6 ml-2.5 ${sort === "asc" ? "text-primary-text" : "text-gray-700"} hover:cursor-pointer`}
           onClick={(e) => changeSort(e)}
           role="presentation"
         >
