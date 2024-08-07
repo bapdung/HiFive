@@ -45,41 +45,41 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring()
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**",
-						"/webjars/**");
+			.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**",
+				"/webjars/**");
 	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
-				.httpBasic(httpBasic -> httpBasic.disable())
-				.formLogin(formLogin -> formLogin.disable())
-				.logout(logout -> logout.disable());
+			.httpBasic(httpBasic -> httpBasic.disable())
+			.formLogin(formLogin -> formLogin.disable())
+			.logout(logout -> logout.disable());
 
 		http.sessionManagement(
-				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+			sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		http.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
-						"/webjars/**").permitAll()
-				.requestMatchers("/api/auth/**").permitAll()
-				.requestMatchers("/api/**").authenticated()
-				.anyRequest().permitAll());
+			.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
+				"/webjars/**").permitAll()
+			.requestMatchers("/api/auth/**").permitAll()
+			.requestMatchers("/api/**").authenticated()
+			.anyRequest().permitAll());
 
 		http.oauth2Login(oauth2 -> oauth2
-				.loginPage("/login")
-				.authorizationEndpoint(authorization -> authorization.authorizationRequestRepository(
-						oAuth2AuthorizationRequestBasedOnCookieRepository()))
-				.successHandler(oAuth2SuccessHandler())
-				.userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserCustomService)));
+			.loginPage("/login")
+			.authorizationEndpoint(authorization -> authorization.authorizationRequestRepository(
+				oAuth2AuthorizationRequestBasedOnCookieRepository()))
+			.successHandler(oAuth2SuccessHandler())
+			.userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserCustomService)));
 
 		http.logout(logout -> logout.logoutSuccessUrl("/login"));
 
 		http.exceptionHandling(exceptionHandling -> exceptionHandling.defaultAuthenticationEntryPointFor(
-				new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-				new AntPathRequestMatcher("/api/**")));
+			new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+			new AntPathRequestMatcher("/api/**")));
 
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
@@ -103,7 +103,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 	@Bean
 	public OAuth2SuccessHandler oAuth2SuccessHandler() {
 		return new OAuth2SuccessHandler(tokenProvider, tokenRepository,
-				oAuth2AuthorizationRequestBasedOnCookieRepository(), memberService, objectMapper);
+			oAuth2AuthorizationRequestBasedOnCookieRepository(), memberService, objectMapper);
 	}
 
 	@Override
@@ -116,12 +116,12 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 		CorsConfiguration configuration = new CorsConfiguration();
 
 		configuration.setAllowedOrigins(Arrays.asList(
-				"http://i11a107.p.ssafy.io",
-				"https://i11a107.p.ssafy.io",
-				"http://i11a107.p.ssafy.io:8080",
-				"http://i11a107.p.ssafy.io:8080",
-				"http://localhost:8080",
-				"http://localhost:3000"));
+			"http://i11a107.p.ssafy.io",
+			"https://i11a107.p.ssafy.io",
+			"http://i11a107.p.ssafy.io:8080",
+			"http://i11a107.p.ssafy.io:8080",
+			"http://localhost:8080",
+			"http://localhost:3000"));
 		// configuration.addAllowedOriginPattern("*");
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
