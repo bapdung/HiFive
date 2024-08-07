@@ -60,7 +60,7 @@ function Point() {
         <div className="flex flex-col bg-white rounded-2xl p-5">
           <h5 className="text-h5">포인트 충전하기</h5>
           <div>
-            <h6 className="text-medium text-gray-700 mt-3.5">충전 금액</h6>
+            <h6 className="text-small text-gray-700 mt-5">충전 금액</h6>
             <input
               type="text"
               value={money ?? ""}
@@ -69,17 +69,19 @@ function Point() {
               className="flex justify-center items-center border border-1 w-full h-12 placeholder py-3.5 px-6 text-small rounded-3xl mt-2"
             />
           </div>
-          <div className="flex justify-start mt-3.5 text-small">
+          <div className="flex flex-col justify-start mt-5 text-small">
             <div className="flex flex-col items-start">
               {/* <span>충전 가능 금액</span> */}
               <span>현재 보유중인 포인트</span>
             </div>
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col items-start mt-2">
               {/* <span className="text-primary-text ml-7">500,000</span> */}
-              <span className="font-semibold ml-5">{totalPoint}</span>
+              <span className="text-large text-primary-text">
+                {totalPoint} point
+              </span>
             </div>
           </div>
-          <button type="button" className="btn-lg mt-5" onClick={postPoint}>
+          <button type="button" className="btn-lg mt-10" onClick={postPoint}>
             충전하기
           </button>
         </div>
