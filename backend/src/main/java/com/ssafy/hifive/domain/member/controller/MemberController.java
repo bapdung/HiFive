@@ -78,12 +78,12 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@Operation(summary = "회원 신분증 등록", description = "사용자의 신분증 사진을 등록한다.")
+	@Operation(summary = "회원 신분증, 이름 등록", description = "사용자의 신분증 사진과 이름을 등록한다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@PostMapping(path="/identification", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/identification", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> createIdentification(@RequestBody
 	MemberIdentificationDto memberIdentificationDto,
 		@AuthenticationPrincipal Member member) {
@@ -91,12 +91,12 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@Operation(summary = "회원 신분증 조회", description = "사용자의 신분증 사진을 조회한다.")
+	@Operation(summary = "회원 신분증, 이름 조회", description = "사용자의 신분증 사진과 이름을 조회한다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path="/identification", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/identification", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MemberIdentificationResponseDto> getIdentification(@AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(memberService.getIdentification(member));
 	}
