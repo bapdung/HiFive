@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useAuthStore from "./store/useAuthStore";
+import ScrollToTop from "./service/scrollToTop";
 
 import Navbar from "./components/Navbar/Navbar";
 import CreatorNavbar from "./components/Navbar/CreatorNavbar";
@@ -54,6 +55,7 @@ function App() {
       ) : (
         <Navbar />
       )}
+      <ScrollToTop />
       <main className="relative w-full flex-grow">
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
