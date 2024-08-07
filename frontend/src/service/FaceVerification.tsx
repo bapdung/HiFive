@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import client from "../client";
+import useAuthStore from "../store/useAuthStore";
 
 interface FaceVerificationProps {
   isOpen: boolean;
@@ -12,12 +14,13 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
   onRequestClose,
   onSuccess,
 }) => {
+  const token = useAuthStore((state) => state.accessToken);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [result, setResult] = useState<string>("");
   const [centerStartTime, setCenterStartTime] = useState<number | null>(null);
-  const centerThreshold = 50; // 중앙으로부터 허용되는 거리 (픽셀)
-  const minCenterTime = 1.0; // 중앙에 머물러야 하는 최소 시간 (초)
+  const centerThreshold = 50;
+  const minCenterTime = 1.0;
 
   useEffect(() => {
     const getVideo = async () => {
@@ -52,21 +55,29 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
         const base64Image = dataUrl.split(",")[1];
 
         try {
-          const response = await axios.post<{
-            verified: boolean;
-            error?: string;
-          }>(`${process.env.REACT_APP_FLASK_END_POINT}/verify-face`, {
-            user_image: base64Image,
-          });
+          if (token) {
+            const memberResponse = await client(token).get(
+              `/api/member/identification`,
+            );
+            const { identificationImg } = memberResponse.data;
+            console.log(identificationImg);
 
-          console.log(response);
-          if (response.data.error) {
-            setResult(`Error: ${response.data.error}`);
-          } else if (response.data.verified) {
-            setResult("본인 인증 완료");
-            onSuccess();
-          } else {
-            setResult("너 누구야");
+            const response = await axios.post<{
+              verified: boolean;
+              error?: string;
+            }>(`${process.env.REACT_APP_FLASK_END_POINT}/verify-face`, {
+              user_image: base64Image,
+              id_card_image: identificationImg,
+            });
+
+            if (response.data.error) {
+              setResult(`Error: ${response.data.error}`);
+            } else if (response.data.verified) {
+              setResult("본인 인증 완료");
+              onSuccess();
+            } else {
+              setResult("너 누구야");
+            }
           }
         } catch (error) {
           if (axios.isAxiosError(error)) {
@@ -77,7 +88,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
         }
       }
     }
-  }, [onSuccess]);
+  }, [onSuccess, token]);
 
   const checkFacePosition = useCallback(() => {
     const canvas = canvasRef.current;
