@@ -151,7 +151,7 @@ function MyInfo() {
   }
 
   return (
-    <div className="flex flex-col h-[900px] justify-center">
+    <div className="flex flex-col m-auto">
       <div className="flex w-[800px] justify-between">
         <div className="flex flex-col items-center pl-5">
           <img

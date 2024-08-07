@@ -99,7 +99,7 @@ function MeetingList() {
           role="presentation"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-y-6 my-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-6 my-10">
         {fanMeetings.map((meeting) => (
           <div
             key={meeting.fanmeetingId}
@@ -110,7 +110,7 @@ function MeetingList() {
             <img
               src={meeting.posterImg}
               alt={meeting.title}
-              className="w-[200px] h-[280px] object-cover rounded-lg"
+              className="w-[200px] h-[280px] min-w-44 object-cover rounded-lg"
             />
             <span className="mt-2 text-h6 font-bold text-gray-900">
               {meeting.title}
