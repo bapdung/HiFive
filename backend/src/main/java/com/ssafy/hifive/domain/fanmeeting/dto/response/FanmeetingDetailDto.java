@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.ssafy.hifive.domain.creator.entity.Creator;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.timetable.dto.response.TimetableResponseDto;
@@ -33,12 +32,12 @@ public class FanmeetingDetailDto {
 	private List<TimetableResponseDto> timetable;
 
 	public static FanmeetingDetailDto from(Fanmeeting fanmeeting, Member member, int remainingTickets,
-		boolean isReservation, Creator creator) {
+		boolean isReservation) {
 		return new FanmeetingDetailDto(
 			fanmeeting.getCreator().getMemberId(),
 			member.getMemberId(),
-			creator.getCreatorName(),
-			creator.getCreatorImg(),
+			fanmeeting.getCreator().getCreatorProfile().getCreatorName(),
+			fanmeeting.getCreator().getCreatorProfile().getCreatorImg(),
 			fanmeeting.getTitle(),
 			fanmeeting.getPosterImg(),
 			fanmeeting.getNotice(),
