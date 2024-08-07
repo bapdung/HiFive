@@ -115,12 +115,14 @@ function IdCard() {
               alt="신분증 이미지"
               className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
             />
-            <div className="flex flex-col mt-5">
-              <span className="text-h6">이름</span>
-              <span className="w-full h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
-                {name}
-              </span>
-            </div>
+            {status === 0 && (
+              <div className="flex flex-col mt-5">
+                <span className="text-h6">이름</span>
+                <span className="w-full h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
+                  {name}
+                </span>
+              </div>
+            )}
           </div>
         ) : (
           <div className="w-[500px] h-[300px] bg-gray-300 rounded-3xl" />
