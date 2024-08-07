@@ -44,30 +44,32 @@ function Gallery() {
 
   return (
     <>
-      <div className="text-2xl font-semibold pt-10">나의 갤러리</div>
-      <div>
-        <span
-          className={`text-h6  mr-2.5 ${sort === "desc" ? "text-primary-text" : "text-gray-700"} hover:cursor-pointer`}
-          onClick={(e) => changeSort(e)}
-          role="presentation"
-        >
-          최신순
-        </span>
-        <span
-          className={`text-h6 ml-2.5 ${sort === "asc" ? "text-primary-text" : "text-gray-700"} hover:cursor-pointer`}
-          onClick={(e) => changeSort(e)}
-          role="presentation"
-        >
-          과거순
-        </span>
-      </div>
-      <div className="mt-10 bg-page-background pt-10 w-full mb-10">
-        {photoList?.map((photo: PhotoType) => (
-          <Photo
-            photo={photo}
-            key={photo.creatorName + Date.now() + Math.random()}
-          />
-        ))}
+      <div className="text-h4 font-semibold py-6">추억 갤러리</div>
+      <div className="flex flex-col bg-page-background w-full items-center">
+        <div className="my-3">
+          <span
+            className={`text-h6  mr-2.5 ${sort === "desc" ? "text-primary-text" : "text-gray-700"} hover:cursor-pointer`}
+            onClick={(e) => changeSort(e)}
+            role="presentation"
+          >
+            최신순
+          </span>
+          <span
+            className={`text-h6 ml-2.5 ${sort === "asc" ? "text-primary-text" : "text-gray-700"} hover:cursor-pointer`}
+            onClick={(e) => changeSort(e)}
+            role="presentation"
+          >
+            과거순
+          </span>
+        </div>
+        <div className="mt-10 pt-10 w-full mb-10">
+          {photoList?.map((photo: PhotoType) => (
+            <Photo
+              photo={photo}
+              key={photo.creatorName + Date.now() + Math.random()}
+            />
+          ))}
+        </div>
       </div>
     </>
   );
