@@ -60,7 +60,6 @@ public class ReservationService {
 		String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
-		//log.info("queue size: {}", currentPayingQueueSize);
 
 		int slotsAvailable = 100 - currentPayingQueueSize.intValue();
 

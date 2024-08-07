@@ -9,8 +9,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public final class MemberIdentificationResponseDto {
 	private String identificationImg;
+	private String name;
 
 	public static MemberIdentificationResponseDto from(Member member) {
-		return new MemberIdentificationResponseDto(member.getIdentificationImg());
+		return new MemberIdentificationResponseDto(member.getIdentificationImg(), member.getName());
 	}
 }
