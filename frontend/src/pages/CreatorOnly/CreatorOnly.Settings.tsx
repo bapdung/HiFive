@@ -12,6 +12,8 @@ function Settings() {
   const { fanmeetingId } = useParams();
   const [currentPath, serCurrentPath] = useState("question");
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [quizSequence, setQuizSequence] = useState<number>(1);
+  const [fetchSignal, setFetchSignal] = useState<boolean>(false);
 
   useEffect(() => {
     serCurrentPath(location.pathname.split("/").pop() || "question");
@@ -19,16 +21,23 @@ function Settings() {
 
   const handleLocation = (path: string) => {
     navigate(`/creator-only/${fanmeetingId}/${path}`);
-    console.log(currentPath);
   };
+  console.log(currentPath);
 
   const handleQuizOpen = () => {
     setIsQuizModalOpen(true);
   };
 
   const handleQuizClose = () => {
-    console.log("퀴즈 모달 닫힘");
     setIsQuizModalOpen(false);
+  };
+
+  const handleQuizSequence = (sequence: number) => {
+    setQuizSequence(sequence);
+  };
+
+  const handleFetchSignal = () => {
+    setFetchSignal(!fetchSignal);
   };
 
   return (
@@ -79,14 +88,25 @@ function Settings() {
             ) : null}
           </div>
         </div>
-        {currentPath === "question" ? <Question /> : null}
+        {currentPath === undefined || currentPath === "question" ? (
+          <Question />
+        ) : null}
         {currentPath === "story" ? <Story /> : null}
         {currentPath === "quiz" ? (
-          <Quiz handleQuizOpen={handleQuizOpen} />
+          <Quiz
+            handleQuizOpen={handleQuizOpen}
+            handleQuizSequence={handleQuizSequence}
+            fetchSignal={fetchSignal}
+          />
         ) : null}
       </div>
       {isQuizModalOpen ? (
-        <QuizCreateModal handleQuizClose={handleQuizClose} />
+        <QuizCreateModal
+          handleQuizClose={handleQuizClose}
+          quizSequence={quizSequence}
+          handleQuizSequence={handleQuizSequence}
+          handleFetchSignal={handleFetchSignal}
+        />
       ) : null}
     </>
   );

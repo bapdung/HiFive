@@ -49,7 +49,7 @@ services: # container setting info
       SPRING_DATASOURCE_PASSWORD: 1q2w3e4r!
       SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
     ports:
-      - "8080:8080"
+      - "5442:8080"
     networks:
       - db-network
       - webnet
@@ -66,6 +66,16 @@ services: # container setting info
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    networks:
+      - webnet
+  
+  ai-server:
+    container_name: hifive_flask
+    build:
+      context: ./ai-server
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
     networks:
       - webnet
 

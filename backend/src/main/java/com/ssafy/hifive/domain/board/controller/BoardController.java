@@ -56,10 +56,12 @@ public class BoardController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/detail/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<BoardResponseDto> getBoardDetail(@PathVariable long boardId,
+	@GetMapping(path = "/{creatorId}/detail/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<BoardResponseDto> getBoardDetail(
+		@PathVariable long creatorId,
+		@PathVariable long boardId,
 		@AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(boardService.getBoardDetail(boardId, member));
+		return ResponseEntity.ok(boardService.getBoardDetail(creatorId, boardId, member));
 	}
 
 	@Operation(summary = "게시글 생성", description = "특정 크리에이터의 게시글 생성")
