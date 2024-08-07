@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FaceVerification from "../../service/FaceVerification";
 import defaultPoster from "../../assets/img/poster.jpg";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
 
 interface TicketProps {
   fanmeetingId: number;
@@ -42,7 +44,28 @@ const Ticket: React.FC<TicketProps> = ({
   const navigate = useNavigate();
   const [verifying, setVerifying] = useState(false);
   const canEnter = isWithin30Minutes(startTime);
+  const token = useAuthStore((state) => state.accessToken);
 
+  const handleEnterClick = async () => {
+    if (canEnter) {
+      try {
+        if (token) {
+          const memberResponse = await client(token).get(
+            `/api/member/identification`,
+          );
+          const { identificationImg } = memberResponse.data;
+          if (identificationImg) {
+            setVerifying(true);
+          } else {
+            alert("신분증이 등록되지 않았습니다. 신분증을 등록해주세요.");
+          }
+        }
+      } catch (error) {
+        alert("신분증 조회 중 오류가 발생했습니다.");
+        console.error("Error fetching identification:", error);
+      }
+    }
+  };
   if (!event && !startTime) {
     if (fanmeetingId) {
       return <div className="w-[737px] h-[500px]" />;
@@ -85,6 +108,8 @@ const Ticket: React.FC<TicketProps> = ({
         </div>
         <div
           className={`btn-lg absolute bottom-12 w-[80%] text-center ${canEnter ? "" : "bg-gray-200"}`}
+          onClick={handleEnterClick}
+          role="presentation"
         >
           <span
             className={`w-full ${canEnter ? "text-white" : "text-gray-700"}`}
@@ -104,8 +129,9 @@ const Ticket: React.FC<TicketProps> = ({
           onRequestClose={() => setVerifying(false)}
           onSuccess={() => {
             setVerifying(false);
-            navigate("/ticket/1");
+            navigate(`/ticket/${fanmeetingId}`);
           }}
+          fanmeetingId={fanmeetingId}
         />
       )}
     </div>
