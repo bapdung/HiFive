@@ -11,14 +11,12 @@ import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -27,20 +25,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NamedEntityGraph(
-	name = "Fanmeeting.withCreatorProfile",
-	attributeNodes = {
-		@NamedAttributeNode(value = "creator", subgraph = "creatorSubgraph")
-	},
-	subgraphs = {
-		@NamedSubgraph(
-			name = "creatorSubgraph",
-			attributeNodes = {
-				@NamedAttributeNode("creatorProfile")
-			}
-		)
-	}
-)
 @Table(name = "fanmeeting")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -50,7 +34,7 @@ public class Fanmeeting extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long fanmeetingId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "creator_id")
 	private Member creator;
 
