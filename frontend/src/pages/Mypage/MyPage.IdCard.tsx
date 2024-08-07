@@ -12,6 +12,7 @@ function IdCard() {
   const [idCardFile, setIdCardFile] = useState<File | null>(null);
   const [idCardName, setIdCardName] = useState<string | null>(null);
   const [idCardSrc, setIdCardSrc] = useState<string | ArrayBuffer | null>(null);
+  const [name, setName] = useState<string>("");
 
   const inputIdCard = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -26,6 +27,9 @@ function IdCard() {
       setIdCardFile(file);
       setStatus(2);
     }
+  };
+  const inputName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
   };
 
   const uploadS3 = async (path: string, file: File) => {
@@ -71,6 +75,7 @@ function IdCard() {
           "/api/member/identification",
           {
             identificationImg: idCardImg,
+            name,
           },
         );
 
@@ -90,6 +95,7 @@ function IdCard() {
         if (response.status === 200) {
           if (response.data.identificationImg) {
             setIdCardSrc(response.data.identificationImg);
+            setName(response.data.name);
             setStatus(0);
           }
         }
@@ -103,11 +109,19 @@ function IdCard() {
     <div className="flex justify-between p-10">
       <div className="flex flex-col mr-14">
         {idCardSrc ? (
-          <img
-            src={idCardSrc as string}
-            alt="신분증 이미지"
-            className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
-          />
+          <div>
+            <img
+              src={idCardSrc as string}
+              alt="신분증 이미지"
+              className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
+            />
+            <div className="flex flex-col mt-5">
+              <span className="text-h6">이름</span>
+              <span className="w-full h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
+                {name}
+              </span>
+            </div>
+          </div>
         ) : (
           <div className="w-[500px] h-[300px] bg-gray-300 rounded-3xl" />
         )}
@@ -126,13 +140,22 @@ function IdCard() {
               />
             </label>
             {status === 2 ? (
-              <div
-                className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
-                onClick={postIdCard}
-                role="presentation"
-              >
-                등록하기
-              </div>
+              <>
+                <input
+                  type="text"
+                  placeholder="이름 입력"
+                  value={name}
+                  onChange={inputName}
+                  className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white p-2"
+                />
+                <div
+                  className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
+                  onClick={postIdCard}
+                  role="presentation"
+                >
+                  등록하기
+                </div>
+              </>
             ) : null}
           </>
         ) : (
