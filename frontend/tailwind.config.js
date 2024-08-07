@@ -54,7 +54,7 @@ export default {
         "board-gradient":
           "linear-gradient(to top, #ffffff 60%, #fcebf0 78%, #ffe7ee 100%)",
         "horizontal-gradient":
-          "linear-gradient(90deg, #FFFBFB 0%, #FFF1F5 100%)",
+          "linear-gradient(90deg, #FFFFFF 0%, #FFFBFB 30%, #FFF1F5 70%)",
         "vertical-gradient":
           "linear-gradient(180deg, #FFF 0%, #FCEBF0 30%, #FFE7EE 100%)",
         "vivid-gradient":

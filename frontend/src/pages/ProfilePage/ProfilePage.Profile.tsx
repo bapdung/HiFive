@@ -128,10 +128,12 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
           updateCreatorProfile={updateCreatorProfile}
         />
       )}
-      <div className="flex h-90 px-12 py-10 items-center justify-between w-4/5 rounded-3xl bg-horizontal-gradient">
-        <div className="w-2/5 h-64 flex flex-col justify-center">
+      <div className="flex h-90 px-12 py-10 items-center justify-between w-5/6 rounded-3xl bg-horizontal-gradient shadow-md">
+        <div className="w-2/6 h-64 flex flex-col justify-center">
           <div className="flex items-center">
-            <div className="text-h2 mr-5">{creatorProfile.creatorName}</div>
+            <div className="text-h2 mr-5 font-semibold">
+              {creatorProfile.creatorName}
+            </div>
             {follow ? (
               <button
                 type="button"
@@ -139,12 +141,12 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
                 onClick={handleUnfollow}
               >
                 <img src={fullHeart} alt="하트" className="mr-1  w-3 h-3" />
-                팔로잉 중
+                팔로잉
               </button>
             ) : (
               <button
                 type="button"
-                className="btn-md h-8 flex items-center"
+                className="btn-md h-9 flex items-center"
                 onClick={handleFollow}
               >
                 <img src={heart} alt="하트" className="mr-1 w-3 h-3" />
@@ -153,34 +155,40 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
             )}
             {isMe && (
               <div
-                className="creator-btn-outline-md h-8 flex items-center ml-3 hover:cursor-pointer"
+                className="creator-btn-outline-md h-9 flex items-center ml-3 hover:cursor-pointer"
                 onClick={openModal}
                 role="presentation"
               >
-                프로필 수정
+                편집
               </div>
             )}
           </div>
-          <p className="text-medium my-5 text-gray-600">
+          <p className="text-medium my-5 text-gray-900">
             {creatorProfile.description}
           </p>
-          <div className="flex">
-            <div className="flex flex-col items-center text-small text-gray-600 mr-14">
-              <span className="text-large">{activityDay}</span>
+          <div className="flex w-full justify-between">
+            <div className="flex flex-col items-center text-small text-gray-600">
+              <span className="text-large font-semibold text-gray-700">
+                {activityDay}
+              </span>
               활동일
             </div>
-            <div className="flex flex-col items-center text-small text-gray-600 mr-14">
-              <span className="text-large">{creatorProfile.follower}</span>
+            <div className="flex flex-col items-center text-small text-gray-600">
+              <span className="text-large font-semibold text-gray-700">
+                {creatorProfile.follower}
+              </span>
               팔로워
             </div>
-            <div className="flex flex-col items-center text-small text-gray-600 mr-14">
-              <span className="text-large">
+            <div className="flex flex-col items-center text-small text-gray-600">
+              <span className="text-large font-semibold text-gray-700">
                 {creatorProfile.fanmeetingCount}
               </span>
               팬미팅
             </div>
-            <div className="flex flex-col items-center text-small text-gray-600 mr-14">
-              <span className="text-large">{creatorProfile.boardCount}</span>
+            <div className="flex flex-col items-center text-small text-gray-600 ">
+              <span className="text-large font-semibold text-gray-700">
+                {creatorProfile.boardCount}
+              </span>
               게시글
             </div>
           </div>
@@ -192,17 +200,28 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
           onClick={() => window.open(creatorProfile.link, "_blank")}
           role="presentation"
         />
-        <div className="w-2/5 h-64 flex flex-col justify-between py-6">
+        <div className="w-4/12 h-64 flex flex-col justify-between py-5">
+          <span className="text-h6 font-semibold ml-1">
+            크리에이터의 최신 피드
+          </span>
           {boardList[0] && (
-            <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
-              <span className="text-large">{creatorProfile.creatorName}</span>
-              <p className="text-h6 text-gray-600">{boardList[0].contents}</p>
+            <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl shadow-sm">
+              <span className="text-medium font-semibold">
+                {creatorProfile.creatorName}
+              </span>
+              <p className="text-small text-gray-900">
+                {boardList[0].contents}
+              </p>
             </div>
           )}
           {boardList[1] && (
-            <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl">
-              <span className="text-large">{creatorProfile.creatorName}</span>
-              <p className="text-h6 text-gray-600">{boardList[1].contents}</p>
+            <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl shadow-sm">
+              <span className="text-medium font-semibold">
+                {creatorProfile.creatorName}
+              </span>
+              <p className="text-small text-gray-900">
+                {boardList[1].contents}
+              </p>
             </div>
           )}
         </div>
