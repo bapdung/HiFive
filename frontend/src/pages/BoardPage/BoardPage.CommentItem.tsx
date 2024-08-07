@@ -5,6 +5,7 @@ interface Comment {
   nickname: string;
   createdDate: string;
   contents: string;
+  profileImg: string;
 }
 
 interface CommentItemProps {
@@ -33,7 +34,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <div className="my-8 flex justify-between">
       <div className="w-[90%] flex justify-between ">
-        <div className="bg-gray-400 min-w-[50px] max-h-[50px] rounded-full" />
+        <img
+          src={comment.profileImg}
+          alt="profile-img"
+          className="min-w-[50px] max-h-[50px] rounded-full"
+        />
         <div className="ml-4 w-full">
           <p>
             <span className="text-gray-900 text-lg">{comment.nickname}</span>

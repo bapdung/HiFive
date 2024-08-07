@@ -60,12 +60,7 @@ function Table({ type }: TypeProps) {
         });
 
         setPointList(response.data);
-
-        if (response.data.length > 0) {
-          setTotalPage(response.data[0].totalPages);
-        } else {
-          setTotalPage(0);
-        }
+        setTotalPage(response.data[0].totalPages);
       }
     };
 
@@ -94,7 +89,7 @@ function Table({ type }: TypeProps) {
           key={i}
           onClick={() => changePage(i)}
           role="presentation"
-          className={page === i ? "text-primary-700" : ""}
+          className={`${page === i ? "text-primary-700" : ""} hover:cursor-pointer`}
         >
           {i}
         </div>,
@@ -111,7 +106,7 @@ function Table({ type }: TypeProps) {
         </h5>
         <select
           name="period"
-          className="text-small"
+          className="text-small hover:cursor-pointer"
           onChange={(e) => changePeriod(e)}
         >
           <option value="3">최근 3개월</option>
@@ -150,29 +145,25 @@ function Table({ type }: TypeProps) {
           )}
         </tbody>
       </table>
-      {totalPage ? (
-        <div className="my-3.5 flex justify-center">
-          <div className="flex justify-between items-center w-80 text-h6">
-            <img
-              src={preIcon}
-              alt="이전버튼"
-              className="w-[1rem] h-[1rem]"
-              onClick={handlePreviousPageGroup}
-              role="presentation"
-            />
-            {renderPageNumbers()}
-            <img
-              src={nextIcon}
-              alt="다음버튼"
-              className="w-[1rem] h-[1rem]"
-              onClick={handleNextPageGroup}
-              role="presentation"
-            />
-          </div>
+      <div className="my-3.5 flex justify-center">
+        <div className="flex justify-between items-center w-80 text-h6">
+          <img
+            src={preIcon}
+            alt="이전버튼"
+            className="w-[1rem] h-[1rem] hover:cursor-pointer"
+            onClick={handlePreviousPageGroup}
+            role="presentation"
+          />
+          {renderPageNumbers()}
+          <img
+            src={nextIcon}
+            alt="다음버튼"
+            className="w-[1rem] h-[1rem] hover:cursor-pointer"
+            onClick={handleNextPageGroup}
+            role="presentation"
+          />
         </div>
-      ) : (
-        ""
-      )}
+      </div>
     </>
   );
 }
