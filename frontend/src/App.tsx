@@ -23,6 +23,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 import ErrorPage from "./pages/ErrorPage";
+import Test from "./pages/FanmeetingPage/TestPage";
 
 function App() {
   const location = useLocation();
@@ -97,6 +98,7 @@ function App() {
           <Route path="/parther" element={<JoinCreator />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="*" element={<ErrorPage />} />
+          <Route path="/test" element={<Test />} />
         </Routes>
       </main>
       <Footer />
