@@ -109,11 +109,19 @@ function IdCard() {
     <div className="flex justify-between p-10">
       <div className="flex flex-col mr-14">
         {idCardSrc ? (
-          <img
-            src={idCardSrc as string}
-            alt="신분증 이미지"
-            className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
-          />
+          <div>
+            <img
+              src={idCardSrc as string}
+              alt="신분증 이미지"
+              className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
+            />
+            <div className="flex flex-col mt-5">
+              <span className="text-h6">이름</span>
+              <span className="w-full h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
+                {name}
+              </span>
+            </div>
+          </div>
         ) : (
           <div className="w-[500px] h-[300px] bg-gray-300 rounded-3xl" />
         )}
@@ -138,7 +146,7 @@ function IdCard() {
                   placeholder="이름 입력"
                   value={name}
                   onChange={inputName}
-                  className="mt-5 p-2 border border-gray-300 rounded"
+                  className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white p-2"
                 />
                 <div
                   className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
