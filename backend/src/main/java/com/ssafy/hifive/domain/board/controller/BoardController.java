@@ -61,7 +61,7 @@ public class BoardController {
 		@PathVariable long creatorId,
 		@PathVariable long boardId,
 		@AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(boardService.getBoardDetail(creatorId, boardId, member));
+		return ResponseEntity.ok(boardService.getBoardDetail(boardId, member));
 	}
 
 	@Operation(summary = "게시글 생성", description = "특정 크리에이터의 게시글 생성")
