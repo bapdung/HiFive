@@ -22,9 +22,7 @@ function CreatorList() {
   const token = useAuthStore((state) => state.accessToken);
 
   const [creatorList, setCreatorList] = useState<Creator[]>([]);
-
   const [inputKeyword, setInputKeyword] = useState<string>();
-
   const [keyword, setKeyword] = useState<string>();
   const [condition, setCondition] = useState<"creatorName" | "createdDate">(
     "creatorName",
@@ -104,7 +102,7 @@ function CreatorList() {
   useEffect(() => {
     getCreatorList(true);
     // eslint-disable-next-line
-  }, [keyword, condition, sort]);
+  }, [keyword, condition, sort, token]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -125,18 +123,18 @@ function CreatorList() {
   }, [creatorList]);
 
   useEffect(() => {
-    if (top !== null) {
+    if (top !== null && token) {
       getCreatorList();
     }
     // eslint-disable-next-line
-  }, [top]);
+  }, [top, token]);
 
   return (
     <div className="bg-white pb-20 w-full">
       <div className="absolute top left-0 h-[228px] bg-landing-gradient w-full flex flex-col pt-12 items-center">
         <div className="flex flex-col items-center">
-          <span className="text-h1 font-semibold">HiFive Creators</span>
-          <span className="text-h6 font-semibold text-gray-600">
+          <span className="text-h2 font-semibold">HiFive Creators</span>
+          <span className="text-medium font-semibold text-gray-600">
             현재 HiFive에서 활동하고 있는 크리에이터 전체 목록입니다.
           </span>
         </div>

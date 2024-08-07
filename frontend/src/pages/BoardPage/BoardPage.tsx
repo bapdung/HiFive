@@ -51,9 +51,7 @@ const BoardPage: React.FC = () => {
       return;
     }
     try {
-      const response = await client(token).get(
-        `api/board/${creatorId}/detail/${boardId}`,
-      );
+      const response = await client(token).get(`api/board/detail/${boardId}`);
       setBoard(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
