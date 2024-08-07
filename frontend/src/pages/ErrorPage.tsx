@@ -18,10 +18,20 @@ const ErrorPage: React.FC = () => {
       <img src={errorBird} alt="error-img" />
       <div className="ml-[2rem]">
         <h1 className="text-[96px] font-bold text-gray-500">404 Error !</h1>
-        <div>
-          <p className="text-h5 my-2.5 text-gray-500">에러코드: {errorCode}</p>
-          <p className="text-h5 text-gray-500">에러메세지: {errorMessage}</p>
-        </div>
+        {errorCode || errorMessage ? (
+          <div>
+            <p className="text-h5 my-2.5 text-gray-500">
+              에러코드: {errorCode}
+            </p>
+            <p className="text-h5 text-gray-500">에러메세지: {errorMessage}</p>
+          </div>
+        ) : (
+          <div>
+            <p className="text-h5 my-2.5 text-gray-500">
+              죄송합니다. 예상치 못 한 에러가 발생했습니다.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
