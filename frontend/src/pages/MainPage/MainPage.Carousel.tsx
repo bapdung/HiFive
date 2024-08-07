@@ -1,66 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
+
 import Ticket from "./MainPage.Ticket";
-import poster from "../../assets/img/poster.jpg";
 import stamp from "../../assets/img/ticket-stamp.png";
 import barcode from "../../assets/img/ticket-barcode.png";
 import prev from "../../assets/icons/preIcon.svg";
 import next from "../../assets/icons/nextIcon.svg";
 
+type TicketData = {
+  fanmeetingId: number;
+  title: string;
+  posterImg: string;
+  openDate: string;
+  startDate: string;
+};
+
 const Carousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(1); // Start from the first actual ticket
-  const ticketWidth = 762;
+  const [tickets, setTickets] = useState<TicketData[]>([]);
+
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  const ticketWidth = 660;
   const margin = 32;
 
-  const tickets = [
-    {
-      id: 0,
-      poster: "",
-      stamp: "",
-      barcode: "",
-      event: "",
-      startTime: "",
-    },
-    {
-      id: 1,
-      poster,
-      stamp,
-      barcode,
-      event: "하이파이브 한 번 해요! by Dasut and Hana",
-      startTime: "2024.07.31 20:00 (2H)",
-    },
-    {
-      id: 2,
-      poster,
-      stamp,
-      barcode,
-      event: "하이파이브 한 번 해요! by Dasut and Hana",
-      startTime: "2024.07.31 20:00 (2H)",
-    },
-    {
-      id: 3,
-      poster,
-      stamp,
-      barcode,
-      event: "하이파이브 한 번 해요! by Dasut and Hana",
-      startTime: "2024.07.31 20:00 (2H)",
-    },
-    {
-      id: 3,
-      poster,
-      stamp,
-      barcode,
-      event: "하이파이브 한 번 해요! by Dasut and Hana",
-      startTime: "2024.07.31 20:00 (2H)",
-    },
-    {
-      id: 4,
-      poster: "",
-      stamp: "",
-      barcode: "",
-      event: "",
-      startTime: "",
-    },
-  ];
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const apiClient = client(accessToken || "");
+        const response = await apiClient.get("/api/fanmeeting/scheduled/fan");
+        const fetchedTickets = response.data
+          .map((ticket: TicketData) => ({
+            fanmeetingId: ticket.fanmeetingId,
+            title: ticket.title,
+            posterImg: ticket.posterImg,
+            openDate: ticket.openDate,
+            startDate: ticket.startDate,
+          }))
+          .sort(
+            (a: TicketData, b: TicketData) =>
+              new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+          );
+
+        setTickets([
+          {
+            fanmeetingId: -1,
+            title: "",
+            posterImg: "",
+            openDate: "",
+            startDate: "",
+          },
+          ...fetchedTickets,
+          {
+            fanmeetingId: -2,
+            title: "",
+            posterImg: "",
+            openDate: "",
+            startDate: "",
+          },
+        ]);
+      } catch (err) {
+        console.error("Error fetching tickets:", err);
+      }
+    };
+
+    fetchTickets();
+  }, [accessToken]);
 
   const handlePrevClick = () => {
     setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 1));
@@ -72,7 +78,7 @@ const Carousel: React.FC = () => {
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center">
-      <div className="flex overflow-clip w-[1524px]">
+      <div className="flex overflow-clip w-full">
         <div
           className="flex transition-transform duration-300"
           style={{
@@ -81,12 +87,13 @@ const Carousel: React.FC = () => {
         >
           {tickets.map((ticket, index) => (
             <Ticket
-              key={ticket.id}
-              poster={ticket.poster}
-              stamp={ticket.stamp}
-              barcode={ticket.barcode}
-              event={ticket.event}
-              startTime={ticket.startTime}
+              key={ticket.fanmeetingId}
+              fanmeetingId={ticket.fanmeetingId}
+              poster={ticket.posterImg || ""}
+              stamp={stamp}
+              barcode={barcode}
+              event={ticket.title}
+              startTime={ticket.startDate}
               isActive={index === currentIndex}
             />
           ))}

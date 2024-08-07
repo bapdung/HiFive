@@ -8,7 +8,7 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import Footer from "./components/Footer";
 import BoardPage from "./pages/BoardPage/BoardPage";
 import Mypage from "./pages/Mypage/MyPage";
-import TicketList from "./pages/TicketPage/TicketPage.List";
+import TicketPage from "./pages/TicketPage/TicketPage";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
@@ -19,6 +19,9 @@ import CreatorOnly from "./pages/CreatorOnly/CreatorOnly.MyFanmeeting";
 import CreateFanmeeting from "./pages/CreatorOnly/CreatorOnly.CreateFanmeeting";
 import Settings from "./pages/CreatorOnly/CreatorOnly.Settings";
 import LandingPage from "./pages/LandingPage/LandingPage";
+import ProtectedRoute from "./ProtectedRoute";
+import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   const location = useLocation();
@@ -45,18 +48,18 @@ function App() {
   }, [validateAndGetToken, setAccessToken]);
 
   return (
-    <div className="App">
+    <div className="App w-full min-h-screen-with-footer">
       {location.pathname.startsWith("/creator-only") ? (
         <CreatorNavbar />
       ) : (
         <Navbar />
       )}
-      <main className="relative">
+      <main className="relative w-full flex-grow">
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
           <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
           <Route path="/mypage/*" element={<Mypage />} />
-          <Route path="/ticket" element={<TicketList />} />
+          <Route path="/ticket" element={<TicketPage />} />
           <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
           <Route
             path="/fanmeeting/:fanmeetingId/question"
@@ -66,24 +69,32 @@ function App() {
             path="/fanmeeting/:fanmeetingId/story"
             element={<StoryForm />}
           />
-          <Route path="/creator-only" element={<CreatorOnly />} />
-          <Route path="/creator-only/new" element={<CreateFanmeeting />} />
-          <Route
-            path="/creator-only/:fanmeetingId/question"
-            element={<Settings />}
-          />
-          <Route
-            path="/creator-only/:fanmeetingId/quiz"
-            element={<Settings />}
-          />
-          <Route
-            path="/creator-only/:fanmeetingId/story"
-            element={<Settings />}
-          />
+          <Route element={<ProtectedRoute requiredCreator />}>
+            <Route path="/creator-only" element={<CreatorOnly />} />
+            <Route path="/creator-only/new" element={<CreateFanmeeting />} />
+            <Route path="/creator-only/:fanmeetingId" element={<Settings />} />
+            <Route
+              path="/creator-only/:fanmeetingId/question"
+              element={<Settings />}
+            />
+            <Route
+              path="/creator-only/:fanmeetingId/quiz"
+              element={<Settings />}
+            />
+            <Route
+              path="/creator-only/:fanmeetingId/story"
+              element={<Settings />}
+            />
+            <Route
+              path="/creator-only/:fanmeetingId/story/:storyId"
+              element={<StoryDetail />}
+            />
+          </Route>
           <Route path="/main" element={<MainPage />} />
           <Route path="/creator/list" element={<CreatorList />} />
           <Route path="/parther" element={<JoinCreator />} />
           <Route path="/" element={<LandingPage />} />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>
       <Footer />
