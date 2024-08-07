@@ -2,7 +2,7 @@ import Meetup from "../../assets/img/description1.svg";
 import Creatorfeed from "../../assets/img/description2.svg";
 
 const Description = () => (
-  <div className="flex flex-col items-center w-full bg-white">
+  <div className="flex flex-col items-center w-[100%] bg-white">
     <div className="flex flex-col justify-center items-center py-20">
       <span className="text-h1 text-gray-900 font-bold">
         Let&apos;s HiFive!

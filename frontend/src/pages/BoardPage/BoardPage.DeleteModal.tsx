@@ -7,7 +7,7 @@ export interface BoardProps {
   onClose: () => void;
   message: string;
   id: number;
-  fetchDetail: () => void;
+  sendDeleteComment: (id: number) => void;
 }
 
 const DeleteModal: React.FC<BoardProps> = ({
@@ -15,7 +15,7 @@ const DeleteModal: React.FC<BoardProps> = ({
   onClose,
   message,
   id,
-  fetchDetail,
+  sendDeleteComment,
 }) => {
   const token = useAuthStore((state) => state.accessToken);
   const location = useLocation();
@@ -35,13 +35,13 @@ const DeleteModal: React.FC<BoardProps> = ({
   };
 
   const deleteComment = async () => {
+    if (!token || !message || !id || message !== "댓글") {
+      return;
+    }
+    await client(token).delete(`/api/comment/${id}`);
     try {
-      if (!token || !message || !id || message !== "댓글") {
-        return;
-      }
-      await client(token).delete(`/api/comment/${id}`);
-      fetchDetail();
       onClose();
+      sendDeleteComment(id);
     } catch (error) {
       console.error("Error during board deletion:", error);
     }

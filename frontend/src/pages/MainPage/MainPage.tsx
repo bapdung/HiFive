@@ -33,8 +33,8 @@ function MainPage() {
   }, [accessToken]);
 
   return (
-    <div className=" flex flex-col items-center w-[1900px]">
-      <span className="text-h2 text-gray-900 font-bold my-10">
+    <div className=" flex flex-col items-center w-full">
+      <span className="text-h3 text-gray-900 font-bold my-6">
         하이파이브 한 번 해요,{" "}
         <span className="text-primary-text">
           {userData?.nickname || "이름"}
@@ -43,7 +43,7 @@ function MainPage() {
       </span>
       <TicketList nickname={userData?.nickname || null} />
       <FollowingList />
-      <div className="flex w-[1272px] justify-between items-center mb-10">
+      <div className="flex w-[1200px] justify-between items-center mb-20">
         <TicketingShortcut />
         <MylistShortcut />
       </div>
