@@ -50,7 +50,7 @@ public class MemberService {
 		if(member.getIdentificationImg() != null){
 			throw new BadRequestException(ErrorCode.IDENTIFICATION_ALREADY_REGISTERED);
 		}
-		member.updateIdentification(memberIdentificationDto.getIdentificationImg());
+		member.updateIdentification(memberIdentificationDto.getIdentificationImg(), memberIdentificationDto.getName());
 		memberRepository.save(member);
 	}
 

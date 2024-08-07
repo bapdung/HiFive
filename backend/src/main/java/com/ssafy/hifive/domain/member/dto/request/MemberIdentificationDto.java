@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public final class MemberIdentificationDto {
 	private String identificationImg;
+	private String name;
 
 	public Member toEntity(Member member) {
 		return Member.builder()
 			.identificationImg(identificationImg)
+			.name(name)
 			.build();
 	}
 }
