@@ -69,9 +69,9 @@ function Fanmeeting() {
 
   return (
     <>
-      <div className="flex justify-center mb-7">
+      <div className="flex justify-center mb-10 mt-3">
         <span
-          className={`text-h4 mr-5 hover:cursor-pointer ${
+          className={`text-h4 font-semibold mr-10 hover:cursor-pointer ${
             status === "scheduled" ? "text-primary-text" : ""
           }`}
           onClick={(e) => changeStatus(e)}
@@ -80,7 +80,7 @@ function Fanmeeting() {
           예정된 팬미팅
         </span>
         <span
-          className={`text-h4 hover:cursor-pointer ${
+          className={`text-h4 font-semibold hover:cursor-pointer ${
             status === "completed" ? "text-primary-text" : ""
           }`}
           onClick={(e) => changeStatus(e)}
