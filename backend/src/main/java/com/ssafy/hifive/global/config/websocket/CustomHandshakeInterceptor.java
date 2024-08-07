@@ -22,7 +22,6 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 		HttpServletRequest servletRequest = ((ServletServerHttpRequest)request).getServletRequest();
 		String memberId = servletRequest.getParameter("memberId");
 
-		log.info("memberId: {}", memberId);
 		if (memberId != null) {
 			attributes.put("memberId", Long.valueOf(memberId));
 		}

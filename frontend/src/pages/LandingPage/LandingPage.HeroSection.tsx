@@ -51,7 +51,7 @@ function HeroSection() {
           onKeyDown={kakaoLogin}
           role="presentation"
         >
-          <span className="text-h4 text-white font-semibold">
+          <span className="text-h4 text-white font-semibold hover:cursor-pointer">
             카카오 계정으로 하이파이브 시작하기
           </span>
         </div>
