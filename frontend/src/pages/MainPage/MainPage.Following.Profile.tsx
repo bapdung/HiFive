@@ -17,7 +17,7 @@ const FollowingProfile: React.FC<FollowingProfileProps> = ({
         <img src={profile} alt="Profile" className="w-[150px] h-[150px]" />
       </Link>
     </div>
-    <span className="text-h4 text-gray-900">{profileName}</span>
+    <span className="text-h6 text-gray-900">{profileName}</span>
   </div>
 );
 export default FollowingProfile;
