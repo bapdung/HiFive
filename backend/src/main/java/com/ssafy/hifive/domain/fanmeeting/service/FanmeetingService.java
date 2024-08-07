@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hifive.domain.category.entity.Category;
 import com.ssafy.hifive.domain.category.repository.CategoryRepository;
-import com.ssafy.hifive.domain.creator.repository.CreatorRepository;
 import com.ssafy.hifive.domain.fanmeeting.dto.param.FanmeetingParam;
 import com.ssafy.hifive.domain.fanmeeting.dto.request.FanmeetingRequestDto;
 import com.ssafy.hifive.domain.fanmeeting.dto.response.FanmeetingDetailDto;
@@ -40,7 +39,6 @@ public class FanmeetingService {
 	private final TimetableService timetableService;
 	private final FanmeetingValidService fanmeetingValidService;
 	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
-	private final CreatorRepository creatorRepository;
 
 	public FanmeetingDetailDto getFanmeetingDetail(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findByIdWithTimetable(fanmeetingId)
@@ -149,9 +147,8 @@ public class FanmeetingService {
 				.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 			topDate = fanmeeting.getStartDate();
 		}
-
 		String sort = param.getSort() != null ? param.getSort() : "desc";
-		//이거 고칠차례
+
 		return fanmeetingRepository.findFanmeetingsByCreatorWithScrolling(
 				creatorId,
 				topDate,
