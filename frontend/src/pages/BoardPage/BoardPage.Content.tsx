@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
-
+import formatDate from "../../utils/formatDate";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 import camera from "../../assets/icons/cameraIcon.png";
@@ -22,6 +22,18 @@ interface ContentProps {
   board: Board | null;
 }
 
+interface CreatorProfile {
+  creatorId: number;
+  creatorName: string;
+  link: string | null;
+  description: string | null;
+  follower: number;
+  boardCount: number;
+  createdDate: string;
+  fanmeetingCount: number;
+  creatorImg: string;
+}
+
 const Content: React.FC<ContentProps> = ({
   handleModal,
   handleEdit,
@@ -31,12 +43,14 @@ const Content: React.FC<ContentProps> = ({
   fetchDetail,
 }) => {
   const location = useLocation();
+  const creatorId = parseInt(location.pathname.split("/")[2], 10);
   const boardId = parseInt(location.pathname.split("/")[3], 10);
   const token = useAuthStore((state) => state.accessToken);
   const [inputValue, setInputValue] = useState(board?.contents);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageSrc, setImageSrc] = useState<string | ArrayBuffer | null>(null);
   const [imageName, setImageName] = useState<string | null>(null);
+  const [creatorProfile, setCreatorProfile] = useState<CreatorProfile>();
 
   // ref 객체 가져오기 위해서 생성 (높이 때문에)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -108,7 +122,7 @@ const Content: React.FC<ContentProps> = ({
   const getS3url = async () => {
     if (imageName && token && imageFile) {
       const response = await client(token).post(`/api/s3/upload/${imageName}`, {
-        prefix: imageName,
+        prefix: "board",
       });
       const { path } = response.data;
       const url = uploadS3(path, imageFile);
@@ -151,13 +165,36 @@ const Content: React.FC<ContentProps> = ({
     handleEdit(false);
   };
 
+  const fetchCreatorProfile = async () => {
+    if (!token) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`/api/creator/${creatorId}`);
+      setCreatorProfile(response.data);
+    } catch (error) {
+      console.error("Error fetching creator profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCreatorProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [creatorId, token]);
+
   return (
     <div className="py-8 px-10 bg-white w-full rounded-[30px] relative">
       <div className="flex items-center space-x-reverse">
-        <div className="bg-gray-400 w-[50px] h-[50px] rounded-full" />
+        <img
+          src={creatorProfile?.creatorImg}
+          className="w-[50px] h-[50px] rounded-full"
+          alt="creator-img"
+        />
         <div className="ml-4">
-          <p className="text-h6">개복어</p>
-          <p className="text-xs">2024. 07. 15</p>
+          <p className="text-h6">{creatorProfile?.creatorName}</p>
+          <p className="text-xs">
+            {board?.createdDate ? formatDate(board.createdDate) : null}
+          </p>
         </div>
         <div className="ml-auto space-x-2.5">
           {isEditing && isCanEdit ? (
