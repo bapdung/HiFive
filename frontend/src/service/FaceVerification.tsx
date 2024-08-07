@@ -1,24 +1,29 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import ReactDOM from "react-dom";
 import client from "../client";
 import useAuthStore from "../store/useAuthStore";
+import loadingGif from "../assets/img/me.png"; // 로딩 애니메이션 이미지 경로
 
 interface FaceVerificationProps {
   isOpen: boolean;
   onRequestClose: () => void;
   onSuccess: () => void;
+  fanmeetingId: number;
 }
 
 const FaceVerification: React.FC<FaceVerificationProps> = ({
   isOpen,
   onRequestClose,
   onSuccess,
+  fanmeetingId,
 }) => {
   const token = useAuthStore((state) => state.accessToken);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [result, setResult] = useState<string>("");
   const [centerStartTime, setCenterStartTime] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); // 로딩 상태 추가
   const centerThreshold = 50;
   const minCenterTime = 1.0;
 
@@ -56,30 +61,35 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
 
         try {
           if (token) {
+            setLoading(true); // 로딩 시작
             const memberResponse = await client(token).get(
               `/api/member/identification`,
             );
             const { identificationImg } = memberResponse.data;
-            console.log(identificationImg);
 
             const response = await axios.post<{
               verified: boolean;
               error?: string;
-            }>(`${process.env.REACT_APP_FLASK_END_POINT}/verify-face`, {
-              user_image: base64Image,
-              id_card_image: identificationImg,
-            });
+            }>(
+              `${process.env.REACT_APP_FLASK_END_POINT}/service/verification`,
+              {
+                user_image: base64Image,
+                id_card_image: identificationImg,
+                fanmeeting_id: fanmeetingId,
+              },
+            );
 
+            setLoading(false); // 로딩 종료
             if (response.data.error) {
               setResult(`Error: ${response.data.error}`);
             } else if (response.data.verified) {
-              setResult("본인 인증 완료");
               onSuccess();
             } else {
-              setResult("너 누구야");
+              setResult("인증 실패");
             }
           }
         } catch (error) {
+          setLoading(false); // 로딩 종료
           if (axios.isAxiosError(error)) {
             setResult(`Error occurred: ${error.message}`);
           } else {
@@ -88,7 +98,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
         }
       }
     }
-  }, [onSuccess, token]);
+  }, [onSuccess, token, fanmeetingId]);
 
   const checkFacePosition = useCallback(() => {
     const canvas = canvasRef.current;
@@ -138,15 +148,11 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
     return null;
   }
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg w-96 max-w-full text-center">
-        <h1 className="text-xl mb-4">Face Verification</h1>
-        <video
-          ref={videoRef}
-          className="w-72 h-72 border border-gray-300 rounded mb-4"
-          autoPlay
-        >
+        <h1 className="text-xl mb-4">본인 확인</h1>
+        <video ref={videoRef} className="w-full h-72 rounded mb-4" autoPlay>
           <track kind="captions" />
         </video>
         <canvas
@@ -155,23 +161,37 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
           height={480}
           style={{ display: "none" }}
         />
-        <div className="mb-4">{result}</div>
-        <button
-          type="button"
-          className="btn btn-primary mb-2"
-          onClick={captureAndVerify}
-        >
-          본인 확인
-        </button>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={onRequestClose}
-        >
-          취소
-        </button>
+        <div className="mb-4">
+          {loading ? (
+            <>
+              <p>본인 확인 중...</p>
+              <img src={loadingGif} alt="loading" className="mx-auto" />
+            </>
+          ) : (
+            result || "카메라 가운데로 와 주세요."
+          )}
+        </div>
+        {!loading && (
+          <>
+            <button
+              type="button"
+              className="btn-light-lg mb-2 mr-5"
+              onClick={captureAndVerify}
+            >
+              본인 확인
+            </button>
+            <button
+              type="button"
+              className="btn-light-lg"
+              onClick={onRequestClose}
+            >
+              취소
+            </button>
+          </>
+        )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
