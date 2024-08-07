@@ -26,7 +26,7 @@ public class OpenviduController {
 	@Value("${openvidu.url}")
 	private String openviduUrl;
 
-	@Value("${openvidu.secret")
+	@Value("${openvidu.secret}")
 	private String openviduSecret;
 
 	private OpenVidu openVidu;
