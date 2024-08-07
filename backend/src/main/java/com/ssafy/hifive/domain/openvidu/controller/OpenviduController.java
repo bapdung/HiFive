@@ -2,6 +2,7 @@ package com.ssafy.hifive.domain.openvidu.controller;
 
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 import jakarta.annotation.PostConstruct;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class OpenviduController {
@@ -40,7 +42,11 @@ public class OpenviduController {
 	public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
 		SessionProperties properties = SessionProperties.fromJson(params).build();
+		log.info("0000000000000000000");
 		Session session = openVidu.createSession(properties);
+		log.info(session.getSessionId());
+		log.info("0000000000000000000");
+
 		return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
 	}
 
