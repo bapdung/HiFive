@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,13 +40,6 @@ public class FanmeetingService {
 	private final FanmeetingValidService fanmeetingValidService;
 	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
 
-	private final static int PAGE_SIZE = 10;
-
-	private Pageable createPageable(FanmeetingParam param) {
-		return PageRequest.of(0, PAGE_SIZE,
-			Sort.by(Sort.Direction.fromString(param.getSort()), "startDate"));
-	}
-
 	public FanmeetingDetailDto getFanmeetingDetail(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findByIdWithTimetable(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
@@ -61,7 +51,8 @@ public class FanmeetingService {
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingAllForFan(Member member) {
-		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(), "desc")
+		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(),
+				"desc")
 			.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
@@ -126,8 +117,9 @@ public class FanmeetingService {
 		fanmeetingRepository.delete(fanmeeting);
 	}
 
-	public List<FanmeetingOverViewDto> getFanmeetingAll() {
-		return fanmeetingRepository.findScheduledFanmeetingsAll()
+	public List<FanmeetingOverViewDto> getFanmeetingAll(FanmeetingParam param) {
+		System.out.println(param.getName());
+		return fanmeetingRepository.findFanmeetingByCreatorName(param.getName())
 			.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
@@ -142,48 +134,43 @@ public class FanmeetingService {
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingByCreator(long creatorId) {
 		return fanmeetingRepository.findByCreatorMemberIdAndStartDateAfter(creatorId,
-			LocalDateTime.now()).stream()
+				LocalDateTime.now())
+			.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
 	public List<FanmeetingOverViewDto> getCompletedFanmeetingByCreator(long creatorId, FanmeetingParam param) {
 		LocalDateTime topDate = null;
-		if(param.getTop() != null) {
+		if (param.getTop() != null) {
 			Fanmeeting fanmeeting = fanmeetingRepository.findById(param.getTop())
 				.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 			topDate = fanmeeting.getStartDate();
 		}
+		String sort = param.getSort() != null ? param.getSort() : "desc";
 
-		String sort = param.getSort()!=null?param.getSort():"desc";
-
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findFanmeetingsByCreatorWithScrolling(
-			creatorId,
-			topDate,
-			sort,
-			false
-		);
-
-		return fanmeetings.stream()
+		return fanmeetingRepository.findFanmeetingsByCreatorWithScrolling(
+				creatorId,
+				topDate,
+				sort,
+				false
+			)
+			.stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
-	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member, FanmeetingParam param ) {
-
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(), param.getSort());
-
-		return fanmeetings.stream()
+	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member, FanmeetingParam param) {
+		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(),
+				param.getSort()).stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}
 
 	public List<FanmeetingOverViewDto> getCompletedFanmeetingForFan(Member member, FanmeetingParam param) {
 
-		List<Fanmeeting> fanmeetings = fanmeetingRepository.findCompletedFanmeetingAllByFan(member.getMemberId(),
-			param.getSort());
-
-		return fanmeetings.stream()
+		return fanmeetingRepository.findCompletedFanmeetingAllByFan(member.getMemberId(),
+				param.getSort()).stream()
 			.map(FanmeetingOverViewDto::from)
 			.collect(Collectors.toList());
 	}

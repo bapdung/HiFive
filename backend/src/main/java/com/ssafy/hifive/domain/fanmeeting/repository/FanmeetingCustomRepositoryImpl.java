@@ -1,6 +1,8 @@
 package com.ssafy.hifive.domain.fanmeeting.repository;
 
+import static com.ssafy.hifive.domain.creator.entity.QCreator.*;
 import static com.ssafy.hifive.domain.fanmeeting.entity.QFanmeeting.*;
+import static com.ssafy.hifive.domain.member.entity.QMember.*;
 import static com.ssafy.hifive.domain.reservation.entity.QReservation.*;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,8 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(fanmeeting.creator, member).fetchJoin()
+			.join(member.creatorProfile, creator1).fetchJoin()
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
 			.where(
 				isScheduledFanmeeting(true),
@@ -40,6 +44,8 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(fanmeeting.creator, member).fetchJoin()
+			.join(member.creatorProfile, creator1).fetchJoin()
 			.where(
 				fanmeeting.creator.memberId.eq(creatorId),
 				isScheduledFanmeeting(isScheduled),
@@ -55,10 +61,27 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(fanmeeting.creator, member).fetchJoin()
+			.join(member.creatorProfile, creator1).fetchJoin()
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
 			.where(
 				isScheduledFanmeeting(false),
 				getFromFanId(fanId)
+			)
+			.orderBy(orderSpecifier)
+			.fetch();
+	}
+
+	@Override
+	public List<Fanmeeting> findFanmeetingByCreatorName(String creatorName) {
+		OrderSpecifier<?> orderSpecifier = getOrderSpecifier("asc");
+
+		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(fanmeeting.creator, member).fetchJoin()
+			.join(member.creatorProfile, creator1).fetchJoin()
+			.where(
+				getKeyWord(creatorName),
+				isScheduledFanmeeting(true)
 			)
 			.orderBy(orderSpecifier)
 			.fetch();
@@ -70,6 +93,10 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 		} else {
 			return fanmeeting.startDate.loe(LocalDateTime.now());
 		}
+	}
+
+	private BooleanExpression getKeyWord(String word) {
+		return word != null ? creator1.creatorName.containsIgnoreCase(word) : null;
 	}
 
 	private BooleanExpression getFromFanId(Long fanId) {

@@ -36,8 +36,8 @@ public class FanmeetingDetailDto {
 		return new FanmeetingDetailDto(
 			fanmeeting.getCreator().getMemberId(),
 			member.getMemberId(),
-			fanmeeting.getCreator().getName(),
-			fanmeeting.getCreator().getProfileImg(),
+			fanmeeting.getCreator().getCreatorProfile().getCreatorName(),
+			fanmeeting.getCreator().getCreatorProfile().getCreatorImg(),
 			fanmeeting.getTitle(),
 			fanmeeting.getPosterImg(),
 			fanmeeting.getNotice(),
