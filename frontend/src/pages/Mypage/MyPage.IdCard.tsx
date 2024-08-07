@@ -12,6 +12,7 @@ function IdCard() {
   const [idCardFile, setIdCardFile] = useState<File | null>(null);
   const [idCardName, setIdCardName] = useState<string | null>(null);
   const [idCardSrc, setIdCardSrc] = useState<string | ArrayBuffer | null>(null);
+  const [name, setName] = useState<string>("");
 
   const inputIdCard = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -26,6 +27,9 @@ function IdCard() {
       setIdCardFile(file);
       setStatus(2);
     }
+  };
+  const inputName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
   };
 
   const uploadS3 = async (path: string, file: File) => {
@@ -71,6 +75,7 @@ function IdCard() {
           "/api/member/identification",
           {
             identificationImg: idCardImg,
+            name,
           },
         );
 
@@ -90,6 +95,7 @@ function IdCard() {
         if (response.status === 200) {
           if (response.data.identificationImg) {
             setIdCardSrc(response.data.identificationImg);
+            setName(response.data.name);
             setStatus(0);
           }
         }
@@ -126,13 +132,22 @@ function IdCard() {
               />
             </label>
             {status === 2 ? (
-              <div
-                className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
-                onClick={postIdCard}
-                role="presentation"
-              >
-                등록하기
-              </div>
+              <>
+                <input
+                  type="text"
+                  placeholder="이름 입력"
+                  value={name}
+                  onChange={inputName}
+                  className="mt-5 p-2 border border-gray-300 rounded"
+                />
+                <div
+                  className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
+                  onClick={postIdCard}
+                  role="presentation"
+                >
+                  등록하기
+                </div>
+              </>
             ) : null}
           </>
         ) : (
