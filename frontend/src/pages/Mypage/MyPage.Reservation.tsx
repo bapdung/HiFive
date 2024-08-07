@@ -10,6 +10,7 @@ type Fanmeeting = {
   posterImg: string;
   openDate: string;
   startDate: string;
+  runningTime: number;
 };
 
 type FanmeetingList = Fanmeeting[];
@@ -68,52 +69,53 @@ function Reservation() {
 
   return (
     <>
-      <div className="mt-6">
+      <div className="my-6">
         <span
-          className={`pr-5 mr-5 border-r-2 border-gray-200 text-h4 ${status === "scheduled" ? "text-primary-text" : ""}`}
+          className={`pr-5 mr-5 border-r-2 border-gray-200 text-h4 font-semibold ${status === "scheduled" ? "text-primary-text" : ""} hover:cursor-pointer`}
           onClick={(e) => changeStatus(e)}
           role="presentation"
         >
           예정 팬미팅
         </span>
         <span
-          className={`text-h4 ${status === "completed" ? "text-primary-text" : ""}`}
+          className={`text-h4 font-semibold ${status === "completed" ? "text-primary-text" : ""} hover:cursor-pointer`}
           onClick={(e) => changeStatus(e)}
           role="presentation"
         >
           지난 팬미팅
         </span>
       </div>
-      <div className="flex w-full justify-end mr-28 mt-6">
+      <div className="flex flex-col w-full items-center justify-center bg-page-background">
         {status === "scheduled" ? (
-          ""
+          <div className="my-3">
+            <span>&nbsp;</span>
+          </div>
         ) : (
-          <>
+          <div className="my-3">
             <span
-              className={`mr-2.5 text-medium ${sort === "desc" ? "text-primary-text" : ""}`}
+              className={`mr-2.5 text-medium ${sort === "desc" ? "text-primary-text" : ""} hover:cursor-pointer`}
               onClick={(e) => changeSort(e)}
               role="presentation"
             >
               최신순
             </span>
             <span
-              className={`text-medium ${sort === "asc" ? "text-primary-text" : ""}`}
+              className={`text-medium ${sort === "asc" ? "text-primary-text" : ""} hover:cursor-pointer`}
               onClick={(e) => changeSort(e)}
               role="presentation"
             >
               과거순
             </span>
-          </>
+          </div>
         )}
-      </div>
-
-      <div className="mt-6 flex flex-wrap px-10 box-border justify-start gap-9">
-        {fanmeetingList.map((fanmeeting) => (
-          <FanmeetingInfo
-            fanmeeting={fanmeeting}
-            key={fanmeeting.fanmeetingId}
-          />
-        ))}
+        <div className="grid grid-cols-5 gap-4">
+          {fanmeetingList.map((fanmeeting) => (
+            <FanmeetingInfo
+              fanmeeting={fanmeeting}
+              key={fanmeeting.fanmeetingId}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

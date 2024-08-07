@@ -56,9 +56,8 @@ public class BoardController {
 		content = @Content(mediaType = "application/json",
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
-	@GetMapping(path = "/{creatorId}/detail/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/detail/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<BoardResponseDto> getBoardDetail(
-		@PathVariable long creatorId,
 		@PathVariable long boardId,
 		@AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(boardService.getBoardDetail(boardId, member));

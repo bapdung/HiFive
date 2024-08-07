@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useAuthStore from "./store/useAuthStore";
+import ScrollToTop from "./service/scrollToTop";
 
 import Navbar from "./components/Navbar/Navbar";
 import CreatorNavbar from "./components/Navbar/CreatorNavbar";
@@ -8,7 +9,7 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import Footer from "./components/Footer";
 import BoardPage from "./pages/BoardPage/BoardPage";
 import Mypage from "./pages/Mypage/MyPage";
-import TicketList from "./pages/TicketPage/TicketPage.List";
+import TicketPage from "./pages/TicketPage/TicketPage";
 import TicketDetail from "./pages/TicketPage/TicketPage.Detail";
 import Question from "./pages/TicketPage/TicketPage.Question";
 import StoryForm from "./pages/TicketPage/TicketPage.StoryForm";
@@ -21,6 +22,8 @@ import Settings from "./pages/CreatorOnly/CreatorOnly.Settings";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
+import ErrorPage from "./pages/ErrorPage";
+import Test from "./pages/FanmeetingPage/TestPage";
 
 function App() {
   const location = useLocation();
@@ -47,18 +50,19 @@ function App() {
   }, [validateAndGetToken, setAccessToken]);
 
   return (
-    <div className="App">
+    <div className="App w-full min-h-screen-with-footer">
       {location.pathname.startsWith("/creator-only") ? (
         <CreatorNavbar />
       ) : (
         <Navbar />
       )}
-      <main className="relative">
+      <ScrollToTop />
+      <main className="relative w-full flex-grow">
         <Routes>
           <Route path="/creator/:creatorId" element={<ProfilePage />} />
           <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
           <Route path="/mypage/*" element={<Mypage />} />
-          <Route path="/ticket" element={<TicketList />} />
+          <Route path="/ticket" element={<TicketPage />} />
           <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
           <Route
             path="/fanmeeting/:fanmeetingId/question"
@@ -93,6 +97,8 @@ function App() {
           <Route path="/creator/list" element={<CreatorList />} />
           <Route path="/parther" element={<JoinCreator />} />
           <Route path="/" element={<LandingPage />} />
+          <Route path="*" element={<ErrorPage />} />
+          <Route path="/test" element={<Test />} />
         </Routes>
       </main>
       <Footer />

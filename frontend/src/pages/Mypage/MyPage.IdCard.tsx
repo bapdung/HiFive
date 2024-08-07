@@ -12,6 +12,7 @@ function IdCard() {
   const [idCardFile, setIdCardFile] = useState<File | null>(null);
   const [idCardName, setIdCardName] = useState<string | null>(null);
   const [idCardSrc, setIdCardSrc] = useState<string | ArrayBuffer | null>(null);
+  const [name, setName] = useState<string>("");
 
   const inputIdCard = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -26,6 +27,9 @@ function IdCard() {
       setIdCardFile(file);
       setStatus(2);
     }
+  };
+  const inputName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
   };
 
   const uploadS3 = async (path: string, file: File) => {
@@ -71,6 +75,7 @@ function IdCard() {
           "/api/member/identification",
           {
             identificationImg: idCardImg,
+            name,
           },
         );
 
@@ -90,6 +95,7 @@ function IdCard() {
         if (response.status === 200) {
           if (response.data.identificationImg) {
             setIdCardSrc(response.data.identificationImg);
+            setName(response.data.name);
             setStatus(0);
           }
         }
@@ -103,11 +109,19 @@ function IdCard() {
     <div className="flex justify-between p-10">
       <div className="flex flex-col mr-14">
         {idCardSrc ? (
-          <img
-            src={idCardSrc as string}
-            alt="신분증 이미지"
-            className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
-          />
+          <div>
+            <img
+              src={idCardSrc as string}
+              alt="신분증 이미지"
+              className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
+            />
+            <div className="flex flex-col mt-5">
+              <span className="text-h6">이름</span>
+              <span className="w-full h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
+                {name}
+              </span>
+            </div>
+          </div>
         ) : (
           <div className="w-[500px] h-[300px] bg-gray-300 rounded-3xl" />
         )}
@@ -117,7 +131,6 @@ function IdCard() {
               <div className="flex justify-center items-center btn-light-lg mt-10 hover:cursor-pointer">
                 {status === 1 ? "사진 선택하기" : "사진 수정하기"}
               </div>
-
               <input
                 type="file"
                 id="idCardImg"
@@ -127,17 +140,26 @@ function IdCard() {
               />
             </label>
             {status === 2 ? (
-              <div
-                className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
-                onClick={postIdCard}
-                role="presentation"
-              >
-                등록하기
-              </div>
+              <>
+                <input
+                  type="text"
+                  placeholder="이름 입력"
+                  value={name}
+                  onChange={inputName}
+                  className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white p-2"
+                />
+                <div
+                  className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
+                  onClick={postIdCard}
+                  role="presentation"
+                >
+                  등록하기
+                </div>
+              </>
             ) : null}
           </>
         ) : (
-          <div className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white">
+          <div className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white hover:cursor-not-allowed">
             등록 완료
           </div>
         )}
@@ -151,8 +173,8 @@ function IdCard() {
             안녕하세요, HiFive 를 이용해 주셔서 감사합니다. <br /> 저희 플랫폼은
             팬미팅의 공정성과 안전한 운영을 위해 본인 확인 절차를 강화하고
             있습니다. <br /> 이를 위해 팬미팅 입장 시 미리 마이페이지에 등록하신
-            신분증을 기준으로 얼굴 일치율을 비교하여 본인 확인을 진행하고자
-            합니다. <br />
+            신분증을 기준으로 얼굴 일치율을 비교하여, <br />
+            본인 확인을 진행하고자 합니다. <br />
             <br />
             1. 본인 확인 : 예매한 티켓을 본인만 사용할 수 있도록 하여 불법 티켓
             양도 및 재판매를 방지하고, 공정한 티켓 구매 환경을 조성합니다.
@@ -173,7 +195,7 @@ function IdCard() {
             <br />
             아래 예시 이미지를 참고하여 신분증에 포함된 개인 정보를 보호하세요.{" "}
             <br />
-            모든 문서는 암호화되어 저장되며, 확인 후 즉시 파기됩니다.
+            모든 문서는 암호화되어 저장되며, 탈퇴 시 즉시 파기됩니다.
           </p>
         </div>
         <div className="mb-8">
@@ -196,17 +218,6 @@ function IdCard() {
           <ol className="text-small list-decimal ml-6">
             <li>주민등록증</li>
             <li>운전면허증</li>
-            <li>여권 (대한민국 발행)</li>
-            <li>청소년증</li>
-            <li>장애인 복지 카드 (단, 신용 카드 및 직불 카드형 제외)</li>
-            <li>
-              주민등록증 발급 신청 확인서 (유효 기간 이내의 사진 및 주요 정보에
-              테이핑 처리된 것에 한함)
-            </li>
-            <li>
-              청소년증 발급 신청 확인서 (유효 기간 이내의 사진 및 주요 정보에
-              테이핑 처리된 것에 한함)
-            </li>
           </ol>
         </div>
       </div>
