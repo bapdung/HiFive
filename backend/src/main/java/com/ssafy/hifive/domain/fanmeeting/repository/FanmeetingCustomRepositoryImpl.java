@@ -24,6 +24,8 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(fanmeeting.creator, member).fetchJoin()
+			.join(member.creatorProfile, creator1).fetchJoin()
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
 			.where(
 				isScheduledFanmeeting(true),
@@ -57,6 +59,8 @@ public class FanmeetingCustomRepositoryImpl implements FanmeetingCustomRepositor
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort);
 
 		return jpaQueryFactory.selectFrom(fanmeeting)
+			.join(fanmeeting.creator, member).fetchJoin()
+			.join(member.creatorProfile, creator1).fetchJoin()
 			.join(reservation).on(reservation.fanmeeting.fanmeetingId.eq(fanmeeting.fanmeetingId))
 			.where(
 				isScheduledFanmeeting(false),

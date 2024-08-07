@@ -151,7 +151,7 @@ public class FanmeetingService {
 		}
 
 		String sort = param.getSort() != null ? param.getSort() : "desc";
-
+		//이거 고칠차례
 		return fanmeetingRepository.findFanmeetingsByCreatorWithScrolling(
 				creatorId,
 				topDate,
@@ -164,7 +164,6 @@ public class FanmeetingService {
 	}
 
 	public List<FanmeetingOverViewDto> getScheduledFanmeetingForFan(Member member, FanmeetingParam param) {
-
 		return fanmeetingRepository.findScheduledFanmeetingAllByFan(member.getMemberId(),
 				param.getSort()).stream()
 			.map(FanmeetingOverViewDto::from)
