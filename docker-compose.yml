@@ -68,6 +68,16 @@ services: # container setting info
       - "3000:3000"
     networks:
       - webnet
+  
+  ai-server:
+    container_name: hifive_flask
+    build:
+      context: ./ai-server
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    networks:
+      - webnet
 
 volumes:
   db-mysql:

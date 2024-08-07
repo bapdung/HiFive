@@ -41,7 +41,6 @@ public class AuthController {
 	@PostMapping("/callback")
 	public ResponseEntity<TokenResponseDto> authCallback(@AuthenticationPrincipal Member member,
 		HttpServletResponse response) {
-		log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		return ResponseEntity.ok(tokenService.createTokenResponse(member, response));
 	}
 

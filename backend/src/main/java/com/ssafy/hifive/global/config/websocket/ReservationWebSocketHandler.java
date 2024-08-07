@@ -36,11 +36,6 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 		sessions.get(fanmeetingId).put(sessionId, session);
 		memberSessionMap.get(fanmeetingId).put(memberId, sessionId);
 
-		log.info("웹소켓 커넥션 실행 sessionId : " + sessionId);
-		log.info("웹소켓 사용자 정보 memberId : " + memberId);
-		log.info("fanmeetingId : " + fanmeetingId);
-
-		// sendMessageToSession(fanmeetingId, memberId, "결제창으로 이동합니다.", "moveToPayment");
 	}
 
 	@Override
@@ -54,15 +49,12 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 			memberSessionMap.get(fanmeetingId).remove(memberId);
 		}
 
-		log.info("웹소켓 커넥션 종료 sessionId : " + sessionId);
-		log.info("fanmeetingId : " + fanmeetingId);
 	}
 
 	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event) {
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
 		WebSocketSession session = sessions.get(fanmeetingId).get(sessionId);
 		if (session != null && session.isOpen()) {
-			log.info(message);
 			try {
 				String jsonMessage = jacksonObjectMapper.writeValueAsString(
 					new WebSocketMessage(message, event));
@@ -77,12 +69,10 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 
 	public void broadcastMessageToFanmeeting(Long fanmeetingId, WebSocketMessage webSocketMessage) throws Exception {
 		ConcurrentMap<String, WebSocketSession> fanmeetingSessions = sessions.get(fanmeetingId);
-		log.info("Attempting to broadcast message to fanmeeting: {}, message: {}", fanmeetingId, webSocketMessage);
 
 		if (fanmeetingSessions != null) {
 			String jsonMessage = jacksonObjectMapper.writeValueAsString(webSocketMessage);
 			TextMessage textMessage = new TextMessage(jsonMessage);
-			log.info(textMessage.toString());
 			for (WebSocketSession session : fanmeetingSessions.values()) {
 				if (session.isOpen()) {
 					session.sendMessage(textMessage);
