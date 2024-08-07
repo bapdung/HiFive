@@ -38,7 +38,6 @@ public class CookieUtil {
 
 		response.addHeader("Set-Cookie", headerValue.toString());
 
-		log.info("Set-Cookie header: " + headerValue.toString());
 	}
 
 	public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

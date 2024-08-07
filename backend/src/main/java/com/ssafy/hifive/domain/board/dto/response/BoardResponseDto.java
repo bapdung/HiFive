@@ -17,11 +17,11 @@ public final class BoardResponseDto {
 	private String contents;
 	private int totalPages;
 
-	public static BoardResponseDto from(Board board, int totalPages, String creatorName) {
+	public static BoardResponseDto from(Board board, int totalPages) {
 
 		return new BoardResponseDto(
 			board.getBoardId(),
-			creatorName,
+			board.getCreator().getCreatorProfile().getCreatorName(),
 			board.getBoardImg(),
 			board.getCreatedDate(),
 			board.getContents(),

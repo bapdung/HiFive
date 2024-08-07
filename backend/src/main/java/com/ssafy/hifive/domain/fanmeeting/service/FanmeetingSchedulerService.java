@@ -29,7 +29,6 @@ public class FanmeetingSchedulerService {
 			.stream()
 			.map(Fanmeeting::getFanmeetingId)
 			.collect(Collectors.toList());
-		log.info("fanmeeting ids: {}", activeFanmeetingIds);
 	}
 
 }
