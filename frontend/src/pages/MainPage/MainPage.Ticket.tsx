@@ -1,4 +1,6 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FaceVerification from "../../service/FaceVerification";
 import defaultPoster from "../../assets/img/poster.jpg";
 
 interface TicketProps {
@@ -38,14 +40,21 @@ const Ticket: React.FC<TicketProps> = ({
   isActive,
 }) => {
   const navigate = useNavigate();
+  const [verifying, setVerifying] = useState(false);
   const canEnter = isWithin30Minutes(startTime);
 
   if (!event && !startTime) {
     if (fanmeetingId) {
       return <div className="w-[660px] h-[500px]" />;
     }
-    return <div className="w-[660px] h-[500px] mr-8" />;
+    return <div className="w-[762px] h-[544px] mr-8" />; // Empty ticket
   }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      setVerifying(true);
+    }
+  };
 
   return (
     <div
@@ -80,21 +89,21 @@ const Ticket: React.FC<TicketProps> = ({
             </span>
           </div>
         </div>
-        <div
-          className={`btn-lg absolute bottom-12 w-[80%] text-center ${canEnter ? "" : "bg-gray-200"}`}
-        >
-          <span
-            className={`w-full ${canEnter ? "text-white" : "text-gray-700"}`}
-          >
-            {canEnter ? "팬 미팅 입장하기" : "입장 가능 시간이 아닙니다"}
-          </span>
+        <div className="btn-lg absolute bottom-12">
+          <span className="px-16 text-white">팬 미팅 입장하기</span>
         </div>
-        <img
-          src={barcode}
-          alt="barcode"
-          className="absolute bottom-[5px] w-5/6"
-        />
+        <img src={barcode} alt="barcode" className="absolute bottom-[5px]" />
       </div>
+      {verifying && (
+        <FaceVerification
+          isOpen={verifying}
+          onRequestClose={() => setVerifying(false)}
+          onSuccess={() => {
+            setVerifying(false);
+            navigate("/ticket/1");
+          }}
+        />
+      )}
     </div>
   );
 };
