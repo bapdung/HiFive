@@ -34,7 +34,6 @@ public class ReservationQueueService {
 
 	public void addToPayingQueue(String queueKey, Long memberId, Long fanmeetingId) {
 		long score = System.currentTimeMillis();
-		log.info("payingQueueKey:{}", queueKey);
 		redisTemplateForObject.opsForZSet().add(queueKey, memberId.toString(), score);
 		try {
 			reservationWebSocketHandler.sendMessageToSession(fanmeetingId, memberId, "결제창으로 이동합니다.", "moveToPayment");
@@ -52,12 +51,13 @@ public class ReservationQueueService {
 		return size != null ? size : 0L;
 	}
 
-	public void moveFromWaitingToPayingQueue(Long fanmeetingId, String waitingQueueKey, String payingQueueKey, int count) {
+	public void moveFromWaitingToPayingQueue(Long fanmeetingId, String waitingQueueKey, String payingQueueKey,
+		int count) {
 		Set<Object> members = redisTemplateForObject.opsForZSet().range(waitingQueueKey, 0, count - 1);
 		if (members != null) {
 			for (Object memberId : members) {
-				removeFromWaitingQueue(waitingQueueKey, Long.valueOf((String) memberId));
-				addToPayingQueue(payingQueueKey, Long.valueOf((String) memberId), fanmeetingId);
+				removeFromWaitingQueue(waitingQueueKey, Long.valueOf((String)memberId));
+				addToPayingQueue(payingQueueKey, Long.valueOf((String)memberId), fanmeetingId);
 			}
 		}
 	}
