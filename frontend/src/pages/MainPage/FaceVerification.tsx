@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import ReactDOM from "react-dom";
-import client from "../client";
-import useAuthStore from "../store/useAuthStore";
-import loadingGif from "../assets/img/me.png"; // 로딩 애니메이션 이미지 경로
+import client from "../../client";
+import useAuthStore from "../../store/useAuthStore";
+import LoadingPage from "../LoadingPage";
 
 interface FaceVerificationProps {
   isOpen: boolean;
@@ -70,14 +70,11 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
             const response = await axios.post<{
               verified: boolean;
               error?: string;
-            }>(
-              `${process.env.REACT_APP_FLASK_END_POINT}/service/verification`,
-              {
-                user_image: base64Image,
-                id_card_image: identificationImg,
-                fanmeeting_id: fanmeetingId,
-              },
-            );
+            }>(`${process.env.REACT_APP_END_POINT}/service/verification`, {
+              user_image: base64Image,
+              id_card_image: identificationImg,
+              fanmeeting_id: fanmeetingId,
+            });
 
             setLoading(false); // 로딩 종료
             if (response.data.error) {
@@ -165,7 +162,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
           {loading ? (
             <>
               <p>본인 확인 중...</p>
-              <img src={loadingGif} alt="loading" className="mx-auto" />
+              <LoadingPage />
             </>
           ) : (
             result || "카메라 가운데로 와 주세요."
