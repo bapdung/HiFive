@@ -19,6 +19,10 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 		Map<String, Object> attributes) throws Exception {
+		log.info("beforeHandshake@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		log.info(request.getURI().toString());
+		log.info(attributes.toString());
+
 		HttpServletRequest servletRequest = ((ServletServerHttpRequest)request).getServletRequest();
 		String memberId = servletRequest.getParameter("memberId");
 
