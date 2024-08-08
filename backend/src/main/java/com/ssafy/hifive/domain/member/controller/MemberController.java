@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.dto.request.MemberIdentificationDto;
+import com.ssafy.hifive.domain.member.dto.request.MemberNameDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberNicknameDto;
 import com.ssafy.hifive.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.hifive.domain.member.dto.response.MemberIdentificationResponseDto;
@@ -64,6 +65,18 @@ public class MemberController {
 		@AuthenticationPrincipal Member member) {
 		memberService.checkNickName(memberNicknameDto);
 		return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+	}
+
+	@Operation(summary = "이름 유효성 검사", description = "사용자가 입력한 이름의 유효성을 검사한다.")
+	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
+		content = @Content(mediaType = "application/json",
+			schema = @Schema(implementation = ErrorResponse.class),
+			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
+	@PostMapping(path = "/validName", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> checkName(@RequestBody MemberNameDto memberNameDto,
+		@AuthenticationPrincipal Member member) {
+		memberService.checkName(memberNameDto);
+		return ResponseEntity.ok("사용 가능한 이름입니다.");
 	}
 
 	@Operation(summary = "회원 정보 수정", description = "사용자의 정보를 수정한다.")
