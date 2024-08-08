@@ -8,7 +8,7 @@ import yellow from "../../assets/Fanmeeting/yellow.png";
 interface VideoContainerProps {
   publisher: Publisher | undefined; // 현재 세션의 발행자 (스트림 발행자)
   subscribers: Subscriber[]; // 현재 세션의 구독자 (다른 사용자의 스트림)
-  isCreator: boolean; // 사용자가 세션의 생성자인지 여부
+  isCreator: boolean | undefined; // 사용자가 세션의 생성자인지 여부
   toggleFanAudio: (subscriber: Subscriber) => void; // 특정 구독자의 오디오를 토글하는 함수
   fanAudioStatus: { [key: string]: boolean }; // 각 구독자의 오디오 상태 (켜짐/꺼짐)
   focusedSubscriber: string | null; // 집중 모드에서 포커스된 구독자의 connectionId

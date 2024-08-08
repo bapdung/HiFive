@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import VideoContainer from "./VideoContainer";
 import JoinForm from "./JoinForm";
 import useAuthStore from "../../store/useAuthStore";
+import client from "../../client";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
@@ -39,7 +40,7 @@ export default function App() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] =
     useState<MediaDeviceInfo | null>(null);
-  const [isCreator, setIsCreator] = useState<boolean>(false);
+  const [isCreator, setIsCreator] = useState<boolean | undefined>();
   const [fanAudioStatus, setFanAudioStatus] = useState<{
     [key: string]: boolean;
   }>({});
@@ -48,6 +49,24 @@ export default function App() {
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timetables, setTimetables] = useState<Timetable[]>([]);
+
+  // 유저 정보 불러오기
+  const fetchUser = async () => {
+    if (!token) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/member`);
+      setIsCreator(response.data.creator);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -344,7 +363,7 @@ export default function App() {
           isCreator={isCreator}
           handleChangeUserName={handleChangeUserName}
           handleChangeSessionId={handleChangeSessionId}
-          setIsCreator={setIsCreator}
+          // setIsCreator={setIsCreator}
           joinSession={joinSession}
         />
       ) : (

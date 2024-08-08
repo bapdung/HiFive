@@ -3,10 +3,10 @@ import React, { ChangeEvent, FormEvent } from "react";
 interface JoinFormProps {
   myUserName: string;
   mySessionId: string;
-  isCreator: boolean;
+  isCreator: boolean | undefined;
   handleChangeUserName: (e: ChangeEvent<HTMLInputElement>) => void;
   handleChangeSessionId: (e: ChangeEvent<HTMLInputElement>) => void;
-  setIsCreator: (isCreator: boolean) => void;
+  // setIsCreator: (isCreator: boolean) => void;
   joinSession: (e: FormEvent<HTMLFormElement>) => void;
 }
 
@@ -16,7 +16,7 @@ const JoinForm: React.FC<JoinFormProps> = ({
   isCreator,
   handleChangeUserName,
   handleChangeSessionId,
-  setIsCreator,
+  // setIsCreator,
   joinSession,
 }) => (
   <div id="join">
@@ -45,16 +45,7 @@ const JoinForm: React.FC<JoinFormProps> = ({
             required
           />
         </p>
-        <p>
-          <label>
-            <input
-              type="checkbox"
-              checked={isCreator}
-              onChange={() => setIsCreator(!isCreator)}
-            />
-            Are you the creator?
-          </label>
-        </p>
+        {isCreator ? "당신은 크리에이터입니다" : "당신은 팬입니다"}
         <p className="text-center">
           <input
             className="btn btn-lg btn-success"
