@@ -53,13 +53,18 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 
 	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event) {
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
+		log.info("member 세션아이디{}", sessionId);
 		WebSocketSession session = sessions.get(fanmeetingId).get(sessionId);
+		log.info("member 세션{}", session.isOpen());
+		log.info("member 세션{}", session.getUri());
 		if (session != null && session.isOpen()) {
 			try {
 				String jsonMessage = jacksonObjectMapper.writeValueAsString(
 					new WebSocketMessage(message, event));
+				log.info(jsonMessage.toString());
 				session.sendMessage(new TextMessage(jsonMessage));
 			} catch (Exception e) {
+				log.info("안보내짐");
 				throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 			}
 		} else {
