@@ -27,10 +27,7 @@ public class ReservationService {
 	private final ReservationWebSocketHandler reservationWebSocketHandler;
 
 	public ReservationMemberDto reserve(long fanmeetingId, Member member) {
-		if(!reservationWebSocketHandler.isSessionValid(fanmeetingId, member.getMemberId())){
-			log.info("세션연결하자마자 끊김현상 발생 api 중단 및 null 전송");
-			return null;
-		}
+		reservationWebSocketHandler.isSessionValid(fanmeetingId, member.getMemberId());
 
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
@@ -86,11 +83,11 @@ public class ReservationService {
 		String waitingqueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		if (reservationValidService.addToPayingQueueIsValid(payingQueueKey)) {
-			log.info("ReservationService 현재 payingQueue 인원이 0명입니다. payingQueue에 추가됩니다.");
+			// log.info("ReservationService 현재 payingQueue 인원이 0명입니다. payingQueue에 추가됩니다.");
 			reservationQueueService.addToPayingQueue(payingQueueKey, memberId, fanmeetingId);
 		} else {
 			reservationQueueService.addToWaitingQueue(waitingqueueKey, memberId);
-			log.info("ReservationService 현재 payingQueue 인원이 1명으로 꽉차있습니다. waitingQueue에 추가됩니다.");
+			// log.info("ReservationService 현재 payingQueue 인원이 1명으로 꽉차있습니다. waitingQueue에 추가됩니다.");
 		}
 	}
 }
