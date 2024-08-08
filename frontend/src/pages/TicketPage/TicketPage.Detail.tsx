@@ -258,6 +258,7 @@ function Detail() {
             title={fanMeetingDetails.title}
             startDate={formattedStartDate}
             cancelDeadline={formattedCancelDeadline}
+            price={fanMeetingDetails.price}
             onClose={() => setShowPaymentModal(false)}
             // eslint-disable-next-line react/jsx-no-bind
             onPayment={handlePayment}
