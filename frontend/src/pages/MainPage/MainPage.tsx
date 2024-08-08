@@ -54,10 +54,10 @@ function MainPage() {
               <img
                 src={logoIcon}
                 alt="creatorlogo"
-                className="w-[50px] h-[50px] mr-4"
+                className="w-[44px] h-[44px] mr-4"
               />
               <div className="flex flex-col items-start justify-center">
-                <span className="text-h6 text-white font-semibold">
+                <span className="text-large text-white font-semibold">
                   크리에이터 입점 완료된 계정입니다.
                 </span>
                 <span className="text-small text-white">
