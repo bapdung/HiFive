@@ -30,7 +30,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
       try {
         const response = await client(accessToken).get("api/member");
-        if (response.data.creator !== requiredCreator) {
+        if (requiredCreator && !response.data.creator) {
           navigate("/error?code=UNAUTHORIZED&message=접근 권한이 없습니다.");
         } else {
           setIsCreator(response.data.creator);
