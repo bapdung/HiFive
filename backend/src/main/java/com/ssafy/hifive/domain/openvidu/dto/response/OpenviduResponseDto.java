@@ -1,4 +1,4 @@
-package com.ssafy.hifive.domain.openvidu.dto.rseponse;
+package com.ssafy.hifive.domain.openvidu.dto.response;
 
 import lombok.AllArgsConstructor;
 

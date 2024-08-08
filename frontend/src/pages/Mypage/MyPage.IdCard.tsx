@@ -14,7 +14,7 @@ function IdCard() {
   const [idCardSrc, setIdCardSrc] = useState<string | ArrayBuffer | null>(null);
   const [name, setName] = useState<string>("");
   const [checkName, setCheckName] = useState<string | null>(null);
-  const [check, setCheck] = useState<boolean>(true);
+  const [, setCheck] = useState<boolean>(true);
 
   const inputIdCard = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,22 +34,6 @@ function IdCard() {
   const inputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
     setCheck(false);
-  };
-
-  const changeName = async () => {
-    if (token) {
-      const response = await client(token).post("/api/member/validName", {
-        name,
-      });
-
-      if (response.status === 200) {
-        setCheckName(response.data);
-        setCheck(true);
-      } else if (response.status === 202) {
-        setCheckName(response.data.acceptedMessage);
-        setName("");
-      }
-    }
   };
 
   const uploadS3 = async (path: string, file: File) => {
@@ -85,29 +69,47 @@ function IdCard() {
   };
 
   const postIdCard = async () => {
-    if (!check) {
-      alert("이름 중복확인 먼저 진행해주세요");
+    if (!name) {
+      alert("이름을 입력해주세요");
       return;
     }
 
     if (idCardName) {
-      const url = await getS3url();
-
-      if (url && token) {
-        const [idCardImg] = url.split("?");
-
-        const response = await client(token).post(
-          "/api/member/identification",
-          {
-            identificationImg: idCardImg,
+      try {
+        if (token) {
+          const response = await client(token).post("/api/member/validName", {
             name,
-          },
-        );
+          });
 
-        if (response.status === 200) {
-          setStatus(0);
-          alert("신분증 등록이 완료되었습니다.");
+          if (response.status === 200) {
+            setCheckName(response.data);
+            setCheck(true);
+          } else if (response.status === 202) {
+            setCheckName(response.data.acceptedMessage);
+            setName("");
+            return;
+          }
+
+          const url = await getS3url();
+          if (url && token) {
+            const [idCardImg] = url.split("?");
+
+            const postResponse = await client(token).post(
+              "/api/member/identification",
+              {
+                identificationImg: idCardImg,
+                name,
+              },
+            );
+
+            if (postResponse.status === 200) {
+              setStatus(0);
+              alert("신분증 등록이 완료되었습니다.");
+            }
+          }
         }
+      } catch (error) {
+        console.error("Error during name validation or ID card upload:", error);
       }
     }
   };
@@ -185,13 +187,6 @@ function IdCard() {
                   className="flex justify-center items-center btn-light-lg h-11 rounded-3xl mt-3 text-black p-2"
                 />
 
-                <button
-                  type="button"
-                  className="btn-light-lg mt-3"
-                  onClick={changeName}
-                >
-                  중복 확인
-                </button>
                 <div
                   className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
                   onClick={postIdCard}
