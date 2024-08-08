@@ -320,8 +320,9 @@ export default function App() {
   );
 
   return (
-    <div className="container">
+    <div className="container w-full flex flex-col items-center">
       {session === undefined ? (
+        // Session 이 undefined 일 때 JoinForm 표시 (나중에 대기방화면으로 바꾸면될듯)
         <JoinForm
           myUserName={myUserName}
           mySessionId={mySessionId}
@@ -332,6 +333,7 @@ export default function App() {
           joinSession={joinSession}
         />
       ) : (
+        // session 이 정의되어 있을 때 비디오 세션 표시
         <div id="session">
           <div id="session-header">
             <h1 id="session-title">{mySessionId}</h1>
