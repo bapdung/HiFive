@@ -16,26 +16,37 @@ import lombok.RequiredArgsConstructor;
 public class MemberValidService {
 	private final MemberRepository memberRepository;
 
-	public void isValidNicknameLength(String nickname) {
-		if (nickname.length() < 2 || nickname.length() > 10)
-			throw new AcceptedException(AcceptedCode.NICKNAME_LENGTH);
+	private void validateLength(String input, AcceptedCode lengthCode) {
+		if (input.length() < 2 || input.length() > 10) {
+			throw new AcceptedException(lengthCode);
+		}
 	}
 
-	public void isValidNicknameSpecailSymbol(String nickname) {
+	private void validateSpecialSymbols(String input, AcceptedCode specialSymbolCode) {
 		String regex = "[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]";
 		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(nickname);
-		boolean isInvaild = matcher.find();
-		if (isInvaild) {
-			throw new AcceptedException(AcceptedCode.NICKNAME_SPECIAL_SYMBOL);
+		Matcher matcher = pattern.matcher(input);
+		boolean isInvalid = matcher.find();
+		if (isInvalid) {
+			throw new AcceptedException(specialSymbolCode);
 		}
 	}
 
-	public void isValidDuplicate(String nickname) {
-		boolean isDuplicate = memberRepository.existsByNickname(nickname);
-
+	private void validateDuplicate(String input, AcceptedCode duplicateCode) {
+		boolean isDuplicate = memberRepository.existsByNickname(input);
 		if (isDuplicate) {
-			throw new AcceptedException(AcceptedCode.NICKNAME_DUPLICATE);
+			throw new AcceptedException(duplicateCode);
 		}
+	}
+
+	public void validateNickname(String nickname) {
+		validateLength(nickname, AcceptedCode.NICKNAME_LENGTH);
+		validateSpecialSymbols(nickname, AcceptedCode.NICKNAME_SPECIAL_SYMBOL);
+		validateDuplicate(nickname, AcceptedCode.NICKNAME_DUPLICATE);
+	}
+
+	public void validateName(String name) {
+		validateLength(name, AcceptedCode.NAME_LENGTH);
+		validateSpecialSymbols(name, AcceptedCode.NAME_SPECIAL_SYMBOL);
 	}
 }

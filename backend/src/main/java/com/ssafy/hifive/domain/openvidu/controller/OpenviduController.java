@@ -5,7 +5,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +48,7 @@ public class OpenviduController {
 	@PostMapping(path = "/sessions", produces = "application/json")
 	public ResponseEntity<OpenViduTimetableDto> initializeSession(@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
+		log.info(String.valueOf(params.get("customSessionId")));
 		SessionProperties properties = new SessionProperties.Builder().customSessionId(String.valueOf(params.get("customSessionId"))).build();
 		Session session = openVidu.createSession(properties);
 		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()), HttpStatus.OK);
@@ -66,11 +66,11 @@ public class OpenviduController {
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
-
-	@PostMapping("/sessions/{sessionId}")
-	public ReseponseEntity<Void> currentCategory(@PathVariable("sessionId") String sessionId, @PathVariable("sequence") Integer sequence){
-		openViduService
-	}
+	//
+	// @PostMapping("/sessions/{sessionId}")
+	// public ReseponseEntity<Void> currentCategory(@PathVariable("sessionId") String sessionId, @PathVariable("sequence") Integer sequence){
+	// 	openViduService
+	// }
 
 
 }
