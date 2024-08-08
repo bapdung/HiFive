@@ -61,7 +61,8 @@ public class ReservationService {
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
 
-		int slotsAvailable = 100 - currentPayingQueueSize.intValue();
+		//하드코딩 : 1로 수정
+		int slotsAvailable = 1 - currentPayingQueueSize.intValue();
 
 		if (slotsAvailable > 0) {
 			try {
