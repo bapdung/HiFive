@@ -14,11 +14,11 @@ import useAuthStore from "../../store/useAuthStore";
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
-interface Timetable {
-  categoryName: string;
-  sequence: number;
-  detail: string;
-}
+// interface Timetable {
+//   categoryName: string;
+//   sequence: number;
+//   detail: string;
+// }
 
 export default function App() {
   const [mySessionId, setMySessionId] = useState<string>("SessionA");
@@ -41,7 +41,7 @@ export default function App() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
-  const [timetables, setTimetables] = useState<Timetable[]>([]);
+  // const [timetables, setTimetables] = useState<Timetable[]>([]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -83,8 +83,8 @@ export default function App() {
         },
       },
     );
-    setTimetables(response.data.timetables);
-    return response.data.sessionId;
+    console.log(response.data, "리스폰스 수정");
+    return response.data;
   };
 
   const createToken = async (sessionId: string): Promise<string> => {
