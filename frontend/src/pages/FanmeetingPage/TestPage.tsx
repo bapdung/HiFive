@@ -320,7 +320,7 @@ export default function App() {
   );
 
   return (
-    <div className="container w-full flex flex-col items-center">
+    <div className="w-full items-center">
       {session === undefined ? (
         // Session 이 undefined 일 때 JoinForm 표시 (나중에 대기방화면으로 바꾸면될듯)
         <JoinForm
