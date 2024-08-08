@@ -200,17 +200,24 @@ function Detail() {
   const isPastEvent = new Date(fanMeetingDetails.startDate) < now;
 
   const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const dayOfWeek = date.toLocaleDateString("ko-KR", { weekday: "short" });
-    return `${year}년 ${month}월 ${day}일 (${dayOfWeek})`;
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      weekday: "short",
+      timeZone: "Asia/Seoul",
+    };
+    return date.toLocaleDateString("ko-KR", options);
   };
 
   const formatTime = (date: Date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Seoul",
+    };
+    return date.toLocaleTimeString("ko-KR", options);
   };
 
   const startDate = new Date(fanMeetingDetails.startDate);
