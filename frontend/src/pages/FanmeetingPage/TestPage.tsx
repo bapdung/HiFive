@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   OpenVidu,
   Publisher,
@@ -35,7 +36,6 @@ interface ChatMessage {
 }
 
 export default function App() {
-  const [mySessionId, setMySessionId] = useState<string>("SessionA");
   const [myUserName, setMyUserName] = useState<string>(
     `Participant${Math.floor(Math.random() * 100)}`,
   );
@@ -48,6 +48,8 @@ export default function App() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] =
     useState<MediaDeviceInfo | null>(null);
+  const location = useLocation();
+  const mySessionId = location.pathname.split("/")[2];
   const [isCreator, setIsCreator] = useState<boolean | undefined>();
   const [fanAudioStatus, setFanAudioStatus] = useState<{
     [key: string]: boolean;
@@ -62,6 +64,7 @@ export default function App() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const userColorsRef = useRef<{ [key: string]: string }>({});
+  const [userId, setUserId] = useState<number | undefined>();
 
   // 유저 정보 불러오기
   const fetchUser = async () => {
@@ -71,6 +74,7 @@ export default function App() {
     try {
       const response = await client(token).get(`api/member`);
       setIsCreator(response.data.creator);
+      setUserId(response.data.memberId);
     } catch (error) {
       console.error(error);
     }
@@ -81,14 +85,9 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const OV = useRef<OpenVidu>(new OpenVidu());
+  console.log(userId);
 
-  const handleChangeSessionId = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMySessionId(e.target.value);
-    },
-    [],
-  );
+  const OV = useRef<OpenVidu>(new OpenVidu());
 
   const handleChangeUserName = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -289,7 +288,6 @@ export default function App() {
     OV.current = new OpenVidu();
     setSession(undefined);
     setSubscribers([]);
-    setMySessionId("SessionA");
     setMyUserName(`Participant${Math.floor(Math.random() * 100)}`);
     setMainStreamManager(undefined);
     setPublisher(undefined);
@@ -434,7 +432,6 @@ export default function App() {
           mySessionId={mySessionId}
           isCreator={isCreator}
           handleChangeUserName={handleChangeUserName}
-          handleChangeSessionId={handleChangeSessionId}
           joinSession={joinSession}
         />
       ) : (
