@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import TimeTable from "./TicketPage.DetailTimetable";
-import Info from "./TicketPage.DetailInfo";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 import webSocketService from "../../service/websocket";
-import Payment from "./TicketPage.PaymentModal";
+
+import TimeTable from "./TicketPage.DetailTimetable";
+import Info from "./TicketPage.DetailInfo";
 import WaitingModal from "./TicketPage.WaitingModal";
 import SuccessModal from "./TicketPage.SuccessModal";
 import FailureModal from "./TicketPage.FailureModal";
+import Payment from "./TicketPage.PaymentModal";
 
 interface TimeTableItem {
   categoryName: string;
@@ -84,15 +85,18 @@ function Detail() {
     const handleWebSocketMessage = (data: WebSocketMessage) => {
       console.log("WebSocket Message Received:", data);
       if (data.event === "currentQueueSize") {
+        console.log(data.event);
         const queueSize = parseInt(data.message.split(":")[1].trim(), 10);
         console.log(queueSize);
         setCurrentQueueSize(queueSize);
         setShowWaitingModal(true);
       } else if (data.event === "moveToPayment") {
+        console.log(data.event);
         webSocketService.disconnect();
         setShowWaitingModal(false);
         setShowPaymentModal(true);
       } else if (data.event === "alreadyReserved") {
+        console.log(data.event);
         alert(data.message);
       }
     };
@@ -254,6 +258,7 @@ function Detail() {
             title={fanMeetingDetails.title}
             startDate={formattedStartDate}
             cancelDeadline={formattedCancelDeadline}
+            price={fanMeetingDetails.price}
             onClose={() => setShowPaymentModal(false)}
             // eslint-disable-next-line react/jsx-no-bind
             onPayment={handlePayment}

@@ -61,7 +61,8 @@ public class ReservationService {
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
 
-		int slotsAvailable = 100 - currentPayingQueueSize.intValue();
+		//하드코딩 : 1로 수정
+		int slotsAvailable = 1 - currentPayingQueueSize.intValue();
 
 		if (slotsAvailable > 0) {
 			try {
@@ -75,12 +76,14 @@ public class ReservationService {
 	}
 
 	public void addToQueue(Long fanmeetingId, Long memberId) {
-		String queueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
+		String waitingqueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		if (reservationValidService.addToPayingQueueIsValid(payingQueueKey)) {
+			log.info("현재 payingQueue 인원이 0명입니다. payingQueue에 추가됩니다.");
 			reservationQueueService.addToPayingQueue(payingQueueKey, memberId, fanmeetingId);
 		} else {
-			reservationQueueService.addToWaitingQueue(queueKey, memberId);
+			reservationQueueService.addToWaitingQueue(waitingqueueKey, memberId);
+			log.info("현재 payingQueue 인원이 1명으로 꽉차있습니다. waitingQueue에 추가됩니다.");
 		}
 	}
 }

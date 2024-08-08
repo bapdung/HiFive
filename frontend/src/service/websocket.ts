@@ -24,7 +24,7 @@ class WebSocketService {
     };
 
     this.socket.onmessage = (event) => {
-      // console.log("Raw WebSocket Message Received:", event.data);
+      console.log("Raw WebSocket Message Received:", event.data);
 
       const data = JSON.parse(event.data);
       // console.log("WebSocket Message Received:", data);
@@ -77,5 +77,7 @@ class WebSocketService {
   }
 }
 
-const webSocketService = new WebSocketService("ws://localhost:8080/ws/ticket");
+const webSocketService = new WebSocketService(
+  "wss://i11a107.p.ssafy.io/ws/ticket",
+);
 export default webSocketService;
