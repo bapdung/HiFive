@@ -65,6 +65,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 			.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
 				"/webjars/**").permitAll()
 			.requestMatchers("/api/auth/**").permitAll()
+			.requestMatchers("/api/member/main").permitAll()
 			.requestMatchers("/api/**").authenticated()
 			.anyRequest().permitAll());
 

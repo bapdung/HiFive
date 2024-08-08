@@ -10,9 +10,11 @@ import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReservationValidService {
 	private final ReservationQueueService reservationQueueService;
 	private final RedisTemplate redisTemplateForObject;
@@ -30,9 +32,11 @@ public class ReservationValidService {
 	}
 
 	public boolean addToPayingQueueIsValid(String queueKey) {
-		if (reservationQueueService.getQueueSize(queueKey) < 100) {
+		if (reservationQueueService.getQueueSize(queueKey) < 1) {
+			log.info("현재 payingQueue 인원이 1명으로 꽉차있습니다. waitingQueue에 추가됩니다.");
 			return true;
 		}
+		log.info("현재 payingQueue 인원이 0명입니다. payingQueue에 추가됩니다.");
 		return false;
 	}
 
