@@ -48,13 +48,9 @@ public class OpenviduController {
 	@PostMapping(path = "/sessions", produces = "application/json")
 	public ResponseEntity<OpenViduTimetableDto> initializeSession(@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
-		SessionProperties properties = SessionProperties.fromJson(params).build();
-		log.info("0000000000000000000");
+		SessionProperties properties = new SessionProperties.Builder().customSessionId(String.valueOf(params.get("customSessionId"))).build();
 		Session session = openVidu.createSession(properties);
-		log.info(session.getSessionId());
-		log.info("0000000000000000000");
-
-		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("custonSessionId").toString(), session.getSessionId()), HttpStatus.OK);
+		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()), HttpStatus.OK);
 	}
 
 	@PostMapping("/sessions/{sessionId}/connections")
@@ -69,4 +65,6 @@ public class OpenviduController {
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
+
+
 }
