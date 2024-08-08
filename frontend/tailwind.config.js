@@ -38,6 +38,7 @@ export default {
       },
       fontFamily: {
         Pretendard: ["Pretendard"],
+        Jua: ["Jua", "sans-serif"],
       },
       fontSize: {
         h1: "3rem",
