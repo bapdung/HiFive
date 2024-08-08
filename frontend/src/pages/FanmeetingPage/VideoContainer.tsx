@@ -1,15 +1,15 @@
-import React from "react";
 import { Publisher, Subscriber } from "openvidu-browser";
 import UserVideoComponent from "./UserVideoComponent";
+import MainBackground from "../../assets/Fanmeeting/mainBackground.png";
 
 interface VideoContainerProps {
-  publisher: Publisher | undefined;
-  subscribers: Subscriber[];
-  isCreator: boolean;
-  toggleFanAudio: (subscriber: Subscriber) => void;
-  fanAudioStatus: { [key: string]: boolean };
-  focusedSubscriber: string | null;
-  focusOnSubscriber: (subscriber: Subscriber) => void;
+  publisher: Publisher | undefined; // 현재 세션의 발행자 (스트림 발행자)
+  subscribers: Subscriber[]; // 현재 세션의 구독자 (다른 사용자의 스트림)
+  isCreator: boolean; // 사용자가 세션의 생성자인지 여부
+  toggleFanAudio: (subscriber: Subscriber) => void; // 특정 구독자의 오디오를 토글하는 함수
+  fanAudioStatus: { [key: string]: boolean }; // 각 구독자의 오디오 상태 (켜짐/꺼짐)
+  focusedSubscriber: string | null; // 집중 모드에서 포커스된 구독자의 connectionId
+  focusOnSubscriber: (subscriber: Subscriber) => void; // 특정 구독자에게 포커스를 맞추는 함수
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -21,19 +21,27 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   focusedSubscriber,
   focusOnSubscriber,
 }) => (
-  <div id="video-container" className="col-md-12">
+  <div id="video-container" className="w-full relative">
+    {/* 크리에이터가 아닐 때 */}
     {!isCreator && (
       <>
+        <img src={MainBackground} alt="main-bg" className="w-full absolute" />
+        {/* 'creator'라는 clientData를 가진 스트림을 찾음 */}
         {subscribers
           .filter(
             (sub) =>
               JSON.parse(sub.stream.connection.data).clientData === "creator",
           )
           .map((sub) => (
-            <div key={sub.id} className="stream-container col-md-12">
+            <div
+              key={sub.id}
+              className="absolute max-w-[640px] top-[92px] left-[30%]"
+            >
+              {/* UserVideoComponent 컴포넌트에 스트림 전달 */}
               <UserVideoComponent streamManager={sub} />
             </div>
           ))}
+        {/* 포커스된 구독자가 있을 때 해당 스트림을 표시 */}
         {focusedSubscriber &&
           subscribers
             .filter(
@@ -44,6 +52,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                 <UserVideoComponent streamManager={sub} />
               </div>
             ))}
+        {/* 발행자가 있을 때 해당 스트림을 표시 => 발행자가 본인 */}
         {publisher && (
           <div className="stream-container col-md-12">
             <UserVideoComponent streamManager={publisher} />
@@ -58,12 +67,14 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
         )}
       </>
     )}
+    {/* 크리에이터일 때 */}
     {isCreator && (
       <>
         {publisher && (
-          <div className="stream-container col-md-12">
+          <div>
             <UserVideoComponent streamManager={publisher} />
             <div>
+              {/* 자신의 마이크 상태 표시 */}
               <span>
                 My Mic:{" "}
                 {fanAudioStatus[publisher.stream.connection.connectionId]
@@ -73,27 +84,32 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             </div>
           </div>
         )}
+
+        {/* 모든 구독자 스트림을 표시 */}
         {subscribers.map((sub) => {
           const { clientData } = JSON.parse(sub.stream.connection.data);
           return (
             <div key={sub.id} className="stream-container col-md-6 col-xs-6">
               <UserVideoComponent streamManager={sub} />
               <div>
-                <span>{clientData}</span>
+                <span>{clientData}</span> {/* 구독자의 clientData 표시 */}
                 <span>
+                  {/* 구독자의 마이크 상태 표시 */}
                   {fanAudioStatus[sub.stream.connection.connectionId]
                     ? "Mic ON"
                     : "Mic OFF"}
                 </span>
                 <button onClick={() => toggleFanAudio(sub)} type="button">
+                  {/* 구독자의 오디오를 토글하는 버튼 */}
                   {fanAudioStatus[sub.stream.connection.connectionId]
                     ? "Mute"
                     : "Unmute"}
                 </button>
+                {/* 특정 팬에게 포커스를 맞추거나 해제하는 버튼 */}
                 <button onClick={() => focusOnSubscriber(sub)} type="button">
                   {focusedSubscriber === sub.stream.connection.connectionId
-                    ? "Show All"
-                    : "Show Only Me"}
+                    ? "되돌리기"
+                    : "보여주기"}
                 </button>
               </div>
             </div>
