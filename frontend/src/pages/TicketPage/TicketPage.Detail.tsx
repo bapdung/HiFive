@@ -9,6 +9,7 @@ import Payment from "./TicketPage.PaymentModal";
 import WaitingModal from "./TicketPage.WaitingModal";
 import SuccessModal from "./TicketPage.SuccessModal";
 import FailureModal from "./TicketPage.FailureModal";
+import { da } from "date-fns/locale";
 
 interface TimeTableItem {
   categoryName: string;
@@ -84,15 +85,18 @@ function Detail() {
     const handleWebSocketMessage = (data: WebSocketMessage) => {
       console.log("WebSocket Message Received:", data);
       if (data.event === "currentQueueSize") {
+        console.log(data.event);
         const queueSize = parseInt(data.message.split(":")[1].trim(), 10);
         console.log(queueSize);
         setCurrentQueueSize(queueSize);
         setShowWaitingModal(true);
       } else if (data.event === "moveToPayment") {
+        console.log(data.event);
         webSocketService.disconnect();
         setShowWaitingModal(false);
         setShowPaymentModal(true);
       } else if (data.event === "alreadyReserved") {
+        console.log(data.event);
         alert(data.message);
       }
     };
