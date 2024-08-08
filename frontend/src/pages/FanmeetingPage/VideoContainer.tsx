@@ -33,6 +33,13 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
         {publisher && (
           <div className="stream-container col-md-12">
             <UserVideoComponent streamManager={publisher} />
+            <div>
+              <span>
+                {fanAudioStatus[publisher.stream.connection.connectionId]
+                  ? "Mic ON"
+                  : "Mic OFF"}
+              </span>
+            </div>
           </div>
         )}
       </>
@@ -42,6 +49,14 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
         {publisher && (
           <div className="stream-container col-md-12">
             <UserVideoComponent streamManager={publisher} />
+            <div>
+              <span>
+                My Mic:{" "}
+                {fanAudioStatus[publisher.stream.connection.connectionId]
+                  ? "Mic ON"
+                  : "Mic OFF"}
+              </span>
+            </div>
           </div>
         )}
         {subscribers.map((sub) => {
