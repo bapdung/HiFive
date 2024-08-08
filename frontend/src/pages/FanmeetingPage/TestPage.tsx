@@ -7,6 +7,7 @@ import {
   Stream,
 } from "openvidu-browser";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 import VideoContainer from "./VideoContainer";
 import JoinForm from "./JoinForm";
 import Chat from "./Chat";
@@ -60,7 +61,7 @@ export default function App() {
   // 채팅 관련 상태 추가
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
-  const [userColors, setUserColors] = useState<{ [key: string]: string }>({});
+  const userColorsRef = useRef<{ [key: string]: string }>({});
 
   // 유저 정보 불러오기
   const fetchUser = async () => {
@@ -77,7 +78,6 @@ export default function App() {
 
   useEffect(() => {
     fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
@@ -108,7 +108,6 @@ export default function App() {
     });
   }, []);
 
-  // 세션 아이디는 팬미팅 아이디로 보내줘야함
   const createSession = async (sessionId: string): Promise<string> => {
     const response = await axios.post<ResponseData>(
       `${APPLICATION_SERVER_URL}api/sessions`,
@@ -145,7 +144,6 @@ export default function App() {
     return createSession(mySessionId).then((sessionId) =>
       createToken(sessionId),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mySessionId, token]);
 
   const joinSession = useCallback(() => {
@@ -167,7 +165,6 @@ export default function App() {
       deleteSubscriber(event.stream.streamManager as Subscriber);
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mySession.on("exception", (exception: any) => {
       console.warn(exception);
     });
@@ -212,17 +209,15 @@ export default function App() {
       if (event.data) {
         const data = JSON.parse(event.data);
         setChatMessages((prevMessages) => [...prevMessages, data]);
-        if (!userColors[data.user]) {
-          setUserColors((prevColors) => ({
-            ...prevColors,
-            [data.user]: generateColor(),
-          }));
+
+        if (!userColorsRef.current[data.user]) {
+          userColorsRef.current[data.user] = generateColor();
         }
       }
     });
 
     setSession(mySession);
-  }, [isCreator, deleteSubscriber, userColors]);
+  }, [mySessionId, isCreator, deleteSubscriber]);
 
   useEffect(() => {
     if (session && token) {
@@ -357,15 +352,21 @@ export default function App() {
   const toggleFanAudio = useCallback(
     (subscriber: Subscriber) => {
       const newAudioStatus = !subscriber.stream.audioActive;
-      // eslint-disable-next-line no-param-reassign
-      subscriber.stream.audioActive = newAudioStatus;
+
+      // 객체 구조를 복사하여 수정
+      const updatedStream = {
+        ...subscriber.stream,
+        audioActive: newAudioStatus,
+      };
+      const updatedSubscriber = { ...subscriber, stream: updatedStream };
+
       setFanAudioStatus((prevStatus) => ({
         ...prevStatus,
-        [subscriber.stream.connection.connectionId]: newAudioStatus,
+        [updatedSubscriber.stream.connection.connectionId]: newAudioStatus,
       }));
       session?.signal({
         data: JSON.stringify({
-          connectionId: subscriber.stream.connection.connectionId,
+          connectionId: updatedSubscriber.stream.connection.connectionId,
           audioActive: newAudioStatus,
         }),
         type: "audioStatus",
@@ -377,7 +378,6 @@ export default function App() {
   const focusOnSubscriber = useCallback(
     (subscriber: Subscriber) => {
       if (focusedSubscriber === subscriber.stream.connection.connectionId) {
-        // 이미 선택된 팬이 다시 선택될 경우 기본 상태로 돌아갑니다.
         session?.signal({
           data: JSON.stringify({
             focusedSubscriber: null,
@@ -385,7 +385,6 @@ export default function App() {
           type: "focus",
         });
       } else {
-        // 팬의 화면을 선택하여 보여줍니다.
         session?.signal({
           data: JSON.stringify({
             focusedSubscriber: subscriber.stream.connection.connectionId,
@@ -397,13 +396,6 @@ export default function App() {
     [focusedSubscriber, session],
   );
 
-  // 고유 키 생성 함수
-  const generateUniqueId = () =>
-    `_${Math.random()
-      .toString(36)
-      .substr(2, 9)}${Math.random().toString(36).substr(2, 9)}`;
-
-  // 메시지 입력 핸들러
   const handleChangeMessage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setNewMessage(e.target.value);
@@ -411,13 +403,12 @@ export default function App() {
     [],
   );
 
-  // 메시지 전송 핸들러
   const handleSendMessage = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (newMessage.trim() !== "") {
         const message = {
-          id: generateUniqueId(),
+          id: uuidv4(),
           user: myUserName,
           text: newMessage,
         };
@@ -434,18 +425,15 @@ export default function App() {
   return (
     <div className="w-full items-center">
       {session === undefined ? (
-        // Session 이 undefined 일 때 JoinForm 표시 (나중에 대기방화면으로 바꾸면될듯)
         <JoinForm
           myUserName={myUserName}
           mySessionId={mySessionId}
           isCreator={isCreator}
           handleChangeUserName={handleChangeUserName}
           handleChangeSessionId={handleChangeSessionId}
-          // setIsCreator={setIsCreator}
           joinSession={joinSession}
         />
       ) : (
-        // session 이 정의되어 있을 때 비디오 세션 표시
         <div id="session">
           <div id="session-header">
             <h1 id="session-title">{mySessionId}</h1>
@@ -495,7 +483,7 @@ export default function App() {
             newMessage={newMessage}
             handleChangeMessage={handleChangeMessage}
             handleSendMessage={handleSendMessage}
-            userColors={userColors}
+            userColors={userColorsRef.current}
           />
         </div>
       )}
