@@ -33,9 +33,6 @@ spring:
   jwt:
     issuer: ${jwt.issuer}
     secret_key: ${jwt.secret_key}
-  
-  jackson:
-    time-zone: Asia/Seoul
 
 cloud:
   s3:
@@ -48,7 +45,7 @@ cloud:
       static: ${aws.region}
     stack:
       auto: false
-      
+
 logging:
   level:
     root: INFO
