@@ -11,7 +11,7 @@ import UserVideoComponent from "./UserVideoComponent";
 import useAuthStore from "../../store/useAuthStore";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 export default function App() {
   const [mySessionId, setMySessionId] = useState<string>("SessionA");
