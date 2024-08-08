@@ -17,7 +17,9 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
         <div className="streamcomponent">
           <OpenViduVideoComponent streamManager={streamManager} />
           <div>
-            <p>{getNicknameTag() === "creator" ? null : getNicknameTag()}</p>
+            <p className="text-center text-gray-900 text-small m-1">
+              {getNicknameTag() === "creator" ? null : getNicknameTag()}
+            </p>
           </div>
         </div>
       ) : null}
