@@ -34,9 +34,11 @@ public class ReservationQueueService {
 
 	public void addToPayingQueue(String queueKey, Long memberId, Long fanmeetingId) {
 		long score = System.currentTimeMillis();
+		log.info("{} 이 사람을 {}에 추가합니다.", memberId, queueKey);
 		redisTemplateForObject.opsForZSet().add(queueKey, memberId.toString(), score);
 		try {
 			reservationWebSocketHandler.sendMessageToSession(fanmeetingId, memberId, "결제창으로 이동합니다.", "moveToPayment");
+			log.info("{}에게 결제창으로 이동하라는 메시지를 날립니다.", memberId);
 		} catch (Exception e) {
 			throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 		}

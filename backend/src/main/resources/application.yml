@@ -45,7 +45,7 @@ cloud:
       static: ${aws.region}
     stack:
       auto: false
-      
+
 logging:
   level:
     root: INFO

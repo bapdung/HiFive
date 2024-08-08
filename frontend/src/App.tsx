@@ -1,7 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useAuthStore from "./store/useAuthStore";
-import ScrollToTop from "./service/scrollToTop";
+import ScrollToTop from "./utils/scrollToTop";
 
 import Navbar from "./components/Navbar/Navbar";
 import CreatorNavbar from "./components/Navbar/CreatorNavbar";

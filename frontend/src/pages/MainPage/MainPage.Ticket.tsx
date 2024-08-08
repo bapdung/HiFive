@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FaceVerification from "../../service/FaceVerification";
+import FaceVerification from "./FaceVerification";
 import defaultPoster from "../../assets/img/poster.jpg";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";

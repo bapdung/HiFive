@@ -7,6 +7,7 @@ interface PaymentProps {
   nickname: string;
   email: string;
   title: string;
+  price: number;
   startDate: string;
   cancelDeadline: string;
   onClose: () => void;
@@ -21,6 +22,7 @@ const Payment: React.FC<PaymentProps> = ({
   startDate,
   cancelDeadline,
   onClose,
+  price,
   onPayment,
 }) => {
   const token = useAuthStore((state) => state.accessToken);
@@ -144,7 +146,7 @@ const Payment: React.FC<PaymentProps> = ({
         </div>
         <div className="w-[250px] border-2 border-solid border-gray-600 p-[20px] flex justify-between my-[70px]">
           <span>총 결제 포인트</span>
-          <span className="text-primary">5,000</span>
+          <span className="text-primary">{price}</span>
         </div>
         <div className="relative">
           <button
