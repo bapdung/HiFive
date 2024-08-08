@@ -95,7 +95,7 @@ function App() {
           </Route>
           <Route path="/main" element={<MainPage />} />
           <Route path="/creator/list" element={<CreatorList />} />
-          <Route path="/parther" element={<JoinCreator />} />
+          <Route path="/partner" element={<JoinCreator />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="/test" element={<Test />} />

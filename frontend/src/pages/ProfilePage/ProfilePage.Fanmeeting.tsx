@@ -6,6 +6,7 @@ import client from "../../client";
 import FanmeetingInfo from "../../components/FanmeetingInfo";
 import preIcon from "../../assets/icons/preIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
+import noContent from "../../assets/img/nocontent1.png";
 
 type FanmeetingInfo = {
   fanmeetingId: number;
@@ -113,7 +114,12 @@ function Fanmeeting() {
           </div>
         </div>
       ) : (
-        <div className="flex justify-center">팬미팅 내역이 없습니다.</div>
+        <div className="flex flex-col w-full items-center justify-center">
+          <img src={noContent} alt="nocontent" className="w-72" />
+          <span className="text-medium my-8 text-center text-gray-500">
+            높이 날며 찾아 봤지만, 아무 것도 찾지 못했어요...
+          </span>
+        </div>
       )}
     </>
   );

@@ -203,7 +203,7 @@ function BoardList({ creatorName, isMe, creatorImg }: Props) {
         From. {creatorName}
       </div>
       {isMe ? (
-        <div className="w-3/4 bg-white rounded-2xl px-10 pt-10 pb-5 mb-9">
+        <div className="w-3/4 bg-white rounded-2xl px-10 pt-10 pb-5 mb-9 border-2 border-primary-500">
           <TextareaAutosize
             className="w-full auto-rows-auto resize-none focus:outline-none"
             placeholder="팬들에게 새로운 소식을 알려주세요!"
