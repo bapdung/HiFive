@@ -1,6 +1,7 @@
 import { Publisher, Subscriber } from "openvidu-browser";
 import UserVideoComponent from "./UserVideoComponent";
 import MainBackground from "../../assets/Fanmeeting/mainBackground.png";
+import CreatorMainBackground from "../../assets/Fanmeeting/creatorMainBackground.png";
 import yellow from "../../assets/Fanmeeting/yellow.png";
 // import micOn from "../../assets/Fanmeeting/micOn.svg";
 // import micOff from "../../assets/Fanmeeting/micOff.svg";
@@ -28,16 +29,16 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
     (sub) => JSON.parse(sub.stream.connection.data).clientData === "creator",
   );
   return (
-    <div id="video-container" className="w-full relative">
+    <div id="video-container" className="w-full relative h-full">
       {/* 크리에이터가 아닐 때 */}
       {!isCreator && (
         <>
-          <img src={MainBackground} alt="main-bg" className="w-full absolute" />
+          <img src={MainBackground} alt="fan-bg" className="w-full z-50" />
           {/* 'creator'라는 clientData를 가진 스트림을 찾음 */}
           {creatorSub && (
             <div
               key={creatorSub.id}
-              className="absolute w-[38%] top-[11vh] left-[30%]"
+              className="absolute w-[38%] top-[11vh] left-[30%] z-60"
             >
               {/* UserVideoComponent 컴포넌트에 스트림 전달 */}
               <UserVideoComponent streamManager={creatorSub} />
@@ -53,7 +54,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
               .map((sub) => (
                 <div
                   key={sub.id}
-                  className="bg-[#FDD1AE] w-[18%] absolute rounded-xl p-2 flex flex-col items-center top-[11vh] left-[21vh]"
+                  className="bg-[#FDD1AE] w-[18%] absolute rounded-xl p-2 flex flex-col items-center top-[11vh] left-[21vh] z-60"
                 >
                   <div>
                     <UserVideoComponent streamManager={sub} />
@@ -65,7 +66,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
               ))}
           {/* 본인(publisher)화면 표시 */}
           {publisher && !focusedSubscriber && (
-            <div className="bg-[#FDD1AE] w-[18%] absolute rounded-xl p-2 flex flex-col items-center top-[11vh] left-[21vh]">
+            <div className="bg-[#FDD1AE] w-[18%] absolute rounded-xl p-2 flex flex-col items-center top-[11vh] left-[21vh] z-60">
               <div className="stream-container col-md-12">
                 <UserVideoComponent streamManager={publisher} />
               </div>
@@ -85,8 +86,13 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
       {/* 크리에이터일 때 */}
       {isCreator && (
         <>
+          <img
+            src={CreatorMainBackground}
+            alt="creator-bg"
+            className="w-full z-50"
+          />
           {publisher && (
-            <div>
+            <div className="z-60 absolute bottom-5 right-20 max-w-[350px]">
               <UserVideoComponent streamManager={publisher} />
               <div>
                 {/* 자신의 마이크 상태 표시 */}
