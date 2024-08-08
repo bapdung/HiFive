@@ -14,11 +14,16 @@ import useAuthStore from "../../store/useAuthStore";
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
-// interface Timetable {
-//   categoryName: string;
-//   sequence: number;
-//   detail: string;
-// }
+interface Timetable {
+  categoryName: string;
+  sequence: number;
+  detail: string;
+}
+
+interface ResponseData {
+  sessionId: string;
+  timetables: Timetable[];
+}
 
 export default function App() {
   const [mySessionId, setMySessionId] = useState<string>("SessionA");
@@ -41,7 +46,7 @@ export default function App() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
-  // const [timetables, setTimetables] = useState<Timetable[]>([]);
+  const [timetables, setTimetables] = useState<Timetable[]>([]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -73,7 +78,7 @@ export default function App() {
 
   // 세션 아이디는 팬미팅 아이디로 보내줘야함
   const createSession = async (sessionId: string): Promise<string> => {
-    const response = await axios.post<string>(
+    const response = await axios.post<ResponseData>(
       `${APPLICATION_SERVER_URL}api/sessions`,
       { customSessionId: sessionId },
       {
@@ -83,8 +88,9 @@ export default function App() {
         },
       },
     );
-    console.log(response.data, "리스폰스 수정");
-    return response.data;
+    setTimetables(response.data.timetables);
+    console.log(timetables);
+    return response.data.sessionId;
   };
 
   const createToken = async (sessionId: string): Promise<string> => {
