@@ -14,13 +14,23 @@ interface PhotoProps {
 function Photo({ photo }: PhotoProps) {
   const date = photo.fanmeetingStartDate.split("T")[0].replaceAll("-", ". ");
 
-  const handleDownload = (imgSrc: string) => {
-    const link = document.createElement("a");
-    link.href = imgSrc;
-    link.download = "image.jpg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async (imgSrc: string) => {
+    try {
+      const response = await fetch(imgSrc, { mode: "cors" });
+      const blob = await response.blob();
+      const blobURL = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobURL;
+      link.download = "image.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(blobURL);
+    } catch (error) {
+      console.error("다운로드 중 문제 발생 :", error);
+    }
   };
 
   return (
