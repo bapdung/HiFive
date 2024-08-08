@@ -55,10 +55,10 @@ function ProfilePage() {
   return (
     <div className="w-full flex flex-col items-center pt-10">
       <Profile initialCreatorProfile={creatorProfile} isMe={isMe} />
-      <div className="w-4/5 mt-8 bg-white p-8 rounded-t-2xl">
+      <div className="w-5/6 mt-8 bg-white p-8 rounded-t-2xl shadow-md">
         <Fanmeeting />
       </div>
-      <div className="bg-vertical-gradient w-4/5 bg-primary-100 rounded-b-2xl flex flex-col justify-center items-center">
+      <div className="bg-vertical-gradient w-5/6 bg-primary-100 rounded-b-2xl flex flex-col justify-center items-center shadow-md mb-10 pb-5">
         <BoardList
           creatorName={creatorProfile.creatorName}
           creatorImg={creatorProfile.creatorImg}
