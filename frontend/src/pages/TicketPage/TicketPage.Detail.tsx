@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import TimeTable from "./TicketPage.DetailTimetable";
-import Info from "./TicketPage.DetailInfo";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 import webSocketService from "../../service/websocket";
-import Payment from "./TicketPage.PaymentModal";
+
+import TimeTable from "./TicketPage.DetailTimetable";
+import Info from "./TicketPage.DetailInfo";
 import WaitingModal from "./TicketPage.WaitingModal";
 import SuccessModal from "./TicketPage.SuccessModal";
 import FailureModal from "./TicketPage.FailureModal";
-import { da } from "date-fns/locale";
+import Payment from "./TicketPage.PaymentModal";
 
 interface TimeTableItem {
   categoryName: string;
