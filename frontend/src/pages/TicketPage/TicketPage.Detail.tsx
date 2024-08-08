@@ -287,14 +287,16 @@ function Detail() {
           <img
             src={fanMeetingDetails.posterImg}
             alt="poster-img"
-            className="w-[35%] mr-10 max-h-80 max-w-[30%]"
+            className="w-[35%] mr-10 max-h-80 max-w-[30%] rounded-lg"
           />
           <div>
-            <h1 className="text-h3 text-gray-900">{fanMeetingDetails.title}</h1>
+            <h1 className="text-h3 font-semibold text-gray-900">
+              {fanMeetingDetails.title}
+            </h1>
             <p className="text-large text-gray-700 mb-6 mt-0.5">
-              {fanMeetingDetails.creatorName} 님의 HiFive 온라인 팬미팅
+              {fanMeetingDetails.creatorName} 님의 HiFive 팬미팅
             </p>
-            <div className="bg-gray-100 px-8 py-6 rounded-[20px]">
+            <div className="bg-page-background px-8 py-6 rounded-[20px]">
               <div className="flex">
                 <img
                   className="w-24 h-24 rounded-full"
@@ -304,7 +306,7 @@ function Detail() {
                 <div className="ml-8 mt-auto mb-auto">
                   <p className="text-gray-700 text-large">
                     크리에이터{" "}
-                    <span className="text-gray-800">
+                    <span className="text-gray-800 font-semibold">
                       {fanMeetingDetails.creatorName}
                     </span>
                   </p>
@@ -324,7 +326,7 @@ function Detail() {
         <TimeTable timetable={fanMeetingDetails.timetable} />
         <Info />
       </div>
-      <div className="bg-white rounded-[25px] p-10 ml-8 max-w-[23%] h-fit sticky top-4">
+      <div className="bg-white rounded-[25px] p-10 ml-8 w-[25%] h-fit sticky top-4">
         {isPastEvent ? (
           <div className="text-center">
             <h3 className="text-h3 mb-12">{fanMeetingDetails.title}</h3>
@@ -368,7 +370,7 @@ function Detail() {
             </div>
             {isReserved ? (
               <div id="reserved" className="mt-10">
-                <div className="bg-gray-100 rounded-[10px] flex flex-col items-center w-full p-2">
+                <div className="bg-page-background rounded-[10px] flex flex-col items-center w-full p-2">
                   <p className="text-gray-500 my-2.5 text-sm">
                     아래 링크를 통해 질문과 사연을 남겨주세요.
                   </p>
@@ -404,7 +406,7 @@ function Detail() {
             ) : (
               <div id="notReserved" className="mt-20">
                 <p className="text-gray-500 text-sm text-center mb-1">
-                  잠깐! 예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
+                  예매 전 하단의 예매 안내 사항을 꼭 읽어주세요!
                 </p>
                 {renderReservationButton()}
               </div>
