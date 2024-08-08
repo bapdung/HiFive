@@ -87,7 +87,7 @@ const Ticket: React.FC<TicketProps> = ({
         <img
           src={poster || defaultPoster}
           alt="poster"
-          className="rounded-xl w-[320px] h-[460px]"
+          className="rounded-xl w-[320px] h-[460px] hover:cursor-pointer"
           onClick={() => navigate(`/ticket/${fanmeetingId}`)}
           role="presentation"
         />
@@ -117,7 +117,7 @@ const Ticket: React.FC<TicketProps> = ({
           </div>
         </div>
         <div
-          className={`btn-lg absolute bottom-12 w-[80%] text-center ${canEnter ? "" : "bg-gray-200"}`}
+          className={`btn-lg absolute bottom-12 w-[80%] text-center ${canEnter ? "hover:cursor-pointer" : "bg-gray-200"}`}
           onClick={handleEnterClick}
           role="presentation"
         >

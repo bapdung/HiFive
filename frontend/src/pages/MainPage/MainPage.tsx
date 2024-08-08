@@ -38,7 +38,7 @@ function MainPage() {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="my-6 flex justify-center items-center gap-10">
+      <div className="my-6 flex justify-center items-center w-full max-w-[1200px] px-4">
         <span className="text-h3 text-gray-900 font-bold">
           하이파이브 한 번 해요,{" "}
           <span
@@ -48,16 +48,18 @@ function MainPage() {
           </span>
           님!
         </span>
+      </div>
+      <div className="absolute right-10 my-4">
         {userData?.creator && (
-          <Link to="/creator-only">
-            <div className="px-10 py-2 text-center bg-secondary rounded-full flex items-center justify-center shadow-md">
+          <Link to="/creator-only" className="flex items-center">
+            <div className="px-10 py-2 text-center bg-secondary rounded-full flex items-center justify-center shadow-md ml-4">
               <img
                 src={logoIcon}
                 alt="creatorlogo"
-                className="w-[44px] h-[44px] mr-4"
+                className="w-[40px] h-[40px] mr-4"
               />
               <div className="flex flex-col items-start justify-center">
-                <span className="text-large text-white font-semibold">
+                <span className="text-medium text-white font-semibold">
                   크리에이터 입점 완료된 계정입니다.
                 </span>
                 <span className="text-small text-white">
