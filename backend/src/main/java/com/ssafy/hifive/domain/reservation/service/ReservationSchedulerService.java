@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReservationSchedulerService {
 	private final ReservationQueueService reservationQueueService;
-	private final FanmeetingSchedulerService fanmeetingSchedulerService;
 	private final RedisPublisher redisPublisher;
 	private final ObjectMapper objectMapper;
 	private final RedisTemplate redisTemplateForObject;
@@ -71,12 +70,12 @@ public class ReservationSchedulerService {
 						Double score = member.getScore();
 						if (score != null) {
 							long elapsedTime = currentTime - score.longValue();
-							log.info("elapsedTime: " + elapsedTime);
-							log.info("timeout: " + timeout + " ms");
+							// log.info("elapsedTime: " + elapsedTime);
+							// log.info("timeout: " + timeout + " ms");
 							if (elapsedTime > timeout) {
 								count++;
 								reservationQueueService.removeFromPayingQueue(queueKey, memberId);
-								log.info("만료시간인 사람 없애는 스케줄러 발동 {} 이 놈 삭제", memberId);
+								// log.info("만료시간인 사람 없애는 스케줄러 발동 {} 이 놈 삭제", memberId);
 							} else {
 								break;
 							}
