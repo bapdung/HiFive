@@ -13,7 +13,7 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
+  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
 
 interface Timetable {
   categoryName: string;
