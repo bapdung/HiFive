@@ -14,6 +14,15 @@ interface PhotoProps {
 function Photo({ photo }: PhotoProps) {
   const date = photo.fanmeetingStartDate.split("T")[0].replaceAll("-", ". ");
 
+  const handleDownload = (imgSrc: string) => {
+    const link = document.createElement("a");
+    link.href = imgSrc;
+    link.download = "image.jpg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center mb-10">
       <div className="text-h5 mb-5">
@@ -31,6 +40,8 @@ function Photo({ photo }: PhotoProps) {
               src={download}
               alt="다운로드 아이콘"
               className="absolute w-[52.65px] h-[63.93px] right-6 bottom-5 z-30 hover:cursor-pointer"
+              onClick={() => handleDownload(img)}
+              role="presentation"
             />
           </div>
         ))}
