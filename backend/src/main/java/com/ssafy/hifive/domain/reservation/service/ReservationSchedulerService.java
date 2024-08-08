@@ -1,5 +1,6 @@
 package com.ssafy.hifive.domain.reservation.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -26,11 +27,13 @@ public class ReservationSchedulerService {
 	private final RedisPublisher redisPublisher;
 	private final ObjectMapper objectMapper;
 	private final RedisTemplate redisTemplateForObject;
-	private final ReservationService reservationService;
 
 	@Scheduled(fixedRate = 10000)
 	public void checkWaiting() {
-		List<Long> activeFanmeetingIds = fanmeetingSchedulerService.getActiveFanmeetingIds();
+		//List<Long> activeFanmeetingIds = fanmeetingSchedulerService.getActiveFanmeetingIds();
+		//하드코딩
+		List<Long> activeFanmeetingIds = new ArrayList<>();
+		activeFanmeetingIds.add(62L);
 		for (Long fanmeetingId : activeFanmeetingIds) {
 			String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 
@@ -52,7 +55,7 @@ public class ReservationSchedulerService {
 		}
 	}
 
-	@Scheduled(fixedRate = 180000) // 3분마다 실행
+	@Scheduled(fixedRate = 60000) // 3분마다 실행, 1분으로 수정
 	public void checkExpiredPayments() {
 		String pattern = "fanmeeting:*:paying-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
@@ -72,9 +75,12 @@ public class ReservationSchedulerService {
 						Double score = member.getScore();
 						if (score != null) {
 							long elapsedTime = currentTime - score.longValue();
+							log.info("elapsedTime: " + elapsedTime);
+							log.info("timeout: " + timeout + " ms");
 							if (elapsedTime > timeout) {
 								count++;
 								reservationQueueService.removeFromPayingQueue(queueKey, memberId);
+								log.info("만료시간인 사람 없애는 스케줄러 발동 {} 이 놈 삭제", memberId);
 							} else {
 								if (count != 0) {
 									String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";

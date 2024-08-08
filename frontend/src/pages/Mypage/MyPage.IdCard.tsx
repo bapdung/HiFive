@@ -13,6 +13,8 @@ function IdCard() {
   const [idCardName, setIdCardName] = useState<string | null>(null);
   const [idCardSrc, setIdCardSrc] = useState<string | ArrayBuffer | null>(null);
   const [name, setName] = useState<string>("");
+  const [checkName, setCheckName] = useState<string | null>(null);
+  const [check, setCheck] = useState<boolean>(true);
 
   const inputIdCard = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,8 +30,26 @@ function IdCard() {
       setStatus(2);
     }
   };
+
   const inputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+    setCheck(false);
+  };
+
+  const changeName = async () => {
+    if (token) {
+      const response = await client(token).post("/api/member/validName", {
+        name,
+      });
+
+      if (response.status === 200) {
+        setCheckName(response.data);
+        setCheck(true);
+      } else if (response.status === 202) {
+        setCheckName(response.data.acceptedMessage);
+        setName("");
+      }
+    }
   };
 
   const uploadS3 = async (path: string, file: File) => {
@@ -65,6 +85,11 @@ function IdCard() {
   };
 
   const postIdCard = async () => {
+    if (!check) {
+      alert("이름 중복확인 먼저 진행해주세요");
+      return;
+    }
+
     if (idCardName) {
       const url = await getS3url();
 
@@ -115,12 +140,14 @@ function IdCard() {
               alt="신분증 이미지"
               className="w-[500px] h-[300px] bg-gray-300 rounded-3xl"
             />
-            <div className="flex flex-col mt-5">
-              <span className="text-h6">이름</span>
-              <span className="w-full h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
-                {name}
-              </span>
-            </div>
+            {status === 0 && (
+              <div className="flex flex-col mt-5">
+                <span className="text-h6">이름</span>
+                <span className="w-full h-11 bg-gray-100 rounded-3xl text-gray-500 flex items-center pl-5 mt-2">
+                  {name}
+                </span>
+              </div>
+            )}
           </div>
         ) : (
           <div className="w-[500px] h-[300px] bg-gray-300 rounded-3xl" />
@@ -141,13 +168,30 @@ function IdCard() {
             </label>
             {status === 2 ? (
               <>
+                <div className="flex items-center justify-between mt-5">
+                  <span className="text-h6">이름</span>
+                  <span
+                    className={`text-small ${checkName === "사용 가능한 이름입니다." ? "text-green" : "text-red"}`}
+                  >
+                    {checkName}
+                  </span>
+                </div>
+
                 <input
                   type="text"
                   placeholder="이름 입력"
                   value={name}
                   onChange={inputName}
-                  className="flex justify-center items-center bg-gray-500 h-11 rounded-3xl mt-10 text-white p-2"
+                  className="flex justify-center items-center btn-light-lg h-11 rounded-3xl mt-3 text-black p-2"
                 />
+
+                <button
+                  type="button"
+                  className="btn-light-lg mt-3"
+                  onClick={changeName}
+                >
+                  중복 확인
+                </button>
                 <div
                   className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
                   onClick={postIdCard}
