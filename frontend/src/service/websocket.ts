@@ -77,5 +77,7 @@ class WebSocketService {
   }
 }
 
-const webSocketService = new WebSocketService("ws://localhost:8080/ws/ticket");
+const webSocketService = new WebSocketService(
+  "ws://i11a107.p.ssafy.io/ws/ticket",
+);
 export default webSocketService;
