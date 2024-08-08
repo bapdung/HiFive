@@ -54,6 +54,8 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event) {
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
 		log.info("member 세션아이디{}", sessionId);
+		log.info("sessions.get(fanmeetingId){}", sessions.get(fanmeetingId));
+		log.info("memberSessionMap.get(fanmeetingId){}", memberSessionMap.get(fanmeetingId));
 		WebSocketSession session = sessions.get(fanmeetingId).get(sessionId);
 		log.info("member 세션{}", session.isOpen());
 		log.info("member 세션{}", session.getUri());
@@ -65,6 +67,7 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 				session.sendMessage(new TextMessage(jsonMessage));
 			} catch (Exception e) {
 				log.info("안보내짐");
+				log.info(e.getMessage());
 				throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 			}
 		} else {
