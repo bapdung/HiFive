@@ -20,17 +20,11 @@ const JoinForm: React.FC<JoinFormProps> = ({
   joinSession,
 }) => (
   <div id="join">
-    <div id="img-div">
-      <img
-        src="resources/images/openvidu_grey_bg_transp_cropped.png"
-        alt="OpenVidu logo"
-      />
-    </div>
     <div id="join-dialog" className="jumbotron vertical-center">
-      <h1> Join a video session </h1>
+      <h1 className="text-h4"> 팬미팅 시작 화면 </h1>
       <form className="form-group" onSubmit={joinSession}>
         <p>
-          <p>Participant: </p>
+          <p>참가자: </p>
           <input
             className="form-control"
             type="text"
@@ -41,7 +35,7 @@ const JoinForm: React.FC<JoinFormProps> = ({
           />
         </p>
         <p>
-          <p> Session: </p>
+          <p>세션: </p>
           <input
             className="form-control"
             type="text"
