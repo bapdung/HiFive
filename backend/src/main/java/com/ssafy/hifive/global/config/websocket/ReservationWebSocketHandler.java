@@ -51,8 +51,17 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 
 	}
 
+	public boolean isSessionValid(Long fanmeetingId, Long memberId){
+		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
+		if(sessionId == null){
+			return false;
+		}
+		return true;
+	}
+
 	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event) {
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
+
 		log.info("member 세션아이디{}", sessionId);
 		log.info("sessions.get(fanmeetingId){}", sessions.get(fanmeetingId));
 		log.info("memberSessionMap.get(fanmeetingId){}", memberSessionMap.get(fanmeetingId));

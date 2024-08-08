@@ -7,6 +7,7 @@ import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.reservation.dto.response.ReservationMemberDto;
+import com.ssafy.hifive.global.config.websocket.ReservationWebSocketHandler;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -23,8 +24,14 @@ public class ReservationService {
 	private final ReservationQueueService reservationQueueService;
 	private final ReservationFanmeetingReserveService reservationFanmeetingReserveService;
 	private final ReservationValidService reservationValidService;
+	private final ReservationWebSocketHandler reservationWebSocketHandler;
 
 	public ReservationMemberDto reserve(long fanmeetingId, Member member) {
+		if(!reservationWebSocketHandler.isSessionValid(fanmeetingId, member.getMemberId())){
+			log.info("세션연결하자마자 끊김현상 발생 api 중단 및 null 전송");
+			return null;
+		}
+
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
