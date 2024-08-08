@@ -5,7 +5,6 @@ interface JoinFormProps {
   mySessionId: string;
   isCreator: boolean | undefined;
   handleChangeUserName: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleChangeSessionId: (e: ChangeEvent<HTMLInputElement>) => void;
   // setIsCreator: (isCreator: boolean) => void;
   joinSession: (e: FormEvent<HTMLFormElement>) => void;
 }
@@ -15,7 +14,6 @@ const JoinForm: React.FC<JoinFormProps> = ({
   mySessionId,
   isCreator,
   handleChangeUserName,
-  handleChangeSessionId,
   // setIsCreator,
   joinSession,
 }) => (
@@ -34,17 +32,7 @@ const JoinForm: React.FC<JoinFormProps> = ({
             required
           />
         </p>
-        <p>
-          <p>세션: </p>
-          <input
-            className="form-control"
-            type="text"
-            id="sessionId"
-            value={mySessionId}
-            onChange={handleChangeSessionId}
-            required
-          />
-        </p>
+        <p>세션: {mySessionId}</p>
         {isCreator ? "당신은 크리에이터입니다" : "당신은 팬입니다"}
         <p className="text-center">
           <input
