@@ -59,19 +59,26 @@ function App() {
       <ScrollToTop />
       <main className="relative w-full flex-grow">
         <Routes>
-          <Route path="/creator/:creatorId" element={<ProfilePage />} />
-          <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
-          <Route path="/mypage/*" element={<Mypage />} />
-          <Route path="/ticket" element={<TicketPage />} />
-          <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
-          <Route
-            path="/fanmeeting/:fanmeetingId/question"
-            element={<Question />}
-          />
-          <Route
-            path="/fanmeeting/:fanmeetingId/story"
-            element={<StoryForm />}
-          />
+          <Route path="/" element={<LandingPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/main" element={<MainPage />} />
+            <Route path="/partner" element={<JoinCreator />} />
+            <Route path="/creator/list" element={<CreatorList />} />
+            <Route path="/creator/:creatorId" element={<ProfilePage />} />
+            <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
+            <Route path="/ticket" element={<TicketPage />} />
+            <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
+            <Route path="/mypage/*" element={<Mypage />} />
+            <Route
+              path="/fanmeeting/:fanmeetingId/question"
+              element={<Question />}
+            />
+            <Route
+              path="/fanmeeting/:fanmeetingId/story"
+              element={<StoryForm />}
+            />
+          </Route>
+
           <Route element={<ProtectedRoute requiredCreator />}>
             <Route path="/creator-only" element={<CreatorOnly />} />
             <Route path="/creator-only/new" element={<CreateFanmeeting />} />
@@ -93,10 +100,7 @@ function App() {
               element={<StoryDetail />}
             />
           </Route>
-          <Route path="/main" element={<MainPage />} />
-          <Route path="/creator/list" element={<CreatorList />} />
-          <Route path="/partner" element={<JoinCreator />} />
-          <Route path="/" element={<LandingPage />} />
+
           <Route path="*" element={<ErrorPage />} />
           <Route path="/test" element={<Test />} />
         </Routes>
