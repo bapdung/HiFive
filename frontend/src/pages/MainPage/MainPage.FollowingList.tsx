@@ -4,6 +4,7 @@ import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 
 import FollowingProfile from "./MainPage.Following.Profile";
+import noContent from "../../assets/img/nocontent1.png";
 
 type FollowingData = {
   creatorId: number;
@@ -40,20 +41,29 @@ function FollowingList() {
           <span className="text-h6 text-gray-700">전체 크리에이터 보기</span>
         </Link>
       </div>
-      <div className=" flex flex-wrap justify-start">
-        {followings.map((following) => (
-          <div
-            key={following.creatorId}
-            className="flex-grow-0 flex-shrink-0 basis-1/6 p-2"
-          >
-            <FollowingProfile
-              creatorId={following.creatorId}
-              profileName={following.creatorName}
-              profile={following.profileImg}
-            />
-          </div>
-        ))}
-      </div>
+      {followings.length > 0 ? (
+        <div className=" flex flex-wrap justify-start">
+          {followings.map((following) => (
+            <div
+              key={following.creatorId}
+              className="flex-grow-0 flex-shrink-0 basis-1/6 p-2"
+            >
+              <FollowingProfile
+                creatorId={following.creatorId}
+                profileName={following.creatorName}
+                profile={following.profileImg}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col w-full items-center justify-center">
+          <img src={noContent} alt="nocontent" className="w-72" />
+          <span className="text-medium my-8 text-center text-gray-500">
+            높이 날며 찾아 봤지만, 아무 것도 찾지 못했어요...
+          </span>
+        </div>
+      )}
     </div>
   );
 }

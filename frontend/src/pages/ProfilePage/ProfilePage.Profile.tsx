@@ -45,6 +45,7 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
   const [activityDay, setActivityDay] = useState<number>();
   const [boardList, setBoardList] = useState<Board[]>([]);
   const [openModifyModal, setOpenModifyModal] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const openModal = () => {
     setOpenModifyModal(true);
@@ -137,19 +138,27 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
             {follow ? (
               <button
                 type="button"
-                className="btn-outline-md h-8 flex items-center"
+                className="btn-outline-md w-25 h-9 flex items-center"
                 onClick={handleUnfollow}
               >
-                <img src={fullHeart} alt="하트" className="mr-1  w-3 h-3" />
+                <img
+                  src={fullHeart}
+                  alt="하트"
+                  className="mr-1.5 w-[13px] h-[13px]"
+                />
                 팔로잉
               </button>
             ) : (
               <button
                 type="button"
-                className="btn-md h-9 flex items-center"
+                className="btn-md w-25 h-9 flex items-center"
                 onClick={handleFollow}
               >
-                <img src={heart} alt="하트" className="mr-1 w-3 h-3" />
+                <img
+                  src={heart}
+                  alt="하트"
+                  className="mr-1.5 w-[15px] h-[14px]"
+                />
                 팔로우
               </button>
             )}
@@ -193,16 +202,29 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
             </div>
           </div>
         </div>
-        <img
-          src={creatorProfile.creatorImg}
-          alt="프로필이미지"
-          className="bg-gray-300 w-52 h-52 rounded-full mx-5 hover:cursor-pointer"
-          onClick={() => window.open(creatorProfile.link, "_blank")}
-          role="presentation"
-        />
+        <div
+          className="relative w-52 h-52"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <img
+            src={creatorProfile.creatorImg}
+            alt="프로필이미지"
+            className="bg-gray-300 w-full h-full rounded-full hover:cursor-pointer"
+          />
+          {isHovered && (
+            <button
+              className="absolute inset-0 w-auto bg-black bg-opacity-50 text-white text-h6 font-semibold flex items-center justify-center rounded-full"
+              onClick={() => window.open(creatorProfile.link, "_blank")}
+              type="button"
+            >
+              크리에이터 방문하기
+            </button>
+          )}
+        </div>
         <div className="w-4/12 h-64 flex flex-col justify-between py-5">
           <span className="text-h6 font-semibold ml-1">
-            크리에이터의 최신 피드
+            크리에이터의 최신 소식
           </span>
           {boardList[0] && (
             <div className="bg-white p-5 rounded-tl-2xl rounded-r-2xl shadow-sm">
