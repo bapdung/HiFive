@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   OpenVidu,
   Publisher,
@@ -6,9 +7,9 @@ import {
   Stream,
 } from "openvidu-browser";
 import axios from "axios";
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import VideoContainer from "./VideoContainer";
 import JoinForm from "./JoinForm";
+import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
@@ -24,6 +25,12 @@ interface Timetable {
 interface ResponseData {
   sessionId: string;
   timetables: Timetable[];
+}
+
+interface ChatMessage {
+  id: string;
+  user: string;
+  text: string;
 }
 
 export default function App() {
@@ -49,6 +56,11 @@ export default function App() {
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timetables, setTimetables] = useState<Timetable[]>([]);
+
+  // 채팅 관련 상태 추가
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [userColors, setUserColors] = useState<{ [key: string]: string }>({});
 
   // 유저 정보 불러오기
   const fetchUser = async () => {
@@ -177,8 +189,40 @@ export default function App() {
       }
     });
 
+    // 밝은 색상을 제외하고 색상 생성 함수
+    const generateColor = (): string => {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i += 1) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      // 밝은 색상 제외
+      if (
+        parseInt(color.substring(1, 3), 16) > 200 &&
+        parseInt(color.substring(3, 5), 16) > 200 &&
+        parseInt(color.substring(5, 7), 16) > 200
+      ) {
+        return generateColor();
+      }
+      return color;
+    };
+
+    // 채팅 관련 시그널 처리
+    mySession.on("signal:chat", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setChatMessages((prevMessages) => [...prevMessages, data]);
+        if (!userColors[data.user]) {
+          setUserColors((prevColors) => ({
+            ...prevColors,
+            [data.user]: generateColor(),
+          }));
+        }
+      }
+    });
+
     setSession(mySession);
-  }, [isCreator, deleteSubscriber]);
+  }, [isCreator, deleteSubscriber, userColors]);
 
   useEffect(() => {
     if (session && token) {
@@ -353,6 +397,40 @@ export default function App() {
     [focusedSubscriber, session],
   );
 
+  // 고유 키 생성 함수
+  const generateUniqueId = () =>
+    `_${Math.random()
+      .toString(36)
+      .substr(2, 9)}${Math.random().toString(36).substr(2, 9)}`;
+
+  // 메시지 입력 핸들러
+  const handleChangeMessage = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setNewMessage(e.target.value);
+    },
+    [],
+  );
+
+  // 메시지 전송 핸들러
+  const handleSendMessage = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (newMessage.trim() !== "") {
+        const message = {
+          id: generateUniqueId(),
+          user: myUserName,
+          text: newMessage,
+        };
+        session?.signal({
+          data: JSON.stringify(message),
+          type: "chat",
+        });
+        setNewMessage("");
+      }
+    },
+    [newMessage, myUserName, session],
+  );
+
   return (
     <div className="w-full items-center">
       {session === undefined ? (
@@ -376,7 +454,7 @@ export default function App() {
               type="button"
               id="buttonLeaveSession"
               onClick={leaveSession}
-              value="Leave session"
+              value="세션나가기"
             />
             {isCreator && (
               <input
@@ -384,7 +462,7 @@ export default function App() {
                 type="button"
                 id="buttonSwitchCamera"
                 onClick={switchCamera}
-                value="Switch Camera"
+                value="카메라 기종 변경"
               />
             )}
             <input
@@ -392,14 +470,14 @@ export default function App() {
               type="button"
               id="buttonToggleAudio"
               onClick={toggleMyAudio}
-              value="Toggle Audio"
+              value="마이크 껐다 키기"
             />
             <input
               className="btn btn-large btn-warning"
               type="button"
               id="buttonToggleVideo"
               onClick={toggleMyVideo}
-              value="Toggle Video"
+              value="비디오껐다키기"
             />
           </div>
 
@@ -411,6 +489,13 @@ export default function App() {
             fanAudioStatus={fanAudioStatus}
             focusedSubscriber={focusedSubscriber}
             focusOnSubscriber={focusOnSubscriber}
+          />
+          <Chat
+            chatMessages={chatMessages}
+            newMessage={newMessage}
+            handleChangeMessage={handleChangeMessage}
+            handleSendMessage={handleSendMessage}
+            userColors={userColors}
           />
         </div>
       )}

@@ -89,7 +89,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           <img
             src={CreatorMainBackground}
             alt="creator-bg"
-            className="w-full z-50"
+            className="w-full z-0"
           />
           {publisher && (
             <div className="z-60 absolute bottom-5 right-20 max-w-[350px]">
