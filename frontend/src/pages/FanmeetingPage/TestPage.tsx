@@ -46,6 +46,7 @@ export default function App() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timetables, setTimetables] = useState<Timetable[]>([]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
@@ -89,7 +90,6 @@ export default function App() {
       },
     );
     setTimetables(response.data.timetables);
-    console.log(timetables);
     return response.data.sessionId;
   };
 
