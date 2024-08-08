@@ -78,6 +78,7 @@ export default function App() {
 
   useEffect(() => {
     fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
@@ -144,6 +145,7 @@ export default function App() {
     return createSession(mySessionId).then((sessionId) =>
       createToken(sessionId),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mySessionId, token]);
 
   const joinSession = useCallback(() => {
@@ -165,6 +167,7 @@ export default function App() {
       deleteSubscriber(event.stream.streamManager as Subscriber);
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mySession.on("exception", (exception: any) => {
       console.warn(exception);
     });
@@ -217,6 +220,7 @@ export default function App() {
     });
 
     setSession(mySession);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mySessionId, isCreator, deleteSubscriber]);
 
   useEffect(() => {
