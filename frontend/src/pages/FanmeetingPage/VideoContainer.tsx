@@ -8,6 +8,8 @@ interface VideoContainerProps {
   isCreator: boolean;
   toggleFanAudio: (subscriber: Subscriber) => void;
   fanAudioStatus: { [key: string]: boolean };
+  focusedSubscriber: string | null;
+  focusOnSubscriber: (subscriber: Subscriber) => void;
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -16,6 +18,8 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   isCreator,
   toggleFanAudio,
   fanAudioStatus,
+  focusedSubscriber,
+  focusOnSubscriber,
 }) => (
   <div id="video-container" className="col-md-12">
     {!isCreator && (
@@ -30,6 +34,16 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
               <UserVideoComponent streamManager={sub} />
             </div>
           ))}
+        {focusedSubscriber &&
+          subscribers
+            .filter(
+              (sub) => sub.stream.connection.connectionId === focusedSubscriber,
+            )
+            .map((sub) => (
+              <div key={sub.id} className="stream-container col-md-12">
+                <UserVideoComponent streamManager={sub} />
+              </div>
+            ))}
         {publisher && (
           <div className="stream-container col-md-12">
             <UserVideoComponent streamManager={publisher} />
@@ -75,6 +89,11 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                   {fanAudioStatus[sub.stream.connection.connectionId]
                     ? "Mute"
                     : "Unmute"}
+                </button>
+                <button onClick={() => focusOnSubscriber(sub)} type="button">
+                  {focusedSubscriber === sub.stream.connection.connectionId
+                    ? "Show All"
+                    : "Show Only Me"}
                 </button>
               </div>
             </div>

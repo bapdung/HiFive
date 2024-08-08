@@ -32,6 +32,9 @@ export default function App() {
   const [fanAudioStatus, setFanAudioStatus] = useState<{
     [key: string]: boolean;
   }>({});
+  const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
+    null,
+  );
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -130,6 +133,13 @@ export default function App() {
           ...prevStatus,
           [data.connectionId]: data.audioActive,
         }));
+      }
+    });
+
+    mySession.on("signal:focus", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setFocusedSubscriber(data.focusedSubscriber);
       }
     });
 
@@ -286,6 +296,29 @@ export default function App() {
     [session],
   );
 
+  const focusOnSubscriber = useCallback(
+    (subscriber: Subscriber) => {
+      if (focusedSubscriber === subscriber.stream.connection.connectionId) {
+        // 이미 선택된 팬이 다시 선택될 경우 기본 상태로 돌아갑니다.
+        session?.signal({
+          data: JSON.stringify({
+            focusedSubscriber: null,
+          }),
+          type: "focus",
+        });
+      } else {
+        // 팬의 화면을 선택하여 보여줍니다.
+        session?.signal({
+          data: JSON.stringify({
+            focusedSubscriber: subscriber.stream.connection.connectionId,
+          }),
+          type: "focus",
+        });
+      }
+    },
+    [focusedSubscriber, session],
+  );
+
   return (
     <div className="container">
       {session === undefined ? (
@@ -340,6 +373,8 @@ export default function App() {
             isCreator={isCreator}
             toggleFanAudio={toggleFanAudio}
             fanAudioStatus={fanAudioStatus}
+            focusedSubscriber={focusedSubscriber}
+            focusOnSubscriber={focusOnSubscriber}
           />
         </div>
       )}
