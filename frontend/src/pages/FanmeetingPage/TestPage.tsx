@@ -4,7 +4,6 @@ import {
   Session,
   Subscriber,
   Stream,
-  // Device,
 } from "openvidu-browser";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -49,15 +48,6 @@ export default function App() {
     },
     [],
   );
-
-  // const handleMainVideoStream = useCallback(
-  //   (stream: Publisher | Subscriber) => {
-  //     if (mainStreamManager !== stream) {
-  //       setMainStreamManager(stream);
-  //     }
-  //   },
-  //   [mainStreamManager],
-  // );
 
   const deleteSubscriber = useCallback((streamManager: Subscriber) => {
     setSubscribers((prevSubscribers) => {
@@ -118,7 +108,8 @@ export default function App() {
       if (!isCreator) {
         setFanAudioStatus((prevStatus) => ({
           ...prevStatus,
-          [subscriber.stream.connection.connectionId]: false,
+          [subscriber.stream.connection.connectionId]:
+            subscriber.stream.audioActive,
         }));
       }
     });
@@ -130,6 +121,16 @@ export default function App() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mySession.on("exception", (exception: any) => {
       console.warn(exception);
+    });
+
+    mySession.on("signal:audioStatus", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setFanAudioStatus((prevStatus) => ({
+          ...prevStatus,
+          [data.connectionId]: data.audioActive,
+        }));
+      }
     });
 
     setSession(mySession);
@@ -173,6 +174,11 @@ export default function App() {
           setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
           setCurrentVideoDevice(currentVideoInputDevice || null);
+
+          setFanAudioStatus((prevStatus) => ({
+            ...prevStatus,
+            [session.connection.connectionId]: newPublisher.stream.audioActive,
+          }));
         } catch (error) {
           if (axios.isAxiosError(error)) {
             console.log(
@@ -238,9 +244,21 @@ export default function App() {
 
   const toggleMyAudio = useCallback(() => {
     if (publisher) {
-      publisher.publishAudio(!publisher.stream.audioActive);
+      const newAudioStatus = !publisher.stream.audioActive;
+      publisher.publishAudio(newAudioStatus);
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [session?.connection.connectionId || ""]: newAudioStatus,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: session.connection.connectionId,
+          audioActive: newAudioStatus,
+        }),
+        type: "audioStatus",
+      });
     }
-  }, [publisher]);
+  }, [publisher, session]);
 
   const toggleMyVideo = useCallback(() => {
     if (publisher) {
@@ -248,15 +266,25 @@ export default function App() {
     }
   }, [publisher]);
 
-  const toggleFanAudio = useCallback((subscriber: Subscriber) => {
-    const streamManager = subscriber.stream.streamManager as Publisher;
-    const newAudioStatus = !streamManager.stream.audioActive;
-    streamManager.publishAudio(newAudioStatus);
-    setFanAudioStatus((prevStatus) => ({
-      ...prevStatus,
-      [subscriber.stream.connection.connectionId]: newAudioStatus,
-    }));
-  }, []);
+  const toggleFanAudio = useCallback(
+    (subscriber: Subscriber) => {
+      const newAudioStatus = !subscriber.stream.audioActive;
+      // eslint-disable-next-line no-param-reassign
+      subscriber.stream.audioActive = newAudioStatus;
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [subscriber.stream.connection.connectionId]: newAudioStatus,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: subscriber.stream.connection.connectionId,
+          audioActive: newAudioStatus,
+        }),
+        type: "audioStatus",
+      });
+    },
+    [session],
+  );
 
   return (
     <div className="container">
