@@ -35,11 +35,11 @@ function Board({ board, creatorImg }: BoardProps) {
           </div>
         </div>
         <div
-          className="btn-light-md h-8 flex justify-center items-center hover:cursor-pointer"
+          className="btn-outline-md h-9 flex items-center hover:cursor-pointer"
           onClick={() => navigate(`/creator/${creatorId}/${board.boardId}`)}
           role="presentation"
         >
-          자세히보기
+          자세히 보기
         </div>
       </div>
       <p className="mt-2.5 text-large">{board.contents}</p>
