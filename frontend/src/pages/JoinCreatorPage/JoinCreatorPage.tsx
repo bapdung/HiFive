@@ -15,106 +15,96 @@ import threeIcon from "../../assets/joinCreator/three.png";
 
 function JoinCreator() {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col w-full items-center">
       <div className="flex flex-col w-full items-center mt-[80px]">
         <img
           src={logoIcon}
           alt="로고"
           className="w-[149.04px] h-[150.35px] rounded-lg"
         />
-        <h4 className="text-h4 font-semibold mt-[20px]">크리에이터 입점신청</h4>
+        <h4 className="text-h5 font-semibold mt-[20px]">크리에이터 신청</h4>
       </div>
-      <div className="flex flex-col justify-center items-center mt-[50px] mb-[90px]">
-        <h1 className="text-h1 font-semibold">
-          HiFive에서 팬들과의 소중한 추억을 만들어 보세요!
+      <div className="flex flex-col justify-center items-center mt-[50px] mb-20">
+        <h1 className="text-h1 font-bold">언제 어디서나 쉽고 즐겁게,</h1>
+        <h1 className="text-h1 font-bold">
+          팬들과 소중한 추억을 만들어 보세요!
         </h1>
-        <h1 className="text-h1 font-semibold">언제 어디서나, 쉽고 즐겁게.</h1>
       </div>
-      <div className="flex w-full justify-between px-7 mb-[40px]">
-        <div className="w-[240px] box-border px-[20px] py-[40px] flex flex-col justify-center items-center rounded-xl bg-white">
+      <div className="flex w-full justify-center gap-5 mb-20">
+        <div className="px-[20px] py-[10px] flex flex-col justify-center items-center rounded-3xl bg-white">
           <img
             src={explain1}
             alt="소통이미지"
-            className="w-[200px] h-[200px] rounded-xl"
+            className="w-[200px] h-[200px] rounded-full"
           />
           <h5 className="text-h5 font-semibold mt-[30px] mb-[10px]">
             특별한 소통의 장
           </h5>
-          <p className="text-small font-semibold text-center">
-            실시간 채팅과 다양한 인터랙션으로 팬들과 더욱 가까워질 수 있어요.
+          <p className="text-small  text-center">
+            실시간 채팅과 다양한 인터랙션으로 <br />
+            팬들과 더욱 가까워질 수 있어요.
           </p>
         </div>
-        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-xl bg-white">
-          <img
-            src={explain1}
-            alt="소통이미지"
-            className="w-[200px] h-[200px] rounded-xl"
-          />
-          <h5 className="text-h5 font-semibold mt-[30px] mb-[10px]">
-            특별한 소통의 장
-          </h5>
-          <p className="text-small font-semibold text-center">
-            실시간 채팅과 다양한 인터랙션으로 팬들과 더욱 가까워질 수 있어요.
-          </p>
-        </div>
-        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-xl bg-white">
+        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-3xl bg-white">
           <img
             src={explain2}
             alt="세션이미지"
-            className="w-[200px] h-[200px] rounded-xl"
+            className="w-[200px] h-[200px] rounded-full"
           />
           <h5 className="text-h5 font-semibold mt-[30px] mb-[10px]">
             즐거운 세션
           </h5>
-          <p className="text-small font-semibold text-center">
-            모두가 참여하는 즐거운 세션을 통해 어색함을 풀고 쉽게 즐길 수
-            있어요.
+          <p className="text-small  text-center">
+            모두가 참여하는 즐거운 세션을 통해 <br />
+            어색함을 풀고 쉽게 즐길 수 있어요.
           </p>
         </div>
-        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-xl bg-white">
+        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-3xl bg-white">
           <img
             src={explain3}
             alt="사진보는이미지"
-            className="w-[200px] h-[200px] rounded-xl"
+            className="w-[200px] h-[200px] rounded-full"
           />
           <h5 className="text-h5 font-semibold mt-[30px] mb-[10px]">
             추억을 선물하세요.
           </h5>
-          <p className="text-small font-semibold text-center">
-            팬들에게 특별한 추억을 선물하는 다양한 도구를 제공하고 있어요.
+          <p className="text-small text-center">
+            팬들에게 특별한 추억을 선물하는 <br /> 다양한 도구를 제공하고
+            있어요.
           </p>
         </div>
-        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-xl bg-white">
+        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-3xl bg-white">
           <img
             src={explain4}
             alt="컴퓨터이미지"
-            className="w-[200px] h-[200px] rounded-xl"
+            className="w-[200px] h-[200px] rounded-full"
           />
           <h5 className="text-h5 font-semibold mt-[30px] mb-[10px]">
             쉽고 간편하게
           </h5>
-          <p className="text-small font-semibold text-center">
-            웹에서 바로 팬미팅 일정을 설정하고 쉽게 관리할 수 있어요.
+          <p className="text-small text-center">
+            웹에서 바로 팬미팅 일정을 설정하고 <br /> 쉽게 관리할 수 있어요.
           </p>
         </div>
-        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-xl bg-white">
+        <div className="w-[240px] px-[20px] py-[40px] flex flex-col justify-center items-center rounded-3xl bg-white">
           <img
             src={explain5}
             alt="화상통화하는이미지"
-            className="w-[200px] h-[200px] rounded-xl"
+            className="w-[200px] h-[200px] rounded-full"
           />
           <h5 className="text-h5 font-semibold mt-[30px] mb-[10px]">
             제약 없이 자유롭게
           </h5>
-          <p className="text-small font-semibold text-center">
-            대관, 일정 조율, .. 머리 아픈 문제는 제쳐두고, 팬을 만나러 가요.
+          <p className="text-small text-center">
+            대관, 일정 조율, .. 머리 아픈 문제는
+            <br /> 제쳐두고, 팬을 만나러 가요.
           </p>
         </div>
       </div>
-      <div className="flex flex-col w-full bg-white items-center pt-[40px] pb-20">
-        <h1 className="text-h1 font-semibold mb-10">신청 절차 안내</h1>
-        <div className="flex w-full justify-between px-28">
-          <div className="w-[400px] h-[300px] bg-gray-100 p-[20px] rounded-3xl relative">
+      <div className="flex flex-col w-full bg-white items-center pt-10 pb-20">
+        <h1 className="text-h2 font-bold mb-10">신청 절차 안내</h1>
+        <div className="flex w-full justify-center gap-10">
+          <div className="w-[400px] h-[300px] bg-page-background p-[20px] rounded-3xl relative shadow-md">
             <img
               src={emailIcon}
               alt="이메일아이콘"
@@ -134,7 +124,7 @@ function JoinCreator() {
               className="w-[24px] h-[24px] absolute bottom-5 right-5"
             />
           </div>
-          <div className="w-[400px] h-[300px] bg-gray-100 p-[20px] rounded-3xl relative">
+          <div className="w-[400px] h-[300px] bg-page-background p-[20px] rounded-3xl relative shadow-md">
             <img
               src={textIcon}
               alt="계약서아이콘"
@@ -153,7 +143,7 @@ function JoinCreator() {
               className="w-[24px] h-[24px] absolute bottom-5 right-5"
             />
           </div>
-          <div className="w-[400px] h-[300px] bg-gray-100 p-[20px] rounded-3xl relative">
+          <div className="w-[400px] h-[300px] bg-page-background p-[20px] rounded-3xl relative shadow-md">
             <img
               src={stampIcon}
               alt="도장아이콘"

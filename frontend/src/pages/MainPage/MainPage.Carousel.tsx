@@ -14,6 +14,8 @@ type TicketData = {
   posterImg: string;
   openDate: string;
   startDate: string;
+  runningTime: number;
+  creatorName: string;
 };
 
 const Carousel: React.FC = () => {
@@ -37,6 +39,8 @@ const Carousel: React.FC = () => {
             posterImg: ticket.posterImg,
             openDate: ticket.openDate,
             startDate: ticket.startDate,
+            runningTime: ticket.runningTime,
+            creatorName: ticket.creatorName,
           }))
           .sort(
             (a: TicketData, b: TicketData) =>
@@ -50,6 +54,8 @@ const Carousel: React.FC = () => {
             posterImg: "",
             openDate: "",
             startDate: "",
+            runningTime: "",
+            creatorName: "",
           },
           ...fetchedTickets,
           {
@@ -58,6 +64,8 @@ const Carousel: React.FC = () => {
             posterImg: "",
             openDate: "",
             startDate: "",
+            runningTime: "",
+            creatorName: "",
           },
         ]);
       } catch (err) {
@@ -95,6 +103,8 @@ const Carousel: React.FC = () => {
               event={ticket.title}
               startTime={ticket.startDate}
               isActive={index === currentIndex}
+              runningTime={ticket.runningTime}
+              creatorName={ticket.creatorName}
             />
           ))}
         </div>
