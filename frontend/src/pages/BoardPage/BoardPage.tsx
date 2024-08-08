@@ -97,15 +97,15 @@ const BoardPage: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full flex flex-col items-center pt-[40px] bg-gray-100">
+    <div className="relative w-full flex flex-col items-start bg-gray-100">
       {isOpen && <div className="fixed inset-0 bg-black opacity-50 z-10" />}
       <div
-        className={`w-3/4 flex flex-col items-center bg-board-gradient rounded-3xl ${isOpen ? "relative z-20" : ""}`}
+        className={`w-full h-full flex flex-col items-center bg-board-gradient ${isOpen ? "relative z-20" : ""}`}
       >
         {isOpen && (
           <div className="absolute inset-0 bg-black opacity-50 z-10 rounded-3xl" />
         )}
-        <div className="w-[80%] mt-20 mb-10 relative">
+        <div className="w-[70%] mt-10 mb-10 relative">
           <Content
             handleModal={handleModal}
             handleEdit={handleEdit}

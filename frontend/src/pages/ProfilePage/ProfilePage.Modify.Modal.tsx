@@ -140,8 +140,8 @@ function ModifyModal({
   }, [creatorProfile]);
 
   return (
-    <div className="z-40 w-screen h-screen absolute top-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-      <div className="z-50 w-2/5 h-3/5 bg-white px-8 py-6 flex flex-col justify-between items-center rounded-3xl">
+    <div className="z-40 w-full h-full absolute top bg-gray-600 bg-opacity-50 flex justify-center items-center">
+      <div className="z-50 w-2/5 h-[600px] bg-white px-8 py-6 flex flex-col justify-between items-center rounded-3xl">
         <img
           src={(tempProfileSrc as string) || creatorProfile.creatorImg}
           alt="프로필이미지"
@@ -160,12 +160,18 @@ function ModifyModal({
             className="hidden"
           />
         </label>
+        <span className="w-full items-start text-small text-gray-700 ml-3 mt-10">
+          프로필 소개문
+        </span>
         <TextareaAutosize
           className="w-full max-h-20 border-2 border-[#DED8E1] rounded-xl px-5 py-2.5 auto-rows-auto resize-none focus:outline-none font-Pretendard"
           placeholder="간단한 프로필 소개문을 100자 이내로 작성해 주세요."
           value={description}
           onChange={(e) => changeDescription(e)}
         />
+        <span className="w-full items-start text-small text-gray-700 ml-3 mt-10">
+          크리에이터 채널 링크
+        </span>
         <input
           type="text"
           className="w-full border-2 border-[#DED8E1] rounded-xl px-5 py-2.5 focus:outline-none font-Pretendard"
