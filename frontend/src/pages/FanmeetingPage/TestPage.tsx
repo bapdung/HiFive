@@ -36,9 +36,7 @@ interface ChatMessage {
 }
 
 export default function App() {
-  const [myUserName, setMyUserName] = useState<string>(
-    `Participant${Math.floor(Math.random() * 100)}`,
-  );
+  const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<
@@ -73,8 +71,8 @@ export default function App() {
     }
     try {
       const response = await client(token).get(`api/member`);
-      setIsCreator(response.data.creator);
       setUserId(response.data.memberId);
+      setMyUserName(response.data.nickname);
     } catch (error) {
       console.error(error);
     }
@@ -85,16 +83,26 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  console.log(userId);
+  const fetchFanmeeting = async () => {
+    if (!token || !mySessionId) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/fanmeeting/${mySessionId}`);
+      if (response.data.creatorId === userId) {
+        setIsCreator(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFanmeeting();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, mySessionId]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
-
-  const handleChangeUserName = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMyUserName(e.target.value);
-    },
-    [],
-  );
 
   const deleteSubscriber = useCallback((streamManager: Subscriber) => {
     setSubscribers((prevSubscribers) => {
@@ -431,7 +439,6 @@ export default function App() {
           myUserName={myUserName}
           mySessionId={mySessionId}
           isCreator={isCreator}
-          handleChangeUserName={handleChangeUserName}
           joinSession={joinSession}
         />
       ) : (

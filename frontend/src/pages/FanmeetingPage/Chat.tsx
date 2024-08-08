@@ -25,12 +25,9 @@ const Chat: React.FC<ChatProps> = ({
     <h3>채팅</h3>
     <div id="chat-box">
       {chatMessages.map((msg) => (
-        <div
-          key={msg.id}
-          className="chat-message"
-          style={{ color: userColors[msg.user] }}
-        >
-          <strong>{msg.user}:</strong> {msg.text}
+        <div key={msg.id} className="chat-message">
+          <strong style={{ color: userColors[msg.user] }}>{msg.user}:</strong>{" "}
+          {msg.text}
         </div>
       ))}
     </div>
