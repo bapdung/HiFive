@@ -4,10 +4,12 @@ import {
   Session,
   Subscriber,
   Stream,
+  // Device,
 } from "openvidu-browser";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import UserVideoComponent from "./UserVideoComponent";
+import VideoContainer from "./VideoContainer";
+import JoinForm from "./JoinForm";
 import useAuthStore from "../../store/useAuthStore";
 
 const APPLICATION_SERVER_URL =
@@ -19,7 +21,6 @@ export default function App() {
     `Participant${Math.floor(Math.random() * 100)}`,
   );
   const token = useAuthStore((state) => state.accessToken);
-  // console.log("1 ", token);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<
     Publisher | Subscriber | undefined
@@ -28,6 +29,10 @@ export default function App() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] =
     useState<MediaDeviceInfo | null>(null);
+  const [isCreator, setIsCreator] = useState<boolean>(false);
+  const [fanAudioStatus, setFanAudioStatus] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -45,28 +50,80 @@ export default function App() {
     [],
   );
 
-  const handleMainVideoStream = useCallback(
-    (stream: Publisher | Subscriber) => {
-      if (mainStreamManager !== stream) {
-        setMainStreamManager(stream);
+  // const handleMainVideoStream = useCallback(
+  //   (stream: Publisher | Subscriber) => {
+  //     if (mainStreamManager !== stream) {
+  //       setMainStreamManager(stream);
+  //     }
+  //   },
+  //   [mainStreamManager],
+  // );
+
+  const deleteSubscriber = useCallback((streamManager: Subscriber) => {
+    setSubscribers((prevSubscribers) => {
+      const index = prevSubscribers.indexOf(streamManager);
+      if (index > -1) {
+        const newSubscribers = [...prevSubscribers];
+        newSubscribers.splice(index, 1);
+        return newSubscribers;
       }
-    },
-    [mainStreamManager],
-  );
-  // console.log("2 ", token);
+      return prevSubscribers;
+    });
+  }, []);
+
+  const createSession = async (sessionId: string): Promise<string> => {
+    const response = await axios.post<string>(
+      `${APPLICATION_SERVER_URL}api/sessions`,
+      { customSessionId: sessionId },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  };
+
+  const createToken = async (sessionId: string): Promise<string> => {
+    const response = await axios.post<string>(
+      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  };
+
+  const getToken = useCallback(async () => {
+    if (!token) {
+      return "";
+    }
+    return createSession(mySessionId).then((sessionId) =>
+      createToken(sessionId),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mySessionId, token]);
 
   const joinSession = useCallback(() => {
-    // console.log("3 ", token);
-    // console.log("Join session!!!!");
     const mySession = OV.current.initSession();
 
     mySession.on("streamCreated", (event: { stream: Stream }) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+      if (!isCreator) {
+        setFanAudioStatus((prevStatus) => ({
+          ...prevStatus,
+          [subscriber.stream.connection.connectionId]: false,
+        }));
+      }
     });
 
     mySession.on("streamDestroyed", (event: { stream: Stream }) => {
-      // eslint-disable-next-line no-use-before-define
       deleteSubscriber(event.stream.streamManager as Subscriber);
     });
 
@@ -76,24 +133,20 @@ export default function App() {
     });
 
     setSession(mySession);
-    // console.log(session);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isCreator, deleteSubscriber]);
 
   useEffect(() => {
-    // console.log("4 ", token);
     if (session && token) {
-      // console.log(session);
-      // eslint-disable-next-line no-use-before-define
       getToken().then(async (openviduToken) => {
         try {
-          await session.connect(openviduToken, { clientData: myUserName });
+          await session.connect(openviduToken, {
+            clientData: isCreator ? "creator" : myUserName,
+          });
 
-          // eslint-disable-next-line prefer-const, no-shadow
-          let publisher = await OV.current.initPublisherAsync(undefined, {
+          const newPublisher = await OV.current.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
-            publishAudio: true,
+            publishAudio: isCreator,
             publishVideo: true,
             resolution: "640x480",
             frameRate: 30,
@@ -101,26 +154,25 @@ export default function App() {
             mirror: false,
           });
 
-          session.publish(publisher);
+          session.publish(newPublisher);
 
           const devices = await OV.current.getDevices();
           const videoDevices = devices.filter(
             (device) => device.kind === "videoinput",
-          ) as MediaDeviceInfo[]; // Ensure devices are of type MediaDeviceInfo
+          );
 
-          const currentVideoDeviceId = publisher.stream
+          const currentVideoDeviceId = newPublisher.stream
             .getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
 
-          // eslint-disable-next-line no-shadow
-          const currentVideoDevice = videoDevices.find(
+          const currentVideoInputDevice = videoDevices.find(
             (device) => device.deviceId === currentVideoDeviceId,
-          );
+          ) as MediaDeviceInfo;
 
-          setMainStreamManager(publisher);
-          setPublisher(publisher);
-          setCurrentVideoDevice(currentVideoDevice || null);
+          setMainStreamManager(newPublisher);
+          setPublisher(newPublisher);
+          setCurrentVideoDevice(currentVideoInputDevice || null);
         } catch (error) {
           if (axios.isAxiosError(error)) {
             console.log(
@@ -134,17 +186,13 @@ export default function App() {
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, myUserName]);
+  }, [session, isCreator, myUserName, token, getToken]);
 
   const leaveSession = useCallback(() => {
-    // console.log("5 ", token);
-    // Leave the session
     if (session) {
       session.disconnect();
     }
 
-    // Reset all states and OpenVidu object
     OV.current = new OpenVidu();
     setSession(undefined);
     setSubscribers([]);
@@ -159,16 +207,16 @@ export default function App() {
       const devices = await OV.current.getDevices();
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput",
-      ) as MediaDeviceInfo[]; // Ensure devices are of type MediaDeviceInfo
+      );
 
       if (videoDevices.length > 1) {
-        const newVideoDevice = videoDevices.find(
+        const newVideoInputDevice = videoDevices.find(
           (device) => device.deviceId !== currentVideoDevice?.deviceId,
-        );
+        ) as MediaDeviceInfo;
 
-        if (newVideoDevice) {
+        if (newVideoInputDevice) {
           const newPublisher = OV.current.initPublisher(undefined, {
-            videoSource: newVideoDevice.deviceId,
+            videoSource: newVideoInputDevice.deviceId,
             publishAudio: true,
             publishVideo: true,
             mirror: true,
@@ -177,7 +225,7 @@ export default function App() {
           if (session) {
             await session.unpublish(mainStreamManager as Publisher);
             await session.publish(newPublisher);
-            setCurrentVideoDevice(newVideoDevice);
+            setCurrentVideoDevice(newVideoInputDevice);
             setMainStreamManager(newPublisher);
             setPublisher(newPublisher);
           }
@@ -188,148 +236,41 @@ export default function App() {
     }
   }, [currentVideoDevice, session, mainStreamManager]);
 
-  const deleteSubscriber = useCallback((streamManager: Subscriber) => {
-    setSubscribers((prevSubscribers) => {
-      const index = prevSubscribers.indexOf(streamManager);
-      if (index > -1) {
-        const newSubscribers = [...prevSubscribers];
-        newSubscribers.splice(index, 1);
-        return newSubscribers;
-      }
-      return prevSubscribers;
-    });
-  }, []);
-
-  useEffect(() => {
-    // console.log("6 ", token);
-    const handleBeforeUnload = () => {
-      leaveSession();
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [leaveSession]);
-
-  const createSession = async (sessionId: string): Promise<string> => {
-    // console.log("create");
-    // console.log("7 ", token);
-    const response = await axios.post<string>(
-      `${APPLICATION_SERVER_URL}api/sessions`,
-      { customSessionId: sessionId },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    // console.log(response.data, "세션생성");
-    return response.data;
-  };
-  const createToken = async (sessionId: string): Promise<string> => {
-    const response = await axios.post<string>(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    // console.log(response.data, "토큰생성");
-    return response.data;
-  };
-  // const getToken = useCallback(
-  //   async () => {
-  //     console.log("짠");
-  //     createSession(mySessionId).then((sessionId) => createToken(sessionId));
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [mySessionId],
-  // );
-
-  // eslint-disable-next-line arrow-body-style
-  const getToken = useCallback(async () => {
-    if (!token) {
-      return "";
+  const toggleMyAudio = useCallback(() => {
+    if (publisher) {
+      publisher.publishAudio(!publisher.stream.audioActive);
     }
+  }, [publisher]);
 
-    return createSession(mySessionId).then((sessionId) =>
-      createToken(sessionId),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mySessionId, token]);
+  const toggleMyVideo = useCallback(() => {
+    if (publisher) {
+      publisher.publishVideo(!publisher.stream.videoActive);
+    }
+  }, [publisher]);
 
-  // const getToken = useCallback(async () => {
-  //   // console.log("Dd");
-  //   createSession(mySessionId).then((sessionId) => createToken(sessionId));
-  // }, [mySessionId]);
-
-  // useEffect(() => {
-  //   if (!token) {
-  //     return;
-  //   }
-  //   getToken();
-  // }, [token]);
+  const toggleFanAudio = useCallback((subscriber: Subscriber) => {
+    const streamManager = subscriber.stream.streamManager as Publisher;
+    const newAudioStatus = !streamManager.stream.audioActive;
+    streamManager.publishAudio(newAudioStatus);
+    setFanAudioStatus((prevStatus) => ({
+      ...prevStatus,
+      [subscriber.stream.connection.connectionId]: newAudioStatus,
+    }));
+  }, []);
 
   return (
     <div className="container">
       {session === undefined ? (
-        <div id="join">
-          <div id="img-div">
-            <img
-              src="resources/images/openvidu_grey_bg_transp_cropped.png"
-              alt="OpenVidu logo"
-            />
-          </div>
-          <div id="join-dialog" className="jumbotron vertical-center">
-            <h1> Join a video session </h1>
-            <form
-              className="form-group"
-              onSubmit={(e) => {
-                e.preventDefault();
-                joinSession();
-              }}
-            >
-              <p>
-                <p>Participant: </p>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="userName"
-                  value={myUserName}
-                  onChange={handleChangeUserName}
-                  required
-                />
-              </p>
-              <p>
-                <p> Session: </p>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="sessionId"
-                  value={mySessionId}
-                  onChange={handleChangeSessionId}
-                  required
-                />
-              </p>
-              <p className="text-center">
-                <input
-                  className="btn btn-lg btn-success"
-                  name="commit"
-                  type="submit"
-                  value="JOIN"
-                />
-              </p>
-            </form>
-          </div>
-        </div>
-      ) : null}
-
-      {session !== undefined ? (
+        <JoinForm
+          myUserName={myUserName}
+          mySessionId={mySessionId}
+          isCreator={isCreator}
+          handleChangeUserName={handleChangeUserName}
+          handleChangeSessionId={handleChangeSessionId}
+          setIsCreator={setIsCreator}
+          joinSession={joinSession}
+        />
+      ) : (
         <div id="session">
           <div id="session-header">
             <h1 id="session-title">{mySessionId}</h1>
@@ -340,44 +281,40 @@ export default function App() {
               onClick={leaveSession}
               value="Leave session"
             />
+            {isCreator && (
+              <input
+                className="btn btn-large btn-success"
+                type="button"
+                id="buttonSwitchCamera"
+                onClick={switchCamera}
+                value="Switch Camera"
+              />
+            )}
             <input
-              className="btn btn-large btn-success"
+              className="btn btn-large btn-warning"
               type="button"
-              id="buttonSwitchCamera"
-              onClick={switchCamera}
-              value="Switch Camera"
+              id="buttonToggleAudio"
+              onClick={toggleMyAudio}
+              value="Toggle Audio"
+            />
+            <input
+              className="btn btn-large btn-warning"
+              type="button"
+              id="buttonToggleVideo"
+              onClick={toggleMyVideo}
+              value="Toggle Video"
             />
           </div>
 
-          {mainStreamManager !== undefined ? (
-            <div id="main-video" className="col-md-6">
-              <UserVideoComponent streamManager={mainStreamManager} />
-            </div>
-          ) : null}
-          <div id="video-container" className="col-md-6">
-            {publisher !== undefined ? (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div
-                className="stream-container col-md-6 col-xs-6"
-                onClick={() => handleMainVideoStream(publisher)}
-              >
-                <UserVideoComponent streamManager={publisher} />
-              </div>
-            ) : null}
-            {subscribers.map((sub) => (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div
-                key={sub.id}
-                className="stream-container col-md-6 col-xs-6"
-                onClick={() => handleMainVideoStream(sub)}
-              >
-                <span>{sub.id}</span>
-                <UserVideoComponent streamManager={sub} />
-              </div>
-            ))}
-          </div>
+          <VideoContainer
+            publisher={publisher}
+            subscribers={subscribers}
+            isCreator={isCreator}
+            toggleFanAudio={toggleFanAudio}
+            fanAudioStatus={fanAudioStatus}
+          />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
