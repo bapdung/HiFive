@@ -154,12 +154,13 @@ function Detail() {
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
       try {
+        console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
         webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
           fanmeetingId,
         );
 
-        console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
+        console.log("연결 완료 api 요청");
 
         const response = await client(token).post<ReservationMemberDto>(
           `/api/reservation/${fanmeetingId}`,
@@ -167,14 +168,6 @@ function Detail() {
 
         const { nickname, email } = response.data;
         setReservationMember({ nickname, email });
-
-        webSocketService.sendMessage(
-          JSON.stringify({
-            event: "reserve",
-            memberId: fanMeetingDetails.memberId,
-            fanMeetingId: fanmeetingId,
-          }),
-        );
       } catch (error) {
         console.error("Error during reservation:", error);
       }
