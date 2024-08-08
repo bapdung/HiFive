@@ -1,7 +1,5 @@
 package com.ssafy.hifive.domain.reservation.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -30,27 +28,25 @@ public class ReservationSchedulerService {
 
 	@Scheduled(fixedRate = 10000)
 	public void checkWaiting() {
-		//List<Long> activeFanmeetingIds = fanmeetingSchedulerService.getActiveFanmeetingIds();
-		//하드코딩
-		List<Long> activeFanmeetingIds = new ArrayList<>();
-		activeFanmeetingIds.add(62L);
-		for (Long fanmeetingId : activeFanmeetingIds) {
-			String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
+		String pattern = "fanmeeting:*:waiting-queue";
+		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
+		if (queueKeys != null) {
+			for (String waitingQueueKey : queueKeys) {
+				String[] parts = waitingQueueKey.split(":");
+				Long fanmeetingId = Long.valueOf(parts[1]);
+				try {
+					Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
+					if (currentWaitingQueueSize > 0) {
+						WebSocketMessage message = new WebSocketMessage(
+							"현재 대기자 수: " + currentWaitingQueueSize,
+							"currentQueueSize");
 
-			try {
-				Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
-
-				if (currentWaitingQueueSize > 0) {
-					WebSocketMessage message = new WebSocketMessage(
-						"현재 대기자 수: " + currentWaitingQueueSize,
-						"currentQueueSize");
-
-					String jsonMessage = objectMapper.writeValueAsString(message);
-					redisPublisher.publish(fanmeetingId, jsonMessage);
+						String jsonMessage = objectMapper.writeValueAsString(message);
+						redisPublisher.publish(fanmeetingId, jsonMessage);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -60,7 +56,7 @@ public class ReservationSchedulerService {
 		String pattern = "fanmeeting:*:paying-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
 		long currentTime = System.currentTimeMillis();
-		long timeout = TimeUnit.MINUTES.toMillis(5);
+		long timeout = TimeUnit.MINUTES.toMillis(1); //나중에 5분으로 다시 수정
 
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
@@ -82,14 +78,14 @@ public class ReservationSchedulerService {
 								reservationQueueService.removeFromPayingQueue(queueKey, memberId);
 								log.info("만료시간인 사람 없애는 스케줄러 발동 {} 이 놈 삭제", memberId);
 							} else {
-								if (count != 0) {
-									String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
-									reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId, waitingQueueKey,
-										queueKey, count);
-								}
 								break;
 							}
 						}
+					}
+					if (count != 0) {
+						String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
+						reservationQueueService.moveFromWaitingToPayingQueue(fanmeetingId, waitingQueueKey,
+							queueKey, count);
 					}
 				}
 			}

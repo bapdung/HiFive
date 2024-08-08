@@ -55,6 +55,7 @@ public class ReservationQueueService {
 
 	public void moveFromWaitingToPayingQueue(Long fanmeetingId, String waitingQueueKey, String payingQueueKey,
 		int count) {
+		log.info("자 payingQueue {}명 지웠으니 waiting-queue에서 옮겨주자", count);
 		Set<Object> members = redisTemplateForObject.opsForZSet().range(waitingQueueKey, 0, count - 1);
 		if (members != null) {
 			for (Object memberId : members) {
