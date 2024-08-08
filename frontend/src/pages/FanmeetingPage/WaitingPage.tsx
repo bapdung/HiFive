@@ -5,7 +5,7 @@ const WaitingPage: React.FC = () => {
   return (
     <div className="bg-white flex flex-col justify-center items-center w-full relative">
       <img src={BackGround} alt="background-img" className="w-full" />
-      <div></div>
+      <div>대기</div>
       <p className="absolute">{message}</p>
     </div>
   );
