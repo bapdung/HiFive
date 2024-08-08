@@ -79,9 +79,11 @@ public class ReservationService {
 		String queueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		if (reservationValidService.addToPayingQueueIsValid(payingQueueKey)) {
+			log.info("현재 payingQueue 인원이 0명입니다. waitingQueue에 추가됩니다.");
 			reservationQueueService.addToPayingQueue(payingQueueKey, memberId, fanmeetingId);
 		} else {
 			reservationQueueService.addToWaitingQueue(queueKey, memberId);
+			log.info("현재 payingQueue 인원이 1명으로 꽉차있습니다. waitingQueue에 추가됩니다.");
 		}
 	}
 }
