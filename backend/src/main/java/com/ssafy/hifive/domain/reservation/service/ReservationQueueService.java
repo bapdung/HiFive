@@ -37,6 +37,7 @@ public class ReservationQueueService {
 		log.info("{} 이 사람을 {}에 추가합니다.", memberId, queueKey);
 		redisTemplateForObject.opsForZSet().add(queueKey, memberId.toString(), score);
 		try {
+			log.info(fanmeetingId + " @@@@@@@@@@@@@@@@@@@@" + memberId);
 			reservationWebSocketHandler.sendMessageToSession(fanmeetingId, memberId, "결제창으로 이동합니다.", "moveToPayment");
 			log.info("{}에게 결제창으로 이동하라는 메시지를 날립니다.", memberId);
 		} catch (Exception e) {
