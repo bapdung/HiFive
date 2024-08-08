@@ -152,6 +152,7 @@ const Content: React.FC<ContentProps> = ({
       if (!imageFile) {
         await client(token).patch(`/api/board/${boardId}`, {
           contents: inputValue,
+          boardImg: board?.boardImg,
         });
         await fetchDetail();
       }
