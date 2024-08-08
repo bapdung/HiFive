@@ -100,7 +100,7 @@ export default function App() {
   useEffect(() => {
     fetchFanmeeting();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, mySessionId]);
+  }, [token, mySessionId, userId]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -296,7 +296,6 @@ export default function App() {
     OV.current = new OpenVidu();
     setSession(undefined);
     setSubscribers([]);
-    setMyUserName(`Participant${Math.floor(Math.random() * 100)}`);
     setMainStreamManager(undefined);
     setPublisher(undefined);
   }, [session]);

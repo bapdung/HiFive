@@ -1,7 +1,7 @@
 import { Publisher, Subscriber } from "openvidu-browser";
 import UserVideoComponent from "./UserVideoComponent";
-import MainBackground from "../../assets/Fanmeeting/mainBackground.png";
-import CreatorMainBackground from "../../assets/Fanmeeting/creatorMainBackground.png";
+// import MainBackground from "../../assets/Fanmeeting/mainBackground.png";
+// import CreatorMainBackground from "../../assets/Fanmeeting/creatorMainBackground.png";
 import yellow from "../../assets/Fanmeeting/yellow.png";
 // import micOn from "../../assets/Fanmeeting/micOn.svg";
 // import micOff from "../../assets/Fanmeeting/micOff.svg";
@@ -33,7 +33,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
       {/* 크리에이터가 아닐 때 */}
       {!isCreator && (
         <>
-          <img src={MainBackground} alt="fan-bg" className="w-full z-50" />
+          {/* <img src={MainBackground} alt="fan-bg" className="w-full z-50" /> */}
           {/* 'creator'라는 clientData를 가진 스트림을 찾음 */}
           {creatorSub && (
             <div
@@ -86,11 +86,11 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
       {/* 크리에이터일 때 */}
       {isCreator && (
         <>
-          <img
+          {/* <img
             src={CreatorMainBackground}
             alt="creator-bg"
             className="w-full z-0"
-          />
+          /> */}
           {publisher && (
             <div className="z-60 absolute bottom-5 right-20 max-w-[350px]">
               <UserVideoComponent streamManager={publisher} />
