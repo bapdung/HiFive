@@ -75,9 +75,12 @@ public class ReservationSchedulerService {
 						Double score = member.getScore();
 						if (score != null) {
 							long elapsedTime = currentTime - score.longValue();
+							log.info("elapsedTime: " + elapsedTime);
+							log.info("timeout: " + timeout + " ms");
 							if (elapsedTime > timeout) {
 								count++;
 								reservationQueueService.removeFromPayingQueue(queueKey, memberId);
+								log.info("만료시간인 사람 없애는 스케줄러 발동 {} 이 놈 삭제", memberId);
 							} else {
 								if (count != 0) {
 									String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
