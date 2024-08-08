@@ -120,6 +120,13 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
     handleActivityDay();
   }, [token, creatorId, creatorProfile.createdDate, creatorProfile]);
 
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length > maxLength) {
+      return `${text.slice(0, maxLength)}...`;
+    }
+    return text;
+  };
+
   return (
     <>
       {openModifyModal && (
@@ -218,7 +225,8 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
               onClick={() => window.open(creatorProfile.link, "_blank")}
               type="button"
             >
-              크리에이터 방문하기
+              크리에이터
+              <br /> 채널 방문하기
             </button>
           )}
         </div>
@@ -232,7 +240,7 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
                 {creatorProfile.creatorName}
               </span>
               <p className="text-small text-gray-900">
-                {boardList[0].contents}
+                {truncateText(boardList[0].contents, 30)}
               </p>
             </div>
           )}
@@ -242,7 +250,7 @@ function Profile({ initialCreatorProfile, isMe }: Props) {
                 {creatorProfile.creatorName}
               </span>
               <p className="text-small text-gray-900">
-                {boardList[1].contents}
+                {truncateText(boardList[1].contents, 30)}
               </p>
             </div>
           )}
