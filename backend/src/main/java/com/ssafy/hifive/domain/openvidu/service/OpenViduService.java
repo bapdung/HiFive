@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 public class OpenViduService {
 	private final TimetableRepository timetableRepository;
 
-	public OpenViduTimetableDto getTimetableAll(String fanmeetingId, String sessionId) {
-		List<TimetableResponseDto> timetables = timetableRepository.findByFanmeeting_FanmeetingId(Long.valueOf(fanmeetingId)).stream()
+	public OpenViduTimetableDto getTimetableAll(Long fanmeetingId, String sessionId) {
+		List<TimetableResponseDto> timetables = timetableRepository.findByFanmeeting_FanmeetingId(fanmeetingId).stream()
 			.map(TimetableResponseDto::from)
 			.collect(Collectors.toList());
 		return OpenViduTimetableDto.from(sessionId, timetables);
