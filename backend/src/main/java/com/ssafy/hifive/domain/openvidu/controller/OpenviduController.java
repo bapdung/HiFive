@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.openvidu.dto.request.CustomSessionRequest;
+import com.ssafy.hifive.domain.openvidu.dto.request.SequenceRequest;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResponseDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduStoryDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduQuizService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduService;
+import com.ssafy.hifive.domain.openvidu.service.OpenViduSessionService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduStoryService;
 
 import io.openvidu.java.client.Connection;
@@ -50,23 +54,27 @@ public class OpenviduController {
 	private final OpenViduService openViduService;
 	private final OpenViduStoryService openViduStoryService;
 	private final OpenViduQuizService openViduQuizService;
+	private final OpenViduSessionService openViduSessionService;
 
 	@PostConstruct
 	public void init() {
 		this.openVidu = new OpenVidu(openviduUrl, openviduSecret);
 	}
 
-	@PostMapping(path = "/", produces = "application/json")
+	@PostMapping(path = "/open", produces = "application/json")
 	public ResponseEntity<OpenViduTimetableDto> initializeSession(
-		@RequestBody(required = false) Map<String, Object> params)
+		@RequestBody CustomSessionRequest customSessionRequest)
 		throws OpenViduJavaClientException, OpenViduHttpException {
-		// log.info(String.valueOf(params.get("customSessionId")));
 		SessionProperties properties = new SessionProperties.Builder().customSessionId(
-			String.valueOf(params.get("customSessionId"))).build();
+			customSessionRequest.getCustomSessionId()).build();
 		Session session = openVidu.createSession(properties);
+		//customSessionId는 fanmeetingId고, sessionId는 생성 시 부여 받는 토큰 값)
+		openViduSessionService.saveSession(Long.valueOf(customSessionRequest.getCustomSessionId()),
+			session.getSessionId());
 		return new ResponseEntity<>(
-			openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()),
-			HttpStatus.OK);
+			openViduService.getTimetableAll(Long.valueOf(customSessionRequest.getCustomSessionId()),
+				session.getSessionId()),
+			HttpStatus.CREATED);
 	}
 
 	@PostMapping("/{sessionId}/connections")
@@ -81,11 +89,27 @@ public class OpenviduController {
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
-	//
-	// @PostMapping("/sessions/{sessionId}")
-	// public ReseponseEntity<Void> currentCategory(@PathVariable("sessionId") String sessionId, @PathVariable("sequence") Integer sequence){
-	// 	openViduService
-	// }
+
+	@PostMapping("/{fanmeetingId}")
+	public ResponseEntity<Void> saveCurrentSequence(@PathVariable Long fanmeetingId,
+		@RequestBody SequenceRequest sequenceRequest) {
+		openViduSessionService.saveSequence(fanmeetingId, sequenceRequest.getSequence());
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{sessionId}")
+	public ResponseEntity<String> deleteSession(@PathVariable("sessionId") String sessionId) throws
+		OpenViduJavaClientException,
+		OpenViduHttpException {
+		Session session = openVidu.getActiveSession(sessionId);
+		if (session == null)
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		for (Connection conn : session.getConnections()) {
+			session.forceDisconnect(conn);
+		}
+		return new ResponseEntity<>("Session deleted", HttpStatus.OK);
+	}
 
 	@PostMapping("/story/{fanmeetingId}")
 	public ResponseEntity<Void> getStories(@PathVariable(name = "fanmeetingId") long fanmeetingId,
@@ -104,5 +128,7 @@ public class OpenviduController {
 	public ResponseEntity<List<OpenViduQuizResponseDto>> getQuizzes(@PathVariable long fanmeetingId) {
 		List<OpenViduQuizResponseDto> quizzes = openViduQuizService.getQuizzesByFanmeetingId(fanmeetingId);
 		return ResponseEntity.ok(quizzes);
+
 	}
+
 }

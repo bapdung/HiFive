@@ -16,7 +16,7 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -35,7 +35,7 @@ interface ChatMessage {
   text: string;
 }
 
-export default function App() {
+export default function Main() {
   const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
   const [session, setSession] = useState<Session | undefined>(undefined);
