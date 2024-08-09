@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/icons/logo/gray-logo.png";
 
 function Footer() {
+  const navigate = useNavigate();
+
   return (
     <div className="z-30 bg-gray-500 w-full h-36 text-small flex justify-center items-center">
       <div className="w-[1406px] flex justify-between">
@@ -25,7 +28,13 @@ function Footer() {
           <span className="text-gray-300">
             크리에이터 이신가요? 여기서 등록하세요
           </span>
-          <span className="text-white">크리에이터 등록하기</span>
+          <span
+            className="text-white hover:cursor-pointer"
+            onClick={() => navigate("/partner")}
+            role="presentation"
+          >
+            크리에이터 등록하기
+          </span>
         </div>
       </div>
     </div>

@@ -76,12 +76,17 @@ function Navbar() {
             <div
               className="text-primary-text text-medium font-semibold m-10 hover:cursor-pointer"
               onClick={kakaoLogin}
-              onKeyDown={kakaoLogin}
               role="presentation"
             >
               로그인
             </div>
-            <div className="btn-lg hover:cursor-pointer">회원가입</div>
+            <div
+              className="btn-lg hover:cursor-pointer"
+              onClick={kakaoLogin}
+              role="presentation"
+            >
+              회원가입
+            </div>
           </>
         )}
       </div>
