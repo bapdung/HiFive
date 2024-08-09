@@ -118,7 +118,7 @@ export default function Main() {
 
   const createSession = async (sessionId: string): Promise<string> => {
     const response = await axios.post<ResponseData>(
-      `${APPLICATION_SERVER_URL}api/sessions`,
+      `${APPLICATION_SERVER_URL}api/sessions/open`,
       { customSessionId: sessionId },
       {
         headers: {
