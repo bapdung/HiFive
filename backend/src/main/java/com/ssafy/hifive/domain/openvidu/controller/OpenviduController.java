@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,12 +47,16 @@ public class OpenviduController {
 	}
 
 	@PostMapping(path = "/sessions", produces = "application/json")
-	public ResponseEntity<OpenViduTimetableDto> initializeSession(@RequestBody(required = false) Map<String, Object> params)
+	public ResponseEntity<OpenViduTimetableDto> initializeSession(
+		@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
 		// log.info(String.valueOf(params.get("customSessionId")));
-		SessionProperties properties = new SessionProperties.Builder().customSessionId(String.valueOf(params.get("customSessionId"))).build();
+		SessionProperties properties = new SessionProperties.Builder().customSessionId(
+			String.valueOf(params.get("customSessionId"))).build();
 		Session session = openVidu.createSession(properties);
-		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()), HttpStatus.OK);
+		return new ResponseEntity<>(
+			openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()),
+			HttpStatus.OK);
 	}
 
 	@PostMapping("/sessions/{sessionId}/connections")
@@ -66,11 +71,25 @@ public class OpenviduController {
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
+
+	@DeleteMapping("/sessions/{sessionId}")
+	public ResponseEntity<String> deleteSession(@PathVariable("sessionId") String sessionId) throws
+		OpenViduJavaClientException,
+		OpenViduHttpException {
+		Session session = openVidu.getActiveSession(sessionId);
+		if (session == null)
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		for (Connection conn : session.getConnections()) {
+			session.forceDisconnect(conn);
+		}
+		return new ResponseEntity<>("Session deleted", HttpStatus.OK);
+	}
+
 	//
 	// @PostMapping("/sessions/{sessionId}")
 	// public ReseponseEntity<Void> currentCategory(@PathVariable("sessionId") String sessionId, @PathVariable("sequence") Integer sequence){
 	// 	openViduService
 	// }
-
 
 }
