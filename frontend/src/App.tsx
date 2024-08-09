@@ -99,7 +99,7 @@ function App() {
           <Route path="/partner" element={<JoinCreator />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/test" element={<Test />} />
+          <Route path="/meet-up/:fanmeetingId" element={<Test />} />
           <Route path="/wait" element={<FanmeetingWaiting />} />
         </Routes>
       </main>
