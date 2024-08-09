@@ -74,8 +74,9 @@ public class BoardService {
 
 		if (!member.isCreator() || board.getCreator().getMemberId() != member.getMemberId())
 			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
-
-		board.updateBoard(boardRequestDto.getContents(), boardRequestDto.getBoardImg());
+		
+		board.updateBoard(boardRequestDto.getContents() == null ? board.getContents() : boardRequestDto.getContents(),
+			boardRequestDto.getBoardImg() == null ? board.getBoardImg() : boardRequestDto.getBoardImg());
 	}
 
 	@Transactional
