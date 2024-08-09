@@ -119,8 +119,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 		configuration.setAllowedOrigins(Arrays.asList(
 			"http://i11a107.p.ssafy.io",
 			"https://i11a107.p.ssafy.io",
-			"http://i11a107.p.ssafy.io:8080",
-			"http://i11a107.p.ssafy.io:8080",
+			"http://i11a107.p.ssafy.io:5442",
 			"http://localhost:8080",
 			"http://localhost:3000"));
 		// configuration.addAllowedOriginPattern("*");
