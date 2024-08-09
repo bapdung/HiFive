@@ -66,8 +66,7 @@ public class CreatorController {
 			schema = @Schema(implementation = ErrorResponse.class),
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}")))
 	@GetMapping(path = "/main", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<CreatorOverviewDto>> getCreatorMain(
-		@AuthenticationPrincipal Member member) {
+	public ResponseEntity<List<CreatorOverviewDto>> getCreatorMain() {
 		return ResponseEntity.ok(creatorService.getTopCreators());
 	}
 

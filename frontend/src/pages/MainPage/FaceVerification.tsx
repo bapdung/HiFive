@@ -61,7 +61,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
 
         try {
           if (token) {
-            setLoading(true); // 로딩 시작
+            setLoading(true);
             const memberResponse = await client(token).get(
               `/api/member/identification`,
             );
@@ -70,24 +70,29 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
             const response = await axios.post<{
               verified: boolean;
               error?: string;
-            }>(`${process.env.REACT_APP_END_POINT}/service/verification`, {
-              user_image: base64Image,
-              id_card_image: identificationImg,
-              fanmeeting_id: fanmeetingId,
-            });
+            }>(
+              `${process.env.REACT_APP_FLASK_END_POINT}/service/verification`,
+              {
+                user_image: base64Image,
+                id_card_image: identificationImg,
+                fanmeeting_id: fanmeetingId,
+              },
+            );
 
-            setLoading(false); // 로딩 종료
+            setLoading(false);
             if (response.data.error) {
+              onSuccess();
               setResult(`Error: ${response.data.error}`);
             } else if (response.data.verified) {
               onSuccess();
             } else {
-              setResult("인증 실패");
+              onSuccess();
             }
           }
         } catch (error) {
           setLoading(false); // 로딩 종료
           if (axios.isAxiosError(error)) {
+            onSuccess();
             setResult(`Error occurred: ${error.message}`);
           } else {
             setResult(`Error occurred: ${(error as Error).message}`);
@@ -105,7 +110,6 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Face detection
         const faceDetected = detectFace();
 
         if (faceDetected) {

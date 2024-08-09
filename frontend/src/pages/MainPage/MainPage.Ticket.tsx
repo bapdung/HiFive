@@ -13,6 +13,8 @@ interface TicketProps {
   event: string;
   startTime: string;
   isActive: boolean;
+  runningTime: number;
+  creatorName: string;
 }
 
 const formatDate = (dateString: string) => {
@@ -40,6 +42,8 @@ const Ticket: React.FC<TicketProps> = ({
   event,
   startTime,
   isActive,
+  runningTime,
+  creatorName,
 }) => {
   const navigate = useNavigate();
   const [verifying, setVerifying] = useState(false);
@@ -83,7 +87,7 @@ const Ticket: React.FC<TicketProps> = ({
         <img
           src={poster || defaultPoster}
           alt="poster"
-          className="rounded-xl w-[320px] h-[460px]"
+          className="rounded-xl w-[320px] h-[460px] hover:cursor-pointer"
           onClick={() => navigate(`/ticket/${fanmeetingId}`)}
           role="presentation"
         />
@@ -97,17 +101,23 @@ const Ticket: React.FC<TicketProps> = ({
               {event}
             </span>
           </div>
-          <div className="flex flex-start flex-col justify-start ml-8 w-full">
+          <div className="flex flex-start flex-col justify-start mb-5 ml-8 w-full">
+            <span className="text-medium text-gray-500 font-bold">CREATOR</span>
+            <span className="text-large text-gray-900 font-bold w-full">
+              {creatorName}
+            </span>
+          </div>
+          <div className="flex flex-start flex-col justify-start mb-5 ml-8 w-full">
             <span className="text-medium text-gray-500 font-bold">
-              START TIME
+              START TIME (Est.)
             </span>
             <span className="text-large text-gray-900 font-bold w-full">
-              {formatDate(startTime)}
+              {formatDate(startTime)} ({runningTime}분)
             </span>
           </div>
         </div>
         <div
-          className={`btn-lg absolute bottom-12 w-[80%] text-center ${canEnter ? "" : "bg-gray-200"}`}
+          className={`btn-lg absolute bottom-12 w-[80%] text-center ${canEnter ? "hover:cursor-pointer" : "bg-gray-200"}`}
           onClick={handleEnterClick}
           role="presentation"
         >

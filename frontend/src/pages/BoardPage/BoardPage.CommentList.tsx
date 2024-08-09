@@ -32,6 +32,7 @@ const CommentList: React.FC<CommentListProps> = ({
   const [top, setTop] = useState<number | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchSignal, setFetchSignal] = useState(false);
+  const [userProfileImg, setUserProfileImg] = useState<string>("");
 
   const handleFetchSignal = () => {
     setFetchSignal(!fetchSignal);
@@ -91,6 +92,7 @@ const CommentList: React.FC<CommentListProps> = ({
       const response = await client(token).get(`/api/member`);
       // console.log("Fetched user:", response.data);
       setUserNickName(response.data.nickname);
+      setUserProfileImg(response.data.profileImg);
     } catch (error) {
       // console.error("Error fetching user:", error);
     }
@@ -139,7 +141,10 @@ const CommentList: React.FC<CommentListProps> = ({
   return (
     <div className="my-12 px-10">
       <p className="text-h5 my-6">댓글</p>
-      <CommentForm handleFetchSignal={handleFetchSignal} />
+      <CommentForm
+        handleFetchSignal={handleFetchSignal}
+        userProfileImg={userProfileImg}
+      />
       {comments.map((comment) => (
         <CommentItem
           key={comment.commentId}

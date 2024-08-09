@@ -90,8 +90,8 @@ public enum ErrorCode {
 	 * WebSocket
 	 */
 	WEBSOCKET_CONNECTION_ERROR(INTERNAL_SERVER_ERROR, "WEBSOCKET-001", "웹소켓 연결 오류가 발생했습니다."),
-	WEBSOCKET_MESSAGE_SEND_ERROR(INTERNAL_SERVER_ERROR, "WEBSOCKET-002", "웹소켓 메시지 전송 오류가 발생했습니다.");
-
+	WEBSOCKET_MESSAGE_SEND_ERROR(INTERNAL_SERVER_ERROR, "WEBSOCKET-002", "웹소켓 메시지 전송 오류가 발생했습니다."),
+	WEBSOCKET_NO_SESSION(INTERNAL_SERVER_ERROR, "WEBSOCKET-003", "연결 실패");
 
 	private final HttpStatus httpStatus;
 	private final String code;
