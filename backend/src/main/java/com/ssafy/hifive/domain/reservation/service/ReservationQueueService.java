@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReservationQueueService {
 	private final RedisTemplate<String, Object> redisTemplateForObject;
-	private final RedisTemplate<String, Integer> redisTemplateForInteger;
 	private final ReservationWebSocketHandler reservationWebSocketHandler;
 
 	public void addToWaitingQueue(String queueKey, Long memberId) {
@@ -34,11 +33,12 @@ public class ReservationQueueService {
 
 	public void addToPayingQueue(String queueKey, Long memberId, Long fanmeetingId) {
 		long score = System.currentTimeMillis();
-		log.info("{} 이 사람을 {}에 추가합니다.", memberId, queueKey);
+		// log.info("{} 이 사람을 {}에 추가합니다.", memberId, queueKey);
 		redisTemplateForObject.opsForZSet().add(queueKey, memberId.toString(), score);
 		try {
+			// log.info(fanmeetingId + " @@@@@@@@@@@@@@@@@@@@" + memberId);
 			reservationWebSocketHandler.sendMessageToSession(fanmeetingId, memberId, "결제창으로 이동합니다.", "moveToPayment");
-			log.info("{}에게 결제창으로 이동하라는 메시지를 날립니다.", memberId);
+			// log.info("{}에게 결제창으로 이동하라는 메시지를 날립니다.", memberId);
 		} catch (Exception e) {
 			throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 		}
@@ -55,6 +55,7 @@ public class ReservationQueueService {
 
 	public void moveFromWaitingToPayingQueue(Long fanmeetingId, String waitingQueueKey, String payingQueueKey,
 		int count) {
+		// log.info("자 payingQueue {}명 지웠으니 waiting-queue에서 옮겨주자", count);
 		Set<Object> members = redisTemplateForObject.opsForZSet().range(waitingQueueKey, 0, count - 1);
 		if (members != null) {
 			for (Object memberId : members) {

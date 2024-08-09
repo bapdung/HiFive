@@ -58,6 +58,8 @@ function Detail() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailureModal, setShowFailureModal] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 오류 메시지 상태 추가
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.accessToken);
 
@@ -154,12 +156,13 @@ function Detail() {
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
       try {
+        console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
         webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
           fanmeetingId,
         );
 
-        console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
+        setIsButtonDisabled(true);
 
         const response = await client(token).post<ReservationMemberDto>(
           `/api/reservation/${fanmeetingId}`,
@@ -167,16 +170,13 @@ function Detail() {
 
         const { nickname, email } = response.data;
         setReservationMember({ nickname, email });
-
-        webSocketService.sendMessage(
-          JSON.stringify({
-            event: "reserve",
-            memberId: fanMeetingDetails.memberId,
-            fanMeetingId: fanmeetingId,
-          }),
-        );
       } catch (error) {
         console.error("Error during reservation:", error);
+        setErrorMessage(
+          "현재 접속자가 많아 오류가 발생했습니다. 다시 시도 부탁드립니다.",
+        );
+        setShowFailureModal(true);
+        setIsButtonDisabled(false);
       }
     }
   }
@@ -247,6 +247,7 @@ function Detail() {
         type="button"
         className="btn-lg w-full mt-5"
         onClick={toggleReserved}
+        disabled={isButtonDisabled}
       >
         예매하기
       </button>
@@ -286,7 +287,13 @@ function Detail() {
       )}
       {showFailureModal && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-          <FailureModal onClose={() => setShowFailureModal(false)} />
+          <FailureModal
+            onClose={() => setShowFailureModal(false)}
+            message={
+              errorMessage ||
+              "현재 접속자가 많아 오류가 발생했습니다. 다시 시도 부탁드립니다."
+            }
+          />
         </div>
       )}
       <div className="w-[60%] bg-white rounded-[25px] p-10">

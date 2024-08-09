@@ -7,11 +7,24 @@ import {
 } from "openvidu-browser";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import UserVideoComponent from "./UserVideoComponent";
+import VideoContainer from "./VideoContainer";
+import JoinForm from "./JoinForm";
 import useAuthStore from "../../store/useAuthStore";
+import client from "../../client";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+
+interface Timetable {
+  categoryName: string;
+  sequence: number;
+  detail: string;
+}
+
+interface ResponseData {
+  sessionId: string;
+  timetables: Timetable[];
+}
 
 export default function App() {
   const [mySessionId, setMySessionId] = useState<string>("SessionA");
@@ -19,7 +32,6 @@ export default function App() {
     `Participant${Math.floor(Math.random() * 100)}`,
   );
   const token = useAuthStore((state) => state.accessToken);
-  // console.log("1 ", token);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<
     Publisher | Subscriber | undefined
@@ -28,6 +40,33 @@ export default function App() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] =
     useState<MediaDeviceInfo | null>(null);
+  const [isCreator, setIsCreator] = useState<boolean | undefined>();
+  const [fanAudioStatus, setFanAudioStatus] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
+    null,
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [timetables, setTimetables] = useState<Timetable[]>([]);
+
+  // 유저 정보 불러오기
+  const fetchUser = async () => {
+    if (!token) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/member`);
+      setIsCreator(response.data.creator);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -45,28 +84,74 @@ export default function App() {
     [],
   );
 
-  const handleMainVideoStream = useCallback(
-    (stream: Publisher | Subscriber) => {
-      if (mainStreamManager !== stream) {
-        setMainStreamManager(stream);
+  const deleteSubscriber = useCallback((streamManager: Subscriber) => {
+    setSubscribers((prevSubscribers) => {
+      const index = prevSubscribers.indexOf(streamManager);
+      if (index > -1) {
+        const newSubscribers = [...prevSubscribers];
+        newSubscribers.splice(index, 1);
+        return newSubscribers;
       }
-    },
-    [mainStreamManager],
-  );
-  // console.log("2 ", token);
+      return prevSubscribers;
+    });
+  }, []);
+
+  // 세션 아이디는 팬미팅 아이디로 보내줘야함
+  const createSession = async (sessionId: string): Promise<string> => {
+    const response = await axios.post<ResponseData>(
+      `${APPLICATION_SERVER_URL}api/sessions`,
+      { customSessionId: sessionId },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    setTimetables(response.data.timetables);
+    return response.data.sessionId;
+  };
+
+  const createToken = async (sessionId: string): Promise<string> => {
+    const response = await axios.post<string>(
+      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  };
+
+  const getToken = useCallback(async () => {
+    if (!token) {
+      return "";
+    }
+    return createSession(mySessionId).then((sessionId) =>
+      createToken(sessionId),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mySessionId, token]);
 
   const joinSession = useCallback(() => {
-    // console.log("3 ", token);
-    // console.log("Join session!!!!");
     const mySession = OV.current.initSession();
 
     mySession.on("streamCreated", (event: { stream: Stream }) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+      if (!isCreator) {
+        setFanAudioStatus((prevStatus) => ({
+          ...prevStatus,
+          [subscriber.stream.connection.connectionId]:
+            subscriber.stream.audioActive,
+        }));
+      }
     });
 
     mySession.on("streamDestroyed", (event: { stream: Stream }) => {
-      // eslint-disable-next-line no-use-before-define
       deleteSubscriber(event.stream.streamManager as Subscriber);
     });
 
@@ -75,25 +160,38 @@ export default function App() {
       console.warn(exception);
     });
 
+    mySession.on("signal:audioStatus", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setFanAudioStatus((prevStatus) => ({
+          ...prevStatus,
+          [data.connectionId]: data.audioActive,
+        }));
+      }
+    });
+
+    mySession.on("signal:focus", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setFocusedSubscriber(data.focusedSubscriber);
+      }
+    });
+
     setSession(mySession);
-    // console.log(session);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isCreator, deleteSubscriber]);
 
   useEffect(() => {
-    // console.log("4 ", token);
     if (session && token) {
-      // console.log(session);
-      // eslint-disable-next-line no-use-before-define
       getToken().then(async (openviduToken) => {
         try {
-          await session.connect(openviduToken, { clientData: myUserName });
+          await session.connect(openviduToken, {
+            clientData: isCreator ? "creator" : myUserName,
+          });
 
-          // eslint-disable-next-line prefer-const, no-shadow
-          let publisher = await OV.current.initPublisherAsync(undefined, {
+          const newPublisher = await OV.current.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
-            publishAudio: true,
+            publishAudio: isCreator,
             publishVideo: true,
             resolution: "640x480",
             frameRate: 30,
@@ -101,26 +199,30 @@ export default function App() {
             mirror: false,
           });
 
-          session.publish(publisher);
+          session.publish(newPublisher);
 
           const devices = await OV.current.getDevices();
           const videoDevices = devices.filter(
             (device) => device.kind === "videoinput",
-          ) as MediaDeviceInfo[]; // Ensure devices are of type MediaDeviceInfo
+          );
 
-          const currentVideoDeviceId = publisher.stream
+          const currentVideoDeviceId = newPublisher.stream
             .getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
 
-          // eslint-disable-next-line no-shadow
-          const currentVideoDevice = videoDevices.find(
+          const currentVideoInputDevice = videoDevices.find(
             (device) => device.deviceId === currentVideoDeviceId,
-          );
+          ) as MediaDeviceInfo;
 
-          setMainStreamManager(publisher);
-          setPublisher(publisher);
-          setCurrentVideoDevice(currentVideoDevice || null);
+          setMainStreamManager(newPublisher);
+          setPublisher(newPublisher);
+          setCurrentVideoDevice(currentVideoInputDevice || null);
+
+          setFanAudioStatus((prevStatus) => ({
+            ...prevStatus,
+            [session.connection.connectionId]: newPublisher.stream.audioActive,
+          }));
         } catch (error) {
           if (axios.isAxiosError(error)) {
             console.log(
@@ -134,17 +236,13 @@ export default function App() {
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, myUserName]);
+  }, [session, isCreator, myUserName, token, getToken]);
 
   const leaveSession = useCallback(() => {
-    // console.log("5 ", token);
-    // Leave the session
     if (session) {
       session.disconnect();
     }
 
-    // Reset all states and OpenVidu object
     OV.current = new OpenVidu();
     setSession(undefined);
     setSubscribers([]);
@@ -159,16 +257,16 @@ export default function App() {
       const devices = await OV.current.getDevices();
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput",
-      ) as MediaDeviceInfo[]; // Ensure devices are of type MediaDeviceInfo
+      );
 
       if (videoDevices.length > 1) {
-        const newVideoDevice = videoDevices.find(
+        const newVideoInputDevice = videoDevices.find(
           (device) => device.deviceId !== currentVideoDevice?.deviceId,
-        );
+        ) as MediaDeviceInfo;
 
-        if (newVideoDevice) {
+        if (newVideoInputDevice) {
           const newPublisher = OV.current.initPublisher(undefined, {
-            videoSource: newVideoDevice.deviceId,
+            videoSource: newVideoInputDevice.deviceId,
             publishAudio: true,
             publishVideo: true,
             mirror: true,
@@ -177,7 +275,7 @@ export default function App() {
           if (session) {
             await session.unpublish(mainStreamManager as Publisher);
             await session.publish(newPublisher);
-            setCurrentVideoDevice(newVideoDevice);
+            setCurrentVideoDevice(newVideoInputDevice);
             setMainStreamManager(newPublisher);
             setPublisher(newPublisher);
           }
@@ -188,148 +286,88 @@ export default function App() {
     }
   }, [currentVideoDevice, session, mainStreamManager]);
 
-  const deleteSubscriber = useCallback((streamManager: Subscriber) => {
-    setSubscribers((prevSubscribers) => {
-      const index = prevSubscribers.indexOf(streamManager);
-      if (index > -1) {
-        const newSubscribers = [...prevSubscribers];
-        newSubscribers.splice(index, 1);
-        return newSubscribers;
-      }
-      return prevSubscribers;
-    });
-  }, []);
-
-  useEffect(() => {
-    // console.log("6 ", token);
-    const handleBeforeUnload = () => {
-      leaveSession();
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [leaveSession]);
-
-  const createSession = async (sessionId: string): Promise<string> => {
-    // console.log("create");
-    // console.log("7 ", token);
-    const response = await axios.post<string>(
-      `${APPLICATION_SERVER_URL}api/sessions`,
-      { customSessionId: sessionId },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    // console.log(response.data, "세션생성");
-    return response.data;
-  };
-  const createToken = async (sessionId: string): Promise<string> => {
-    const response = await axios.post<string>(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    // console.log(response.data, "토큰생성");
-    return response.data;
-  };
-  // const getToken = useCallback(
-  //   async () => {
-  //     console.log("짠");
-  //     createSession(mySessionId).then((sessionId) => createToken(sessionId));
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [mySessionId],
-  // );
-
-  // eslint-disable-next-line arrow-body-style
-  const getToken = useCallback(async () => {
-    if (!token) {
-      return "";
+  const toggleMyAudio = useCallback(() => {
+    if (publisher) {
+      const newAudioStatus = !publisher.stream.audioActive;
+      publisher.publishAudio(newAudioStatus);
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [session?.connection.connectionId || ""]: newAudioStatus,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: session.connection.connectionId,
+          audioActive: newAudioStatus,
+        }),
+        type: "audioStatus",
+      });
     }
+  }, [publisher, session]);
 
-    return createSession(mySessionId).then((sessionId) =>
-      createToken(sessionId),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mySessionId, token]);
+  const toggleMyVideo = useCallback(() => {
+    if (publisher) {
+      publisher.publishVideo(!publisher.stream.videoActive);
+    }
+  }, [publisher]);
 
-  // const getToken = useCallback(async () => {
-  //   // console.log("Dd");
-  //   createSession(mySessionId).then((sessionId) => createToken(sessionId));
-  // }, [mySessionId]);
+  const toggleFanAudio = useCallback(
+    (subscriber: Subscriber) => {
+      const newAudioStatus = !subscriber.stream.audioActive;
+      // eslint-disable-next-line no-param-reassign
+      subscriber.stream.audioActive = newAudioStatus;
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [subscriber.stream.connection.connectionId]: newAudioStatus,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: subscriber.stream.connection.connectionId,
+          audioActive: newAudioStatus,
+        }),
+        type: "audioStatus",
+      });
+    },
+    [session],
+  );
 
-  // useEffect(() => {
-  //   if (!token) {
-  //     return;
-  //   }
-  //   getToken();
-  // }, [token]);
+  const focusOnSubscriber = useCallback(
+    (subscriber: Subscriber) => {
+      if (focusedSubscriber === subscriber.stream.connection.connectionId) {
+        // 이미 선택된 팬이 다시 선택될 경우 기본 상태로 돌아갑니다.
+        session?.signal({
+          data: JSON.stringify({
+            focusedSubscriber: null,
+          }),
+          type: "focus",
+        });
+      } else {
+        // 팬의 화면을 선택하여 보여줍니다.
+        session?.signal({
+          data: JSON.stringify({
+            focusedSubscriber: subscriber.stream.connection.connectionId,
+          }),
+          type: "focus",
+        });
+      }
+    },
+    [focusedSubscriber, session],
+  );
 
   return (
-    <div className="container">
+    <div className="w-full items-center">
       {session === undefined ? (
-        <div id="join">
-          <div id="img-div">
-            <img
-              src="resources/images/openvidu_grey_bg_transp_cropped.png"
-              alt="OpenVidu logo"
-            />
-          </div>
-          <div id="join-dialog" className="jumbotron vertical-center">
-            <h1> Join a video session </h1>
-            <form
-              className="form-group"
-              onSubmit={(e) => {
-                e.preventDefault();
-                joinSession();
-              }}
-            >
-              <p>
-                <p>Participant: </p>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="userName"
-                  value={myUserName}
-                  onChange={handleChangeUserName}
-                  required
-                />
-              </p>
-              <p>
-                <p> Session: </p>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="sessionId"
-                  value={mySessionId}
-                  onChange={handleChangeSessionId}
-                  required
-                />
-              </p>
-              <p className="text-center">
-                <input
-                  className="btn btn-lg btn-success"
-                  name="commit"
-                  type="submit"
-                  value="JOIN"
-                />
-              </p>
-            </form>
-          </div>
-        </div>
-      ) : null}
-
-      {session !== undefined ? (
+        // Session 이 undefined 일 때 JoinForm 표시 (나중에 대기방화면으로 바꾸면될듯)
+        <JoinForm
+          myUserName={myUserName}
+          mySessionId={mySessionId}
+          isCreator={isCreator}
+          handleChangeUserName={handleChangeUserName}
+          handleChangeSessionId={handleChangeSessionId}
+          // setIsCreator={setIsCreator}
+          joinSession={joinSession}
+        />
+      ) : (
+        // session 이 정의되어 있을 때 비디오 세션 표시
         <div id="session">
           <div id="session-header">
             <h1 id="session-title">{mySessionId}</h1>
@@ -340,44 +378,42 @@ export default function App() {
               onClick={leaveSession}
               value="Leave session"
             />
+            {isCreator && (
+              <input
+                className="btn btn-large btn-success"
+                type="button"
+                id="buttonSwitchCamera"
+                onClick={switchCamera}
+                value="Switch Camera"
+              />
+            )}
             <input
-              className="btn btn-large btn-success"
+              className="btn btn-large btn-warning"
               type="button"
-              id="buttonSwitchCamera"
-              onClick={switchCamera}
-              value="Switch Camera"
+              id="buttonToggleAudio"
+              onClick={toggleMyAudio}
+              value="Toggle Audio"
+            />
+            <input
+              className="btn btn-large btn-warning"
+              type="button"
+              id="buttonToggleVideo"
+              onClick={toggleMyVideo}
+              value="Toggle Video"
             />
           </div>
 
-          {mainStreamManager !== undefined ? (
-            <div id="main-video" className="col-md-6">
-              <UserVideoComponent streamManager={mainStreamManager} />
-            </div>
-          ) : null}
-          <div id="video-container" className="col-md-6">
-            {publisher !== undefined ? (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div
-                className="stream-container col-md-6 col-xs-6"
-                onClick={() => handleMainVideoStream(publisher)}
-              >
-                <UserVideoComponent streamManager={publisher} />
-              </div>
-            ) : null}
-            {subscribers.map((sub) => (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div
-                key={sub.id}
-                className="stream-container col-md-6 col-xs-6"
-                onClick={() => handleMainVideoStream(sub)}
-              >
-                <span>{sub.id}</span>
-                <UserVideoComponent streamManager={sub} />
-              </div>
-            ))}
-          </div>
+          <VideoContainer
+            publisher={publisher}
+            subscribers={subscribers}
+            isCreator={isCreator}
+            toggleFanAudio={toggleFanAudio}
+            fanAudioStatus={fanAudioStatus}
+            focusedSubscriber={focusedSubscriber}
+            focusOnSubscriber={focusOnSubscriber}
+          />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

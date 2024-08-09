@@ -24,6 +24,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 import ErrorPage from "./pages/ErrorPage";
 import Test from "./pages/FanmeetingPage/TestPage";
+import FanmeetingWaiting from "./pages/FanmeetingPage/WaitingPage";
 
 function App() {
   const location = useLocation();
@@ -103,6 +104,7 @@ function App() {
 
           <Route path="*" element={<ErrorPage />} />
           <Route path="/test" element={<Test />} />
+          <Route path="/wait" element={<FanmeetingWaiting />} />
         </Routes>
       </main>
       <Footer />
