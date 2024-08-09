@@ -23,7 +23,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 import ErrorPage from "./pages/ErrorPage";
-import Test from "./pages/FanmeetingPage/TestPage";
+import Test from "./pages/FanmeetingPage/Main";
 import FanmeetingWaiting from "./pages/FanmeetingPage/WaitingPage";
 
 function App() {
