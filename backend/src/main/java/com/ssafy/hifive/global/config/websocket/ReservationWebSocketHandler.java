@@ -48,18 +48,42 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 			sessions.get(fanmeetingId).remove(sessionId);
 			memberSessionMap.get(fanmeetingId).remove(memberId);
 		}
+	}
 
+	public void isSessionValid(Long fanmeetingId, Long memberId){
+		//세션맵 자체가 초기화 되어있을 때
+		if(memberSessionMap.isEmpty()){
+			throw new BadRequestException(ErrorCode.WEBSOCKET_NO_SESSION);
+		}
+		//세션맵에 해당하는 팬미팅이 없을 때
+		if(memberSessionMap.get(fanmeetingId).isEmpty()){
+			throw new BadRequestException(ErrorCode.WEBSOCKET_NO_SESSION);
+		}
+		//sessionId가 없을 때
+		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
+		if(sessionId == null){
+			throw new BadRequestException(ErrorCode.WEBSOCKET_NO_SESSION);
+		}
 	}
 
 	public void sendMessageToSession(Long fanmeetingId, Long memberId, String message, String event) {
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
+
+		// log.info("member 세션아이디{}", sessionId);
+		// log.info("sessions.get(fanmeetingId){}", sessions.get(fanmeetingId));
+		// log.info("memberSessionMap.get(fanmeetingId){}", memberSessionMap.get(fanmeetingId));
 		WebSocketSession session = sessions.get(fanmeetingId).get(sessionId);
+		// log.info("member 세션{}", session.isOpen());
+		// log.info("member 세션{}", session.getUri());
 		if (session != null && session.isOpen()) {
 			try {
 				String jsonMessage = jacksonObjectMapper.writeValueAsString(
 					new WebSocketMessage(message, event));
+				// log.info(jsonMessage.toString());
 				session.sendMessage(new TextMessage(jsonMessage));
 			} catch (Exception e) {
+				// log.info("안보내짐");
+				// log.info(e.getMessage());
 				throw new BadRequestException(ErrorCode.WEBSOCKET_MESSAGE_SEND_ERROR);
 			}
 		} else {

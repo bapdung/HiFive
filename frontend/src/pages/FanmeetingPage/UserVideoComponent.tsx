@@ -2,7 +2,7 @@ import OpenViduVideoComponent from "./OvVideo";
 
 interface UserVideoComponentProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  streamManager: any; // Replace 'any' with the appropriate type if known
+  streamManager: any; // 비디오 스트림을 관리하는 객체
 }
 
 const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
@@ -17,7 +17,9 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
         <div className="streamcomponent">
           <OpenViduVideoComponent streamManager={streamManager} />
           <div>
-            <p>{getNicknameTag()}</p>
+            <p className="text-center text-gray-900 text-small m-1">
+              {getNicknameTag() === "creator" ? null : getNicknameTag()}
+            </p>
           </div>
         </div>
       ) : null}
