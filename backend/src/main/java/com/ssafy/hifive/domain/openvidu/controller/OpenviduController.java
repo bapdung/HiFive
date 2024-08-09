@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduService;
+import com.ssafy.hifive.domain.openvidu.service.OpenViduSessionService;
 
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.ConnectionProperties;
@@ -39,6 +40,7 @@ public class OpenviduController {
 	private OpenVidu openVidu;
 
 	private final OpenViduService openViduService;
+	private final OpenViduSessionService openViduSessionService;
 
 	@PostConstruct
 	public void init() {
@@ -48,9 +50,13 @@ public class OpenviduController {
 	@PostMapping(path = "/sessions", produces = "application/json")
 	public ResponseEntity<OpenViduTimetableDto> initializeSession(@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
-		// log.info(String.valueOf(params.get("customSessionId")));
+		// SessionProperties properties = SessionProperties.fromJson(params).build();
+		// Session session = openVidu.createSession(properties);
+		// System.out.println(session.getSessionId());
 		SessionProperties properties = new SessionProperties.Builder().customSessionId(String.valueOf(params.get("customSessionId"))).build();
 		Session session = openVidu.createSession(properties);
+		//customSessionId는 fanmeetingId고, sessionId는 생성 시 부여 받는 토큰 값)
+		openViduSessionService.saveSession(String.valueOf(params.get("customSessionId")), session.getSessionId());
 		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()), HttpStatus.OK);
 	}
 
@@ -66,11 +72,5 @@ public class OpenviduController {
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
-	//
-	// @PostMapping("/sessions/{sessionId}")
-	// public ReseponseEntity<Void> currentCategory(@PathVariable("sessionId") String sessionId, @PathVariable("sequence") Integer sequence){
-	// 	openViduService
-	// }
-
 
 }
