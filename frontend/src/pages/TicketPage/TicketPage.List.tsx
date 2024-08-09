@@ -73,16 +73,20 @@ function MeetingList() {
 
   return (
     <div className="flex flex-col items-center my-10 mx-20">
-      <span className="text-h4 text-gray-900 font-bold">팬미팅 둘러보기</span>
-      <span className="text-small text-gray-600 mt-2">
-        종료된 팬미팅은 크리에이터 프로필에서 확인하세요!
+      <span className="text-h4 text-gray-900 font-bold mb-2">
+        팬미팅 둘러보기
       </span>
-      <div
-        className="text-primary-text text-small font-bold"
-        onClick={() => navigate("/creator/list")}
-        role="presentation"
-      >
-        크리에이터 프로필 둘러보기 &rarr;
+      <div className="px-8 py-2 flex flex-col bg-page-background justify-center items-center  rounded-full">
+        <span className="text-small text-gray-600">
+          종료된 팬미팅은 크리에이터 프로필에서 확인하세요!
+        </span>
+        <div
+          className="text-primary-text text-small font-bold hover:cursor-pointer"
+          onClick={() => navigate("/creator/list")}
+          role="presentation"
+        >
+          크리에이터 리스트 둘러보기 &rarr;
+        </div>
       </div>
       <div className="flex relative items-center">
         <input
@@ -103,7 +107,7 @@ function MeetingList() {
         {fanMeetings.map((meeting) => (
           <div
             key={meeting.fanmeetingId}
-            className="flex flex-col p-4 items-center"
+            className="flex flex-col p-4 items-center hover:cursor-pointer"
             onClick={() => navigate(`/ticket/${meeting.fanmeetingId}`)}
             role="presentation"
           >
