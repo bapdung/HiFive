@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
+import com.ssafy.hifive.domain.openvidu.service.OpenViduService;
+
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.ConnectionProperties;
 import io.openvidu.java.client.OpenVidu;
@@ -19,10 +22,12 @@ import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class OpenviduController {
 	@Value("${openvidu.url}")
@@ -33,21 +38,20 @@ public class OpenviduController {
 
 	private OpenVidu openVidu;
 
+	private final OpenViduService openViduService;
+
 	@PostConstruct
 	public void init() {
 		this.openVidu = new OpenVidu(openviduUrl, openviduSecret);
 	}
 
-	@PostMapping("/sessions")
-	public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
+	@PostMapping(path = "/sessions", produces = "application/json")
+	public ResponseEntity<OpenViduTimetableDto> initializeSession(@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
-		SessionProperties properties = SessionProperties.fromJson(params).build();
-		log.info("0000000000000000000");
+		// log.info(String.valueOf(params.get("customSessionId")));
+		SessionProperties properties = new SessionProperties.Builder().customSessionId(String.valueOf(params.get("customSessionId"))).build();
 		Session session = openVidu.createSession(properties);
-		log.info(session.getSessionId());
-		log.info("0000000000000000000");
-
-		return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
+		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()), HttpStatus.OK);
 	}
 
 	@PostMapping("/sessions/{sessionId}/connections")
@@ -62,4 +66,11 @@ public class OpenviduController {
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
+	//
+	// @PostMapping("/sessions/{sessionId}")
+	// public ReseponseEntity<Void> currentCategory(@PathVariable("sessionId") String sessionId, @PathVariable("sequence") Integer sequence){
+	// 	openViduService
+	// }
+
+
 }

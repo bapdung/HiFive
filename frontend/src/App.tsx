@@ -24,6 +24,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 import ErrorPage from "./pages/ErrorPage";
 import Test from "./pages/FanmeetingPage/TestPage";
+import FanmeetingWaiting from "./pages/FanmeetingPage/WaitingPage";
 
 function App() {
   const location = useLocation();
@@ -95,10 +96,11 @@ function App() {
           </Route>
           <Route path="/main" element={<MainPage />} />
           <Route path="/creator/list" element={<CreatorList />} />
-          <Route path="/parther" element={<JoinCreator />} />
+          <Route path="/partner" element={<JoinCreator />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/test" element={<Test />} />
+          <Route path="/meet-up/:fanmeetingId" element={<Test />} />
+          <Route path="/wait" element={<FanmeetingWaiting />} />
         </Routes>
       </main>
       <Footer />

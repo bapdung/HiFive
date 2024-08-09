@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   OpenVidu,
   Publisher,
@@ -6,20 +8,36 @@ import {
   Stream,
 } from "openvidu-browser";
 import axios from "axios";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import UserVideoComponent from "./UserVideoComponent";
+import { v4 as uuidv4 } from "uuid";
+import VideoContainer from "./VideoContainer";
+import JoinForm from "./JoinForm";
+import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
+import client from "../../client";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
+
+interface Timetable {
+  categoryName: string;
+  sequence: number;
+  detail: string;
+}
+
+interface ResponseData {
+  sessionId: string;
+  timetables: Timetable[];
+}
+
+interface ChatMessage {
+  id: string;
+  user: string;
+  text: string;
+}
 
 export default function App() {
-  const [mySessionId, setMySessionId] = useState<string>("SessionA");
-  const [myUserName, setMyUserName] = useState<string>(
-    `Participant${Math.floor(Math.random() * 100)}`,
-  );
+  const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
-  // console.log("1 ", token);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<
     Publisher | Subscriber | undefined
@@ -28,165 +46,63 @@ export default function App() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] =
     useState<MediaDeviceInfo | null>(null);
-
-  const OV = useRef<OpenVidu>(new OpenVidu());
-
-  const handleChangeSessionId = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMySessionId(e.target.value);
-    },
-    [],
+  const location = useLocation();
+  const mySessionId = location.pathname.split("/")[2];
+  const [isCreator, setIsCreator] = useState<boolean | undefined>();
+  const [fanAudioStatus, setFanAudioStatus] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
+    null,
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [timetables, setTimetables] = useState<Timetable[]>([]);
 
-  const handleChangeUserName = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMyUserName(e.target.value);
-    },
-    [],
-  );
+  // 채팅 관련 상태 추가
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
+  const userColorsRef = useRef<{ [key: string]: string }>({});
+  const [userId, setUserId] = useState<number | undefined>();
 
-  const handleMainVideoStream = useCallback(
-    (stream: Publisher | Subscriber) => {
-      if (mainStreamManager !== stream) {
-        setMainStreamManager(stream);
-      }
-    },
-    [mainStreamManager],
-  );
-  // console.log("2 ", token);
-
-  const joinSession = useCallback(() => {
-    // console.log("3 ", token);
-    // console.log("Join session!!!!");
-    const mySession = OV.current.initSession();
-
-    mySession.on("streamCreated", (event: { stream: Stream }) => {
-      const subscriber = mySession.subscribe(event.stream, undefined);
-      setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
-    });
-
-    mySession.on("streamDestroyed", (event: { stream: Stream }) => {
-      // eslint-disable-next-line no-use-before-define
-      deleteSubscriber(event.stream.streamManager as Subscriber);
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mySession.on("exception", (exception: any) => {
-      console.warn(exception);
-    });
-
-    setSession(mySession);
-    // console.log(session);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // 유저 정보 불러오기
+  const fetchUser = async () => {
+    if (!token) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/member`);
+      setUserId(response.data.memberId);
+      setMyUserName(response.data.nickname);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    // console.log("4 ", token);
-    if (session && token) {
-      // console.log(session);
-      // eslint-disable-next-line no-use-before-define
-      getToken().then(async (openviduToken) => {
-        try {
-          await session.connect(openviduToken, { clientData: myUserName });
-
-          // eslint-disable-next-line prefer-const, no-shadow
-          let publisher = await OV.current.initPublisherAsync(undefined, {
-            audioSource: undefined,
-            videoSource: undefined,
-            publishAudio: true,
-            publishVideo: true,
-            resolution: "640x480",
-            frameRate: 30,
-            insertMode: "APPEND",
-            mirror: false,
-          });
-
-          session.publish(publisher);
-
-          const devices = await OV.current.getDevices();
-          const videoDevices = devices.filter(
-            (device) => device.kind === "videoinput",
-          ) as MediaDeviceInfo[]; // Ensure devices are of type MediaDeviceInfo
-
-          const currentVideoDeviceId = publisher.stream
-            .getMediaStream()
-            .getVideoTracks()[0]
-            .getSettings().deviceId;
-
-          // eslint-disable-next-line no-shadow
-          const currentVideoDevice = videoDevices.find(
-            (device) => device.deviceId === currentVideoDeviceId,
-          );
-
-          setMainStreamManager(publisher);
-          setPublisher(publisher);
-          setCurrentVideoDevice(currentVideoDevice || null);
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            console.log(
-              "There was an error connecting to the session:",
-              error.code,
-              error.message,
-            );
-          } else {
-            console.error("An unexpected error occurred:", error);
-          }
-        }
-      });
-    }
+    fetchUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, myUserName]);
+  }, [token]);
 
-  const leaveSession = useCallback(() => {
-    // console.log("5 ", token);
-    // Leave the session
-    if (session) {
-      session.disconnect();
+  const fetchFanmeeting = async () => {
+    if (!token || !mySessionId) {
+      return;
     }
-
-    // Reset all states and OpenVidu object
-    OV.current = new OpenVidu();
-    setSession(undefined);
-    setSubscribers([]);
-    setMySessionId("SessionA");
-    setMyUserName(`Participant${Math.floor(Math.random() * 100)}`);
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
-  }, [session]);
-
-  const switchCamera = useCallback(async () => {
     try {
-      const devices = await OV.current.getDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput",
-      ) as MediaDeviceInfo[]; // Ensure devices are of type MediaDeviceInfo
-
-      if (videoDevices.length > 1) {
-        const newVideoDevice = videoDevices.find(
-          (device) => device.deviceId !== currentVideoDevice?.deviceId,
-        );
-
-        if (newVideoDevice) {
-          const newPublisher = OV.current.initPublisher(undefined, {
-            videoSource: newVideoDevice.deviceId,
-            publishAudio: true,
-            publishVideo: true,
-            mirror: true,
-          });
-
-          if (session) {
-            await session.unpublish(mainStreamManager as Publisher);
-            await session.publish(newPublisher);
-            setCurrentVideoDevice(newVideoDevice);
-            setMainStreamManager(newPublisher);
-            setPublisher(newPublisher);
-          }
-        }
+      const response = await client(token).get(`api/fanmeeting/${mySessionId}`);
+      if (response.data.creatorId === userId) {
+        setIsCreator(true);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
-  }, [currentVideoDevice, session, mainStreamManager]);
+  };
+
+  useEffect(() => {
+    fetchFanmeeting();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, mySessionId, userId]);
+
+  const OV = useRef<OpenVidu>(new OpenVidu());
 
   const deleteSubscriber = useCallback((streamManager: Subscriber) => {
     setSubscribers((prevSubscribers) => {
@@ -200,22 +116,8 @@ export default function App() {
     });
   }, []);
 
-  useEffect(() => {
-    // console.log("6 ", token);
-    const handleBeforeUnload = () => {
-      leaveSession();
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [leaveSession]);
-
   const createSession = async (sessionId: string): Promise<string> => {
-    // console.log("create");
-    // console.log("7 ", token);
-    const response = await axios.post<string>(
+    const response = await axios.post<ResponseData>(
       `${APPLICATION_SERVER_URL}api/sessions`,
       { customSessionId: sessionId },
       {
@@ -225,9 +127,10 @@ export default function App() {
         },
       },
     );
-    // console.log(response.data, "세션생성");
-    return response.data;
+    setTimetables(response.data.timetables);
+    return response.data.sessionId;
   };
+
   const createToken = async (sessionId: string): Promise<string> => {
     const response = await axios.post<string>(
       `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
@@ -239,97 +142,323 @@ export default function App() {
         },
       },
     );
-    // console.log(response.data, "토큰생성");
     return response.data;
   };
-  // const getToken = useCallback(
-  //   async () => {
-  //     console.log("짠");
-  //     createSession(mySessionId).then((sessionId) => createToken(sessionId));
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [mySessionId],
-  // );
 
-  // eslint-disable-next-line arrow-body-style
   const getToken = useCallback(async () => {
     if (!token) {
       return "";
     }
-
     return createSession(mySessionId).then((sessionId) =>
       createToken(sessionId),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mySessionId, token]);
 
-  // const getToken = useCallback(async () => {
-  //   // console.log("Dd");
-  //   createSession(mySessionId).then((sessionId) => createToken(sessionId));
-  // }, [mySessionId]);
+  const joinSession = useCallback(() => {
+    const mySession = OV.current.initSession();
 
-  // useEffect(() => {
-  //   if (!token) {
-  //     return;
-  //   }
-  //   getToken();
-  // }, [token]);
+    mySession.on("streamCreated", (event: { stream: Stream }) => {
+      const subscriber = mySession.subscribe(event.stream, undefined);
+      setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+      if (!isCreator) {
+        setFanAudioStatus((prevStatus) => ({
+          ...prevStatus,
+          [subscriber.stream.connection.connectionId]:
+            subscriber.stream.audioActive,
+        }));
+      }
+    });
+
+    mySession.on("streamDestroyed", (event: { stream: Stream }) => {
+      deleteSubscriber(event.stream.streamManager as Subscriber);
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mySession.on("exception", (exception: any) => {
+      console.warn(exception);
+    });
+
+    mySession.on("signal:audioStatus", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setFanAudioStatus((prevStatus) => ({
+          ...prevStatus,
+          [data.connectionId]: data.audioActive,
+        }));
+      }
+    });
+
+    mySession.on("signal:focus", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setFocusedSubscriber(data.focusedSubscriber);
+      }
+    });
+
+    // 밝은 색상을 제외하고 색상 생성 함수
+    const generateColor = (): string => {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i += 1) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      // 밝은 색상 제외
+      if (
+        parseInt(color.substring(1, 3), 16) > 200 &&
+        parseInt(color.substring(3, 5), 16) > 200 &&
+        parseInt(color.substring(5, 7), 16) > 200
+      ) {
+        return generateColor();
+      }
+      return color;
+    };
+
+    // 채팅 관련 시그널 처리
+    mySession.on("signal:chat", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setChatMessages((prevMessages) => [...prevMessages, data]);
+
+        if (!userColorsRef.current[data.user]) {
+          userColorsRef.current[data.user] = generateColor();
+        }
+      }
+    });
+
+    setSession(mySession);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mySessionId, isCreator, deleteSubscriber]);
+
+  useEffect(() => {
+    if (session && token) {
+      getToken().then(async (openviduToken) => {
+        try {
+          await session.connect(openviduToken, {
+            clientData: isCreator ? "creator" : myUserName,
+          });
+
+          const newPublisher = await OV.current.initPublisherAsync(undefined, {
+            audioSource: undefined,
+            videoSource: undefined,
+            publishAudio: isCreator,
+            publishVideo: true,
+            resolution: "640x480",
+            frameRate: 30,
+            insertMode: "APPEND",
+            mirror: false,
+          });
+
+          session.publish(newPublisher);
+
+          const devices = await OV.current.getDevices();
+          const videoDevices = devices.filter(
+            (device) => device.kind === "videoinput",
+          );
+
+          const currentVideoDeviceId = newPublisher.stream
+            .getMediaStream()
+            .getVideoTracks()[0]
+            .getSettings().deviceId;
+
+          const currentVideoInputDevice = videoDevices.find(
+            (device) => device.deviceId === currentVideoDeviceId,
+          ) as MediaDeviceInfo;
+
+          setMainStreamManager(newPublisher);
+          setPublisher(newPublisher);
+          setCurrentVideoDevice(currentVideoInputDevice || null);
+
+          setFanAudioStatus((prevStatus) => ({
+            ...prevStatus,
+            [session.connection.connectionId]: newPublisher.stream.audioActive,
+          }));
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            console.log(
+              "There was an error connecting to the session:",
+              error.code,
+              error.message,
+            );
+          } else {
+            console.error("An unexpected error occurred:", error);
+          }
+        }
+      });
+    }
+  }, [session, isCreator, myUserName, token, getToken]);
+
+  const leaveSession = useCallback(() => {
+    if (session) {
+      session.disconnect();
+    }
+
+    OV.current = new OpenVidu();
+    setSession(undefined);
+    setSubscribers([]);
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
+  }, [session]);
+
+  const closeSession = useCallback(() => {
+    if (session) {
+      session
+        .signal({
+          type: "closeSession",
+          data: JSON.stringify({
+            reason: "The session has been closed by the creator.",
+          }),
+        })
+        .then(() => {
+          leaveSession(); // 세션 종료 후 자신도 나가도록 처리
+        })
+        .catch((error) => {
+          console.error("Error sending closeSession signal:", error);
+        });
+    }
+  }, [session, leaveSession]);
+
+  const switchCamera = useCallback(async () => {
+    try {
+      const devices = await OV.current.getDevices();
+      const videoDevices = devices.filter(
+        (device) => device.kind === "videoinput",
+      );
+
+      if (videoDevices.length > 1) {
+        const newVideoInputDevice = videoDevices.find(
+          (device) => device.deviceId !== currentVideoDevice?.deviceId,
+        ) as MediaDeviceInfo;
+
+        if (newVideoInputDevice) {
+          const newPublisher = OV.current.initPublisher(undefined, {
+            videoSource: newVideoInputDevice.deviceId,
+            publishAudio: true,
+            publishVideo: true,
+            mirror: true,
+          });
+
+          if (session) {
+            await session.unpublish(mainStreamManager as Publisher);
+            await session.publish(newPublisher);
+            setCurrentVideoDevice(newVideoInputDevice);
+            setMainStreamManager(newPublisher);
+            setPublisher(newPublisher);
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [currentVideoDevice, session, mainStreamManager]);
+
+  const toggleMyAudio = useCallback(() => {
+    if (publisher) {
+      const newAudioStatus = !publisher.stream.audioActive;
+      publisher.publishAudio(newAudioStatus);
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [session?.connection.connectionId || ""]: newAudioStatus,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: session.connection.connectionId,
+          audioActive: newAudioStatus,
+        }),
+        type: "audioStatus",
+      });
+    }
+  }, [publisher, session]);
+
+  const toggleMyVideo = useCallback(() => {
+    if (publisher) {
+      publisher.publishVideo(!publisher.stream.videoActive);
+    }
+  }, [publisher]);
+
+  const toggleFanAudio = useCallback(
+    (subscriber: Subscriber) => {
+      const newAudioStatus = !subscriber.stream.audioActive;
+
+      // 객체 구조를 복사하여 수정
+      const updatedStream = {
+        ...subscriber.stream,
+        audioActive: newAudioStatus,
+      };
+      const updatedSubscriber = { ...subscriber, stream: updatedStream };
+
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [updatedSubscriber.stream.connection.connectionId]: newAudioStatus,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: updatedSubscriber.stream.connection.connectionId,
+          audioActive: newAudioStatus,
+        }),
+        type: "audioStatus",
+      });
+    },
+    [session],
+  );
+
+  const focusOnSubscriber = useCallback(
+    (subscriber: Subscriber) => {
+      if (focusedSubscriber === subscriber.stream.connection.connectionId) {
+        session?.signal({
+          data: JSON.stringify({
+            focusedSubscriber: null,
+          }),
+          type: "focus",
+        });
+      } else {
+        session?.signal({
+          data: JSON.stringify({
+            focusedSubscriber: subscriber.stream.connection.connectionId,
+          }),
+          type: "focus",
+        });
+      }
+    },
+    [focusedSubscriber, session],
+  );
+
+  const handleChangeMessage = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setNewMessage(e.target.value);
+    },
+    [],
+  );
+
+  const handleSendMessage = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (newMessage.trim() !== "") {
+        const message = {
+          id: uuidv4(),
+          user: myUserName,
+          text: newMessage,
+        };
+        session?.signal({
+          data: JSON.stringify(message),
+          type: "chat",
+        });
+        setNewMessage("");
+      }
+    },
+    [newMessage, myUserName, session],
+  );
 
   return (
-    <div className="container">
+    <div className="w-full items-center">
       {session === undefined ? (
-        <div id="join">
-          <div id="img-div">
-            <img
-              src="resources/images/openvidu_grey_bg_transp_cropped.png"
-              alt="OpenVidu logo"
-            />
-          </div>
-          <div id="join-dialog" className="jumbotron vertical-center">
-            <h1> Join a video session </h1>
-            <form
-              className="form-group"
-              onSubmit={(e) => {
-                e.preventDefault();
-                joinSession();
-              }}
-            >
-              <p>
-                <p>Participant: </p>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="userName"
-                  value={myUserName}
-                  onChange={handleChangeUserName}
-                  required
-                />
-              </p>
-              <p>
-                <p> Session: </p>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="sessionId"
-                  value={mySessionId}
-                  onChange={handleChangeSessionId}
-                  required
-                />
-              </p>
-              <p className="text-center">
-                <input
-                  className="btn btn-lg btn-success"
-                  name="commit"
-                  type="submit"
-                  value="JOIN"
-                />
-              </p>
-            </form>
-          </div>
-        </div>
-      ) : null}
-
-      {session !== undefined ? (
+        <JoinForm
+          myUserName={myUserName}
+          mySessionId={mySessionId}
+          isCreator={isCreator}
+          joinSession={joinSession}
+        />
+      ) : (
         <div id="session">
           <div id="session-header">
             <h1 id="session-title">{mySessionId}</h1>
@@ -338,46 +467,56 @@ export default function App() {
               type="button"
               id="buttonLeaveSession"
               onClick={leaveSession}
-              value="Leave session"
+              value="세션나가기"
+            />
+            {isCreator && (
+              <>
+                <input
+                  className="btn btn-large btn-success"
+                  type="button"
+                  id="buttonSwitchCamera"
+                  onClick={switchCamera}
+                  value="카메라 기종 변경"
+                />
+                <button type="button" className="btn-md" onClick={closeSession}>
+                  세션 종료
+                </button>
+              </>
+            )}
+            <input
+              className="btn btn-large btn-warning"
+              type="button"
+              id="buttonToggleAudio"
+              onClick={toggleMyAudio}
+              value="마이크 껐다 키기"
             />
             <input
-              className="btn btn-large btn-success"
+              className="btn btn-large btn-warning"
               type="button"
-              id="buttonSwitchCamera"
-              onClick={switchCamera}
-              value="Switch Camera"
+              id="buttonToggleVideo"
+              onClick={toggleMyVideo}
+              value="비디오껐다키기"
             />
           </div>
 
-          {mainStreamManager !== undefined ? (
-            <div id="main-video" className="col-md-6">
-              <UserVideoComponent streamManager={mainStreamManager} />
-            </div>
-          ) : null}
-          <div id="video-container" className="col-md-6">
-            {publisher !== undefined ? (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div
-                className="stream-container col-md-6 col-xs-6"
-                onClick={() => handleMainVideoStream(publisher)}
-              >
-                <UserVideoComponent streamManager={publisher} />
-              </div>
-            ) : null}
-            {subscribers.map((sub) => (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div
-                key={sub.id}
-                className="stream-container col-md-6 col-xs-6"
-                onClick={() => handleMainVideoStream(sub)}
-              >
-                <span>{sub.id}</span>
-                <UserVideoComponent streamManager={sub} />
-              </div>
-            ))}
-          </div>
+          <VideoContainer
+            publisher={publisher}
+            subscribers={subscribers}
+            isCreator={isCreator}
+            toggleFanAudio={toggleFanAudio}
+            fanAudioStatus={fanAudioStatus}
+            focusedSubscriber={focusedSubscriber}
+            focusOnSubscriber={focusOnSubscriber}
+          />
+          <Chat
+            chatMessages={chatMessages}
+            newMessage={newMessage}
+            handleChangeMessage={handleChangeMessage}
+            handleSendMessage={handleSendMessage}
+            userColors={userColorsRef.current}
+          />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
