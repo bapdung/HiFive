@@ -82,6 +82,16 @@
       format("truetype");
 }
 
+@font-face {
+  font-family: "Jua";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/jua/v16/co3KmW9ljjATdOrY.woff2)
+    format("woff2");
+  unicode-range: U+0000-00FF, U+AC00-D7AF; /* Added full Unicode range for Latin and Hangul */
+}
+
 @layer components {
   .btn-lg {
     @apply px-5 py-2.5 rounded-3xl bg-primary font-semibold text-medium text-white;

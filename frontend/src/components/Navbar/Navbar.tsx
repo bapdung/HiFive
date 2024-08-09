@@ -42,7 +42,7 @@ function Navbar() {
 
   return (
     <div
-      className={`z-10 bg-white flex w-full justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-[rgba(255,255,255,0.85)] backdrop-blur-md shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
+      className={`z-10 bg-white flex w-full justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-white bg-opacity-85 backdrop-blur-md shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
     >
       <div>
         <img
@@ -76,12 +76,17 @@ function Navbar() {
             <div
               className="text-primary-text text-medium font-semibold m-10 hover:cursor-pointer"
               onClick={kakaoLogin}
-              onKeyDown={kakaoLogin}
               role="presentation"
             >
               로그인
             </div>
-            <div className="btn-lg hover:cursor-pointer">회원가입</div>
+            <div
+              className="btn-lg hover:cursor-pointer"
+              onClick={kakaoLogin}
+              role="presentation"
+            >
+              회원가입
+            </div>
           </>
         )}
       </div>
