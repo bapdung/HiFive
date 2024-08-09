@@ -300,6 +300,24 @@ export default function App() {
     setPublisher(undefined);
   }, [session]);
 
+  const closeSession = useCallback(() => {
+    if (session) {
+      session
+        .signal({
+          type: "closeSession",
+          data: JSON.stringify({
+            reason: "The session has been closed by the creator.",
+          }),
+        })
+        .then(() => {
+          leaveSession(); // 세션 종료 후 자신도 나가도록 처리
+        })
+        .catch((error) => {
+          console.error("Error sending closeSession signal:", error);
+        });
+    }
+  }, [session, leaveSession]);
+
   const switchCamera = useCallback(async () => {
     try {
       const devices = await OV.current.getDevices();
@@ -452,13 +470,18 @@ export default function App() {
               value="세션나가기"
             />
             {isCreator && (
-              <input
-                className="btn btn-large btn-success"
-                type="button"
-                id="buttonSwitchCamera"
-                onClick={switchCamera}
-                value="카메라 기종 변경"
-              />
+              <>
+                <input
+                  className="btn btn-large btn-success"
+                  type="button"
+                  id="buttonSwitchCamera"
+                  onClick={switchCamera}
+                  value="카메라 기종 변경"
+                />
+                <button type="button" className="btn-md" onClick={closeSession}>
+                  세션 종료
+                </button>
+              </>
             )}
             <input
               className="btn btn-large btn-warning"
