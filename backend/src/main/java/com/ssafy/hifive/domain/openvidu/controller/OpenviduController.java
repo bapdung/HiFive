@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.hifive.domain.openvidu.dto.request.CustomSessionRequest;
+import com.ssafy.hifive.domain.openvidu.dto.request.SequenceRequest;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduSessionService;
@@ -29,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/sessions")
 public class OpenviduController {
 	@Value("${openvidu.url}")
 	private String openviduUrl;
@@ -47,20 +49,21 @@ public class OpenviduController {
 		this.openVidu = new OpenVidu(openviduUrl, openviduSecret);
 	}
 
-	@PostMapping(path = "/sessions", produces = "application/json")
-	public ResponseEntity<OpenViduTimetableDto> initializeSession(@RequestBody(required = false) Map<String, Object> params)
+	@PostMapping(path = "/open", produces = "application/json")
+	public ResponseEntity<OpenViduTimetableDto> initializeSession(
+		@RequestBody CustomSessionRequest customSessionRequest)
 		throws OpenViduJavaClientException, OpenViduHttpException {
-		// SessionProperties properties = SessionProperties.fromJson(params).build();
-		// Session session = openVidu.createSession(properties);
-		// System.out.println(session.getSessionId());
-		SessionProperties properties = new SessionProperties.Builder().customSessionId(String.valueOf(params.get("customSessionId"))).build();
+		SessionProperties properties = new SessionProperties.Builder().customSessionId(
+			customSessionRequest.getCustomSessionId()).build();
 		Session session = openVidu.createSession(properties);
 		//customSessionId는 fanmeetingId고, sessionId는 생성 시 부여 받는 토큰 값)
-		openViduSessionService.saveSession(String.valueOf(params.get("customSessionId")), session.getSessionId());
-		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()), HttpStatus.OK);
+		openViduSessionService.saveSession(Long.valueOf(customSessionRequest.getCustomSessionId()), session.getSessionId());
+		return new ResponseEntity<>(
+			openViduService.getTimetableAll(Long.valueOf(customSessionRequest.getCustomSessionId()), session.getSessionId()),
+			HttpStatus.CREATED);
 	}
 
-	@PostMapping("/sessions/{sessionId}/connections")
+	@PostMapping("/{sessionId}/connections")
 	public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
 		@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
@@ -72,5 +75,12 @@ public class OpenviduController {
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
+
+	@PostMapping("/{fanmeetingId}")
+	public ResponseEntity<Void> saveCurrentSequence(@PathVariable Long fanmeetingId, @RequestBody SequenceRequest sequenceRequest){
+		openViduSessionService.saveSequence(fanmeetingId, sequenceRequest.getSequence());
+		return ResponseEntity.ok().build();
+	}
+
 
 }
