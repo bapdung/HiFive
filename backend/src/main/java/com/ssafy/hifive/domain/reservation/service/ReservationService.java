@@ -7,6 +7,7 @@ import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.reservation.dto.response.ReservationMemberDto;
+import com.ssafy.hifive.global.config.websocket.ReservationWebSocketHandler;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -23,8 +24,11 @@ public class ReservationService {
 	private final ReservationQueueService reservationQueueService;
 	private final ReservationFanmeetingReserveService reservationFanmeetingReserveService;
 	private final ReservationValidService reservationValidService;
+	private final ReservationWebSocketHandler reservationWebSocketHandler;
 
 	public ReservationMemberDto reserve(long fanmeetingId, Member member) {
+		reservationWebSocketHandler.isSessionValid(fanmeetingId, member.getMemberId());
+
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
@@ -79,11 +83,11 @@ public class ReservationService {
 		String waitingqueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		if (reservationValidService.addToPayingQueueIsValid(payingQueueKey)) {
-			log.info("현재 payingQueue 인원이 0명입니다. payingQueue에 추가됩니다.");
+			// log.info("ReservationService 현재 payingQueue 인원이 0명입니다. payingQueue에 추가됩니다.");
 			reservationQueueService.addToPayingQueue(payingQueueKey, memberId, fanmeetingId);
 		} else {
 			reservationQueueService.addToWaitingQueue(waitingqueueKey, memberId);
-			log.info("현재 payingQueue 인원이 1명으로 꽉차있습니다. waitingQueue에 추가됩니다.");
+			// log.info("ReservationService 현재 payingQueue 인원이 1명으로 꽉차있습니다. waitingQueue에 추가됩니다.");
 		}
 	}
 }
