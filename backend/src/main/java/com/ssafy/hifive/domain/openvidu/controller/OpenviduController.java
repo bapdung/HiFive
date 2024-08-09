@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/sessions")
 public class OpenviduController {
 	@Value("${openvidu.url}")
 	private String openviduUrl;
@@ -47,12 +47,9 @@ public class OpenviduController {
 		this.openVidu = new OpenVidu(openviduUrl, openviduSecret);
 	}
 
-	@PostMapping(path = "/sessions", produces = "application/json")
+	@PostMapping( produces = "application/json")
 	public ResponseEntity<OpenViduTimetableDto> initializeSession(@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {
-		// SessionProperties properties = SessionProperties.fromJson(params).build();
-		// Session session = openVidu.createSession(properties);
-		// System.out.println(session.getSessionId());
 		SessionProperties properties = new SessionProperties.Builder().customSessionId(String.valueOf(params.get("customSessionId"))).build();
 		Session session = openVidu.createSession(properties);
 		//customSessionId는 fanmeetingId고, sessionId는 생성 시 부여 받는 토큰 값)
@@ -60,7 +57,7 @@ public class OpenviduController {
 		return new ResponseEntity<>(openViduService.getTimetableAll(params.get("customSessionId").toString(), session.getSessionId()), HttpStatus.OK);
 	}
 
-	@PostMapping("/sessions/{sessionId}/connections")
+	@PostMapping("/{sessionId}/connections")
 	public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
 		@RequestBody(required = false) Map<String, Object> params)
 		throws OpenViduJavaClientException, OpenViduHttpException {

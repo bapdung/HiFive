@@ -22,13 +22,4 @@ public class OpenViduService {
 			.collect(Collectors.toList());
 		return OpenViduTimetableDto.from(sessionId, timetables);
 	}
-
-	// public void saveCurrentCategory(Long fanmeetingId, String category) {
-	// 	List<TimetableResponseDto> timetables = timetableRepository.findByFanmeeting_FanmeetingId(Long.valueOf(fanmeetingId)).stream()
-	// 		.map(TimetableResponseDto::from)
-	// 		.collect(Collectors.toList());
-	// 	return OpenViduTimetableDto.from(sessionId, timetables);
-	// }
-
-
 }

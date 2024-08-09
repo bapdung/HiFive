@@ -11,8 +11,10 @@ import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OpenViduSessionService {
 	private final FanmeetingRepository fanmeetingRepository;
@@ -22,7 +24,7 @@ public class OpenViduSessionService {
 	public void saveSession(String fanmeetingId, String sessionId){
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(Long.valueOf(fanmeetingId))
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
-
+		log.info("session저장", fanmeetingId);
 		String sessionkey = "fanmeeting:" + fanmeetingId + ":session";
 		redisTemplateForString.opsForValue().set(sessionkey, sessionId, fanmeeting.getRunningTime() + 30, TimeUnit.MINUTES);
 
