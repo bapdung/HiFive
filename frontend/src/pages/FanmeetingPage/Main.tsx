@@ -35,7 +35,7 @@ interface ChatMessage {
   text: string;
 }
 
-export default function App() {
+export default function Main() {
   const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
   const [session, setSession] = useState<Session | undefined>(undefined);
