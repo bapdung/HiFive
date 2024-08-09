@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RedisSubscriber implements MessageListener {
 
-	// ?
 	private final ReservationWebSocketHandler webSocketHandler;
 	private final ObjectMapper objectMapper;
 
@@ -25,7 +24,7 @@ public class RedisSubscriber implements MessageListener {
 		try {
 			String channel = new String(message.getChannel(), "UTF-8");
 			String body = new String(message.getBody(), "UTF-8");
-			System.out.println("Received channel: " + channel + " with message: " + body);
+			// System.out.println("Received channel: " + channel + " with message: " + body);
 
 			if (channel.startsWith("fanmeeting:")) {
 				String[] parts = channel.split(":");

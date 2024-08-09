@@ -40,6 +40,11 @@ const Payment: React.FC<PaymentProps> = ({
     }
   };
 
+  const handleClose = () => {
+    onClose();
+    window.location.reload(); // 페이지 새로고침
+  };
+
   return (
     <div className="w-[1200px] h-[675px] bg-primary-300 flex p-[50px]">
       <div className="bg-white w-[700px] rounded-2xl p-[50px]">
@@ -171,7 +176,7 @@ const Payment: React.FC<PaymentProps> = ({
         <button
           type="button"
           className="btn-gray px-[30px] mt-5"
-          onClick={onClose}
+          onClick={handleClose} // 수정된 부분
         >
           닫기
         </button>

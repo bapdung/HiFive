@@ -1,20 +1,18 @@
-// FailureModal.tsx
-import React from "react";
-
 interface FailureModalProps {
   onClose: () => void;
+  // eslint-disable-next-line react/require-default-props
+  message?: string;
 }
 
-function FailureModal({ onClose }: FailureModalProps) {
+function FailureModal({ onClose, message }: FailureModalProps) {
   return (
-    <div className="w-[50rem] bg-white flex flex-col items-center h-[26rem] justify-center rounded-3xl">
-      <h1 className="text-h4">결제에 실패하였습니다.</h1>
-      <button
-        type="button"
-        className="btn-md mt-4 bg-gray-100 text-gray-600"
-        onClick={onClose}
-      >
-        창 닫기
+    <div className="bg-white p-10 rounded-xl text-center">
+      <h2 className="text-h4 mb-4">오류</h2>
+      <p className="mb-8">
+        {message || "예매에 실패했습니다. 다시 시도해주세요."}
+      </p>
+      <button type="button" className="btn-lg" onClick={onClose}>
+        닫기
       </button>
     </div>
   );
