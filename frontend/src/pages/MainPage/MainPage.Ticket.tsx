@@ -88,7 +88,7 @@ const Ticket: React.FC<TicketProps> = ({
           src={poster || defaultPoster}
           alt="poster"
           className="rounded-xl w-[320px] h-[460px]"
-          onClick={() => navigate(`/ticket/${fanmeetingId}`)}
+          onClick={() => navigate(`/test/${fanmeetingId}`)}
           role="presentation"
         />
       </div>
@@ -139,7 +139,7 @@ const Ticket: React.FC<TicketProps> = ({
           onRequestClose={() => setVerifying(false)}
           onSuccess={() => {
             setVerifying(false);
-            navigate(`/ticket/${fanmeetingId}`);
+            navigate(`/test`);
           }}
           fanmeetingId={fanmeetingId}
         />
