@@ -23,7 +23,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 import ErrorPage from "./pages/ErrorPage";
-import Test from "./pages/FanmeetingPage/Main";
+import FanmeetingPage from "./pages/FanmeetingPage/Main";
 import FanmeetingWaiting from "./pages/FanmeetingPage/WaitingPage";
 
 function App() {
@@ -103,7 +103,7 @@ function App() {
           </Route>
 
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/meet-up/:fanmeetingId" element={<Test />} />
+          <Route path="/meet-up/:fanmeetingId" element={<FanmeetingPage />} />
           <Route path="/wait" element={<FanmeetingWaiting />} />
         </Routes>
       </main>
