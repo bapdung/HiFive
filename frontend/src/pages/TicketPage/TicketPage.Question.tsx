@@ -50,7 +50,7 @@ function Question() {
   const handleSubmit = async (index: number) => {
     const contents = newQuestions[index];
     if (!contents) {
-      console.error("질문 내용을 입력해주세요.");
+      alert("질문 내용을 입력해주세요.");
       return;
     }
     try {
@@ -73,7 +73,7 @@ function Question() {
 
   const handleEditSubmit = async (questionId: number) => {
     if (!editContent) {
-      console.error("질문 내용을 입력해주세요.");
+      alert("질문 내용을 입력해주세요.");
       return;
     }
     try {
