@@ -32,6 +32,7 @@ function CreatorList() {
 
   const onSearch = () => {
     setKeyword(inputKeyword);
+    setTop(null);
   };
 
   const onInputKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
