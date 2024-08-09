@@ -38,7 +38,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           {creatorSub && (
             <div
               key={creatorSub.id}
-              className="absolute w-[38%] top-[11vh] left-[30%] z-60"
+              className=" w-[38%] top-[11vh] left-[30%] z-60"
             >
               {/* UserVideoComponent 컴포넌트에 스트림 전달 */}
               <UserVideoComponent streamManager={creatorSub} />
@@ -54,7 +54,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
               .map((sub) => (
                 <div
                   key={sub.id}
-                  className="bg-[#FDD1AE] w-[18%] absolute rounded-xl p-2 flex flex-col items-center top-[11vh] left-[21vh] z-60"
+                  className="bg-[#FDD1AE] w-[18%]  rounded-xl p-2 flex flex-col items-center top-[11vh] left-[21vh] z-60"
                 >
                   <div>
                     <UserVideoComponent streamManager={sub} />
@@ -66,7 +66,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
               ))}
           {/* 본인(publisher)화면 표시 */}
           {publisher && !focusedSubscriber && (
-            <div className="bg-[#FDD1AE] w-[18%] absolute rounded-xl p-2 flex flex-col items-center top-[11vh] left-[21vh] z-60">
+            <div className="bg-[#FDD1AE] w-[18%] rounded-xl p-2 flex flex-col items-center">
               <div className="stream-container col-md-12">
                 <UserVideoComponent streamManager={publisher} />
               </div>
@@ -74,7 +74,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                 <img src={yellow} alt="img" />
               </div>
               {/* 어차피 나중에 버튼으로 넣을거임 */}
-              <span className="absolute bottom-3 left-3">
+              <span className=" bottom-3 left-3">
                 {fanAudioStatus[publisher.stream.connection.connectionId]
                   ? "마이크 ON"
                   : "음소거중"}
@@ -92,7 +92,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             className="w-full z-0"
           /> */}
           {publisher && (
-            <div className="z-60 absolute bottom-5 right-20 max-w-[350px]">
+            <div className="z-60 bottom-5 right-20 max-w-[350px]">
               <UserVideoComponent streamManager={publisher} />
               <div>
                 {/* 자신의 마이크 상태 표시 */}
