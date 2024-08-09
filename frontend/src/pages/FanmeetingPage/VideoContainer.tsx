@@ -36,10 +36,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           {/* <img src={MainBackground} alt="fan-bg" className="w-full z-50" /> */}
           {/* 'creator'라는 clientData를 가진 스트림을 찾음 */}
           {creatorSub && (
-            <div
-              key={creatorSub.id}
-              className=" w-[38%] top-[11vh] left-[30%] z-60"
-            >
+            <div key={creatorSub.id} className="p-5 bg-emerald-500">
               {/* UserVideoComponent 컴포넌트에 스트림 전달 */}
               <UserVideoComponent streamManager={creatorSub} />
             </div>
@@ -92,7 +89,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             className="w-full z-0"
           /> */}
           {publisher && (
-            <div className="z-60 bottom-5 right-20 max-w-[350px]">
+            <div className="p-5 bg-emerald-500">
               <UserVideoComponent streamManager={publisher} />
               <div>
                 {/* 자신의 마이크 상태 표시 */}
