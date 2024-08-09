@@ -18,16 +18,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   useEffect(() => {
     const fetchUser = async () => {
       setIsLoading(false);
+
       if (isLoading) {
         return;
       }
+
       if (!accessToken) {
         navigate("/"); // 로그인 안 했으면 랜딩 페이지로 리다이렉트
         return;
       }
+
       try {
         const response = await client(accessToken).get("api/member");
-        if (response.data.creator !== requiredCreator) {
+        if (requiredCreator && !response.data.creator) {
           navigate("/error?code=UNAUTHORIZED&message=접근 권한이 없습니다.");
         } else {
           setIsCreator(response.data.creator);
