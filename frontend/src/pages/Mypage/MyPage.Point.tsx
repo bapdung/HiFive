@@ -5,7 +5,7 @@ import useAuthStore from "../../store/useAuthStore";
 import Table from "./MyPage.Point.Table";
 
 function Point() {
-  const [money, setMoney] = useState<number>();
+  const [money, setMoney] = useState<number | null>();
   const [totalPoint, setTotalPoint] = useState<number>();
 
   const token = useAuthStore((state) => state.accessToken);
@@ -23,6 +23,12 @@ function Point() {
 
     if (typeof money !== "number") {
       alert("유효한 숫자를 입력해주세요");
+      return;
+    }
+
+    if (money > 100000) {
+      alert("1회 최대 충전금액은 100,000원입니다.");
+      setMoney(null);
       return;
     }
 
@@ -60,7 +66,12 @@ function Point() {
         <div className="flex flex-col bg-white rounded-2xl p-5">
           <h5 className="text-h5">포인트 충전하기</h5>
           <div>
-            <h6 className="text-small text-gray-700 mt-5">충전 금액</h6>
+            <div className="flex mt-5 justify-between">
+              <h6 className="text-small text-gray-700">충전 금액</h6>
+              <span className="text-small text-primary-text">
+                1회 최대 충전금액 100,000원
+              </span>
+            </div>
             <input
               type="text"
               value={money ?? ""}
