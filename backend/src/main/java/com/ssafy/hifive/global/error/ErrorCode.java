@@ -19,7 +19,7 @@ public enum ErrorCode {
 	 */
 	MEMBER_FORBIDDEN_ERROR(FORBIDDEN, "MEMBER-000", "사용자의 접근 권한이 없습니다."),
 	MEMBER_NOT_FOUND(UNAUTHORIZED, "MEMBER-001", "사용자가 존재하지 않습니다."),
-	IDENTIFICATION_ALREADY_REGISTERED(METHOD_NOT_ALLOWED, "MEMBER-002","신분증은 최초 1회 등록 가능합니다."),
+	IDENTIFICATION_ALREADY_REGISTERED(METHOD_NOT_ALLOWED, "MEMBER-002", "신분증은 최초 1회 등록 가능합니다."),
 
 	/**
 	 * Board
