@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   OpenVidu,
   Publisher,
@@ -6,14 +8,15 @@ import {
   Stream,
 } from "openvidu-browser";
 import axios from "axios";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import VideoContainer from "./VideoContainer";
 import JoinForm from "./JoinForm";
+import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -26,11 +29,14 @@ interface ResponseData {
   timetables: Timetable[];
 }
 
+interface ChatMessage {
+  id: string;
+  user: string;
+  text: string;
+}
+
 export default function App() {
-  const [mySessionId, setMySessionId] = useState<string>("SessionA");
-  const [myUserName, setMyUserName] = useState<string>(
-    `Participant${Math.floor(Math.random() * 100)}`,
-  );
+  const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<
@@ -40,6 +46,8 @@ export default function App() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] =
     useState<MediaDeviceInfo | null>(null);
+  const location = useLocation();
+  const mySessionId = location.pathname.split("/")[2];
   const [isCreator, setIsCreator] = useState<boolean | undefined>();
   const [fanAudioStatus, setFanAudioStatus] = useState<{
     [key: string]: boolean;
@@ -50,6 +58,12 @@ export default function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timetables, setTimetables] = useState<Timetable[]>([]);
 
+  // 채팅 관련 상태 추가
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
+  const userColorsRef = useRef<{ [key: string]: string }>({});
+  const [userId, setUserId] = useState<number | undefined>();
+
   // 유저 정보 불러오기
   const fetchUser = async () => {
     if (!token) {
@@ -57,7 +71,8 @@ export default function App() {
     }
     try {
       const response = await client(token).get(`api/member`);
-      setIsCreator(response.data.creator);
+      setUserId(response.data.memberId);
+      setMyUserName(response.data.nickname);
     } catch (error) {
       console.error(error);
     }
@@ -68,21 +83,26 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  const fetchFanmeeting = async () => {
+    if (!token || !mySessionId) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/fanmeeting/${mySessionId}`);
+      if (response.data.creatorId === userId) {
+        setIsCreator(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFanmeeting();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, mySessionId, userId]);
+
   const OV = useRef<OpenVidu>(new OpenVidu());
-
-  const handleChangeSessionId = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMySessionId(e.target.value);
-    },
-    [],
-  );
-
-  const handleChangeUserName = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMyUserName(e.target.value);
-    },
-    [],
-  );
 
   const deleteSubscriber = useCallback((streamManager: Subscriber) => {
     setSubscribers((prevSubscribers) => {
@@ -96,7 +116,6 @@ export default function App() {
     });
   }, []);
 
-  // 세션 아이디는 팬미팅 아이디로 보내줘야함
   const createSession = async (sessionId: string): Promise<string> => {
     const response = await axios.post<ResponseData>(
       `${APPLICATION_SERVER_URL}api/sessions`,
@@ -177,8 +196,39 @@ export default function App() {
       }
     });
 
+    // 밝은 색상을 제외하고 색상 생성 함수
+    const generateColor = (): string => {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i += 1) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      // 밝은 색상 제외
+      if (
+        parseInt(color.substring(1, 3), 16) > 200 &&
+        parseInt(color.substring(3, 5), 16) > 200 &&
+        parseInt(color.substring(5, 7), 16) > 200
+      ) {
+        return generateColor();
+      }
+      return color;
+    };
+
+    // 채팅 관련 시그널 처리
+    mySession.on("signal:chat", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setChatMessages((prevMessages) => [...prevMessages, data]);
+
+        if (!userColorsRef.current[data.user]) {
+          userColorsRef.current[data.user] = generateColor();
+        }
+      }
+    });
+
     setSession(mySession);
-  }, [isCreator, deleteSubscriber]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mySessionId, isCreator, deleteSubscriber]);
 
   useEffect(() => {
     if (session && token) {
@@ -246,11 +296,27 @@ export default function App() {
     OV.current = new OpenVidu();
     setSession(undefined);
     setSubscribers([]);
-    setMySessionId("SessionA");
-    setMyUserName(`Participant${Math.floor(Math.random() * 100)}`);
     setMainStreamManager(undefined);
     setPublisher(undefined);
   }, [session]);
+
+  const closeSession = useCallback(() => {
+    if (session) {
+      session
+        .signal({
+          type: "closeSession",
+          data: JSON.stringify({
+            reason: "The session has been closed by the creator.",
+          }),
+        })
+        .then(() => {
+          leaveSession(); // 세션 종료 후 자신도 나가도록 처리
+        })
+        .catch((error) => {
+          console.error("Error sending closeSession signal:", error);
+        });
+    }
+  }, [session, leaveSession]);
 
   const switchCamera = useCallback(async () => {
     try {
@@ -313,15 +379,21 @@ export default function App() {
   const toggleFanAudio = useCallback(
     (subscriber: Subscriber) => {
       const newAudioStatus = !subscriber.stream.audioActive;
-      // eslint-disable-next-line no-param-reassign
-      subscriber.stream.audioActive = newAudioStatus;
+
+      // 객체 구조를 복사하여 수정
+      const updatedStream = {
+        ...subscriber.stream,
+        audioActive: newAudioStatus,
+      };
+      const updatedSubscriber = { ...subscriber, stream: updatedStream };
+
       setFanAudioStatus((prevStatus) => ({
         ...prevStatus,
-        [subscriber.stream.connection.connectionId]: newAudioStatus,
+        [updatedSubscriber.stream.connection.connectionId]: newAudioStatus,
       }));
       session?.signal({
         data: JSON.stringify({
-          connectionId: subscriber.stream.connection.connectionId,
+          connectionId: updatedSubscriber.stream.connection.connectionId,
           audioActive: newAudioStatus,
         }),
         type: "audioStatus",
@@ -333,7 +405,6 @@ export default function App() {
   const focusOnSubscriber = useCallback(
     (subscriber: Subscriber) => {
       if (focusedSubscriber === subscriber.stream.connection.connectionId) {
-        // 이미 선택된 팬이 다시 선택될 경우 기본 상태로 돌아갑니다.
         session?.signal({
           data: JSON.stringify({
             focusedSubscriber: null,
@@ -341,7 +412,6 @@ export default function App() {
           type: "focus",
         });
       } else {
-        // 팬의 화면을 선택하여 보여줍니다.
         session?.signal({
           data: JSON.stringify({
             focusedSubscriber: subscriber.stream.connection.connectionId,
@@ -353,21 +423,42 @@ export default function App() {
     [focusedSubscriber, session],
   );
 
+  const handleChangeMessage = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setNewMessage(e.target.value);
+    },
+    [],
+  );
+
+  const handleSendMessage = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (newMessage.trim() !== "") {
+        const message = {
+          id: uuidv4(),
+          user: myUserName,
+          text: newMessage,
+        };
+        session?.signal({
+          data: JSON.stringify(message),
+          type: "chat",
+        });
+        setNewMessage("");
+      }
+    },
+    [newMessage, myUserName, session],
+  );
+
   return (
     <div className="w-full items-center">
       {session === undefined ? (
-        // Session 이 undefined 일 때 JoinForm 표시 (나중에 대기방화면으로 바꾸면될듯)
         <JoinForm
           myUserName={myUserName}
           mySessionId={mySessionId}
           isCreator={isCreator}
-          handleChangeUserName={handleChangeUserName}
-          handleChangeSessionId={handleChangeSessionId}
-          // setIsCreator={setIsCreator}
           joinSession={joinSession}
         />
       ) : (
-        // session 이 정의되어 있을 때 비디오 세션 표시
         <div id="session">
           <div id="session-header">
             <h1 id="session-title">{mySessionId}</h1>
@@ -376,30 +467,35 @@ export default function App() {
               type="button"
               id="buttonLeaveSession"
               onClick={leaveSession}
-              value="Leave session"
+              value="세션나가기"
             />
             {isCreator && (
-              <input
-                className="btn btn-large btn-success"
-                type="button"
-                id="buttonSwitchCamera"
-                onClick={switchCamera}
-                value="Switch Camera"
-              />
+              <>
+                <input
+                  className="btn btn-large btn-success"
+                  type="button"
+                  id="buttonSwitchCamera"
+                  onClick={switchCamera}
+                  value="카메라 기종 변경"
+                />
+                <button type="button" className="btn-md" onClick={closeSession}>
+                  세션 종료
+                </button>
+              </>
             )}
             <input
               className="btn btn-large btn-warning"
               type="button"
               id="buttonToggleAudio"
               onClick={toggleMyAudio}
-              value="Toggle Audio"
+              value="마이크 껐다 키기"
             />
             <input
               className="btn btn-large btn-warning"
               type="button"
               id="buttonToggleVideo"
               onClick={toggleMyVideo}
-              value="Toggle Video"
+              value="비디오껐다키기"
             />
           </div>
 
@@ -411,6 +507,13 @@ export default function App() {
             fanAudioStatus={fanAudioStatus}
             focusedSubscriber={focusedSubscriber}
             focusOnSubscriber={focusOnSubscriber}
+          />
+          <Chat
+            chatMessages={chatMessages}
+            newMessage={newMessage}
+            handleChangeMessage={handleChangeMessage}
+            handleSendMessage={handleSendMessage}
+            userColors={userColorsRef.current}
           />
         </div>
       )}
