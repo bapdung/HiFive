@@ -78,6 +78,8 @@ function App() {
               path="/fanmeeting/:fanmeetingId/story"
               element={<StoryForm />}
             />
+            <Route path="/meet-up/:fanmeetingId" element={<Test />} />
+            <Route path="/wait" element={<FanmeetingWaiting />} />
           </Route>
 
           <Route element={<ProtectedRoute requiredCreator />}>
@@ -103,8 +105,6 @@ function App() {
           </Route>
 
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/meet-up/:fanmeetingId" element={<Test />} />
-          <Route path="/wait" element={<FanmeetingWaiting />} />
         </Routes>
       </main>
       <Footer />
