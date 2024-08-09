@@ -23,7 +23,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 import ErrorPage from "./pages/ErrorPage";
-import Test from "./pages/FanmeetingPage/TestPage";
+import FanmeetingPage from "./pages/FanmeetingPage/Main";
 import FanmeetingWaiting from "./pages/FanmeetingPage/WaitingPage";
 
 function App() {
@@ -60,19 +60,26 @@ function App() {
       <ScrollToTop />
       <main className="relative w-full flex-grow">
         <Routes>
-          <Route path="/creator/:creatorId" element={<ProfilePage />} />
-          <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
-          <Route path="/mypage/*" element={<Mypage />} />
-          <Route path="/ticket" element={<TicketPage />} />
-          <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
-          <Route
-            path="/fanmeeting/:fanmeetingId/question"
-            element={<Question />}
-          />
-          <Route
-            path="/fanmeeting/:fanmeetingId/story"
-            element={<StoryForm />}
-          />
+          <Route path="/" element={<LandingPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/main" element={<MainPage />} />
+            <Route path="/partner" element={<JoinCreator />} />
+            <Route path="/creator/list" element={<CreatorList />} />
+            <Route path="/creator/:creatorId" element={<ProfilePage />} />
+            <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
+            <Route path="/ticket" element={<TicketPage />} />
+            <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
+            <Route path="/mypage/*" element={<Mypage />} />
+            <Route
+              path="/fanmeeting/:fanmeetingId/question"
+              element={<Question />}
+            />
+            <Route
+              path="/fanmeeting/:fanmeetingId/story"
+              element={<StoryForm />}
+            />
+          </Route>
+
           <Route element={<ProtectedRoute requiredCreator />}>
             <Route path="/creator-only" element={<CreatorOnly />} />
             <Route path="/creator-only/new" element={<CreateFanmeeting />} />
@@ -94,12 +101,9 @@ function App() {
               element={<StoryDetail />}
             />
           </Route>
-          <Route path="/main" element={<MainPage />} />
-          <Route path="/creator/list" element={<CreatorList />} />
-          <Route path="/partner" element={<JoinCreator />} />
-          <Route path="/" element={<LandingPage />} />
+
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/meet-up/:fanmeetingId" element={<Test />} />
+          <Route path="/meet-up/:fanmeetingId" element={<FanmeetingPage />} />
           <Route path="/wait" element={<FanmeetingWaiting />} />
         </Routes>
       </main>
