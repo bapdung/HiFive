@@ -28,7 +28,7 @@ const Quiz: React.FC<QuizProps> = ({
   const [allQuizzes, setAllQuizzes] = useState<Quiz[]>([]);
   const fanmeetingId = parseInt(location.pathname.split("/")[2], 10);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
+  const [currentQuiz, setCurrentQuiz] = useState<number | null>(null);
   const [currentQuizTitle, setCurrentQuizTitle] = useState("");
   const [currentQuizDetail, setCurrentQuizDetail] = useState("");
   const [currentQuizAnswer, setCurrentQuizAnswer] = useState<boolean | null>(
@@ -51,7 +51,7 @@ const Quiz: React.FC<QuizProps> = ({
   }, [token, fanmeetingId, allQuizzes.length, fetchSignal]);
 
   const openInput = (quiz: Quiz) => {
-    setCurrentQuiz(quiz);
+    setCurrentQuiz(quiz.id);
     setIsEditing(true);
     setCurrentQuizAnswer(quiz.answer);
     setCurrentQuizTitle(quiz.problem);
@@ -66,13 +66,19 @@ const Quiz: React.FC<QuizProps> = ({
     setCurrentQuizDetail(event.target.value);
   };
 
-  const updateQuiz = async (buttonOfQuiz: Quiz) => {
-    if (!isEditing || buttonOfQuiz !== currentQuiz) {
-      setIsEditing(true);
-      setCurrentQuiz(buttonOfQuiz);
+  const updateQuiz = async (buttonOfQuizId: number, buttonOfQuiz: Quiz) => {
+    if (!token || !currentQuiz) {
       return;
     }
-    if (!token || !currentQuiz || currentQuiz !== buttonOfQuiz) {
+    if (!isEditing || buttonOfQuizId !== currentQuiz) {
+      setIsEditing(true);
+      setCurrentQuiz(buttonOfQuizId);
+      setCurrentQuizTitle(buttonOfQuiz.problem);
+      setCurrentQuizDetail(buttonOfQuiz.detail);
+      setCurrentQuizAnswer(buttonOfQuiz.answer);
+      return;
+    }
+    if (currentQuiz !== buttonOfQuizId) {
       return;
     }
     const payload = {
@@ -81,17 +87,17 @@ const Quiz: React.FC<QuizProps> = ({
       sequence: buttonOfQuiz.sequence,
       answer: currentQuizAnswer,
     };
-    await client(token).put(`/api/quiz/${currentQuiz.id}`, payload);
+    await client(token).put(`/api/quiz/${currentQuiz}`, payload);
     setIsEditing(false);
     fetchAllQuizzes();
   };
 
-  const deleteQuiz = async (quiz: Quiz) => {
-    console.log(quiz.id);
+  const deleteQuiz = async (quizId: number) => {
+    console.log(quizId);
     if (!token) {
       return;
     }
-    await client(token).delete(`/api/quiz/${quiz.id}`);
+    await client(token).delete(`/api/quiz/${quizId}`);
     fetchAllQuizzes();
   };
 
@@ -110,7 +116,7 @@ const Quiz: React.FC<QuizProps> = ({
             key={quiz.id}
             className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[1rem] px-8 justify-between bg-white"
           >
-            {!isEditing || currentQuiz !== quiz ? (
+            {!isEditing || currentQuiz !== quiz.id ? (
               <button
                 type="button"
                 className="text-h5 flex justify-between w-full"
@@ -126,7 +132,7 @@ const Quiz: React.FC<QuizProps> = ({
                 </span>
               </button>
             ) : null}
-            {isEditing && currentQuiz === quiz ? (
+            {isEditing && currentQuiz === quiz.id ? (
               <div>
                 <button
                   type="button"
@@ -152,7 +158,7 @@ const Quiz: React.FC<QuizProps> = ({
                 </button>
               </div>
             ) : null}
-            {currentQuiz !== quiz || !isEditing ? (
+            {currentQuiz !== quiz.id || !isEditing ? (
               <button
                 type="button"
                 className="text-large w-full"
@@ -167,7 +173,7 @@ const Quiz: React.FC<QuizProps> = ({
               </button>
             ) : null}
 
-            {currentQuiz === quiz && isEditing ? (
+            {currentQuiz === quiz.id && isEditing ? (
               <div>
                 <input
                   type="text"
@@ -188,14 +194,14 @@ const Quiz: React.FC<QuizProps> = ({
               <button
                 type="button"
                 className="creator-btn-light-md"
-                onClick={() => updateQuiz(quiz)}
+                onClick={() => updateQuiz(quiz.id, quiz)}
               >
                 수정하기
               </button>
               <button
                 type="button"
                 className="btn-light-md ml-2"
-                onClick={() => deleteQuiz(quiz)}
+                onClick={() => deleteQuiz(quiz.id)}
               >
                 삭제하기
               </button>
