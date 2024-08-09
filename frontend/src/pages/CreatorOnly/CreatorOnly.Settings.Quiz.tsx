@@ -108,12 +108,17 @@ const Quiz: React.FC<QuizProps> = ({
   return (
     <div className="flex flex-col items-center">
       {allQuizzes.length >= 15 ? (
-        <button
-          type="button"
-          className="my-8 w-1/4 creator-btn-md bg-gray-500 hover:cursor-default"
-        >
-          퀴즈 생성하기
-        </button>
+        <>
+          <button
+            type="button"
+            className="mt-8 w-1/4 creator-btn-md bg-gray-500 hover:cursor-default"
+          >
+            퀴즈 생성하기
+          </button>
+          <p className="text-small text-primary-text mb-8 mt-1">
+            퀴즈는 15개까지만 생성 가능합니다.
+          </p>
+        </>
       ) : (
         <button
           type="button"
