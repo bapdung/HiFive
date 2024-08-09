@@ -6,9 +6,13 @@ import client from "../../client";
 interface CommentFormProps {
   // fetchComments: (reset: boolean) => void;
   handleFetchSignal: () => void;
+  userProfileImg: string;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ handleFetchSignal }) => {
+const CommentForm: React.FC<CommentFormProps> = ({
+  handleFetchSignal,
+  userProfileImg,
+}) => {
   const [comment, setComment] = useState("");
   const location = useLocation();
   const token = useAuthStore((state) => state.accessToken);
@@ -38,7 +42,11 @@ const CommentForm: React.FC<CommentFormProps> = ({ handleFetchSignal }) => {
 
   return (
     <div className="flex items-center w-full mb-12 justify-between">
-      <div className="bg-gray-400 min-w-[50px] h-[50px] rounded-full" />
+      <img
+        src={userProfileImg}
+        alt="프로필이미지"
+        className="bg-gray-400 min-w-[50px] h-[50px] rounded-full"
+      />
       <form
         className="w-full ml-4 flex justify-between border-b border-solid border-1 pb-2 border-gray-500"
         onSubmit={submitComment}
