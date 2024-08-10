@@ -31,7 +31,7 @@ const StoryTime: React.FC<StoryTimeProps> = ({
   timetables,
 }) => {
   const [isStoryTime, setIsStoryTime] = useState(false);
-  const [storySequence, setStorySequence] = useState(0); // 나중에 1로 변경될 예정
+  const [storySequence, setStorySequence] = useState(0);
   const [lastStorySequence, setLastStorySequence] = useState<number | null>(
     null,
   );
