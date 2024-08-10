@@ -38,7 +38,7 @@ const QuestionTime: React.FC<QuestionProps> = ({
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
 
   useEffect(() => {
-    const QuestionStartApi = async () => {
+    const questionStartApi = async () => {
       if (!token || !mySessionId) {
         return;
       }
@@ -52,7 +52,7 @@ const QuestionTime: React.FC<QuestionProps> = ({
 
     if (timetables[currentSequence - 1]?.categoryName === "Q&A") {
       setIsQuestionTime(true);
-      QuestionStartApi();
+      questionStartApi();
     } else {
       setIsQuestionTime(false);
       setQuestionSequence(0);
