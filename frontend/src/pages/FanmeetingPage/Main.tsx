@@ -334,7 +334,7 @@ export default function Main() {
         if (newVideoInputDevice) {
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoInputDevice.deviceId,
-            publishAudio: true,
+            publishAudio: isCreator,
             publishVideo: true,
             mirror: true,
           });
@@ -351,7 +351,7 @@ export default function Main() {
     } catch (e) {
       console.error(e);
     }
-  }, [currentVideoDevice, session, mainStreamManager]);
+  }, [currentVideoDevice, session, mainStreamManager, isCreator]);
 
   const toggleMyAudio = useCallback(() => {
     if (publisher) {
@@ -459,6 +459,7 @@ export default function Main() {
           mySessionId={mySessionId}
           isCreator={isCreator}
           joinSession={joinSession}
+          setIsCreator={setIsCreator}
         />
       ) : (
         <div id="session">
