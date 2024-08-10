@@ -14,6 +14,7 @@ import JoinForm from "./JoinForm";
 import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
+import TimeTableComponent from "./TimeTableComponent";
 
 // "http:localhost:8080/"
 const APPLICATION_SERVER_URL =
@@ -58,8 +59,38 @@ export default function Main() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+  // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
+  const [currentSequence, setCurrentSequence] = useState(1);
+  // 현재 코너 바뀔때마다 백엔드로 api 호출
+  const apiTimetable = async (seq: number) => {
+    if (!token) {
+      return;
+    }
+    try {
+      await client(token).post(`api/sessions/${mySessionId}`, {
+        sequence: seq,
+      });
+      console.log("성공적으로 전송");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const nextSequence = () => {
+    if (currentSequence < timetables.length) {
+      const next = currentSequence + 1;
+      setCurrentSequence(next);
+      apiTimetable(next);
+    }
+  };
+  const prevSequence = () => {
+    if (currentSequence > 1) {
+      const prev = currentSequence - 1;
+      setCurrentSequence(prev);
+      apiTimetable(prev);
+    }
+  };
 
   // 채팅 관련 상태 추가
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -134,7 +165,7 @@ export default function Main() {
     setTimetables(response.data.timetables);
     return response.data.sessionId;
   };
-
+  console.log(timetables);
   const createToken = async (sessionId: string): Promise<string> => {
     try {
       const response = await axios.post<string>(
@@ -561,7 +592,12 @@ export default function Main() {
               value="비디오껐다키기"
             />
           </div>
-
+          <TimeTableComponent
+            currentSequence={currentSequence}
+            nextSequence={nextSequence}
+            prevSequence={prevSequence}
+            isCreator
+          />
           <VideoContainer
             publisher={publisher}
             subscribers={subscribers}
