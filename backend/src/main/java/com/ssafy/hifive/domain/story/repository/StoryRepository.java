@@ -15,4 +15,6 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 	Page<Story> findByFanmeeting_FanmeetingId(long fanmeetingId, Pageable pageable);
 
 	Page<Story> findByFanmeeting_FanmeetingIdAndIsPicked(long fanmeetingId, boolean isPicked, Pageable pageable);
+
+	List<Story> findByFanmeeting_FanmeetingIdAndIsPickedTrue(long fanmeetingId);
 }

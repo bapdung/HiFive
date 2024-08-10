@@ -15,6 +15,7 @@ import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
+// "http:localhost:8080/"
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
 
@@ -64,6 +65,7 @@ export default function Main() {
   const [newMessage, setNewMessage] = useState<string>("");
   const userColorsRef = useRef<{ [key: string]: string }>({});
   const [userId, setUserId] = useState<number | undefined>();
+  const [lastMessageTime, setLastMessageTime] = useState<number | null>(null);
 
   // 유저 정보 불러오기
   const fetchUser = async () => {
@@ -452,6 +454,15 @@ export default function Main() {
   const handleSendMessage = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+
+      const now = Date.now();
+
+      // 1.5초에 채팅 하나 보낼 수 있다.
+      if (lastMessageTime && now - lastMessageTime < 1500) {
+        alert("도배 금지!!");
+        return;
+      }
+
       if (newMessage.trim() !== "") {
         const message = {
           id: uuidv4(),
@@ -464,9 +475,10 @@ export default function Main() {
           type: "chat",
         });
         setNewMessage("");
+        setLastMessageTime(now);
       }
     },
-    [newMessage, myUserName, session, isCreator],
+    [newMessage, myUserName, session, lastMessageTime, isCreator],
   );
 
   return (
