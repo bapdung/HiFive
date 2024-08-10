@@ -165,7 +165,7 @@ export default function Main() {
   };
 
   const getToken = useCallback(async () => {
-    if (!token) {
+    if (!token || !mySessionId) {
       return "";
     }
     return createSession(mySessionId).then((sessionId) =>
@@ -498,6 +498,39 @@ export default function Main() {
     [newMessage, myUserName, session, lastMessageTime, isCreator],
   );
 
+  const goToNextCorner = useCallback(
+    (newSequence: number) => {
+      if (isCreator && session) {
+        setCurrentSequence(newSequence);
+        session.signal({
+          type: "nextCorner",
+          data: JSON.stringify({ sequence: newSequence }),
+        });
+      }
+    },
+    [isCreator, session],
+  );
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (session) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleNextCornerSignal = (event: any) => {
+        if (event.data) {
+          const data = JSON.parse(event.data);
+          setCurrentSequence(data.sequence);
+        }
+      };
+
+      session.on("signal:nextCorner", handleNextCornerSignal);
+
+      // 클린업 함수 반환
+      return () => {
+        session.off("signal:nextCorner", handleNextCornerSignal);
+      };
+    }
+  }, [session]);
+
   return (
     <div className="w-full items-center">
       {session === undefined ? (
@@ -575,6 +608,7 @@ export default function Main() {
             currentSequence={currentSequence}
             isCreator
             setCurrentSequence={setCurrentSequence}
+            onSequenceChange={goToNextCorner}
           />
           <StoryTime
             token={token}
