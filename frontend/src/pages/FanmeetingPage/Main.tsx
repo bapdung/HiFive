@@ -616,6 +616,7 @@ export default function Main() {
             timetables={timetables}
             currentSequence={currentSequence}
             isCreator
+            session={session}
           />
           <QuestionTime
             token={token}
