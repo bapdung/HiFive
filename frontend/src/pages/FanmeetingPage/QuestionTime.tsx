@@ -102,16 +102,16 @@ const QuestionTime: React.FC<QuestionProps> = ({
       {isCreator && (
         <div>
           <button type="button" onClick={prevQuestion}>
-            이전 사연
+            이전 질문
           </button>
           <button type="button" onClick={nextQuestion}>
-            다음 사연
+            다음 질문
           </button>
         </div>
       )}
       {currentQuestion && (
         <div>
-          <p>{questionSequence}번째 사연</p>
+          <p>{questionSequence}번째 질문</p>
           <p>작성자 : {currentQuestion.nickname}</p>
           <p>{currentQuestion.content}</p>
         </div>

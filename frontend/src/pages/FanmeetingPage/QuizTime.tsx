@@ -47,7 +47,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
       }
     };
 
-    if (timetables[currentSequence - 1]?.categoryName === "Q&A") {
+    if (timetables[currentSequence - 1]?.categoryName === "O/X게임") {
       setIsQuizTime(true);
       quizStartApi();
     } else {
@@ -87,17 +87,18 @@ const QuizTime: React.FC<QuizTimeProps> = ({
 
   return isQuizTime ? (
     <div>
-      <p>Q&A 시간입니다.</p>
+      <p>O/X 퀴즈 시간입니다</p>
       {isCreator && (
         <div>
           <button type="button" onClick={nextQuestion}>
-            다음 사연
+            다음 문제
           </button>
         </div>
       )}
       {currentQuiz && (
         <div>
           <p>{quizSequence}번째 문제</p>
+          {quizSequence === lastQuizSequence && <p>마지막 문제입니다!</p>}
           <p>문제 : {currentQuiz.problem}</p>
         </div>
       )}
