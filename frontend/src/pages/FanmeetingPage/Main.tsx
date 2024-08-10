@@ -17,6 +17,7 @@ import client from "../../client";
 import TimeTableComponent from "./TimeTableComponent";
 import StoryTime from "./StoryTime";
 import QuestionTime from "./QuestionTime";
+import QuizTime from "./QuizTime";
 
 // "http:localhost:8080/"
 const APPLICATION_SERVER_URL =
@@ -583,6 +584,13 @@ export default function Main() {
             isCreator
           />
           <QuestionTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator
+          />
+          <QuizTime
             token={token}
             mySessionId={mySessionId}
             timetables={timetables}
