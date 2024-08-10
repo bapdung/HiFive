@@ -33,6 +33,7 @@ interface ChatMessage {
   id: string;
   user: string;
   text: string;
+  isCreator: boolean;
 }
 
 export default function Main() {
@@ -118,7 +119,7 @@ export default function Main() {
 
   const createSession = async (sessionId: string): Promise<string> => {
     const response = await axios.post<ResponseData>(
-      `${APPLICATION_SERVER_URL}api/sessions`,
+      `${APPLICATION_SERVER_URL}api/sessions/open`,
       { customSessionId: sessionId },
       {
         headers: {
@@ -438,6 +439,7 @@ export default function Main() {
           id: uuidv4(),
           user: myUserName,
           text: newMessage,
+          isCreator,
         };
         session?.signal({
           data: JSON.stringify(message),
@@ -446,7 +448,7 @@ export default function Main() {
         setNewMessage("");
       }
     },
-    [newMessage, myUserName, session],
+    [newMessage, myUserName, session, isCreator],
   );
 
   return (
