@@ -82,12 +82,11 @@ public class OpenviduController {
 
 	@PostMapping("/{sessionId}/connections")
 	public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
-		@RequestBody(required = false) Map<String, Object> params)
+		@RequestBody(required = false) Map<String, Object> params, @AuthenticationPrincipal Member member)
 		throws OpenViduJavaClientException, OpenViduHttpException {
 		Session session = openVidu.getActiveSession(sessionId);
-		if (session == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		openViduSessionService.isValidSession(session);
+		openViduService.isValidMember(Long.valueOf(sessionId), member);
 		ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);

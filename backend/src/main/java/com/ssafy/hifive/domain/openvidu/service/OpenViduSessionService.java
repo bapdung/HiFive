@@ -10,6 +10,7 @@ import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
+import io.openvidu.java.client.Session;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,5 +48,11 @@ public class OpenViduSessionService {
 	public void deleteSession(String fanmeetingId) {
 		redisTemplateForString.delete("fanmeeting:" + fanmeetingId + ":session");
 		redisTemplateForInteger.delete("fanmeeting:" + fanmeetingId + ":sequence");
+	}
+
+	public void isValidSession(Session session){
+		if (session == null) {
+			throw new DataNotFoundException(ErrorCode.FANMEETING_NO_SESSION);
+		}
 	}
 }
