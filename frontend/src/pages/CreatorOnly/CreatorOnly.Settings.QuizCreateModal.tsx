@@ -82,7 +82,6 @@ const QuizCreateModal: React.FC<QuizCreateModalProps> = ({
 
   return (
     <div className="w-full min-h-[50rem] absolute flex items-center justify-center z-50">
-      <div className="w-full h-full bg-black absolute opacity-70" />
       <div className="bg-white w-[50rem] h-[22rem] z-10 rounded-3xl flex flex-col items-center justify-between absolute top-1/4 p-12">
         <div className="flex justify-between w-full">
           <div className="w-2/3">
