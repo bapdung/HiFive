@@ -14,6 +14,7 @@ interface TimeTableProps {
   setCurrentSequence: (seq: number) => void;
   isCreator: boolean | undefined;
   timetables: Timetable[];
+  onSequenceChange: (newSequence: number) => void;
 }
 
 const TimeTableComponent: React.FC<TimeTableProps> = ({
@@ -23,6 +24,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
   mySessionId,
   isCreator,
   timetables,
+  onSequenceChange,
 }) => {
   // 현재 코너 바뀔때마다 백엔드로 api 호출
   const apiTimetable = async (seq: number) => {
@@ -45,6 +47,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
       const next = currentSequence + 1;
       setCurrentSequence(next);
       apiTimetable(next);
+      onSequenceChange(next);
     }
   };
 
@@ -53,6 +56,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
       const prev = currentSequence - 1;
       setCurrentSequence(prev);
       apiTimetable(prev);
+      onSequenceChange(prev);
     }
   };
 
