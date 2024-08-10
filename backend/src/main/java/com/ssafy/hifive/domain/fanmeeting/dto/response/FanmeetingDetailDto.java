@@ -29,6 +29,7 @@ public class FanmeetingDetailDto {
 	private int price;
 	private int remainingTickets;
 	private boolean isReservation;
+	private String link;
 	private List<TimetableResponseDto> timetable;
 
 	public static FanmeetingDetailDto from(Fanmeeting fanmeeting, Member member, int remainingTickets,
@@ -48,6 +49,7 @@ public class FanmeetingDetailDto {
 			fanmeeting.getPrice(),
 			remainingTickets,
 			isReservation,
+			fanmeeting.getLink(),
 			fanmeeting.getTimetable().stream()
 				.map(TimetableResponseDto::from)
 				.collect(Collectors.toList())
