@@ -33,6 +33,12 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 		sessions.putIfAbsent(fanmeetingId, new ConcurrentHashMap<>());
 		memberSessionMap.putIfAbsent(fanmeetingId, new ConcurrentHashMap<>());
 
+		if (memberSessionMap.get(fanmeetingId).containsKey(memberId)) {
+			sendMessageToSession(fanmeetingId, memberId, "이미 세션이 연결된 사용자입니다.", "alreadyConnected");
+			session.close();
+			return;
+		}
+
 		sessions.get(fanmeetingId).put(sessionId, session);
 		memberSessionMap.get(fanmeetingId).put(memberId, sessionId);
 
