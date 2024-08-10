@@ -5,11 +5,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduQuizRequestDto;
+import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizDto;
+import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResultDto;
+import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResultSequenceDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCustomSessionDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduSequenceDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuestionDto;
-import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResponseDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduStoryDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduQuestionService;
@@ -126,11 +129,49 @@ public class OpenviduController {
 		return ResponseEntity.ok(openViduStoryService.getStoryBySequence(fanmeetingId, sequence, member));
 	}
 
-	@GetMapping(value = "/{fanmeetingId}/quiz", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpenViduQuizResponseDto>> getQuizzes(@PathVariable long fanmeetingId) {
-		List<OpenViduQuizResponseDto> quizzes = openViduQuizService.getQuizzesByFanmeetingId(fanmeetingId);
-		return ResponseEntity.ok(quizzes);
+	@PostMapping("/quiz/{fanmeetingId}")
+	public ResponseEntity<Void> getQuizzes(@PathVariable(name = "fanmeetingId") long fanmeetingId,
+		@AuthenticationPrincipal Member member) {
+		openViduQuizService.getQuizzes(fanmeetingId, member);
+		return ResponseEntity.ok().build();
+	}
 
+	@GetMapping("/quiz/{fanmeetingId}/{sequence}")
+	public ResponseEntity<OpenViduQuizDto> getQuizBySequence(
+		@PathVariable(name = "fanmeetingId") long fanmeetingId,
+		@PathVariable(name = "sequence") int sequence,
+		@AuthenticationPrincipal Member member) {
+
+		OpenViduQuizDto quiz = openViduQuizService.getQuizBySequence(fanmeetingId, sequence, member);
+		return ResponseEntity.ok(quiz);
+	}
+
+	@PostMapping("/quiz/answer/{fanmeetingId}/{sequence}")
+	public ResponseEntity<Void> submitSingleUserAnswer(
+		@PathVariable(name = "fanmeetingId") long fanmeetingId,
+		@PathVariable(name = "sequence") int sequence,
+		@ModelAttribute OpenViduQuizRequestDto openViduQuizRequestDto,
+		@AuthenticationPrincipal Member member) {
+
+		openViduQuizService.submitSingleUserAnswer(fanmeetingId, sequence, member, openViduQuizRequestDto);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/quiz/result/{fanmeetingId}/{sequence}")
+	public ResponseEntity<List<OpenViduQuizResultSequenceDto>> getResultsForQuestion(
+		@PathVariable(name = "fanmeetingId") long fanmeetingId,
+		@PathVariable(name = "sequence") int sequence,
+		@AuthenticationPrincipal Member member) {
+
+		return ResponseEntity.ok(openViduQuizService.getResultsForQuestion(fanmeetingId, sequence));
+	}
+
+	@GetMapping("/quiz/result/{fanmeetingId}")
+	public ResponseEntity<List<OpenViduQuizResultDto>> getQuizRanking(
+		@PathVariable(name = "fanmeetingId") long fanmeetingId,
+		@AuthenticationPrincipal Member member) {
+
+		return ResponseEntity.ok(openViduQuizService.getQuizRanking(fanmeetingId));
 	}
 
 	@GetMapping(path = "/question/{fanmeetingId}/{sequence}")
