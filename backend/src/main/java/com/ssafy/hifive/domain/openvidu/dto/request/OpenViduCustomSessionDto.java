@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CustomSessionRequest {
+public class OpenViduCustomSessionDto {
 	private String customSessionId;
 }
