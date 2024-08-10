@@ -53,16 +53,21 @@ const StoryTime: React.FC<StoryTimeProps> = ({
     if (timetables[currentSequence - 1]?.categoryName === "사연 전달") {
       setIsStoryTime(true);
       storyStartApi();
+    } else {
+      setIsStoryTime(false);
+      setStorySequence(0);
+      setLastStorySequence(null);
+      setCurrentStory(null);
     }
   }, [token, mySessionId, currentSequence, timetables]);
 
-  const fetchAStory = async (nextsq: number) => {
-    if (!token || (lastStorySequence && lastStorySequence <= storySequence)) {
+  const fetchAStory = async (seq: number) => {
+    if (!token || (lastStorySequence && lastStorySequence < seq)) {
       return;
     }
     try {
       const response = await client(token).get(
-        `/api/sessions/story/${mySessionId}/${nextsq}`,
+        `/api/sessions/story/${mySessionId}/${seq}`,
       );
       setCurrentStory(response.data);
       setLastStorySequence(response.data.totalStoryCount);
@@ -74,7 +79,7 @@ const StoryTime: React.FC<StoryTimeProps> = ({
   const nextStory = () => {
     if (
       !lastStorySequence ||
-      (lastStorySequence && lastStorySequence < currentSequence)
+      (lastStorySequence && lastStorySequence > storySequence)
     ) {
       const nextseq = storySequence + 1;
       setStorySequence(nextseq);
@@ -89,7 +94,8 @@ const StoryTime: React.FC<StoryTimeProps> = ({
       fetchAStory(prevseq);
     }
   };
-  return (
+
+  return isStoryTime ? (
     <div>
       {isStoryTime && <p>사연전달 시간입니다.</p>}
       <p>사연전달 컴포넌트</p>
@@ -106,13 +112,13 @@ const StoryTime: React.FC<StoryTimeProps> = ({
       {currentStory && (
         <div>
           <p>{storySequence}번째 사연</p>
-          <p>{currentStory.title}</p>
-          <p>{currentStory.nickname}</p>
+          <p>작성자 : {currentStory.nickname}</p>
+          <p>제목 : {currentStory.title}</p>
           <p>{currentStory.content}</p>
         </div>
       )}
     </div>
-  );
+  ) : null;
 };
 
 export default StoryTime;

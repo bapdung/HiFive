@@ -16,6 +16,7 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 import TimeTableComponent from "./TimeTableComponent";
 import StoryTime from "./StoryTime";
+import QuestionTime from "./QuestionTime";
 
 // "http:localhost:8080/"
 const APPLICATION_SERVER_URL =
@@ -138,7 +139,7 @@ export default function Main() {
     setTimetables(response.data.timetables);
     return response.data.sessionId;
   };
-  console.log(timetables);
+
   const createToken = async (sessionId: string): Promise<string> => {
     try {
       const response = await axios.post<string>(
@@ -252,13 +253,14 @@ export default function Main() {
       getToken().then(async (openviduToken) => {
         try {
           await session.connect(openviduToken, {
+            // 크리에이터일경우 이름 특수문자(##)로 설정 => 팬이랑 안겹치게 하기 위해서
             clientData: isCreator ? "##" : myUserName,
           });
 
           const newPublisher = await OV.current.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
-            publishAudio: isCreator,
+            publishAudio: isCreator, // 크리에이터일경우만 마이크 킨 상태로 시작
             publishVideo: true,
             resolution: "640x480",
             frameRate: 30,
@@ -574,6 +576,13 @@ export default function Main() {
             setCurrentSequence={setCurrentSequence}
           />
           <StoryTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator
+          />
+          <QuestionTime
             token={token}
             mySessionId={mySessionId}
             timetables={timetables}
