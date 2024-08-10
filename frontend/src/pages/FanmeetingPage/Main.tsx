@@ -15,6 +15,7 @@ import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 import TimeTableComponent from "./TimeTableComponent";
+import StoryTime from "./StoryTime";
 
 // "http:localhost:8080/"
 const APPLICATION_SERVER_URL =
@@ -63,34 +64,6 @@ export default function Main() {
   // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
   const [currentSequence, setCurrentSequence] = useState(1);
-  // 현재 코너 바뀔때마다 백엔드로 api 호출
-  const apiTimetable = async (seq: number) => {
-    if (!token) {
-      return;
-    }
-    try {
-      await client(token).post(`api/sessions/${mySessionId}`, {
-        sequence: seq,
-      });
-      console.log("성공적으로 전송");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const nextSequence = () => {
-    if (currentSequence < timetables.length) {
-      const next = currentSequence + 1;
-      setCurrentSequence(next);
-      apiTimetable(next);
-    }
-  };
-  const prevSequence = () => {
-    if (currentSequence > 1) {
-      const prev = currentSequence - 1;
-      setCurrentSequence(prev);
-      apiTimetable(prev);
-    }
-  };
 
   // 채팅 관련 상태 추가
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -593,9 +566,18 @@ export default function Main() {
             />
           </div>
           <TimeTableComponent
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
             currentSequence={currentSequence}
-            nextSequence={nextSequence}
-            prevSequence={prevSequence}
+            isCreator
+            setCurrentSequence={setCurrentSequence}
+          />
+          <StoryTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
             isCreator
           />
           <VideoContainer
