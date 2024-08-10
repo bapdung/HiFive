@@ -16,7 +16,7 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
+  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
 
 interface Timetable {
   categoryName: string;
@@ -63,6 +63,7 @@ export default function Main() {
   const [newMessage, setNewMessage] = useState<string>("");
   const userColorsRef = useRef<{ [key: string]: string }>({});
   const [userId, setUserId] = useState<number | undefined>();
+  const [lastMessageTime, setLastMessageTime] = useState<number | null>(null);
 
   // 유저 정보 불러오기
   const fetchUser = async () => {
@@ -118,7 +119,7 @@ export default function Main() {
 
   const createSession = async (sessionId: string): Promise<string> => {
     const response = await axios.post<ResponseData>(
-      `${APPLICATION_SERVER_URL}api/sessions`,
+      `${APPLICATION_SERVER_URL}api/sessions/open`,
       { customSessionId: sessionId },
       {
         headers: {
@@ -433,6 +434,15 @@ export default function Main() {
   const handleSendMessage = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+
+      const now = Date.now();
+
+      // 1.5초에 채팅 하나 보낼 수 있다.
+      if (lastMessageTime && now - lastMessageTime < 1500) {
+        alert("도배 금지!!");
+        return;
+      }
+
       if (newMessage.trim() !== "") {
         const message = {
           id: uuidv4(),
@@ -444,9 +454,10 @@ export default function Main() {
           type: "chat",
         });
         setNewMessage("");
+        setLastMessageTime(now);
       }
     },
-    [newMessage, myUserName, session],
+    [newMessage, myUserName, session, lastMessageTime],
   );
 
   return (
