@@ -1,6 +1,7 @@
 package com.ssafy.hifive.domain.openvidu.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,6 +27,10 @@ public class OpenViduStoryService {
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final FanmeetingRepository fanmeetingRepository;
 
+	private String getRedisKey(long fanmeetingId) {
+		return "fanmeeting:" + fanmeetingId + ":story";
+	}
+
 	public void getStories(long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
@@ -34,11 +39,9 @@ public class OpenViduStoryService {
 			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
 		}
 
-		String redisKey = "fanmeeting:" + fanmeetingId + ":story";
-
 		List<Story> storyList = storyRepository.findByFanmeeting_FanmeetingIdAndIsPickedTrue(fanmeetingId);
 
-		if (storyList == null || storyList.isEmpty()) {
+		if (storyList.isEmpty()) {
 			throw new DataNotFoundException(ErrorCode.STORY_NOT_FOUND);
 		}
 
@@ -46,19 +49,23 @@ public class OpenViduStoryService {
 			.map(story -> OpenViduStoryDto.from(story, storyList.size()))
 			.collect(Collectors.toList());
 
-		redisTemplate.opsForValue().set(redisKey, stories);
+		redisTemplate.opsForValue()
+			.set(getRedisKey(fanmeetingId), stories, fanmeeting.getRunningTime() + 30, TimeUnit.MINUTES);
 
 	}
 
 	public OpenViduStoryDto getStoryBySequence(long fanmeetingId, int sequence, Member member) {
 
-		String redisKey = "fanmeeting:" + fanmeetingId + ":story";
+		String redisKey = getRedisKey(fanmeetingId);
 		List<OpenViduStoryDto> stories = (List<OpenViduStoryDto>)redisTemplate.opsForValue().get(redisKey);
 
-		if (stories == null || sequence < 0 || sequence >= stories.size()) {
+		int adjustedSequence = sequence - 1;
+
+		if (stories == null || adjustedSequence < 0 || adjustedSequence >= stories.size()) {
 			throw new DataNotFoundException(ErrorCode.STORY_NOT_FOUND);
 		}
 
-		return stories.get(sequence);
+		return stories.get(adjustedSequence);
 	}
+
 }

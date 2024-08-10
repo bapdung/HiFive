@@ -126,7 +126,6 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	//TODO
 	@Operation(summary = "회원 로그아웃", description = "사용자가 웹사이트를 로그아웃한다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
 		content = @Content(mediaType = "application/json",
