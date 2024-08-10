@@ -79,12 +79,18 @@ public class Fanmeeting extends BaseTimeEntity {
 	@Column(name = "open_date")
 	private LocalDateTime openDate;
 
+	@Column(name = "is_ended")
+	private boolean isEnded;
+
+	@Column
+	private String link;
+
 	@OneToMany(mappedBy = "fanmeeting")
 	private List<Timetable> timetable = new ArrayList<>();
 
 	@Builder
 	private Fanmeeting(Member creator, String title, String posterImg, String notice, int participant,
-		LocalDateTime startDate, int runningTime, int price, LocalDateTime openDate, List<Timetable> timetable) {
+		LocalDateTime startDate, int runningTime, int price, LocalDateTime openDate, String link, List<Timetable> timetable) {
 		this.creator = creator;
 		this.title = title;
 		this.posterImg = posterImg;
@@ -94,6 +100,8 @@ public class Fanmeeting extends BaseTimeEntity {
 		this.runningTime = runningTime;
 		this.price = price;
 		this.openDate = openDate;
+		this.isEnded = false;
+		this.link = link;
 		this.timetable = timetable;
 
 	}
@@ -115,5 +123,6 @@ public class Fanmeeting extends BaseTimeEntity {
 		this.runningTime = dto.getRunningTime();
 		this.openDate = dto.getOpenDate();
 		this.price = dto.getPrice();
+		this.link = dto.getLink();
 	}
 }
