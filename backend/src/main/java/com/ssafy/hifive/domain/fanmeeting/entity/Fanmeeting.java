@@ -114,6 +114,10 @@ public class Fanmeeting extends BaseTimeEntity {
 		this.timetable.addAll(timetables);
 	}
 
+	public void updateIsEnded() {
+		this.isEnded = true;
+	}
+
 	public void updateFanmeeting(FanmeetingRequestDto dto) {
 		this.title = dto.getTitle();
 		this.posterImg = dto.getPosterImg();
