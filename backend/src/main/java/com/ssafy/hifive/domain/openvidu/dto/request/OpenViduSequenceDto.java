@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SequenceRequest {
+public class OpenViduSequenceDto {
 	private Integer sequence;
 }
