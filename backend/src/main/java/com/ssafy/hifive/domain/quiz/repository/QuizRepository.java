@@ -23,4 +23,5 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
 	List<Quiz> findByFanmeeting(Fanmeeting fanmeeting);
 
+	List<Quiz> findByFanmeeting_FanmeetingId(long fanmeetingId);
 }
