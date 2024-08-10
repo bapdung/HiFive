@@ -42,4 +42,10 @@ public class OpenViduService {
 		}
 	}
 
+	public void isCreator(Long creatorId, Member member) {
+		if (member.getMemberId() != creatorId || !member.isCreator()) {
+			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
+		}
+	}
+
 }
