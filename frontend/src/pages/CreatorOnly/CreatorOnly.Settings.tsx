@@ -43,6 +43,10 @@ function Settings() {
   return (
     <>
       <div className="relative">
+        {isQuizModalOpen ? (
+          <div className="w-full h-full bg-black absolute opacity-70" />
+        ) : null}
+
         <div className="w-screen bg-white py-8 flex flex-col items-center">
           <p className="w-[40%] mb-5 flex justify-around text-h3 text-gray-700">
             <button

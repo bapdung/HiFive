@@ -59,15 +59,19 @@ const Quiz: React.FC<QuizProps> = ({
   };
 
   const handleInputTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentQuizTitle(event.target.value);
+    if (event.target.value.length <= 30) {
+      setCurrentQuizTitle(event.target.value);
+    }
   };
 
   const handleInputDetail = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentQuizDetail(event.target.value);
+    if (event.target.value.length <= 50) {
+      setCurrentQuizDetail(event.target.value);
+    }
   };
 
   const updateQuiz = async (buttonOfQuizId: number, buttonOfQuiz: Quiz) => {
-    if (!token || !currentQuiz) {
+    if (!token) {
       return;
     }
     if (!isEditing || buttonOfQuizId !== currentQuiz) {
@@ -103,18 +107,32 @@ const Quiz: React.FC<QuizProps> = ({
 
   return (
     <div className="flex flex-col items-center">
-      <button
-        type="button"
-        className="my-8 w-1/4 creator-btn-md"
-        onClick={handleQuizOpen}
-      >
-        퀴즈 생성하기
-      </button>
+      {allQuizzes.length >= 15 ? (
+        <>
+          <button
+            type="button"
+            className="mt-8 w-1/4 creator-btn-md bg-gray-500 hover:cursor-default"
+          >
+            퀴즈 생성하기
+          </button>
+          <p className="text-small text-primary-text mb-8 mt-1">
+            퀴즈는 15개까지만 생성 가능합니다.
+          </p>
+        </>
+      ) : (
+        <button
+          type="button"
+          className="my-8 w-1/4 creator-btn-md"
+          onClick={handleQuizOpen}
+        >
+          퀴즈 생성하기
+        </button>
+      )}
       <div className="w-3/4 flex flex-wrap justify-center gap-6">
         {allQuizzes.map((quiz, index) => (
           <div
             key={quiz.id}
-            className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[1rem] px-8 justify-between bg-white"
+            className="border-2 border-secondary-700 rounded-[20px] w-[350px] flex flex-col items-center min-h-48 py-[1rem] px-8 justify-between bg-white"
           >
             {!isEditing || currentQuiz !== quiz.id ? (
               <button
@@ -177,7 +195,7 @@ const Quiz: React.FC<QuizProps> = ({
               <div>
                 <input
                   type="text"
-                  className="focus:outline-none text-large text-gray-700 text-center mb-2.5 w-full"
+                  className="focus:outline-none text-large text-gray-700 mb-2.5 text-center w-full"
                   value={currentQuizTitle}
                   onChange={handleInputTitle}
                 />

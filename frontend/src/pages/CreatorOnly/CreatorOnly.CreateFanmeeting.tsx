@@ -59,6 +59,19 @@ function CreateFanmeeting() {
   const [posterName, setPosterName] = useState<string | null>(null);
   const naviate = useNavigate();
 
+  // 각종 에러 메세지
+  const [submitError, setSubmitError] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [titleLength, setTitleLength] = useState(0);
+  const [meetingDateError, setMeetingDateError] = useState("");
+  const [ticketDateError, setTicketDateError] = useState("");
+  const [detailError, setDetailError] = useState("");
+  const [priceError, setPriceError] = useState("");
+  const [posterError, setPosterError] = useState("");
+  const [durationError, setDurationError] = useState("");
+  const [cornerError, setCornerError] = useState("");
+  const [peopleError, setPeopleError] = useState("");
+
   // 진행시간
   const durations = [
     "1:00",
@@ -84,16 +97,22 @@ function CreateFanmeeting() {
   ];
 
   const handleTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 제목 받아옴
-    setTitle(e.target.value);
+    if (e.target.value.length <= 30) {
+      setTitleLength(e.target.value.length);
+      setTitle(e.target.value);
+      setTitleError("");
+    }
   };
+
   const handleDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     // 설명 받아옴
     setDescription(e.target.value);
+    setDetailError("");
   };
   const handlePeopleNumber = (num: number) => {
     // 인원수 받아옴
     setPeopleNumber(num);
+    setPeopleError("");
   };
   const toggleFanmeetingCalendar = () => {
     // 팬미팅 달력 토글
@@ -120,10 +139,11 @@ function CreateFanmeeting() {
   const checkStartDateValidation = (date: Date) => {
     const today = new Date();
     const difference = differenceInDays(date, today);
-    if (difference < 7) {
-      alert("일주일 뒤 날짜만 선택 가능합니다.");
+    if (difference < 6) {
+      setMeetingDateError("일주일 뒤부터 선택할 수 있습니다.");
       return false;
     }
+    setMeetingDateError("");
     return true;
   };
 
@@ -132,14 +152,15 @@ function CreateFanmeeting() {
     const today = new Date();
     const tomorrow = addDays(today, 1);
     if (!startDate) {
-      alert("팬미팅 날짜를 먼저 정해주세요.");
+      setTicketDateError("팬미팅 날짜를 먼저 선택해주세요.");
       return false;
     }
     const dayBeforeTicketDate = addDays(startDate, -1); // 팬미팅 하루전
     if (isBefore(date, tomorrow) || isAfter(date, dayBeforeTicketDate)) {
-      alert("잘못된 날짜를 선택하셨습니다.");
+      alert("내일부터 팬미팅 하루 전까지만 선택하실 수 있습니다.");
       return false;
     }
+    setTicketDateError("");
     return true;
   };
 
@@ -173,12 +194,21 @@ function CreateFanmeeting() {
   const handleDurationSelect = (duration: string) => {
     setSelectedDuration(duration);
     setIsTimeOpen(false);
+    setDurationError("");
   };
 
   // 티켓 가격 받아옴
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const intValue = parseNumberIntoInteger(e.target.value);
-    setTicketPrice(intValue);
+    if (intValue <= 500000) {
+      setTicketPrice(intValue);
+      setPriceError("");
+    } else if (intValue <= 5000000) {
+      setTicketPrice(intValue);
+      setPriceError("50만원 이하의 가격으로 설정해주세요.");
+    } else {
+      setPriceError("50만원 이하의 가격으로 설정해주세요.");
+    }
   };
 
   const inputImageUpload = async (
@@ -205,6 +235,7 @@ function CreateFanmeeting() {
       reader.readAsDataURL(file);
       setPosterName(file.name);
       setPosterFile(file);
+      setPosterError("");
     }
   };
 
@@ -244,6 +275,9 @@ function CreateFanmeeting() {
       ...corners,
       { id: `corner-${corners.length}`, content: "코너 선택" },
     ]);
+    if (cornerError === "타임 테이블을 1개 이상 선택해주세요.") {
+      setCornerError("");
+    }
   };
 
   // drag 공간에서 제거
@@ -271,6 +305,9 @@ function CreateFanmeeting() {
       content: customCorner[`corner-${index}`] || "직접 입력",
     };
     setCorners(newCorners);
+    if (cornerError === "타임 테이블을 올바르게 설정해주세요.") {
+      setCornerError("");
+    }
   };
 
   // drag and drop
@@ -362,7 +399,37 @@ function CreateFanmeeting() {
       !selectedDuration ||
       !posterSrc
     ) {
-      alert("미입력한 항목이 있습니다.");
+      if (title === "") {
+        setTitleError("팬미팅 제목을 입력해주세요.");
+      }
+      if (description === "") {
+        setDetailError("팬미팅 상세 설명을 입력해주세요.");
+      }
+      if (selectedDuration === "" || !selectedDuration) {
+        setDurationError("진행 시간을 선택해주세요.");
+      }
+      if (ticketPrice === "") {
+        setPriceError("티켓 가격을 입력해주세요.");
+      }
+      if (isCornerSelectionIncomplete) {
+        setCornerError("타임 테이블을 올바르게 설정해주세요.");
+      }
+      if (corners.length === 0) {
+        setCornerError("타임 테이블을 1개 이상 선택해주세요.");
+      }
+      if (!peopleNumber) {
+        setPeopleError("참가 인원을 선택해주세요.");
+      }
+      if (!startDate) {
+        setMeetingDateError("팬미팅 날짜를 선택해주세요.");
+      }
+      if (!ticketDate) {
+        setTicketDateError("예매 시작 날짜를 선택해주세요.");
+      }
+      if (!posterSrc) {
+        setPosterError("팬미팅 포스터 이미지를 등록해주세요.");
+      }
+      setSubmitError("미입력한 항목이 있습니다.");
       return false;
     }
     handleModalOpen();
@@ -424,14 +491,18 @@ function CreateFanmeeting() {
               <p className="text-small mb-1.5">타이틀</p>
               <input
                 type="text"
-                className="creator-btn-outline-md mt-1 focus:outline-none text-gray-900 mb-5 text-center"
+                className="creator-btn-outline-md mt-1 focus:outline-none text-gray-900 text-center"
                 style={{ borderWidth: "1px" }}
                 placeholder="이 곳에 팬미팅 제목을 입력하세요."
                 value={title}
                 onChange={handleTitle}
               />
+              <p className="mb-5 mt-1 flex justify-between">
+                <span className="text-primary-text">{titleError}</span>
+                <span className="text-secondary">{titleLength}/30</span>
+              </p>
               <p className="text-small mb-1.5">참가 인원</p>
-              <div className="w-full flex justify-around mt-1 mb-5">
+              <div className="w-full flex justify-around mt-1">
                 <button
                   onClick={() => handlePeopleNumber(5)}
                   type="button"
@@ -481,11 +552,12 @@ function CreateFanmeeting() {
                   50명
                 </button>
               </div>
+              <p className="text-primary-text mb-5 mt-1">{peopleError}</p>
               <p className="text-small mb-1.5">행사 날짜</p>
               <button
                 onClick={() => toggleFanmeetingCalendar()}
                 type="button"
-                className="creator-btn-outline-md w-full mb-5 focus:outline-none"
+                className="creator-btn-outline-md w-full focus:outline-none"
                 style={{ borderWidth: "1px" }}
               >
                 {startDate ? (
@@ -501,6 +573,7 @@ function CreateFanmeeting() {
                   </>
                 )}
               </button>
+              <p className="text-primary-text mb-5 mt-1">{meetingDateError}</p>
               {isFanmeetingCalendarOpen && (
                 <DatePicker
                   selected={startDate}
@@ -564,13 +637,15 @@ function CreateFanmeeting() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col w-full my-5">
+              <p className="text-primary-text mt-1">{durationError}</p>
+              <p className="text-primary-text mt-1">{priceError}</p>
+              <div className="flex flex-col w-full mt-5">
                 <p className="text-small mb-1.5">예매 오픈일</p>
                 <button
                   onClick={() => toggleTicketCalendar()}
                   type="button"
                   style={{ borderWidth: "1px" }}
-                  className="creator-btn-outline-md w-full mb-5 focus:outline-none"
+                  className="creator-btn-outline-md w-full focus:outline-none"
                 >
                   {ticketDate ? (
                     <p className="text-secondary">
@@ -597,6 +672,7 @@ function CreateFanmeeting() {
                     locale={ko}
                   />
                 )}
+                <p className="text-primary-text mt-1">{ticketDateError}</p>
               </div>
             </div>
             <div className="flex flex-col w-[40%]">
@@ -605,7 +681,7 @@ function CreateFanmeeting() {
                 <div>
                   <label htmlFor="photoFile">
                     <div
-                      className="creator-btn-outline-md text-center mb-4 hover:cursor-pointer"
+                      className="creator-btn-outline-md text-center hover:cursor-pointer"
                       style={{ borderWidth: "1px" }}
                     >
                       파일 업로드
@@ -630,6 +706,7 @@ function CreateFanmeeting() {
                   <div className="relative w-full h-full bg-gray-300 flex justify-center items-center" />
                 </div>
               </form>
+              <p className="text-primary-text mt-1 mb-4">{posterError}</p>
             </div>
           </div>
           <div className="flex justify-between">
@@ -647,6 +724,7 @@ function CreateFanmeeting() {
               >
                 {description}
               </textarea>
+              <p className="text-primary-text mb-5">{detailError}</p>
             </div>
             <div className="w-2/5">
               <p className="text-small mb-1.5">타임 테이블 설정</p>
@@ -722,6 +800,9 @@ function CreateFanmeeting() {
                   코너 선택을 완료해야 팬미팅을 생성할 수 있습니다.
                 </p>
               )}
+              {corners.length === 0 && (
+                <p className="text-primary-text mt-1">{cornerError}</p>
+              )}
             </div>
           </div>
         </div>
@@ -732,6 +813,7 @@ function CreateFanmeeting() {
         >
           팬미팅 생성하기
         </button>
+        <p className="text-primary-text mt-1">{submitError}</p>
       </div>
       {showModal && (
         <Modal onClose={handleModalClose} onConfirm={submitCreateFanmeeting} />
