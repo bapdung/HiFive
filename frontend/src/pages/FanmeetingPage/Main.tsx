@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   OpenVidu,
   Publisher,
@@ -38,6 +38,7 @@ interface ChatMessage {
 }
 
 export default function Main() {
+  const navigate = useNavigate();
   const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
   const [session, setSession] = useState<Session | undefined>(undefined);
@@ -135,17 +136,26 @@ export default function Main() {
   };
 
   const createToken = async (sessionId: string): Promise<string> => {
-    const response = await axios.post<string>(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+    try {
+      const response = await axios.post<string>(
+        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    );
-    return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
+      return "";
+    }
   };
 
   const getToken = useCallback(async () => {
