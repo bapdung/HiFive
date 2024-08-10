@@ -43,7 +43,7 @@ const useAuthStore = create<AuthState>((set) => ({
         if (accessToken) {
           localStorage.setItem("accessToken", accessToken);
           set({ accessToken });
-          window.location.reload(); // 새로고침 추가
+          window.location.reload();
         } else {
           console.error("Failed to refresh access token");
           return null;
@@ -54,7 +54,7 @@ const useAuthStore = create<AuthState>((set) => ({
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
         set({ accessToken });
-        window.location.reload(); // 새로고침 추가
+        window.location.reload();
       } else {
         console.error("Failed to get access token");
         return null;
