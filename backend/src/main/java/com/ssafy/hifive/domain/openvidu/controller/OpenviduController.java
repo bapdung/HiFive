@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.entity.Member;
-import com.ssafy.hifive.domain.openvidu.dto.request.CustomSessionRequest;
-import com.ssafy.hifive.domain.openvidu.dto.request.SequenceRequest;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCustomSessionDto;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduSequenceDto;
+import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuestionDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResponseDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduStoryDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
+import com.ssafy.hifive.domain.openvidu.service.OpenViduQuestionService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduQuizService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduSessionService;
@@ -43,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/api/sessions")
 public class OpenviduController {
+	private final OpenViduQuestionService openViduQuestionService;
 	@Value("${openvidu.url}")
 	private String openviduUrl;
 
@@ -63,16 +66,16 @@ public class OpenviduController {
 
 	@PostMapping(path = "/open", produces = "application/json")
 	public ResponseEntity<OpenViduTimetableDto> initializeSession(
-		@RequestBody CustomSessionRequest customSessionRequest)
+		@RequestBody OpenViduCustomSessionDto openViduCustomSessionDto)
 		throws OpenViduJavaClientException, OpenViduHttpException {
 		SessionProperties properties = new SessionProperties.Builder().customSessionId(
-			customSessionRequest.getCustomSessionId()).build();
+			openViduCustomSessionDto.getCustomSessionId()).build();
 		Session session = openVidu.createSession(properties);
 		//customSessionId는 fanmeetingId고, sessionId는 생성 시 부여 받는 토큰 값)
-		openViduSessionService.saveSession(Long.valueOf(customSessionRequest.getCustomSessionId()),
+		openViduSessionService.saveSession(Long.valueOf(openViduCustomSessionDto.getCustomSessionId()),
 			session.getSessionId());
 		return new ResponseEntity<>(
-			openViduService.getTimetableAll(Long.valueOf(customSessionRequest.getCustomSessionId()),
+			openViduService.getTimetableAll(Long.valueOf(openViduCustomSessionDto.getCustomSessionId()),
 				session.getSessionId()),
 			HttpStatus.CREATED);
 	}
@@ -92,8 +95,8 @@ public class OpenviduController {
 
 	@PostMapping("/{fanmeetingId}")
 	public ResponseEntity<Void> saveCurrentSequence(@PathVariable Long fanmeetingId,
-		@RequestBody SequenceRequest sequenceRequest) {
-		openViduSessionService.saveSequence(fanmeetingId, sequenceRequest.getSequence());
+		@RequestBody OpenViduSequenceDto openViduSequenceDto) {
+		openViduSessionService.saveSequence(fanmeetingId, openViduSequenceDto.getSequence());
 		return ResponseEntity.ok().build();
 	}
 
@@ -130,5 +133,23 @@ public class OpenviduController {
 		return ResponseEntity.ok(quizzes);
 
 	}
+
+	@GetMapping(path = "/question/{fanmeetingId}/{sequence}")
+	public ResponseEntity<OpenViduQuestionDto> getQuestionBySequence(@PathVariable(name = "fanmeetingId") long fanmeetingId,
+		@PathVariable(name = "sequence") int sequence, @AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(openViduQuestionService.getQuestionBySequence(fanmeetingId, sequence, member));
+	}
+
+	@PostMapping("/question/{fanmeetingId}")
+	public ResponseEntity<Void> getQuestions(@PathVariable(name = "fanmeetingId") long fanmeetingId,
+		@AuthenticationPrincipal Member member) {
+		openViduQuestionService.getQuestions(fanmeetingId, member);
+		return ResponseEntity.ok().build();
+	}
+
+
+
+
+
 
 }
