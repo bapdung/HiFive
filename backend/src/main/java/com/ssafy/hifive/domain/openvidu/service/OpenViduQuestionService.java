@@ -40,7 +40,7 @@ public class OpenViduQuestionService {
 		List<Question> questionList = questionRepository.findByFanmeeting_FanmeetingIdAndIsPickedTrue(fanmeetingId);
 
 		if (questionList == null || questionList.isEmpty()) {
-			throw new DataNotFoundException(ErrorCode.STORY_NOT_FOUND);
+			throw new DataNotFoundException(ErrorCode.QUESTION_NOT_FOUND);
 		}
 
 		List<OpenViduQuestionDto> questions = questionList.stream()
@@ -56,8 +56,8 @@ public class OpenViduQuestionService {
 		String questionKey = "fanmeeting:" + fanmeetingId + ":question";
 		List<OpenViduQuestionDto> questions = (List<OpenViduQuestionDto>)redisTemplate.opsForValue().get(questionKey);
 
-		if (questions == null || sequence <= 0 || sequence >= questions.size()) {
-			throw new DataNotFoundException(ErrorCode.STORY_NOT_FOUND);
+		if (questions == null || sequence <= 0 || sequence > questions.size()) {
+			throw new DataNotFoundException(ErrorCode.QUESTION_NOT_FOUND);
 		}
 
 		return questions.get(sequence - 1);
