@@ -236,7 +236,7 @@ export default function Main() {
       getToken().then(async (openviduToken) => {
         try {
           await session.connect(openviduToken, {
-            clientData: isCreator ? "creator" : myUserName,
+            clientData: isCreator ? "##" : myUserName,
           });
 
           const newPublisher = await OV.current.initPublisherAsync(undefined, {
@@ -371,6 +371,24 @@ export default function Main() {
     }
   }, [publisher, session]);
 
+  // 내 오디오 끄기 함수
+  const muteMyAudio = useCallback(() => {
+    if (publisher && publisher.stream.audioActive) {
+      publisher.publishAudio(false);
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [session?.connection.connectionId || ""]: false,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: session.connection.connectionId,
+          audioActive: false,
+        }),
+        type: "audioStatus",
+      });
+    }
+  }, [publisher, session]);
+
   const toggleMyVideo = useCallback(() => {
     if (publisher) {
       publisher.publishVideo(!publisher.stream.videoActive);
@@ -486,13 +504,33 @@ export default function Main() {
                 </button>
               </>
             )}
-            <input
-              className="btn btn-large btn-warning"
-              type="button"
-              id="buttonToggleAudio"
-              onClick={toggleMyAudio}
-              value="마이크 껐다 키기"
-            />
+            {isCreator ? (
+              <input
+                className="btn btn-large btn-warning"
+                type="button"
+                id="buttonToggleAudio"
+                onClick={toggleMyAudio}
+                value="마이크 껐다 키기"
+              />
+            ) : (
+              <input
+                className={
+                  publisher &&
+                  fanAudioStatus[publisher.stream.connection.connectionId]
+                    ? "btn-md hover:pointer"
+                    : "btn-md bg-gray-700 hover:default"
+                }
+                type="button"
+                id="buttonToggleAudio"
+                onClick={muteMyAudio}
+                value={
+                  publisher &&
+                  fanAudioStatus[publisher.stream.connection.connectionId]
+                    ? "음소거 하기"
+                    : "음소거 중"
+                }
+              />
+            )}
             <input
               className="btn btn-large btn-warning"
               type="button"
