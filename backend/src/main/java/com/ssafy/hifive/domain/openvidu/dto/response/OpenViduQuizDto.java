@@ -4,20 +4,22 @@ import com.ssafy.hifive.domain.quiz.entity.Quiz;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class OpenViduQuizResponseDto {
-	private int sequence;
+@NoArgsConstructor
+public final class OpenViduQuizDto {
 	private String problem;
 	private boolean answer;
+	private int totalQuizCount;
 	private String detail;
 
-	public static OpenViduQuizResponseDto from(Quiz quiz) {
-		return new OpenViduQuizResponseDto(
-			quiz.getSequence(),
+	public static OpenViduQuizDto from(Quiz quiz, int totalQuizCount) {
+		return new OpenViduQuizDto(
 			quiz.getProblem(),
 			quiz.isAnswer(),
+			totalQuizCount,
 			quiz.getDetail()
 		);
 	}
