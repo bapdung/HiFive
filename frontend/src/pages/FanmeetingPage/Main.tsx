@@ -457,8 +457,8 @@ export default function Main() {
 
       const now = Date.now();
 
-      // 1.5초에 채팅 하나 보낼 수 있다.
-      if (lastMessageTime && now - lastMessageTime < 1500) {
+      // 0.5초에 채팅 하나 보낼 수 있다.
+      if (lastMessageTime && now - lastMessageTime < 500) {
         alert("도배 금지!!");
         return;
       }
