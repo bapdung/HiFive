@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Session } from "openvidu-browser";
 import client from "../../client";
 
 interface Timetable {
@@ -13,6 +14,7 @@ interface StoryTimeProps {
   currentSequence: number;
   isCreator: boolean | undefined;
   timetables: Timetable[];
+  session: Session | undefined;
 }
 
 interface Story {
@@ -29,6 +31,7 @@ const StoryTime: React.FC<StoryTimeProps> = ({
   currentSequence,
   isCreator,
   timetables,
+  session,
 }) => {
   const [isStoryTime, setIsStoryTime] = useState(false);
   const [storySequence, setStorySequence] = useState(0);
@@ -84,6 +87,13 @@ const StoryTime: React.FC<StoryTimeProps> = ({
       const nextseq = storySequence + 1;
       setStorySequence(nextseq);
       fetchAStory(nextseq);
+
+      if (isCreator && session) {
+        session.signal({
+          type: "nextStory",
+          data: JSON.stringify({ storySequence: nextseq }),
+        });
+      }
     }
   };
 
@@ -92,8 +102,39 @@ const StoryTime: React.FC<StoryTimeProps> = ({
       const prevseq = storySequence - 1;
       setStorySequence(prevseq);
       fetchAStory(prevseq);
+
+      if (isCreator && session) {
+        session.signal({
+          type: "prevStory",
+          data: JSON.stringify({ storySequence: prevseq }),
+        });
+      }
     }
   };
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (session) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleNextStorySignal = (event: any) => {
+        if (event.data) {
+          const data = JSON.parse(event.data);
+          setStorySequence(data.storySequence);
+          fetchAStory(data.storySequence);
+        }
+      };
+
+      session.on("signal:nextStory", handleNextStorySignal);
+      session.on("signal:prevStory", handleNextStorySignal);
+
+      // 클린업 함수 반환
+      return () => {
+        session.off("signal:nextStory", handleNextStorySignal);
+        session.off("signal:prevStory", handleNextStorySignal);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   return isStoryTime ? (
     <div>
