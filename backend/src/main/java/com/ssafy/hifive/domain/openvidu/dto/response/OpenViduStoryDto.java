@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public final class OpenViduStoryDto {
-	private long storyId;
 	private String nickname;
 	private String title;
 	private String content;
@@ -18,7 +17,6 @@ public final class OpenViduStoryDto {
 
 	public static OpenViduStoryDto from(Story story, int totalStoryCount) {
 		return new OpenViduStoryDto(
-			story.getStoryId(),
 			story.getFan().getNickname(),
 			story.getTitle(),
 			story.getContent(),
