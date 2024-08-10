@@ -8,8 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OpenViduQuizRequestDto {
-	private String sessionId;
-	private int questionNum;
-	private int score;
-	private long memberId;
+	private boolean isCorrect;
 }
