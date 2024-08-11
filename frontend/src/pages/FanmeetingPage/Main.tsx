@@ -16,6 +16,8 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 import TimeTableComponent from "./TimeTableComponent";
 
+import roomframe from "../../assets/Fanmeeting/roomframe.png";
+
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
 // const APPLICATION_SERVER_URL =
@@ -524,7 +526,7 @@ export default function Main() {
   );
 
   return (
-    <div className="w-full items-center">
+    <div className="w-full h-full items-center bg-meetingroom-700">
       {session === undefined ? (
         <JoinForm
           myUserName={myUserName}
@@ -534,8 +536,12 @@ export default function Main() {
           setIsCreator={setIsCreator}
         />
       ) : (
-        <div id="session">
-          <div id="session-header">
+        <div
+          id="session"
+          className="bg-meetingroom-700 w-full h-full flex flex-col items-center"
+        >
+          <img src={roomframe} alt="frame" className="w-11/12 absolute top-5" />
+          <div id="session-header" className="w-[300px]">
             <h1 id="session-title">{mySessionId}</h1>
             <input
               className="btn btn-large btn-danger"
