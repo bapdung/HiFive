@@ -17,6 +17,11 @@ interface Quiz {
   detail: string;
 }
 
+interface Rank {
+  fanId: number;
+  score: number;
+}
+
 interface QuizTimeProps {
   token: string | null;
   mySessionId: string | null;
@@ -46,8 +51,11 @@ const QuizTime: React.FC<QuizTimeProps> = ({
   const [showAnswerButtons, setShowAnswerButtons] = useState<boolean>(false);
   const [showAnswerRevealButton, setShowAnswerRevealButton] =
     useState<boolean>(false);
+  const [showRankingRevealButton, setShowRankingRevealButton] =
+    useState<boolean>(false);
   const [userAnswer, setUserAnswer] = useState<boolean | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [ranks, setRanks] = useState<Rank[] | null>(null);
 
   useEffect(() => {
     const quizStartApi = async () => {
@@ -156,6 +164,36 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         }),
       });
       setShowAnswerRevealButton(false);
+      if (quizSequence === lastQuizSequence) {
+        setShowRankingRevealButton(true);
+      } else {
+        setShowRankingRevealButton(false);
+      }
+    }
+  };
+
+  const fetchRank = async () => {
+    if (session && token && mySessionId) {
+      try {
+        const response = await client(token).get(
+          `api/sessions/quiz/result/${mySessionId}`,
+        );
+        setRanks(response.data);
+      } catch (error) {
+        console.error("Fetch rank error:", error);
+      }
+    }
+  };
+
+  const revealRanking = async () => {
+    if (isCreator && session) {
+      await fetchRank();
+      session.signal({
+        type: "revealRanking",
+        data: JSON.stringify({}),
+      });
+      fetchRank();
+      console.log(ranks);
     }
   };
 
@@ -194,11 +232,18 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         }
       };
 
+      const handleRevealRankingSignal = (event: any) => {
+        if (event.data) {
+          fetchRank(); // 순위 데이터를 가져옴
+        }
+      };
+
       session.on("signal:startTimer", handleStartTimerSignal);
       session.on("signal:revealAnswer", handleRevealAnswerSignal);
       session.on("signal:nextQuiz", handleNextQuizSignal);
       session.on("signal:resetAnswer", handleResetAnswerSignal);
       session.on("signal:resetReveal", handleResetRevealSignal);
+      session.on("signal:revealRanking", handleRevealRankingSignal);
 
       return () => {
         session.off("signal:startTimer", handleStartTimerSignal);
@@ -206,6 +251,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         session.off("signal:nextQuiz", handleNextQuizSignal);
         session.off("signal:resetAnswer", handleResetAnswerSignal);
         session.off("signal:resetReveal", handleResetRevealSignal);
+        session.off("signal:revealRanking", handleRevealRankingSignal);
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -251,6 +297,11 @@ const QuizTime: React.FC<QuizTimeProps> = ({
           {showAnswerRevealButton && (
             <button type="button" onClick={revealAnswer}>
               정답 공개
+            </button>
+          )}
+          {showRankingRevealButton && (
+            <button type="button" onClick={revealRanking}>
+              순위 공개
             </button>
           )}
         </div>
