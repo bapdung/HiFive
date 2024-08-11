@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -167,7 +166,7 @@ public class OpenviduController {
 	public ResponseEntity<Void> submitSingleUserAnswer(
 		@PathVariable(name = "fanmeetingId") long fanmeetingId,
 		@PathVariable(name = "sequence") int sequence,
-		@ModelAttribute OpenViduQuizRequestDto openViduQuizRequestDto,
+		@RequestBody OpenViduQuizRequestDto openViduQuizRequestDto,
 		@AuthenticationPrincipal Member member) {
 
 		openViduQuizService.submitSingleUserAnswer(fanmeetingId, sequence, member, openViduQuizRequestDto);

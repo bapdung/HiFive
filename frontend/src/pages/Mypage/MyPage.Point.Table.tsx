@@ -45,6 +45,7 @@ function Table({ type }: TypeProps) {
 
   const changePeriod = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setPeriod(Number(e.target.value));
+    setPage(1);
   };
 
   useEffect(() => {
