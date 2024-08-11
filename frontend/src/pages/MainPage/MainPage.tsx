@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import client from "../../client";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 
 import TicketList from "./MainPage.TicketList";
@@ -9,6 +8,7 @@ import TicketingShortcut from "./MainPage.TicketingShortcut";
 import MylistShortcut from "./MainPage.MylistShortcut";
 
 import logoIcon from "../../assets/joinCreator/logoIcon.png";
+import client from "../../client";
 
 type UserData = {
   nickname: string;
@@ -17,24 +17,53 @@ type UserData = {
 
 function MainPage() {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const accessToken = useAuthStore((state) => state.accessToken);
+  const { accessToken, validateAndGetToken, setAccessToken } = useAuthStore();
+  const navigate = useNavigate();
+  const [isTokenReady, setIsTokenReady] = useState(false);
+
+  useEffect(() => {
+    const preparePage = async () => {
+      let token = accessToken;
+
+      if (!token) {
+        token = await validateAndGetToken();
+        if (token) {
+          setAccessToken(token);
+        } else {
+          navigate("/");
+          return;
+        }
+      }
+
+      setIsTokenReady(true);
+    };
+
+    preparePage();
+  }, [accessToken, validateAndGetToken, setAccessToken, navigate]);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const apiClient = client(accessToken || "");
-        const response = await apiClient.get("/api/member");
-        if (response.data) {
-          const { nickname, creator } = response.data;
-          setUserData({ nickname, creator });
+      if (isTokenReady) {
+        try {
+          const apiClient = await client(accessToken || "");
+          const response = await apiClient.get("/api/member");
+          if (response.data) {
+            const { nickname, creator } = response.data;
+            setUserData({ nickname, creator });
+          }
+        } catch (err) {
+          console.error("Error fetching user data:", err);
+          navigate("/");
         }
-      } catch (err) {
-        console.error("Error fetching user data:", err);
       }
     };
 
     fetchUserData();
-  }, [accessToken]);
+  }, [isTokenReady, accessToken, navigate]);
+
+  if (!isTokenReady) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -42,7 +71,9 @@ function MainPage() {
         <span className="text-h3 text-gray-900 font-bold">
           하이파이브 한 번 해요,{" "}
           <span
-            className={`${userData?.creator ? "text-secondary" : "text-primary-text"}`}
+            className={`${
+              userData?.creator ? "text-secondary" : "text-primary-text"
+            }`}
           >
             {userData?.nickname || "이름"}
           </span>

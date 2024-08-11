@@ -21,6 +21,7 @@ public final class FanmeetingRequestDto {
 	private LocalDateTime startDate;
 	private LocalDateTime openDate;
 	private int price;
+	private String link;
 	private List<TimetableCreateDto> timetable;
 
 	public Fanmeeting toEntity(Member creator) {
@@ -35,6 +36,7 @@ public final class FanmeetingRequestDto {
 			.startDate(startDate)
 			.openDate(openDate)
 			.price(price)
+			.link(link)
 			.build();
 
 	}

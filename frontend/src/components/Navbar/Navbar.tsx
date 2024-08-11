@@ -8,7 +8,12 @@ import client from "../../client";
 
 function Navbar() {
   const token = useAuthStore((state) => state.accessToken);
-  const [login, setLogin] = useState<boolean>(false);
+  const validateAndGetToken = useAuthStore(
+    (state) => state.validateAndGetToken,
+  );
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+
+  const [isTokenValid, setIsTokenValid] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,10 +25,11 @@ function Navbar() {
       const response = await client(token).get("/api/member/logout");
 
       if (response.status === 200) {
-        useAuthStore.getState().setAccessToken(null);
+        console.log("@@@");
+        setAccessToken(null);
         localStorage.removeItem("accessToken");
         document.cookie = "refresh_token=; path=/; max-age=0;";
-        setLogin(false);
+        setIsTokenValid(false);
         navigate("/");
         window.location.reload();
       }
@@ -31,18 +37,25 @@ function Navbar() {
   };
 
   useEffect(() => {
-    const localToken = localStorage.getItem("accessToken");
+    const checkToken = async () => {
+      const validToken = await validateAndGetToken();
+      if (validToken) {
+        setIsTokenValid(true);
+      } else {
+        setIsTokenValid(false);
+      }
+    };
 
-    if (localToken) {
-      setLogin(true);
-    } else {
-      setLogin(false);
-    }
-  }, []);
+    checkToken();
+  }, [validateAndGetToken]);
 
   return (
     <div
-      className={`z-10 bg-white flex w-full justify-between items-center h-20 px-10 py-2 ${isLanding ? "bg-white bg-opacity-85 backdrop-blur-md shadow-none sticky top-0" : "bg-white shadow-nav-shadow"}`}
+      className={`z-10 bg-white flex w-full justify-between items-center h-20 px-10 py-2 ${
+        isLanding
+          ? "bg-white bg-opacity-85 backdrop-blur-md shadow-none sticky top-0"
+          : "bg-white shadow-nav-shadow"
+      }`}
     >
       <div>
         <img
@@ -54,7 +67,7 @@ function Navbar() {
         />
       </div>
       <div className="flex items-center">
-        {login ? (
+        {isTokenValid ? (
           <>
             <div
               className="text-primary-text text-medium font-semibold m-10 hover:cursor-pointer"

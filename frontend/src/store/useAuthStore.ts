@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import Cookie from "js-cookie";
 import { getAccessToken } from "../service/authService";
 
 interface AuthState {
@@ -8,6 +9,7 @@ interface AuthState {
   isCreator: boolean | null;
   setIsCreator: (bool: boolean) => void;
   validateAndGetToken: () => Promise<string | null>;
+  logout: (redirect?: boolean) => void; // 리다이렉트 제어를 위한 매개변수 추가
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -25,42 +27,21 @@ const useAuthStore = create<AuthState>((set) => ({
 
   validateAndGetToken: async () => {
     let accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      const base64Url = accessToken.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-          .join(""),
-      );
-      const decodedToken = JSON.parse(jsonPayload);
-      const tokenExpiration = decodedToken.exp;
-      const now = Math.floor(Date.now() / 1000);
+    const refreshToken = Cookie.get("refresh_token");
 
-      if (tokenExpiration < now) {
-        accessToken = await getAccessToken();
-        if (accessToken) {
-          localStorage.setItem("accessToken", accessToken);
-          set({ accessToken });
-          window.location.reload(); // 새로고침 추가
-        } else {
-          console.error("Failed to refresh access token");
-          return null;
-        }
-      }
-    } else {
+    if (!accessToken && refreshToken) {
       accessToken = await getAccessToken();
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
         set({ accessToken });
-        window.location.reload(); // 새로고침 추가
       } else {
-        console.error("Failed to get access token");
         return null;
       }
+    } else if (!accessToken && !refreshToken) {
+      // 이미 로그아웃 상태이거나 무한 로그아웃을 방지하기 위해 redirect를 false로 설정
+      useAuthStore.getState().logout(false);
+      return null;
     }
-
     return accessToken;
   },
 
@@ -69,15 +50,19 @@ const useAuthStore = create<AuthState>((set) => ({
   },
 
   fetchTokens: async () => {
-    try {
-      const newAccessToken = await getAccessToken();
-      if (newAccessToken) {
-        localStorage.setItem("accessToken", newAccessToken);
-        set({ accessToken: newAccessToken });
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Failed to fetch tokens:", error);
+    const newAccessToken = await getAccessToken();
+    if (newAccessToken) {
+      localStorage.setItem("accessToken", newAccessToken);
+      set({ accessToken: newAccessToken });
+    }
+  },
+
+  logout: (redirect = true) => {
+    set({ accessToken: null, isCreator: false });
+    localStorage.removeItem("accessToken");
+    document.cookie = "refresh_token=; path=/; max-age=0;";
+    if (redirect) {
+      window.location.href = "/"; // 기본적으로 리다이렉트 수행
     }
   },
 }));
