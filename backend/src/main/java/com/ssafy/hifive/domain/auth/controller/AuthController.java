@@ -52,6 +52,7 @@ public class AuthController {
 	@PostMapping("/refresh")
 	public ResponseEntity<TokenResponseDto> refresh(HttpServletRequest request,
 		HttpServletResponse response) {
+
 		String refreshToken = CookieUtil.getCookie(request, "refresh_token")
 			.map(Cookie::getValue)
 			.orElse(null);

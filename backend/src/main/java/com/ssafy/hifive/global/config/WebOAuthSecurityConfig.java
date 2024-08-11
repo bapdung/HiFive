@@ -63,20 +63,19 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 
 		http.authorizeHttpRequests(authorize -> authorize
 			.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**",
-				"/webjars/**").permitAll()
+				"/webjars/**", "/login").permitAll()
 			.requestMatchers("/api/auth/**").permitAll()
 			.requestMatchers("/api/creator/main").permitAll()
 			.requestMatchers("/api/**").authenticated()
 			.anyRequest().permitAll());
 
 		http.oauth2Login(oauth2 -> oauth2
-			.loginPage("/login")
 			.authorizationEndpoint(authorization -> authorization.authorizationRequestRepository(
 				oAuth2AuthorizationRequestBasedOnCookieRepository()))
 			.successHandler(oAuth2SuccessHandler())
 			.userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserCustomService)));
 
-		http.logout(logout -> logout.logoutSuccessUrl("/login"));
+		http.logout(logout -> logout.logoutSuccessUrl("/"));
 
 		http.exceptionHandling(exceptionHandling -> exceptionHandling.defaultAuthenticationEntryPointFor(
 			new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
