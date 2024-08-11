@@ -25,6 +25,7 @@ function Navbar() {
       const response = await client(token).get("/api/member/logout");
 
       if (response.status === 200) {
+        console.log("@@@");
         setAccessToken(null);
         localStorage.removeItem("accessToken");
         document.cookie = "refresh_token=; path=/; max-age=0;";
