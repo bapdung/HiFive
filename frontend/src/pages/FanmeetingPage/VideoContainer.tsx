@@ -175,12 +175,14 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           return clientData !== "##";
         })
         .map((sub) => {
-          const { clientData } = JSON.parse(sub.stream.connection.data);
-          console.log(clientData, "클라이언트 데이타");
+          const { clientData, userId } = JSON.parse(sub.stream.connection.data);
+          console.log(clientData, "클라이언트 이름");
+          console.log(userId, "클라이언트 멤버 번호");
           return (
             <div
               key={sub.stream.connection.connectionId}
               className="stream-container col-md-6 col-xs-6"
+              id={`fan-camera-component-${userId}`}
             >
               <UserVideoComponent
                 streamManager={sub}

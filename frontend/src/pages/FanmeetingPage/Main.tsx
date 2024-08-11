@@ -309,6 +309,7 @@ export default function Main() {
           await session.connect(openviduToken, {
             // 크리에이터일경우 이름 특수문자(##)로 설정 => 팬이랑 안겹치게 하기 위해서
             clientData: isCreator ? "##" : myUserName,
+            userId,
           });
 
           const newPublisher = await OV.current.initPublisherAsync(undefined, {
@@ -359,7 +360,7 @@ export default function Main() {
         }
       });
     }
-  }, [session, isCreator, myUserName, token, getToken]);
+  }, [session, isCreator, myUserName, token, getToken, userId]);
 
   const leaveSession = useCallback(() => {
     if (session) {
