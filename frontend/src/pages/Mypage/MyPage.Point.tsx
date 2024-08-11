@@ -6,7 +6,7 @@ import Table from "./MyPage.Point.Table";
 
 function Point() {
   const [money, setMoney] = useState<number | null>();
-  const [totalPoint, setTotalPoint] = useState<number>();
+  const [totalPoint, setTotalPoint] = useState<number>(0);
 
   const token = useAuthStore((state) => state.accessToken);
 
@@ -16,7 +16,7 @@ function Point() {
   };
 
   const postPoint = async () => {
-    if (money === 0) {
+    if (!money || money === 0) {
       alert("충전할 포인트를 입력해주세요.");
       return;
     }
