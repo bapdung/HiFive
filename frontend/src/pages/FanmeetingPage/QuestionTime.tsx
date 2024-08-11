@@ -138,7 +138,6 @@ const QuestionTime: React.FC<QuestionProps> = ({
 
   return isQuestionTime ? (
     <div>
-      <p>Q&A 시간입니다.</p>
       {isCreator && (
         <div>
           <button type="button" onClick={prevQuestion}>
