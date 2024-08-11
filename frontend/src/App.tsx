@@ -58,12 +58,22 @@ function App() {
   }
 
   return (
-    <div className="App w-full min-h-screen-with-footer">
-      {location.pathname.startsWith("/creator-only") ? (
-        <CreatorNavbar />
-      ) : (
-        <Navbar />
-      )}
+    <div
+      className={`App w-full ${
+        location.pathname.startsWith("/meet-up") ||
+        location.pathname.startsWith("/wait")
+          ? "h-full"
+          : "min-h-screen-with-footer"
+      }`}
+    >
+      {!location.pathname.startsWith("/meet-up") &&
+        !location.pathname.startsWith("/wait") &&
+        (location.pathname.startsWith("/creator-only") ? (
+          <CreatorNavbar />
+        ) : (
+          <Navbar />
+        ))}
+
       <ScrollToTop />
       <main className="relative w-full flex-grow">
         <Routes>
@@ -86,6 +96,8 @@ function App() {
               path="/fanmeeting/:fanmeetingId/story"
               element={<StoryForm />}
             />
+            <Route path="/meet-up/:fanmeetingId" element={<FanmeetingPage />} />
+            <Route path="/wait" element={<FanmeetingWaiting />} />
           </Route>
 
           <Route element={<ProtectedRoute requiredCreator />}>
@@ -111,11 +123,11 @@ function App() {
           </Route>
 
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/meet-up/:fanmeetingId" element={<FanmeetingPage />} />
-          <Route path="/wait" element={<FanmeetingWaiting />} />
         </Routes>
       </main>
-      <Footer />
+
+      {!location.pathname.startsWith("/meet-up") &&
+        !location.pathname.startsWith("/wait") && <Footer />}
     </div>
   );
 }
