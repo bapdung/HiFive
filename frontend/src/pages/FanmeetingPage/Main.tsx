@@ -211,7 +211,26 @@ export default function Main() {
     mySession.on("signal:focus", (event) => {
       if (event.data) {
         const data = JSON.parse(event.data);
-        setFocusedSubscriber(data.focusedSubscriber);
+        const focusedSubscriberId = data.focusedSubscriber;
+
+        if (focusedSubscriberId) {
+          const foundSubscriber = subscribers.find(
+            (sub) => sub.stream.connection.connectionId === focusedSubscriberId,
+          );
+
+          if (foundSubscriber) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else if (
+            publisher &&
+            publisher.stream.connection.connectionId === focusedSubscriberId
+          ) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else {
+            setFocusedSubscriber(null);
+          }
+        } else {
+          setFocusedSubscriber(null);
+        }
       }
     });
 
@@ -441,25 +460,56 @@ export default function Main() {
   );
 
   const focusOnSubscriber = useCallback(
-    (subscriber: Subscriber) => {
-      if (focusedSubscriber === subscriber.stream.connection.connectionId) {
-        session?.signal({
-          data: JSON.stringify({
-            focusedSubscriber: null,
-          }),
-          type: "focus",
-        });
-      } else {
-        session?.signal({
-          data: JSON.stringify({
-            focusedSubscriber: subscriber.stream.connection.connectionId,
-          }),
-          type: "focus",
-        });
-      }
+    (subscriber: Subscriber | Publisher) => {
+      const subscriberId = subscriber.stream.connection.connectionId;
+      const newFocusedSubscriber =
+        focusedSubscriber === subscriberId ? null : subscriberId;
+
+      session?.signal({
+        data: JSON.stringify({
+          focusedSubscriber: newFocusedSubscriber,
+        }),
+        type: "focus",
+      });
     },
     [focusedSubscriber, session],
   );
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (session) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleFocusSignal = (event: any) => {
+        const data = JSON.parse(event.data);
+        const focusedSubscriberId = data.focusedSubscriber;
+
+        if (focusedSubscriberId) {
+          const foundSubscriber = subscribers.find(
+            (sub) => sub.stream.connection.connectionId === focusedSubscriberId,
+          );
+
+          if (foundSubscriber) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else if (
+            publisher &&
+            publisher.stream.connection.connectionId === focusedSubscriberId
+          ) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else {
+            setFocusedSubscriber(null);
+          }
+        } else {
+          setFocusedSubscriber(null);
+        }
+      };
+
+      session.on("signal:focus", handleFocusSignal);
+
+      return () => {
+        session.off("signal:focus", handleFocusSignal);
+      };
+    }
+  }, [session, subscribers, publisher]);
 
   const handleChangeMessage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
