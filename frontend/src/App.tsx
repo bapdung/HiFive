@@ -58,12 +58,22 @@ function App() {
   }
 
   return (
-    <div className="App w-full min-h-screen-with-footer">
-      {location.pathname.startsWith("/creator-only") ? (
-        <CreatorNavbar />
-      ) : (
-        <Navbar />
-      )}
+    <div
+      className={`App w-full ${
+        location.pathname.startsWith("/meet-up") ||
+        location.pathname.startsWith("/wait")
+          ? "h-full"
+          : "min-h-screen-with-footer"
+      }`}
+    >
+      {!location.pathname.startsWith("/meet-up") &&
+        !location.pathname.startsWith("/wait") &&
+        (location.pathname.startsWith("/creator-only") ? (
+          <CreatorNavbar />
+        ) : (
+          <Navbar />
+        ))}
+
       <ScrollToTop />
       <main className="relative w-full flex-grow">
         <Routes>
@@ -115,7 +125,9 @@ function App() {
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>
-      <Footer />
+
+      {!location.pathname.startsWith("/meet-up") &&
+        !location.pathname.startsWith("/wait") && <Footer />}
     </div>
   );
 }
