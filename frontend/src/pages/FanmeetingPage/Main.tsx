@@ -70,10 +70,16 @@ export default function Main() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
+
+  // 퀴즈 관련 상태
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: boolean }>(
     {},
   );
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
+  const [isReveal, setIsReveal] = useState(false);
+  const handleReveal = (bool: boolean) => {
+    setIsReveal(bool);
+  };
 
   // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
@@ -716,6 +722,7 @@ export default function Main() {
             isCreator={isCreator}
             session={session}
             handleFetchQuiz={handleFetchQuiz}
+            handleReveal={handleReveal}
           />
           <VideoContainer
             publisher={publisher}
@@ -729,6 +736,7 @@ export default function Main() {
             currentSequence={currentSequence}
             timetables={timetables}
             currentQuiz={currentQuiz}
+            isReveal={isReveal}
           />
           <Chat
             chatMessages={chatMessages}

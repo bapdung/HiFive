@@ -31,6 +31,7 @@ interface VideoContainerProps {
   currentSequence: number;
   timetables: Timetable[];
   currentQuiz: Quiz | null;
+  isReveal: boolean;
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -45,6 +46,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   currentSequence,
   timetables,
   currentQuiz,
+  isReveal,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
   useEffect(() => {
@@ -76,6 +78,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             userAnswers={userAnswers}
             isQuizTime={isQuizTime}
             currentQuiz={currentQuiz}
+            isReveal={isReveal}
           />
         </div>
       )}
@@ -87,6 +90,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             userAnswers={userAnswers}
             isQuizTime={isQuizTime}
             currentQuiz={currentQuiz}
+            isReveal={isReveal}
           />
           <div>
             <span>
@@ -120,6 +124,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                       userAnswers={userAnswers}
                       isQuizTime={isQuizTime}
                       currentQuiz={currentQuiz}
+                      isReveal={isReveal}
                     />
                   </div>
                 </div>
@@ -136,6 +141,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                     userAnswers={userAnswers}
                     isQuizTime={isQuizTime}
                     currentQuiz={currentQuiz}
+                    isReveal={isReveal}
                   />
                 </div>
               </div>
@@ -149,6 +155,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             userAnswers={userAnswers}
             isQuizTime={isQuizTime}
             currentQuiz={currentQuiz}
+            isReveal={isReveal}
           />
           <div>
             <span>
@@ -180,6 +187,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                 userAnswers={userAnswers}
                 isQuizTime={isQuizTime}
                 currentQuiz={currentQuiz}
+                isReveal={isReveal}
               />
               <div>
                 <span>{clientData}</span> {/* 구독자의 clientData 표시 */}

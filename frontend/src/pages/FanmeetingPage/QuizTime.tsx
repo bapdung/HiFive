@@ -25,6 +25,7 @@ interface QuizTimeProps {
   isCreator: boolean | undefined;
   handleFetchQuiz: (quiz: Quiz | null) => void;
   session: Session | undefined; // 세션을 props로 전달받습니다.
+  handleReveal: (bool: boolean) => void;
 }
 
 const QuizTime: React.FC<QuizTimeProps> = ({
@@ -35,6 +36,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
   timetables,
   session,
   handleFetchQuiz,
+  handleReveal,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
   const [quizSequence, setQuizSequence] = useState(0);
@@ -120,6 +122,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
       setQuizSequence(nextseq);
       fetchAQuiz(nextseq);
       setUserAnswer(null);
+      handleReveal(false); // 로컬 상태 업데이트
       if (isCreator && session) {
         session.signal({
           type: "nextQuiz",
@@ -136,6 +139,10 @@ const QuizTime: React.FC<QuizTimeProps> = ({
             data: JSON.stringify({}),
           }),
         });
+        session.signal({
+          type: "revealAnswer",
+          data: JSON.stringify({ isReveal: false }),
+        });
       }
     }
   };
@@ -144,7 +151,9 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     if (isCreator && session && currentQuiz) {
       session.signal({
         type: "revealAnswer",
-        data: JSON.stringify({ correctAnswer: currentQuiz.answer }),
+        data: JSON.stringify({
+          isReveal: true,
+        }),
       });
       setShowAnswerRevealButton(false);
     }
@@ -161,12 +170,8 @@ const QuizTime: React.FC<QuizTimeProps> = ({
       const handleRevealAnswerSignal = (event: any) => {
         if (event.data) {
           const data = JSON.parse(event.data);
-          const { correctAnswer } = data;
-          if (userAnswer !== null) {
-            const result =
-              userAnswer === correctAnswer ? "맞았습니다!" : "틀렸습니다.";
-            alert(result);
-          }
+          const { isReveal } = data;
+          handleReveal(isReveal);
         }
       };
 
@@ -182,20 +187,29 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         setUserAnswer(null);
       };
 
+      const handleResetRevealSignal = (event: any) => {
+        if (event.data) {
+          const data = JSON.parse(event.data);
+          handleReveal(data.isReveal);
+        }
+      };
+
       session.on("signal:startTimer", handleStartTimerSignal);
       session.on("signal:revealAnswer", handleRevealAnswerSignal);
       session.on("signal:nextQuiz", handleNextQuizSignal);
       session.on("signal:resetAnswer", handleResetAnswerSignal);
+      session.on("signal:resetReveal", handleResetRevealSignal);
 
       return () => {
         session.off("signal:startTimer", handleStartTimerSignal);
         session.off("signal:revealAnswer", handleRevealAnswerSignal);
         session.off("signal:nextQuiz", handleNextQuizSignal);
         session.off("signal:resetAnswer", handleResetAnswerSignal);
+        session.off("signal:resetReveal", handleResetRevealSignal);
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, userAnswer]); // userAnswer가 변경될 때만 실행되도록 의존성 배열 설정
+  }, [session]);
 
   const sendAnswer = async () => {
     if (!token || !mySessionId || !currentQuiz) {
