@@ -59,20 +59,35 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
 
       {/* 포커스된 구독자가 있을 때 해당 스트림을 표시 */}
       {focusedSubscriber &&
-        subscribers
-          .filter(
-            (sub) => sub.stream.connection.connectionId === focusedSubscriber,
-          )
-          .map((sub) => (
-            <div
-              key={sub.stream.connection.connectionId}
-              className="bg-[#FDD1AE] p-4"
-            >
-              <div>
-                <UserVideoComponent streamManager={sub} />
+        (subscribers.find(
+          (sub) => sub.stream.connection.connectionId === focusedSubscriber,
+        )
+          ? subscribers
+              .filter(
+                (sub) =>
+                  sub.stream.connection.connectionId === focusedSubscriber,
+              )
+              .map((sub) => (
+                <div
+                  key={sub.stream.connection.connectionId}
+                  className="bg-[#FDD1AE] p-4"
+                >
+                  <div>
+                    <UserVideoComponent streamManager={sub} />
+                  </div>
+                </div>
+              ))
+          : publisher &&
+            publisher.stream.connection.connectionId === focusedSubscriber && (
+              <div
+                key={publisher.stream.connection.connectionId}
+                className="bg-[#FDD1AE] p-4"
+              >
+                <div>
+                  <UserVideoComponent streamManager={publisher} />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
       {/* 자신의 스트림 표시 */}
       {!isCreator && publisher && (
