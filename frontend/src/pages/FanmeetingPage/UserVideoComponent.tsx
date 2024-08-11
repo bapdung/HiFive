@@ -14,6 +14,7 @@ interface UserVideoComponentProps {
   userAnswers: { [key: string]: boolean };
   isQuizTime: boolean;
   isReveal: boolean;
+  rank: number | null;
 }
 
 const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
@@ -22,6 +23,7 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
   isQuizTime,
   currentQuiz,
   isReveal,
+  rank,
 }) => {
   const userId = streamManager.stream.connection.connectionId;
   const userName = JSON.parse(streamManager.stream.connection.data).clientData;
@@ -35,6 +37,7 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
     <div>
       {streamManager && (
         <div className="streamcomponent">
+          {isQuizTime && rank && <p>{rank}등</p>}
           <OpenViduVideoComponent
             streamManager={streamManager}
             userName={userName}

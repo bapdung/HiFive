@@ -31,6 +31,7 @@ interface QuizTimeProps {
   handleFetchQuiz: (quiz: Quiz | null) => void;
   session: Session | undefined; // 세션을 props로 전달받습니다.
   handleReveal: (bool: boolean) => void;
+  handleRank: (rank: Rank[]) => void;
 }
 
 const QuizTime: React.FC<QuizTimeProps> = ({
@@ -42,6 +43,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
   session,
   handleFetchQuiz,
   handleReveal,
+  handleRank,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
   const [quizSequence, setQuizSequence] = useState(0);
@@ -55,7 +57,6 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     useState<boolean>(false);
   const [userAnswer, setUserAnswer] = useState<boolean | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [ranks, setRanks] = useState<Rank[] | null>(null);
 
   useEffect(() => {
     const quizStartApi = async () => {
@@ -178,7 +179,8 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         const response = await client(token).get(
           `api/sessions/quiz/result/${mySessionId}`,
         );
-        setRanks(response.data);
+        console.log(response.data);
+        handleRank([{ fanId: 2, score: 3 }]);
       } catch (error) {
         console.error("Fetch rank error:", error);
       }
@@ -193,7 +195,6 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         data: JSON.stringify({}),
       });
       fetchRank();
-      console.log(ranks);
     }
   };
 
