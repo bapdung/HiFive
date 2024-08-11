@@ -229,7 +229,6 @@ const QuizTime: React.FC<QuizTimeProps> = ({
 
   return isQuizTime ? (
     <div>
-      <p>O/X 퀴즈 시간입니다</p>
       {isCreator && (
         <div>
           <button type="button" onClick={nextQuestion}>

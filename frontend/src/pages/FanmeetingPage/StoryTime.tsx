@@ -138,8 +138,6 @@ const StoryTime: React.FC<StoryTimeProps> = ({
 
   return isStoryTime ? (
     <div>
-      {isStoryTime && <p>사연전달 시간입니다.</p>}
-      <p>사연전달 컴포넌트</p>
       {isCreator && (
         <div>
           <button type="button" onClick={prevStory}>
