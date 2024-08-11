@@ -14,8 +14,8 @@ interface QuizTimeProps {
   token: string | null;
   mySessionId: string | null;
   currentSequence: number;
-  isCreator: boolean | undefined;
   timetables: Timetable[];
+  isCreator: boolean | undefined;
   session: Session | undefined; // 세션을 props로 전달받습니다.
 }
 
@@ -114,6 +114,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     ) {
       setQuizSequence(nextseq);
       fetchAQuiz(nextseq);
+      setUserAnswer(null);
       if (isCreator && session) {
         session.signal({
           type: "nextQuiz",
@@ -122,6 +123,13 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         session.signal({
           type: "startTimer",
           data: JSON.stringify({}),
+        });
+        session.signal({
+          type: "resetAnswer",
+          data: JSON.stringify({
+            userId: session.connection.connectionId,
+            data: JSON.stringify({}),
+          }),
         });
       }
     }
@@ -165,14 +173,20 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         }
       };
 
+      const handleResetAnswerSignal = () => {
+        setUserAnswer(null);
+      };
+
       session.on("signal:startTimer", handleStartTimerSignal);
       session.on("signal:revealAnswer", handleRevealAnswerSignal);
       session.on("signal:nextQuiz", handleNextQuizSignal);
+      session.on("signal:resetAnswer", handleResetAnswerSignal);
 
       return () => {
         session.off("signal:startTimer", handleStartTimerSignal);
         session.off("signal:revealAnswer", handleRevealAnswerSignal);
         session.off("signal:nextQuiz", handleNextQuizSignal);
+        session.off("signal:resetAnswer", handleResetAnswerSignal);
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,6 +195,15 @@ const QuizTime: React.FC<QuizTimeProps> = ({
   const handleAnswer = (answer: boolean) => {
     setUserAnswer(answer);
     setShowAnswerButtons(false);
+    if (session) {
+      session.signal({
+        type: "userAnswer",
+        data: JSON.stringify({
+          userId: session.connection.connectionId,
+          answer,
+        }),
+      });
+    }
   };
 
   return isQuizTime ? (
@@ -204,7 +227,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
           {quizSequence === lastQuizSequence && <p>마지막 문제입니다!</p>}
           <p>문제 : {currentQuiz.problem}</p>
           {timer !== null && <p>남은 시간: {timer}초</p>}
-          {showAnswerButtons && !isCreator && (
+          {showAnswerButtons && (
             <div>
               <button type="button" onClick={() => handleAnswer(true)}>
                 O
