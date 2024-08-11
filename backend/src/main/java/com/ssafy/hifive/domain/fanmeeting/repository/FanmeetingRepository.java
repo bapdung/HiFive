@@ -42,4 +42,6 @@ public interface FanmeetingRepository extends JpaRepository<Fanmeeting, Long>, F
 			where DATE(f.openDate) = CURRENT_DATE
 		""")
 	List<Fanmeeting> getActiveFanmeetingIds();
+
+	boolean existsByFanmeetingIdAndIsEndedTrue(Long fanMeetingId);
 }
