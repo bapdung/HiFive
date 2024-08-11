@@ -56,18 +56,21 @@ public class ReservationWebSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
-	public void isSessionValid(Long fanmeetingId, Long memberId){
+	public void isSessionValid(Long fanmeetingId, Long memberId) {
 		//세션맵 자체가 초기화 되어있을 때
-		if(memberSessionMap.isEmpty()){
+		if (memberSessionMap.isEmpty()) {
+			log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@111111");
 			throw new BadRequestException(ErrorCode.WEBSOCKET_NO_SESSION);
 		}
 		//세션맵에 해당하는 팬미팅이 없을 때
-		if(memberSessionMap.get(fanmeetingId).isEmpty()){
+		if (memberSessionMap.get(fanmeetingId).isEmpty()) {
+			log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22222");
 			throw new BadRequestException(ErrorCode.WEBSOCKET_NO_SESSION);
 		}
 		//sessionId가 없을 때
 		String sessionId = memberSessionMap.get(fanmeetingId).get(memberId);
-		if(sessionId == null){
+		if (sessionId == null) {
+			log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@333333");
 			throw new BadRequestException(ErrorCode.WEBSOCKET_NO_SESSION);
 		}
 	}
