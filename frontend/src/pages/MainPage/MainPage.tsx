@@ -91,10 +91,10 @@ function MainPage() {
               />
               <div className="flex flex-col items-start justify-center">
                 <span className="text-medium text-white font-semibold">
-                  크리에이터 입점 완료된 계정입니다.
+                  크리에이터 계정입니다.
                 </span>
                 <span className="text-small text-white">
-                  전용 페이지에서 팬미팅을 생성, 관리해보세요 &rarr;
+                  팬미팅 생성 및 관리 페이지 이동 &rarr;
                 </span>
               </div>
             </div>
