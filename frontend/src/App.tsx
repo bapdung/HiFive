@@ -1,5 +1,5 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useAuthStore from "./store/useAuthStore";
 import ScrollToTop from "./utils/scrollToTop";
 
@@ -32,6 +32,7 @@ function App() {
     (state) => state.validateAndGetToken,
   );
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -45,10 +46,16 @@ function App() {
       } else {
         setAccessToken(localToken);
       }
+
+      setIsLoading(false);
     };
 
     checkLogin();
   }, [validateAndGetToken, setAccessToken]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="App w-full min-h-screen-with-footer">
@@ -66,6 +73,7 @@ function App() {
             <Route path="/partner" element={<JoinCreator />} />
             <Route path="/creator/list" element={<CreatorList />} />
             <Route path="/creator/:creatorId" element={<ProfilePage />} />
+
             <Route path="/creator/:creatorId/:postId" element={<BoardPage />} />
             <Route path="/ticket" element={<TicketPage />} />
             <Route path="/ticket/:fanmeetingId" element={<TicketDetail />} />
