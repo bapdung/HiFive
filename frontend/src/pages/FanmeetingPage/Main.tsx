@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   OpenVidu,
   Publisher,
@@ -14,9 +14,12 @@ import JoinForm from "./JoinForm";
 import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
+import TimeTableComponent from "./TimeTableComponent";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+// const APPLICATION_SERVER_URL =
+//   process.env.NODE_ENV === "production" ? "" : "http:localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -33,9 +36,11 @@ interface ChatMessage {
   id: string;
   user: string;
   text: string;
+  isCreator: boolean;
 }
 
 export default function Main() {
+  const navigate = useNavigate();
   const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
   const [session, setSession] = useState<Session | undefined>(undefined);
@@ -55,14 +60,45 @@ export default function Main() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+  // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
+  const [currentSequence, setCurrentSequence] = useState(1);
+  // 현재 코너 바뀔때마다 백엔드로 api 호출
+  const apiTimetable = async (seq: number) => {
+    if (!token) {
+      return;
+    }
+    try {
+      await client(token).post(`api/sessions/${mySessionId}`, {
+        sequence: seq,
+      });
+      console.log("성공적으로 전송");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const nextSequence = () => {
+    if (currentSequence < timetables.length) {
+      const next = currentSequence + 1;
+      setCurrentSequence(next);
+      apiTimetable(next);
+    }
+  };
+  const prevSequence = () => {
+    if (currentSequence > 1) {
+      const prev = currentSequence - 1;
+      setCurrentSequence(prev);
+      apiTimetable(prev);
+    }
+  };
 
   // 채팅 관련 상태 추가
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const userColorsRef = useRef<{ [key: string]: string }>({});
   const [userId, setUserId] = useState<number | undefined>();
+  const [lastMessageTime, setLastMessageTime] = useState<number | null>(null);
 
   // 유저 정보 불러오기
   const fetchUser = async () => {
@@ -118,7 +154,7 @@ export default function Main() {
 
   const createSession = async (sessionId: string): Promise<string> => {
     const response = await axios.post<ResponseData>(
-      `${APPLICATION_SERVER_URL}api/sessions`,
+      `${APPLICATION_SERVER_URL}api/sessions/open`,
       { customSessionId: sessionId },
       {
         headers: {
@@ -130,19 +166,28 @@ export default function Main() {
     setTimetables(response.data.timetables);
     return response.data.sessionId;
   };
-
+  console.log(timetables);
   const createToken = async (sessionId: string): Promise<string> => {
-    const response = await axios.post<string>(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+    try {
+      const response = await axios.post<string>(
+        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    );
-    return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
+      return "";
+    }
   };
 
   const getToken = useCallback(async () => {
@@ -235,7 +280,7 @@ export default function Main() {
       getToken().then(async (openviduToken) => {
         try {
           await session.connect(openviduToken, {
-            clientData: isCreator ? "creator" : myUserName,
+            clientData: isCreator ? "##" : myUserName,
           });
 
           const newPublisher = await OV.current.initPublisherAsync(undefined, {
@@ -333,7 +378,7 @@ export default function Main() {
         if (newVideoInputDevice) {
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoInputDevice.deviceId,
-            publishAudio: true,
+            publishAudio: isCreator,
             publishVideo: true,
             mirror: true,
           });
@@ -350,7 +395,7 @@ export default function Main() {
     } catch (e) {
       console.error(e);
     }
-  }, [currentVideoDevice, session, mainStreamManager]);
+  }, [currentVideoDevice, session, mainStreamManager, isCreator]);
 
   const toggleMyAudio = useCallback(() => {
     if (publisher) {
@@ -364,6 +409,24 @@ export default function Main() {
         data: JSON.stringify({
           connectionId: session.connection.connectionId,
           audioActive: newAudioStatus,
+        }),
+        type: "audioStatus",
+      });
+    }
+  }, [publisher, session]);
+
+  // 내 오디오 끄기 함수
+  const muteMyAudio = useCallback(() => {
+    if (publisher && publisher.stream.audioActive) {
+      publisher.publishAudio(false);
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [session?.connection.connectionId || ""]: false,
+      }));
+      session?.signal({
+        data: JSON.stringify({
+          connectionId: session.connection.connectionId,
+          audioActive: false,
         }),
         type: "audioStatus",
       });
@@ -433,20 +496,31 @@ export default function Main() {
   const handleSendMessage = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+
+      const now = Date.now();
+
+      // 0.5초에 채팅 하나 보낼 수 있다.
+      if (lastMessageTime && now - lastMessageTime < 500) {
+        alert("도배 금지!!");
+        return;
+      }
+
       if (newMessage.trim() !== "") {
         const message = {
           id: uuidv4(),
           user: myUserName,
           text: newMessage,
+          isCreator,
         };
         session?.signal({
           data: JSON.stringify(message),
           type: "chat",
         });
         setNewMessage("");
+        setLastMessageTime(now);
       }
     },
-    [newMessage, myUserName, session],
+    [newMessage, myUserName, session, lastMessageTime, isCreator],
   );
 
   return (
@@ -457,6 +531,7 @@ export default function Main() {
           mySessionId={mySessionId}
           isCreator={isCreator}
           joinSession={joinSession}
+          setIsCreator={setIsCreator}
         />
       ) : (
         <div id="session">
@@ -483,13 +558,33 @@ export default function Main() {
                 </button>
               </>
             )}
-            <input
-              className="btn btn-large btn-warning"
-              type="button"
-              id="buttonToggleAudio"
-              onClick={toggleMyAudio}
-              value="마이크 껐다 키기"
-            />
+            {isCreator ? (
+              <input
+                className="btn btn-large btn-warning"
+                type="button"
+                id="buttonToggleAudio"
+                onClick={toggleMyAudio}
+                value="마이크 껐다 키기"
+              />
+            ) : (
+              <input
+                className={
+                  publisher &&
+                  fanAudioStatus[publisher.stream.connection.connectionId]
+                    ? "btn-md hover:pointer"
+                    : "btn-md bg-gray-700 hover:default"
+                }
+                type="button"
+                id="buttonToggleAudio"
+                onClick={muteMyAudio}
+                value={
+                  publisher &&
+                  fanAudioStatus[publisher.stream.connection.connectionId]
+                    ? "음소거 하기"
+                    : "음소거 중"
+                }
+              />
+            )}
             <input
               className="btn btn-large btn-warning"
               type="button"
@@ -498,7 +593,12 @@ export default function Main() {
               value="비디오껐다키기"
             />
           </div>
-
+          <TimeTableComponent
+            currentSequence={currentSequence}
+            nextSequence={nextSequence}
+            prevSequence={prevSequence}
+            isCreator
+          />
           <VideoContainer
             publisher={publisher}
             subscribers={subscribers}

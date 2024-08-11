@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.quiz.entity.Quiz;
 
 @Repository
@@ -19,4 +20,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 			"""
 	)
 	List<Quiz> findAllByFanmeetingId(@Param("id") long fanmeetingId);
+
+	List<Quiz> findByFanmeeting(Fanmeeting fanmeeting);
+
+	List<Quiz> findByFanmeeting_FanmeetingId(long fanmeetingId);
 }

@@ -14,6 +14,15 @@ interface PaymentProps {
   onPayment: () => void;
 }
 
+interface ApiError {
+  response?: {
+    data?: {
+      code?: string;
+      message?: string;
+    };
+  };
+}
+
 const Payment: React.FC<PaymentProps> = ({
   fanmeetingId,
   nickname,
@@ -35,8 +44,36 @@ const Payment: React.FC<PaymentProps> = ({
       onPayment();
       onClose();
     } catch (error) {
-      alert("결제 중 오류가 발생했습니다.");
-      console.error("Error during payment:", error);
+      if (error) {
+        const apiError = error as ApiError;
+
+        // 응답 데이터를 명시적으로 캐스팅
+        const errorData = apiError.response?.data as {
+          errorCode?: string;
+          errorMessage?: string;
+        };
+
+        const errorCode = errorData?.errorCode;
+        const errorMessage = errorData?.errorMessage;
+
+        if (errorCode === "RESERVATION-002") {
+          alert("포인트 잔액이 부족해 결제가 취소되었습니다.");
+          onClose();
+          window.location.reload();
+        } else if (errorCode === "RESERVATION-005") {
+          alert("결제 시간이 만료되었습니다.");
+          onClose();
+          window.location.reload();
+        } else if (errorMessage) {
+          alert(errorMessage);
+          onClose();
+          window.location.reload();
+        } else {
+          alert("결제 중 오류가 발생했습니다. 다시 시도해주세요.");
+          onClose();
+          window.location.reload();
+        }
+      }
     }
   };
 

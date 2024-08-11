@@ -28,7 +28,7 @@ const Quiz: React.FC<QuizProps> = ({
   const [allQuizzes, setAllQuizzes] = useState<Quiz[]>([]);
   const fanmeetingId = parseInt(location.pathname.split("/")[2], 10);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
+  const [currentQuiz, setCurrentQuiz] = useState<number | null>(null);
   const [currentQuizTitle, setCurrentQuizTitle] = useState("");
   const [currentQuizDetail, setCurrentQuizDetail] = useState("");
   const [currentQuizAnswer, setCurrentQuizAnswer] = useState<boolean | null>(
@@ -51,7 +51,7 @@ const Quiz: React.FC<QuizProps> = ({
   }, [token, fanmeetingId, allQuizzes.length, fetchSignal]);
 
   const openInput = (quiz: Quiz) => {
-    setCurrentQuiz(quiz);
+    setCurrentQuiz(quiz.id);
     setIsEditing(true);
     setCurrentQuizAnswer(quiz.answer);
     setCurrentQuizTitle(quiz.problem);
@@ -59,20 +59,30 @@ const Quiz: React.FC<QuizProps> = ({
   };
 
   const handleInputTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentQuizTitle(event.target.value);
+    if (event.target.value.length <= 30) {
+      setCurrentQuizTitle(event.target.value);
+    }
   };
 
   const handleInputDetail = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentQuizDetail(event.target.value);
+    if (event.target.value.length <= 50) {
+      setCurrentQuizDetail(event.target.value);
+    }
   };
 
-  const updateQuiz = async (buttonOfQuiz: Quiz) => {
-    if (!isEditing || buttonOfQuiz !== currentQuiz) {
-      setIsEditing(true);
-      setCurrentQuiz(buttonOfQuiz);
+  const updateQuiz = async (buttonOfQuizId: number, buttonOfQuiz: Quiz) => {
+    if (!token) {
       return;
     }
-    if (!token || !currentQuiz || currentQuiz !== buttonOfQuiz) {
+    if (!isEditing || buttonOfQuizId !== currentQuiz) {
+      setIsEditing(true);
+      setCurrentQuiz(buttonOfQuizId);
+      setCurrentQuizTitle(buttonOfQuiz.problem);
+      setCurrentQuizDetail(buttonOfQuiz.detail);
+      setCurrentQuizAnswer(buttonOfQuiz.answer);
+      return;
+    }
+    if (currentQuiz !== buttonOfQuizId) {
       return;
     }
     const payload = {
@@ -81,36 +91,50 @@ const Quiz: React.FC<QuizProps> = ({
       sequence: buttonOfQuiz.sequence,
       answer: currentQuizAnswer,
     };
-    await client(token).put(`/api/quiz/${currentQuiz.id}`, payload);
+    await client(token).put(`/api/quiz/${currentQuiz}`, payload);
     setIsEditing(false);
     fetchAllQuizzes();
   };
 
-  const deleteQuiz = async (quiz: Quiz) => {
-    console.log(quiz.id);
+  const deleteQuiz = async (quizId: number) => {
+    console.log(quizId);
     if (!token) {
       return;
     }
-    await client(token).delete(`/api/quiz/${quiz.id}`);
+    await client(token).delete(`/api/quiz/${quizId}`);
     fetchAllQuizzes();
   };
 
   return (
     <div className="flex flex-col items-center">
-      <button
-        type="button"
-        className="my-8 w-1/4 creator-btn-md"
-        onClick={handleQuizOpen}
-      >
-        퀴즈 생성하기
-      </button>
+      {allQuizzes.length >= 15 ? (
+        <>
+          <button
+            type="button"
+            className="mt-8 w-1/4 creator-btn-md bg-gray-500 hover:cursor-default"
+          >
+            퀴즈 생성하기
+          </button>
+          <p className="text-small text-primary-text mb-8 mt-1">
+            퀴즈는 15개까지만 생성 가능합니다.
+          </p>
+        </>
+      ) : (
+        <button
+          type="button"
+          className="my-8 w-1/4 creator-btn-md"
+          onClick={handleQuizOpen}
+        >
+          퀴즈 생성하기
+        </button>
+      )}
       <div className="w-3/4 flex flex-wrap justify-center gap-6">
         {allQuizzes.map((quiz, index) => (
           <div
             key={quiz.id}
-            className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[1rem] px-8 justify-between bg-white"
+            className="border-2 border-secondary-700 rounded-[20px] w-[350px] flex flex-col items-center min-h-48 py-[1rem] px-8 justify-between bg-white"
           >
-            {!isEditing || currentQuiz !== quiz ? (
+            {!isEditing || currentQuiz !== quiz.id ? (
               <button
                 type="button"
                 className="text-h5 flex justify-between w-full"
@@ -126,7 +150,7 @@ const Quiz: React.FC<QuizProps> = ({
                 </span>
               </button>
             ) : null}
-            {isEditing && currentQuiz === quiz ? (
+            {isEditing && currentQuiz === quiz.id ? (
               <div>
                 <button
                   type="button"
@@ -152,7 +176,7 @@ const Quiz: React.FC<QuizProps> = ({
                 </button>
               </div>
             ) : null}
-            {currentQuiz !== quiz || !isEditing ? (
+            {currentQuiz !== quiz.id || !isEditing ? (
               <button
                 type="button"
                 className="text-large w-full"
@@ -167,11 +191,11 @@ const Quiz: React.FC<QuizProps> = ({
               </button>
             ) : null}
 
-            {currentQuiz === quiz && isEditing ? (
+            {currentQuiz === quiz.id && isEditing ? (
               <div>
                 <input
                   type="text"
-                  className="focus:outline-none text-large text-gray-700 text-center mb-2.5 w-full"
+                  className="focus:outline-none text-large text-gray-700 mb-2.5 text-center w-full"
                   value={currentQuizTitle}
                   onChange={handleInputTitle}
                 />
@@ -188,14 +212,14 @@ const Quiz: React.FC<QuizProps> = ({
               <button
                 type="button"
                 className="creator-btn-light-md"
-                onClick={() => updateQuiz(quiz)}
+                onClick={() => updateQuiz(quiz.id, quiz)}
               >
                 수정하기
               </button>
               <button
                 type="button"
                 className="btn-light-md ml-2"
-                onClick={() => deleteQuiz(quiz)}
+                onClick={() => deleteQuiz(quiz.id)}
               >
                 삭제하기
               </button>

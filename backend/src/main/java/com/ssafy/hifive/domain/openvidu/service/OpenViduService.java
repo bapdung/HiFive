@@ -5,9 +5,16 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
+import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
+import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
+import com.ssafy.hifive.domain.reservation.repository.ReservationRepository;
 import com.ssafy.hifive.domain.timetable.dto.response.TimetableResponseDto;
 import com.ssafy.hifive.domain.timetable.repository.TimetableRepository;
+import com.ssafy.hifive.global.error.ErrorCode;
+import com.ssafy.hifive.global.error.type.BadRequestException;
+import com.ssafy.hifive.global.error.type.ForbiddenException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,20 +22,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OpenViduService {
 	private final TimetableRepository timetableRepository;
+	private final ReservationRepository reservationRepository;
+	private final FanmeetingRepository fanmeetingRepository;
 
-	public OpenViduTimetableDto getTimetableAll(String fanmeetingId, String sessionId) {
-		List<TimetableResponseDto> timetables = timetableRepository.findByFanmeeting_FanmeetingId(Long.valueOf(fanmeetingId)).stream()
+	public OpenViduTimetableDto getTimetableAll(Long fanmeetingId, String sessionId) {
+		List<TimetableResponseDto> timetables = timetableRepository.findByFanmeeting_FanmeetingId(fanmeetingId).stream()
 			.map(TimetableResponseDto::from)
 			.collect(Collectors.toList());
 		return OpenViduTimetableDto.from(sessionId, timetables);
 	}
 
-	// public void saveCurrentCategory(Long fanmeetingId, String category) {
-	// 	List<TimetableResponseDto> timetables = timetableRepository.findByFanmeeting_FanmeetingId(Long.valueOf(fanmeetingId)).stream()
-	// 		.map(TimetableResponseDto::from)
-	// 		.collect(Collectors.toList());
-	// 	return OpenViduTimetableDto.from(sessionId, timetables);
-	// }
+	public void isValidMember(Long fanmeetingId, Member member) {
+		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
 
+		if (!reservationRepository.checkReservation(fanmeetingId, member.getMemberId())
+			&& fanmeeting.getCreator().getMemberId() != member.getMemberId()) {
+			throw new ForbiddenException(ErrorCode.ENTER_NOT_ALLOWED);
+		}
+	}
+
+	public void isCreator(Long creatorId, Member member) {
+		if (member.getMemberId() != creatorId || !member.isCreator()) {
+			throw new ForbiddenException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
+		}
+	}
 
 }
