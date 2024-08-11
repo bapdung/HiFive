@@ -66,9 +66,9 @@ function MainPage() {
   }
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div className="my-6 flex justify-center items-center w-full max-w-[1200px] px-4">
-        <span className="text-h3 text-gray-900 font-bold">
+    <div className="flex flex-col items-center w-full max-w-[1200px]">
+      <div className="my-6 flex justify-between items-center w-full max-w-[1200px] px-4">
+        <span className="text-h4 text-gray-900 font-bold mx-auto">
           하이파이브 한 번 해요,{" "}
           <span
             className={`${
@@ -79,28 +79,29 @@ function MainPage() {
           </span>
           님!
         </span>
-      </div>
-      <div className="absolute right-10 my-4">
         {userData?.creator && (
-          <Link to="/creator-only" className="flex items-center">
-            <div className="px-10 py-2 text-center bg-secondary rounded-full flex items-center justify-center shadow-md ml-4">
-              <img
-                src={logoIcon}
-                alt="creatorlogo"
-                className="w-[40px] h-[40px] mr-4"
-              />
-              <div className="flex flex-col items-start justify-center">
-                <span className="text-medium text-white font-semibold">
-                  크리에이터 인증 계정입니다.
-                </span>
-                <span className="text-small text-white">
-                  팬미팅 생성 및 관리 바로가기 &rarr;
-                </span>
+          <div className="flex">
+            <Link to="/creator-only" className="flex items-center">
+              <div className="px-7 py-2 text-center bg-secondary rounded-full flex items-center justify-center shadow-md ml-4">
+                <img
+                  src={logoIcon}
+                  alt="creatorlogo"
+                  className="w-[40px] h-[40px] mr-3"
+                />
+                <div className="flex flex-col items-start justify-center">
+                  <span className="text-medium text-white font-semibold">
+                    크리에이터 계정입니다.
+                  </span>
+                  <span className="text-small text-white">
+                    팬미팅 생성 및 관리하기 &rarr;
+                  </span>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         )}
       </div>
+
       <TicketList nickname={userData?.nickname || null} />
       <FollowingList />
       <div className="flex w-[1200px] justify-between items-center mb-20">
