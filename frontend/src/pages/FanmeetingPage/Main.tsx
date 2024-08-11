@@ -62,6 +62,9 @@ export default function Main() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
+  const [userAnswers, setUserAnswers] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
@@ -231,6 +234,22 @@ export default function Main() {
         } else {
           setFocusedSubscriber(null);
         }
+      }
+    });
+
+    mySession.on("signal:userAnswer", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setUserAnswers((prevAnswers) => ({
+          ...prevAnswers,
+          [data.userId]: data.answer,
+        }));
+      }
+    });
+
+    mySession.on("signal:resetAnswer", (event) => {
+      if (event.data) {
+        setUserAnswers({});
       }
     });
 
@@ -656,7 +675,7 @@ export default function Main() {
             mySessionId={mySessionId}
             timetables={timetables}
             currentSequence={currentSequence}
-            isCreator
+            isCreator={isCreator}
             setCurrentSequence={setCurrentSequence}
             onSequenceChange={goToNextCorner}
           />
@@ -665,7 +684,7 @@ export default function Main() {
             mySessionId={mySessionId}
             timetables={timetables}
             currentSequence={currentSequence}
-            isCreator
+            isCreator={isCreator}
             session={session}
           />
           <QuestionTime
@@ -673,7 +692,7 @@ export default function Main() {
             mySessionId={mySessionId}
             timetables={timetables}
             currentSequence={currentSequence}
-            isCreator
+            isCreator={isCreator}
             session={session}
           />
           <QuizTime
@@ -681,7 +700,7 @@ export default function Main() {
             mySessionId={mySessionId}
             timetables={timetables}
             currentSequence={currentSequence}
-            isCreator
+            isCreator={isCreator}
             session={session}
           />
           <VideoContainer
@@ -692,6 +711,9 @@ export default function Main() {
             fanAudioStatus={fanAudioStatus}
             focusedSubscriber={focusedSubscriber}
             focusOnSubscriber={focusOnSubscriber}
+            userAnswers={userAnswers}
+            currentSequence={currentSequence}
+            timetables={timetables}
           />
           <Chat
             chatMessages={chatMessages}
