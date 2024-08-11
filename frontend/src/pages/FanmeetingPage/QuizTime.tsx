@@ -52,7 +52,6 @@ const QuizTime: React.FC<QuizTimeProps> = ({
       }
       try {
         await client(token).post(`api/sessions/quiz/${mySessionId}`);
-        console.log("성공적으로 전송!! Q&A 시작!");
       } catch (error) {
         console.error("Quiz start API error:", error);
       }
@@ -205,7 +204,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
           {quizSequence === lastQuizSequence && <p>마지막 문제입니다!</p>}
           <p>문제 : {currentQuiz.problem}</p>
           {timer !== null && <p>남은 시간: {timer}초</p>}
-          {showAnswerButtons && (
+          {showAnswerButtons && !isCreator && (
             <div>
               <button type="button" onClick={() => handleAnswer(true)}>
                 O
