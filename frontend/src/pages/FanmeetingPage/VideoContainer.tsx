@@ -19,6 +19,11 @@ interface Quiz {
   detail: string;
 }
 
+interface Rank {
+  fanId: number;
+  score: number;
+}
+
 interface VideoContainerProps {
   publisher: Publisher | undefined; // 현재 세션의 발행자 (스트림 발행자)
   subscribers: Subscriber[]; // 현재 세션의 구독자 (다른 사용자의 스트림)
@@ -32,6 +37,7 @@ interface VideoContainerProps {
   timetables: Timetable[];
   currentQuiz: Quiz | null;
   isReveal: boolean;
+  ranks: Rank[] | null;
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -47,6 +53,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   timetables,
   currentQuiz,
   isReveal,
+  ranks,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
   useEffect(() => {
@@ -61,8 +68,14 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   const creatorSub = subscribers.find(
     (sub) => JSON.parse(sub.stream.connection.data).clientData === "##",
   );
-  // console.log(publisher, "자기자신@@@@@@@@@@@@@");
+  console.log(publisher, "자기자신@@@@@@@@@@@@@");
   // console.log(creatorSub, "크리에이터@#@@@");
+
+  const getRankForUser = (userId: number): number | null => {
+    if (!ranks) return null;
+    const rankIndex = ranks.findIndex((rank) => rank.fanId === userId);
+    return rankIndex !== -1 ? rankIndex + 1 : null; // 1등부터 시작하도록 인덱스 조정
+  };
 
   return (
     <div id="video-container" className="w-full relative h-full">
@@ -79,6 +92,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             isQuizTime={isQuizTime}
             currentQuiz={currentQuiz}
             isReveal={isReveal}
+            rank={null}
           />
         </div>
       )}
@@ -91,6 +105,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             isQuizTime={isQuizTime}
             currentQuiz={currentQuiz}
             isReveal={isReveal}
+            rank={null}
           />
           <div>
             <span>
@@ -125,6 +140,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                       isQuizTime={isQuizTime}
                       currentQuiz={currentQuiz}
                       isReveal={isReveal}
+                      rank={null}
                     />
                   </div>
                 </div>
@@ -142,6 +158,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                     isQuizTime={isQuizTime}
                     currentQuiz={currentQuiz}
                     isReveal={isReveal}
+                    rank={null}
                   />
                 </div>
               </div>
@@ -156,6 +173,9 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             isQuizTime={isQuizTime}
             currentQuiz={currentQuiz}
             isReveal={isReveal}
+            rank={getRankForUser(
+              JSON.parse(publisher.stream.connection.data).userId,
+            )}
           />
           <div>
             <span>
@@ -190,6 +210,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                 isQuizTime={isQuizTime}
                 currentQuiz={currentQuiz}
                 isReveal={isReveal}
+                rank={getRankForUser(userId)}
               />
               <div>
                 <span>{clientData}</span> {/* 구독자의 clientData 표시 */}

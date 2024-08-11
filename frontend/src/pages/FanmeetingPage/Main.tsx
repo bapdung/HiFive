@@ -49,6 +49,11 @@ interface Quiz {
   detail: string;
 }
 
+interface Rank {
+  fanId: number;
+  score: number;
+}
+
 export default function Main() {
   const navigate = useNavigate();
   const [myUserName, setMyUserName] = useState<string>("");
@@ -79,6 +84,10 @@ export default function Main() {
   const [isReveal, setIsReveal] = useState(false);
   const handleReveal = (bool: boolean) => {
     setIsReveal(bool);
+  };
+  const [ranks, setRanks] = useState<Rank[] | null>(null);
+  const handleRank = (allRank: Rank[]) => {
+    setRanks(allRank);
   };
 
   // 타임 테이블 관련 상태
@@ -724,6 +733,7 @@ export default function Main() {
             session={session}
             handleFetchQuiz={handleFetchQuiz}
             handleReveal={handleReveal}
+            handleRank={handleRank}
           />
           <VideoContainer
             publisher={publisher}
@@ -738,6 +748,7 @@ export default function Main() {
             timetables={timetables}
             currentQuiz={currentQuiz}
             isReveal={isReveal}
+            ranks={ranks}
           />
           <Chat
             chatMessages={chatMessages}
