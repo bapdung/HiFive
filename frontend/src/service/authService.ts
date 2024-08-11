@@ -20,7 +20,6 @@ export const getAccessToken = async () => {
 
     return response.data.accessToken;
   } catch (error) {
-    console.error("Failed to get access token", error);
     return null;
   }
 };

@@ -51,7 +51,7 @@ public class PointService {
 		Page<Point> transactionPage = pointRepository.findPointTranscationByMemberIdWithPaging(
 			member.getMemberId(), TransactionType.getTransactionType("plus"), startDate, pageable);
 
-		int totalPages = transactionPage.getTotalPages();
+		int totalPages = transactionPage != null ? transactionPage.getTotalPages() : 0;
 
 		return transactionPage.getContent().stream()
 			.map(transaction -> PointPlusDto.from(transaction, totalPages))
@@ -67,7 +67,7 @@ public class PointService {
 		Page<Point> transactionPage = pointRepository.findPointTranscationByMemberIdWithPaging(
 			member.getMemberId(), TransactionType.getTransactionType("minus"), startDate, pageable);
 
-		int totalPages = transactionPage.getTotalPages();
+		int totalPages = transactionPage != null ? transactionPage.getTotalPages() : 0;
 
 		return transactionPage.getContent().stream()
 			.map(transaction -> PointMinusDto.from(transaction, totalPages))
