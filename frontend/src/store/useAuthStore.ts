@@ -25,42 +25,15 @@ const useAuthStore = create<AuthState>((set) => ({
 
   validateAndGetToken: async () => {
     let accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      const base64Url = accessToken.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-          .join(""),
-      );
-      const decodedToken = JSON.parse(jsonPayload);
-      const tokenExpiration = decodedToken.exp;
-      const now = Math.floor(Date.now() / 1000);
-
-      if (tokenExpiration < now) {
-        accessToken = await getAccessToken();
-        if (accessToken) {
-          localStorage.setItem("accessToken", accessToken);
-          set({ accessToken });
-          window.location.reload(); // 새로고침 추가
-        } else {
-          console.error("Failed to refresh access token");
-          return null;
-        }
-      }
-    } else {
+    if (!accessToken) {
       accessToken = await getAccessToken();
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
         set({ accessToken });
-        window.location.reload(); // 새로고침 추가
       } else {
-        console.error("Failed to get access token");
         return null;
       }
     }
-
     return accessToken;
   },
 
@@ -69,15 +42,10 @@ const useAuthStore = create<AuthState>((set) => ({
   },
 
   fetchTokens: async () => {
-    try {
-      const newAccessToken = await getAccessToken();
-      if (newAccessToken) {
-        localStorage.setItem("accessToken", newAccessToken);
-        set({ accessToken: newAccessToken });
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Failed to fetch tokens:", error);
+    const newAccessToken = await getAccessToken();
+    if (newAccessToken) {
+      localStorage.setItem("accessToken", newAccessToken);
+      set({ accessToken: newAccessToken });
     }
   },
 }));

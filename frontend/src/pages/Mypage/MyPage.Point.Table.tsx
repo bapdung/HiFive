@@ -9,14 +9,14 @@ type PlusPoint = {
   transactionDate: string;
   money: number;
   point: number;
-  totalPages: number;
+  totalPages?: number;
 };
 
 type MinusPoint = {
   transactionDate: string;
   detail: number;
   point: number;
-  totalPages: number;
+  totalPages?: number;
 };
 
 type Params = {
@@ -55,12 +55,21 @@ function Table({ type }: TypeProps) {
       };
 
       if (token) {
-        const response = await client(token).get(`/api/point/${type}`, {
-          params,
-        });
+        try {
+          const response = await client(token).get(`/api/point/${type}`, {
+            params,
+          });
 
-        setPointList(response.data);
-        setTotalPage(response.data[0].totalPages);
+          const data = Array.isArray(response.data)
+            ? response.data
+            : [response.data];
+          setPointList(data);
+          setTotalPage(data[0]?.totalPages || 1);
+        } catch (error) {
+          console.error("Error fetching point data:", error);
+          setPointList(null);
+          setTotalPage(1);
+        }
       }
     };
 
@@ -124,9 +133,9 @@ function Table({ type }: TypeProps) {
           </tr>
         </thead>
         <tbody>
-          {pointList ? (
+          {pointList && pointList.length > 0 ? (
             pointList.map((point, index) => (
-              // eslint-disable-next-line
+              // eslint-disable-next-line react/no-array-index-key
               <tr key={index}>
                 <td className="py-2.5">{index + 1}</td>
                 <td>

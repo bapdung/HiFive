@@ -19,9 +19,10 @@ import StoryTime from "./StoryTime";
 import QuestionTime from "./QuestionTime";
 import QuizTime from "./QuizTime";
 
-// "http:localhost:8080/"
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+// const APPLICATION_SERVER_URL =
+//   process.env.NODE_ENV === "production" ? "" : "http:localhost:8080/";
 
 interface Timetable {
   categoryName: string;
