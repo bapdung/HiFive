@@ -10,20 +10,21 @@ interface Timetable {
   detail: string;
 }
 
+interface Quiz {
+  problem: string;
+  answer: boolean;
+  totalQuizCount: number;
+  detail: string;
+}
+
 interface QuizTimeProps {
   token: string | null;
   mySessionId: string | null;
   currentSequence: number;
   timetables: Timetable[];
   isCreator: boolean | undefined;
+  handleFetchQuiz: (quiz: Quiz | null) => void;
   session: Session | undefined; // 세션을 props로 전달받습니다.
-}
-
-interface Quiz {
-  problem: string;
-  answer: boolean;
-  totalQuizCount: number;
-  detail: string;
 }
 
 const QuizTime: React.FC<QuizTimeProps> = ({
@@ -33,6 +34,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
   isCreator,
   timetables,
   session,
+  handleFetchQuiz,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
   const [quizSequence, setQuizSequence] = useState(0);
@@ -65,7 +67,9 @@ const QuizTime: React.FC<QuizTimeProps> = ({
       setQuizSequence(0);
       setLastQuizSequence(null);
       setCurrentQuiz(null);
+      handleFetchQuiz(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, mySessionId, currentSequence, timetables]);
 
   const startTimer = () => {
@@ -100,6 +104,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
         `/api/sessions/quiz/${mySessionId}/${seq}`,
       );
       setCurrentQuiz(response.data);
+      handleFetchQuiz(response.data);
       setLastQuizSequence(response.data.totalQuizCount);
     } catch (error) {
       console.error("Fetch quiz error:", error);
@@ -199,7 +204,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     try {
       const isUserCorrect = userAnswer === currentQuiz?.answer;
       await client(token).post(
-        `/api/quiz/answer/${mySessionId}/${quizSequence}`,
+        `/api/sessions/quiz/answer/${mySessionId}/${quizSequence}`,
         { isCorrect: isUserCorrect },
       );
     } catch (error) {
