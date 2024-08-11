@@ -192,6 +192,21 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, userAnswer]); // userAnswer가 변경될 때만 실행되도록 의존성 배열 설정
 
+  const sendAnswer = async () => {
+    if (!token || !mySessionId || !currentQuiz) {
+      return;
+    }
+    try {
+      const isUserCorrect = userAnswer === currentQuiz?.answer;
+      await client(token).post(
+        `/api/quiz/answer/${mySessionId}/${quizSequence}`,
+        { isCorrect: isUserCorrect },
+      );
+    } catch (error) {
+      console.error("Send answer error:", error);
+    }
+  };
+
   const handleAnswer = (answer: boolean) => {
     setUserAnswer(answer);
     setShowAnswerButtons(false);
@@ -203,6 +218,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
           answer,
         }),
       });
+      sendAnswer();
     }
   };
 
