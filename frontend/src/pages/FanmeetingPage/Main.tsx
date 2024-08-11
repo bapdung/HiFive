@@ -42,6 +42,13 @@ interface ChatMessage {
   isCreator: boolean;
 }
 
+interface Quiz {
+  problem: string;
+  answer: boolean;
+  totalQuizCount: number;
+  detail: string;
+}
+
 export default function Main() {
   const navigate = useNavigate();
   const [myUserName, setMyUserName] = useState<string>("");
@@ -66,6 +73,7 @@ export default function Main() {
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: boolean }>(
     {},
   );
+  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
 
   // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
@@ -601,6 +609,10 @@ export default function Main() {
     }
   }, [session]);
 
+  const handleFetchQuiz = (quiz: Quiz | null) => {
+    setCurrentQuiz(quiz);
+  };
+
   return (
     <div className="w-full items-center">
       {session === undefined ? (
@@ -703,6 +715,7 @@ export default function Main() {
             currentSequence={currentSequence}
             isCreator={isCreator}
             session={session}
+            handleFetchQuiz={handleFetchQuiz}
           />
           <VideoContainer
             publisher={publisher}
@@ -715,6 +728,7 @@ export default function Main() {
             userAnswers={userAnswers}
             currentSequence={currentSequence}
             timetables={timetables}
+            currentQuiz={currentQuiz}
           />
           <Chat
             chatMessages={chatMessages}

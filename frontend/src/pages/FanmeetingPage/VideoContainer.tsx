@@ -12,6 +12,13 @@ interface Timetable {
   detail: string;
 }
 
+interface Quiz {
+  problem: string;
+  answer: boolean;
+  totalQuizCount: number;
+  detail: string;
+}
+
 interface VideoContainerProps {
   publisher: Publisher | undefined; // 현재 세션의 발행자 (스트림 발행자)
   subscribers: Subscriber[]; // 현재 세션의 구독자 (다른 사용자의 스트림)
@@ -23,6 +30,7 @@ interface VideoContainerProps {
   userAnswers: { [key: string]: boolean };
   currentSequence: number;
   timetables: Timetable[];
+  currentQuiz: Quiz | null;
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -36,6 +44,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   userAnswers,
   currentSequence,
   timetables,
+  currentQuiz,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
   useEffect(() => {
@@ -66,6 +75,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             streamManager={creatorSub}
             userAnswers={userAnswers}
             isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
           />
         </div>
       )}
@@ -76,6 +86,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             streamManager={publisher}
             userAnswers={userAnswers}
             isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
           />
           <div>
             <span>
@@ -108,6 +119,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                       streamManager={sub}
                       userAnswers={userAnswers}
                       isQuizTime={isQuizTime}
+                      currentQuiz={currentQuiz}
                     />
                   </div>
                 </div>
@@ -123,6 +135,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                     streamManager={publisher}
                     userAnswers={userAnswers}
                     isQuizTime={isQuizTime}
+                    currentQuiz={currentQuiz}
                   />
                 </div>
               </div>
@@ -135,6 +148,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             streamManager={publisher}
             userAnswers={userAnswers}
             isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
           />
           <div>
             <span>
@@ -165,6 +179,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                 streamManager={sub}
                 userAnswers={userAnswers}
                 isQuizTime={isQuizTime}
+                currentQuiz={currentQuiz}
               />
               <div>
                 <span>{clientData}</span> {/* 구독자의 clientData 표시 */}
