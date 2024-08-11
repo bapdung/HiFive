@@ -35,7 +35,7 @@ function MyFanmeeting() {
   return (
     <div className="w-full flex flex-col items-center">
       <div className="my-10 w-4/5 bg-white p-10 rounded-[25px] flex flex-col items-center">
-        <p className="text-h4">예정된 팬미팅</p>
+        <p className="text-h4 font-semibold">예정된 팬미팅</p>
         <button
           onClick={goCreateFanmeeting}
           type="button"

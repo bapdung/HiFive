@@ -515,16 +515,18 @@ function CreateFanmeeting() {
   return (
     <div className="w-full flex flex-col items-center relative">
       <div className="w-[100vw] bg-white py-8 flex flex-col items-center">
-        <h1 className="text-secondary text-h3 mb-5">팬 미팅 생성하기</h1>
-        <div className="bg-gray-100 rounded-lg py-[1rem] px-[2rem] text-center w-[30rem]">
-          <h1 className="text-gray-700 text-large">
-            팬 미팅을 생성하고 팬들과의 소중한 추억을 만들어보세요. 입력한
-            정보는 현재 페이지 이후 수정할 수 없습니다.
+        <h1 className="text-secondary text-h3 font-semibold mb-5">
+          팬 미팅 생성하기
+        </h1>
+        <div className="bg-gray-100 rounded-full py-[1rem] px-[2rem] text-center w-[30rem]">
+          <h1 className="text-gray-900 text-medium">
+            팬 미팅을 생성하고 팬들과의 소중한 추억을 만들어보세요. <br />
+            입력한 정보는 현재 페이지 이후 수정할 수 없습니다.
           </h1>
         </div>
       </div>
-      <div className="my-10 flex flex-col bg-white w-[60%] rounded-[25px] py-10 px-14 items-center">
-        <p className="text-h5">나만의 팬미팅 설정</p>
+      <div className="my-10 flex flex-col bg-white w-5/6 rounded-[25px] py-10 px-14 items-center">
+        <p className="text-h5 font-semibold">새로운 팬미팅 설정</p>
         <div className="w-full flex flex-col">
           <div className="flex my-10 justify-between">
             <div className="flex flex-col w-[40%]">
@@ -789,8 +791,8 @@ function CreateFanmeeting() {
               </div>
               <p className="text-small text-primary">{linkError}</p>
               <p className="text-gray-500 text-small mb-5">
-                올바르지 않은 영상을 입력하실 경우 대기영상이 보이지 않을 수
-                있습니다.
+                올바르지 않은 영상을 입력하실 경우,
+                <br /> 대기영상이 정상적으로 보이지 않을 수 있습니다.
               </p>
             </div>
             <div className="w-2/5">

@@ -91,10 +91,10 @@ function MainPage() {
               />
               <div className="flex flex-col items-start justify-center">
                 <span className="text-medium text-white font-semibold">
-                  크리에이터 계정입니다.
+                  크리에이터 인증 계정입니다.
                 </span>
                 <span className="text-small text-white">
-                  팬미팅 생성 및 관리 페이지 이동 &rarr;
+                  팬미팅 생성 및 관리 바로가기 &rarr;
                 </span>
               </div>
             </div>
