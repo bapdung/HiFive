@@ -78,9 +78,9 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
           {/* 코너 순서 */}
           <p>{currentSequence} 번째 코너</p>
           {/* 코너이름 */}
-          <p>{timetables[currentSequence - 1].categoryName} 코너</p>{" "}
+          <p>{timetables[currentSequence - 1]?.categoryName} 코너</p>{" "}
           {/* 코너설명 */}
-          <p>{timetables[currentSequence - 1].detail}</p>
+          <p>{timetables[currentSequence - 1]?.detail}</p>
         </div>
       )}
     </div>

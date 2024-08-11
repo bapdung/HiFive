@@ -13,6 +13,7 @@ interface UserVideoComponentProps {
   streamManager: any; // 비디오 스트림을 관리하는 객체
   userAnswers: { [key: string]: boolean };
   isQuizTime: boolean;
+  isReveal: boolean;
 }
 
 const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
@@ -20,6 +21,7 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
   userAnswers,
   isQuizTime,
   currentQuiz,
+  isReveal,
 }) => {
   const userId = streamManager.stream.connection.connectionId;
   const userName = JSON.parse(streamManager.stream.connection.data).clientData;
@@ -44,7 +46,8 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
                 {userAnswers[userId] ? "O" : "X"}
               </p>
             )}
-            {isWrong && <p>틀렸어</p>}
+            {isWrong && isReveal && <p>틀렸어</p>}
+            {!isWrong && isReveal && <p>맞았어</p>}
           </div>
         </div>
       )}
