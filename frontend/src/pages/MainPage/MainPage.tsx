@@ -30,7 +30,7 @@ function MainPage() {
         if (token) {
           setAccessToken(token);
         } else {
-          navigate("/login");
+          navigate("/");
           return;
         }
       }
@@ -53,7 +53,7 @@ function MainPage() {
           }
         } catch (err) {
           console.error("Error fetching user data:", err);
-          navigate("/login");
+          navigate("/");
         }
       }
     };

@@ -1,6 +1,8 @@
 package com.ssafy.hifive.domain.fanmeeting.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -87,7 +89,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll(@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getFanmeetingAll(@AuthenticationPrincipal Member member,
+		@ModelAttribute FanmeetingParam param) {
 		System.out.println(param.getName());
 		return ResponseEntity.ok(fanmeetingService.getFanmeetingAll(param));
 	}
@@ -147,7 +150,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/scheduled/fan", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingForFan(@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingForFan(
+		@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
 		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getScheduledFanmeetingForFan(member, param);
 		return ResponseEntity.ok(fanmeetings);
 	}
@@ -159,7 +163,8 @@ public class FanmeetingController {
 			examples = @ExampleObject(value = "{\"error\" : \"사용자 인증에 실패하였습니다.\"}"))
 	)
 	@GetMapping(path = "/completed/fan", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingForFan(@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
+	public ResponseEntity<List<FanmeetingOverViewDto>> getCompletedFanmeetingForFan(
+		@AuthenticationPrincipal Member member, @ModelAttribute FanmeetingParam param) {
 		List<FanmeetingOverViewDto> fanmeetings = fanmeetingService.getCompletedFanmeetingForFan(member, param);
 		return ResponseEntity.ok(fanmeetings);
 	}
@@ -174,5 +179,12 @@ public class FanmeetingController {
 	public ResponseEntity<List<FanmeetingOverViewDto>> getScheduledFanmeetingAllForFan(
 		@AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(fanmeetingService.getScheduledFanmeetingAllForFan(member));
+	}
+
+	@GetMapping("/server-time")
+	public ResponseEntity<Map<String, Object>> getServerTime() {
+		Map<String, Object> response = new HashMap<>();
+		response.put("serverTime", System.currentTimeMillis());
+		return ResponseEntity.ok(response);
 	}
 }

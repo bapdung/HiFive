@@ -23,7 +23,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [result, setResult] = useState<string>("");
   const [centerStartTime, setCenterStartTime] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(false); // 로딩 상태 추가
+  const [loading, setLoading] = useState<boolean>(false);
   const centerThreshold = 50;
   const minCenterTime = 1.0;
 
@@ -67,6 +67,15 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
             );
             const { identificationImg } = memberResponse.data;
 
+            // 신분증 이미지가 등록되지 않은 경우
+            if (!identificationImg) {
+              alert(
+                "신분증이 등록되지 않았습니다. 신분증을 먼저 등록해주세요.",
+              );
+              window.location.reload(); // 페이지 새로고침
+              return;
+            }
+
             const response = await axios.post<{
               verified: boolean;
               error?: string;
@@ -81,18 +90,16 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
 
             setLoading(false);
             if (response.data.error) {
-              onSuccess();
               setResult(`Error: ${response.data.error}`);
             } else if (response.data.verified) {
               onSuccess();
             } else {
-              onSuccess();
+              alert("본인 확인에 실패했습니다.");
             }
           }
         } catch (error) {
           setLoading(false); // 로딩 종료
           if (axios.isAxiosError(error)) {
-            onSuccess();
             setResult(`Error occurred: ${error.message}`);
           } else {
             setResult(`Error occurred: ${(error as Error).message}`);
