@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import client from "./client";
 import useAuthStore from "./store/useAuthStore";
 
@@ -14,6 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const { accessToken, setIsCreator } = useAuthStore();
   const navigate = useNavigate();
+  const { fanmeetingId } = useParams<{ fanmeetingId: string }>();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,13 +30,28 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       }
 
       try {
-        const response = await client(accessToken).get("api/member");
-        if (requiredCreator && !response.data.creator) {
+        const userResponse = await client(accessToken).get("api/member");
+        const isCreator = userResponse.data.creator;
+        const userId = userResponse.data.memberId;
+        setIsCreator(isCreator);
+
+        if (requiredCreator && !isCreator) {
           navigate("/error?code=UNAUTHORIZED&message=접근 권한이 없습니다.");
-        } else {
-          setIsCreator(response.data.creator);
-          setIsLoading(false);
+          return;
         }
+
+        if (requiredCreator && fanmeetingId) {
+          const fanmeetingResponse = await client(accessToken).get(
+            `/api/fanmeeting/${fanmeetingId}`,
+          );
+          const fanmeetingCreator = fanmeetingResponse.data.creatorId;
+
+          if (userId !== fanmeetingCreator) {
+            navigate("/error?code=UNAUTHORIZED&message=접근 권한이 없습니다.");
+          }
+        }
+
+        setIsLoading(false);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           navigate(
@@ -47,7 +63,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     };
 
     fetchUser();
-  }, [accessToken, requiredCreator, navigate, setIsCreator, isLoading]);
+  }, [
+    accessToken,
+    requiredCreator,
+    navigate,
+    setIsCreator,
+    isLoading,
+    fanmeetingId,
+  ]);
 
   if (isLoading) {
     return <div>Loading...</div>;
