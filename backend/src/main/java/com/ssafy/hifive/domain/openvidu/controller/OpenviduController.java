@@ -222,7 +222,7 @@ public class OpenviduController {
 	public ResponseEntity<Void> recordStop(@AuthenticationPrincipal Member member,
 		@RequestBody OpenViduRecordStopDto openViduRecordStopDto
 	) throws OpenViduJavaClientException, OpenViduHttpException {
-		openViduRecordService.stopRecordVideo(openVidu, openViduRecordStopDto.getRecordingId());
+		openViduRecordService.stopRecordVideo(openVidu, openViduRecordStopDto.getRecordId());
 		return ResponseEntity.ok().build();
 	}
 }
