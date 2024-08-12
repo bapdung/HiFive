@@ -138,9 +138,9 @@ function ModifyModal({
     setDescription(creatorProfile.description);
     setLink(creatorProfile.link);
   }, [creatorProfile]);
-
+  // fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50
   return (
-    <div className="z-40 w-full h-full absolute top bg-gray-600 bg-opacity-50 flex justify-center items-center">
+    <div className="z-40 w-full h-full fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
       <div className="z-50 w-2/5 h-[600px] bg-white px-8 py-6 flex flex-col justify-between items-center rounded-3xl">
         <img
           src={(tempProfileSrc as string) || creatorProfile.creatorImg}
@@ -160,7 +160,7 @@ function ModifyModal({
             className="hidden"
           />
         </label>
-        <span className="w-full items-start text-small text-gray-700 ml-3 mt-10">
+        <span className="w-full items-start text-small text-gray-700 ml-3 mt-5">
           프로필 소개문
         </span>
         <TextareaAutosize
@@ -169,7 +169,7 @@ function ModifyModal({
           value={description}
           onChange={(e) => changeDescription(e)}
         />
-        <span className="w-full items-start text-small text-gray-700 ml-3 mt-10">
+        <span className="w-full items-start text-small text-gray-700 ml-3 mt-5">
           크리에이터 채널 링크
         </span>
         <input
