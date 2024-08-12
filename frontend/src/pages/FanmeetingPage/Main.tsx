@@ -23,8 +23,6 @@ import WaitingPage from "./WaitingPage";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
-// const APPLICATION_SERVER_URL =
-//   process.env.NODE_ENV === "production" ? "" : "http:localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -71,6 +69,7 @@ export default function Main() {
   const location = useLocation();
   const mySessionId = location.pathname.split("/")[2];
   const [isCreator, setIsCreator] = useState<boolean | undefined>();
+  const [waitingUrl, setWaitingUrl] = useState<string | null>(null);
   const [fanAudioStatus, setFanAudioStatus] = useState<{
     [key: string]: boolean;
   }>({});
@@ -131,10 +130,30 @@ export default function Main() {
       if (response.data.creatorId === userId) {
         setIsCreator(true);
       }
+      setWaitingUrl(response.data.link);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const checkIsEnded = async () => {
+    if (!token || !session || !mySessionId) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/fanmeeting/${mySessionId}`);
+      if (response.data.data) {
+        navigate(`/fanmeeting/result/${mySessionId}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    checkIsEnded();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, token, mySessionId]);
 
   useEffect(() => {
     fetchFanmeeting();
@@ -385,23 +404,38 @@ export default function Main() {
     setPublisher(undefined);
   }, [session]);
 
-  const closeSession = useCallback(() => {
-    if (session) {
-      session
-        .signal({
+  const closeSessionApi = async () => {
+    if (!token || !session || !mySessionId) {
+      return;
+    }
+    try {
+      const response = await client(token).delete(
+        `api/sessions/${mySessionId}`,
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error closing the session:", error);
+    }
+  };
+
+  const closeSession = useCallback(async () => {
+    try {
+      await closeSessionApi();
+      if (session) {
+        await session.signal({
           type: "closeSession",
           data: JSON.stringify({
             reason: "The session has been closed by the creator.",
           }),
-        })
-        .then(() => {
-          leaveSession(); // 세션 종료 후 자신도 나가도록 처리
-        })
-        .catch((error) => {
-          console.error("Error sending closeSession signal:", error);
         });
+        leaveSession();
+        console.log("나갔어");
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
-  }, [session, leaveSession]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, token, mySessionId]);
 
   const switchCamera = useCallback(async () => {
     try {
@@ -418,7 +452,7 @@ export default function Main() {
         if (newVideoInputDevice) {
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoInputDevice.deviceId,
-            publishAudio: isCreator,
+            publishAudio: false,
             publishVideo: true,
             mirror: true,
           });
@@ -435,6 +469,7 @@ export default function Main() {
     } catch (e) {
       console.error(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentVideoDevice, session, mainStreamManager, isCreator]);
 
   const toggleMyAudio = useCallback(() => {
@@ -567,15 +602,12 @@ export default function Main() {
   const handleSendMessage = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-
       const now = Date.now();
-
       // 0.5초에 채팅 하나 보낼 수 있다.
       if (lastMessageTime && now - lastMessageTime < 500) {
         alert("도배 금지!!");
         return;
       }
-
       if (newMessage.trim() !== "") {
         const message = {
           id: uuidv4(),
@@ -593,6 +625,24 @@ export default function Main() {
     },
     [newMessage, myUserName, session, lastMessageTime, isCreator],
   );
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (session) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleSignal = (event: any) => {
+        if (event.data) {
+          console.log("Received closeSession signal:", event.data);
+          leaveSession();
+        }
+      };
+      session.on("signal:closeSession", handleSignal);
+      return () => {
+        session.off("signal:closeSession", handleSignal);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   const goToNextCorner = useCallback(
     (newSequence: number) => {
@@ -652,7 +702,7 @@ export default function Main() {
             setCurrentSequence={setCurrentSequence}
             onSequenceChange={goToNextCorner}
           />
-          <WaitingPage />
+          <WaitingPage waitingUrl={waitingUrl} />
         </div>
       ) : (
         <div id="session">
