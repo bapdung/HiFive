@@ -156,7 +156,6 @@ function Detail() {
 
         if (timeDiff > 0) {
           const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-          const day = Math.floor(hours / 24);
           const minutes = Math.floor(
             (timeDiff % (1000 * 60 * 60)) / (1000 * 60),
           );
