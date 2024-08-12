@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduRecordDto;
 import com.ssafy.hifive.global.error.ErrorCode;
+import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
 
 import io.openvidu.java.client.OpenVidu;
@@ -33,8 +34,11 @@ public class OpenViduRecordService {
 		return OpenViduRecordDto.from(openVidu.startRecording(fanmeetingId, properties).getId());
 	}
 
-	public void stopRecordVideo(OpenVidu openVidu, String recordingId) throws
+	public void stopRecordVideo(OpenVidu openVidu, String recordId) throws
 		OpenViduJavaClientException, OpenViduHttpException {
-		openVidu.stopRecording(recordingId);
+		if (openVidu.getRecording(recordId) == null) {
+			throw new BadRequestException(ErrorCode.RECORDING_NOT_FOUND, "Record가 존재하지 않습니다." + recordId);
+		}
+		openVidu.stopRecording(recordId);
 	}
 }
