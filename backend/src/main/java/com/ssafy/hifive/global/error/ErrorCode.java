@@ -44,7 +44,7 @@ public enum ErrorCode {
 	FANMEETING_NOT_FOUND(BAD_REQUEST, "FANMEETING-001", "FanmeetingId에 해당하는 Fanmeeting이 존재하지 않습니다."),
 	FANMEETING_NO_SESSION(BAD_REQUEST, "FANMETING-002", "해당 팬미팅 세션이 존재하지 않습니다."),
 	FANMEETING_NO_MEMBER_CONNECTION(BAD_REQUEST, "FANMEETING-003", "해당 사용자의 Connection이 존재하지 않습니다."),
-	
+	RECORDING_NOT_FOUND(BAD_REQUEST, "FANMEETING-004", "Record Id가 존재하지 않습니다."),
 	/**
 	 * Question
 	 */
