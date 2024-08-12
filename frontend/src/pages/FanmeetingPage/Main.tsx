@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -15,6 +16,10 @@ import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 import TimeTableComponent from "./TimeTableComponent";
+import StoryTime from "./StoryTime";
+import QuestionTime from "./QuestionTime";
+import QuizTime from "./QuizTime";
+import WaitingPage from "./WaitingPage";
 
 import roomframe from "../../assets/Fanmeeting/roomframe.png";
 
@@ -41,6 +46,18 @@ interface ChatMessage {
   isCreator: boolean;
 }
 
+interface Quiz {
+  problem: string;
+  answer: boolean;
+  totalQuizCount: number;
+  detail: string;
+}
+
+interface Rank {
+  fanId: number;
+  score: number;
+}
+
 export default function Main() {
   const navigate = useNavigate();
   const [myUserName, setMyUserName] = useState<string>("");
@@ -63,37 +80,23 @@ export default function Main() {
     null,
   );
 
+  // 퀴즈 관련 상태
+  const [userAnswers, setUserAnswers] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
+  const [isReveal, setIsReveal] = useState(false);
+  const handleReveal = (bool: boolean) => {
+    setIsReveal(bool);
+  };
+  const [ranks, setRanks] = useState<Rank[] | null>(null);
+  const handleRank = (allRank: Rank[]) => {
+    setRanks(allRank);
+  };
+
   // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
-  const [currentSequence, setCurrentSequence] = useState(1);
-  // 현재 코너 바뀔때마다 백엔드로 api 호출
-  const apiTimetable = async (seq: number) => {
-    if (!token) {
-      return;
-    }
-    try {
-      await client(token).post(`api/sessions/${mySessionId}`, {
-        sequence: seq,
-      });
-      console.log("성공적으로 전송");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const nextSequence = () => {
-    if (currentSequence < timetables.length) {
-      const next = currentSequence + 1;
-      setCurrentSequence(next);
-      apiTimetable(next);
-    }
-  };
-  const prevSequence = () => {
-    if (currentSequence > 1) {
-      const prev = currentSequence - 1;
-      setCurrentSequence(prev);
-      apiTimetable(prev);
-    }
-  };
+  const [currentSequence, setCurrentSequence] = useState(0);
 
   // 채팅 관련 상태 추가
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -168,7 +171,7 @@ export default function Main() {
     setTimetables(response.data.timetables);
     return response.data.sessionId;
   };
-  console.log(timetables);
+
   const createToken = async (sessionId: string): Promise<string> => {
     try {
       const response = await axios.post<string>(
@@ -193,7 +196,7 @@ export default function Main() {
   };
 
   const getToken = useCallback(async () => {
-    if (!token) {
+    if (!token || !mySessionId) {
       return "";
     }
     return createSession(mySessionId).then((sessionId) =>
@@ -239,7 +242,42 @@ export default function Main() {
     mySession.on("signal:focus", (event) => {
       if (event.data) {
         const data = JSON.parse(event.data);
-        setFocusedSubscriber(data.focusedSubscriber);
+        const focusedSubscriberId = data.focusedSubscriber;
+
+        if (focusedSubscriberId) {
+          const foundSubscriber = subscribers.find(
+            (sub) => sub.stream.connection.connectionId === focusedSubscriberId,
+          );
+
+          if (foundSubscriber) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else if (
+            publisher &&
+            publisher.stream.connection.connectionId === focusedSubscriberId
+          ) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else {
+            setFocusedSubscriber(null);
+          }
+        } else {
+          setFocusedSubscriber(null);
+        }
+      }
+    });
+
+    mySession.on("signal:userAnswer", (event) => {
+      if (event.data) {
+        const data = JSON.parse(event.data);
+        setUserAnswers((prevAnswers) => ({
+          ...prevAnswers,
+          [data.userId]: data.answer,
+        }));
+      }
+    });
+
+    mySession.on("signal:resetAnswer", (event) => {
+      if (event.data) {
+        setUserAnswers({});
       }
     });
 
@@ -282,13 +320,15 @@ export default function Main() {
       getToken().then(async (openviduToken) => {
         try {
           await session.connect(openviduToken, {
+            // 크리에이터일경우 이름 특수문자(##)로 설정 => 팬이랑 안겹치게 하기 위해서
             clientData: isCreator ? "##" : myUserName,
+            userId,
           });
 
           const newPublisher = await OV.current.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
-            publishAudio: isCreator,
+            publishAudio: isCreator, // 크리에이터일경우만 마이크 킨 상태로 시작
             publishVideo: true,
             resolution: "640x480",
             frameRate: 30,
@@ -333,7 +373,7 @@ export default function Main() {
         }
       });
     }
-  }, [session, isCreator, myUserName, token, getToken]);
+  }, [session, isCreator, myUserName, token, getToken, userId]);
 
   const leaveSession = useCallback(() => {
     if (session) {
@@ -468,25 +508,56 @@ export default function Main() {
   );
 
   const focusOnSubscriber = useCallback(
-    (subscriber: Subscriber) => {
-      if (focusedSubscriber === subscriber.stream.connection.connectionId) {
-        session?.signal({
-          data: JSON.stringify({
-            focusedSubscriber: null,
-          }),
-          type: "focus",
-        });
-      } else {
-        session?.signal({
-          data: JSON.stringify({
-            focusedSubscriber: subscriber.stream.connection.connectionId,
-          }),
-          type: "focus",
-        });
-      }
+    (subscriber: Subscriber | Publisher) => {
+      const subscriberId = subscriber.stream.connection.connectionId;
+      const newFocusedSubscriber =
+        focusedSubscriber === subscriberId ? null : subscriberId;
+
+      session?.signal({
+        data: JSON.stringify({
+          focusedSubscriber: newFocusedSubscriber,
+        }),
+        type: "focus",
+      });
     },
     [focusedSubscriber, session],
   );
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (session) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleFocusSignal = (event: any) => {
+        const data = JSON.parse(event.data);
+        const focusedSubscriberId = data.focusedSubscriber;
+
+        if (focusedSubscriberId) {
+          const foundSubscriber = subscribers.find(
+            (sub) => sub.stream.connection.connectionId === focusedSubscriberId,
+          );
+
+          if (foundSubscriber) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else if (
+            publisher &&
+            publisher.stream.connection.connectionId === focusedSubscriberId
+          ) {
+            setFocusedSubscriber(focusedSubscriberId);
+          } else {
+            setFocusedSubscriber(null);
+          }
+        } else {
+          setFocusedSubscriber(null);
+        }
+      };
+
+      session.on("signal:focus", handleFocusSignal);
+
+      return () => {
+        session.off("signal:focus", handleFocusSignal);
+      };
+    }
+  }, [session, subscribers, publisher]);
 
   const handleChangeMessage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -525,6 +596,43 @@ export default function Main() {
     [newMessage, myUserName, session, lastMessageTime, isCreator],
   );
 
+  const goToNextCorner = useCallback(
+    (newSequence: number) => {
+      if (isCreator && session) {
+        setCurrentSequence(newSequence);
+        session.signal({
+          type: "nextCorner",
+          data: JSON.stringify({ sequence: newSequence }),
+        });
+      }
+    },
+    [isCreator, session],
+  );
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (session) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleNextCornerSignal = (event: any) => {
+        if (event.data) {
+          const data = JSON.parse(event.data);
+          setCurrentSequence(data.sequence);
+        }
+      };
+
+      session.on("signal:nextCorner", handleNextCornerSignal);
+
+      // 클린업 함수 반환
+      return () => {
+        session.off("signal:nextCorner", handleNextCornerSignal);
+      };
+    }
+  }, [session]);
+
+  const handleFetchQuiz = (quiz: Quiz | null) => {
+    setCurrentQuiz(quiz);
+  };
+
   return (
     <div className="w-full h-full items-center bg-meetingroom-700">
       {session === undefined ? (
@@ -535,6 +643,8 @@ export default function Main() {
           joinSession={joinSession}
           setIsCreator={setIsCreator}
         />
+      ) : currentSequence === 0 ? (
+        <WaitingPage />
       ) : (
         <div
           id="session"
@@ -600,10 +710,40 @@ export default function Main() {
             />
           </div>
           <TimeTableComponent
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
             currentSequence={currentSequence}
-            nextSequence={nextSequence}
-            prevSequence={prevSequence}
-            isCreator
+            isCreator={isCreator}
+            setCurrentSequence={setCurrentSequence}
+            onSequenceChange={goToNextCorner}
+          />
+          <StoryTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            session={session}
+          />
+          <QuestionTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            session={session}
+          />
+          <QuizTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            session={session}
+            handleFetchQuiz={handleFetchQuiz}
+            handleReveal={handleReveal}
+            handleRank={handleRank}
           />
           <VideoContainer
             publisher={publisher}
@@ -613,6 +753,12 @@ export default function Main() {
             fanAudioStatus={fanAudioStatus}
             focusedSubscriber={focusedSubscriber}
             focusOnSubscriber={focusOnSubscriber}
+            userAnswers={userAnswers}
+            currentSequence={currentSequence}
+            timetables={timetables}
+            currentQuiz={currentQuiz}
+            isReveal={isReveal}
+            ranks={ranks}
           />
           <Chat
             chatMessages={chatMessages}
