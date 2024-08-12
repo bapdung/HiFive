@@ -60,7 +60,7 @@ function Detail() {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
-  const [serverTime, setServerTime] = useState<number>(0);
+  const [serverTimeOffset, setServerTimeOffset] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.accessToken);
@@ -72,9 +72,9 @@ function Detail() {
           const response = await client(token).get(
             "/api/fanmeeting/server-time",
           );
-          // eslint-disable-next-line no-shadow
           const { serverTime } = response.data;
-          setServerTime(serverTime);
+          const localTime = Date.now();
+          setServerTimeOffset(serverTime - localTime);
         }
       } catch (error) {
         console.error("Error fetching server time:", error);
@@ -98,7 +98,8 @@ function Detail() {
           setFanMeetingDetails(data);
           setIsReserved(data.reservation);
 
-          const now = serverTime;
+          // 예매 시작 전인지 확인하여 버튼 활성화 상태 설정
+          const now = Date.now() + serverTimeOffset;
           const openDate = new Date(data.openDate).getTime();
           if (now >= openDate) {
             setIsButtonDisabled(false);
@@ -109,9 +110,7 @@ function Detail() {
       }
     };
 
-    if (serverTime > 0) {
-      fetchFanmeetingDetails();
-    }
+    fetchFanmeetingDetails();
 
     const handleWebSocketMessage = (data: WebSocketMessage) => {
       if (data.event === "currentQueueSize") {
@@ -142,14 +141,14 @@ function Detail() {
         handleWebSocketMessage,
       );
     };
-  }, [token, fanmeetingId, serverTime]);
+  }, [token, fanmeetingId, serverTimeOffset]);
 
   // eslint-disable-next-line consistent-return
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
-    if (fanMeetingDetails && serverTime > 0) {
+    if (fanMeetingDetails) {
       const updateRemainingTime = () => {
-        const now = serverTime + 1000;
-        setServerTime(now);
+        const now = new Date().getTime() + serverTimeOffset;
         const openDate = new Date(fanMeetingDetails.openDate).getTime();
         const timeDiff = openDate - now;
 
@@ -177,7 +176,7 @@ function Detail() {
 
       return () => clearInterval(timer);
     }
-  }, [fanMeetingDetails, serverTime]);
+  }, [fanMeetingDetails, serverTimeOffset]);
 
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
@@ -256,6 +255,8 @@ function Detail() {
         </button>
       );
     }
+
+    // eslint-disable-next-line no-shadow
 
     if (timeRemaining) {
       return (
