@@ -60,7 +60,7 @@ function Detail() {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
-  const [serverTimeOffset, setServerTimeOffset] = useState<number>(0);
+  const [serverTime, setServerTime] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.accessToken);
@@ -72,9 +72,9 @@ function Detail() {
           const response = await client(token).get(
             "/api/fanmeeting/server-time",
           );
+          // eslint-disable-next-line no-shadow
           const { serverTime } = response.data;
-          const localTime = Date.now();
-          setServerTimeOffset(serverTime - localTime);
+          setServerTime(serverTime);
         }
       } catch (error) {
         console.error("Error fetching server time:", error);
@@ -98,8 +98,7 @@ function Detail() {
           setFanMeetingDetails(data);
           setIsReserved(data.reservation);
 
-          // 예매 시작 전인지 확인하여 버튼 활성화 상태 설정
-          const now = Date.now() + serverTimeOffset;
+          const now = serverTime;
           const openDate = new Date(data.openDate).getTime();
           if (now >= openDate) {
             setIsButtonDisabled(false);
@@ -110,7 +109,9 @@ function Detail() {
       }
     };
 
-    fetchFanmeetingDetails();
+    if (serverTime > 0) {
+      fetchFanmeetingDetails();
+    }
 
     const handleWebSocketMessage = (data: WebSocketMessage) => {
       if (data.event === "currentQueueSize") {
@@ -141,13 +142,14 @@ function Detail() {
         handleWebSocketMessage,
       );
     };
-  }, [token, fanmeetingId, serverTimeOffset]);
+  }, [token, fanmeetingId, serverTime]);
 
   // eslint-disable-next-line consistent-return
   useEffect(() => {
-    if (fanMeetingDetails) {
+    if (fanMeetingDetails && serverTime > 0) {
       const updateRemainingTime = () => {
-        const now = new Date().getTime() + serverTimeOffset;
+        const now = serverTime + 1000;
+        setServerTime(now);
         const openDate = new Date(fanMeetingDetails.openDate).getTime();
         const timeDiff = openDate - now;
 
@@ -166,7 +168,7 @@ function Detail() {
           }
         } else {
           setTimeRemaining("");
-          setIsButtonDisabled(false); // 시간이 경과하면 버튼을 활성화
+          setIsButtonDisabled(false);
         }
       };
 
@@ -175,7 +177,7 @@ function Detail() {
 
       return () => clearInterval(timer);
     }
-  }, [fanMeetingDetails, serverTimeOffset]);
+  }, [fanMeetingDetails, serverTime]);
 
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
