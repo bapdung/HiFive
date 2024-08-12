@@ -154,6 +154,29 @@ export default function Main() {
     }
   };
 
+  const validateUser = async () => {
+    if (!token || !mySessionId || !userId) {
+      return;
+    }
+    try {
+      await client(token).post(`api/sessions/check`, {
+        memberId: userId,
+        fanmeetingId: parseInt(mySessionId, 10),
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    validateUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, mySessionId, userId]);
+
   useEffect(() => {
     checkIsEnded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -423,23 +446,21 @@ export default function Main() {
     }
   };
 
-  const closeSession = useCallback(() => {
-    closeSessionApi();
-    if (session) {
-      session
-        .signal({
+  const closeSession = useCallback(async () => {
+    try {
+      await closeSessionApi();
+      if (session) {
+        await session.signal({
           type: "closeSession",
           data: JSON.stringify({
             reason: "The session has been closed by the creator.",
           }),
-        })
-        .then(() => {
-          leaveSession(); // 세션 종료 후 자신도 나가도록 처리
-          console.log("나갔어");
-        })
-        .catch((error) => {
-          console.error("Error sending closeSession signal:", error);
         });
+        leaveSession();
+        console.log("나갔어");
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, token, mySessionId]);
@@ -459,7 +480,7 @@ export default function Main() {
         if (newVideoInputDevice) {
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoInputDevice.deviceId,
-            publishAudio: isCreator,
+            publishAudio: false,
             publishVideo: true,
             mirror: true,
           });
@@ -476,6 +497,7 @@ export default function Main() {
     } catch (e) {
       console.error(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentVideoDevice, session, mainStreamManager, isCreator]);
 
   const toggleMyAudio = useCallback(() => {
@@ -824,6 +846,8 @@ export default function Main() {
             currentQuiz={currentQuiz}
             isReveal={isReveal}
             ranks={ranks}
+            token={token}
+            mySessionId={mySessionId}
           />
           <Chat
             chatMessages={chatMessages}
