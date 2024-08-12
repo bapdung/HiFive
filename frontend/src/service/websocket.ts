@@ -4,7 +4,7 @@ type Listener = (data: any) => void;
 class WebSocketService {
   private url: string;
 
-  private socket: WebSocket | null;
+  private socket: WebSocket | null = null;
 
   private listeners: { [event: string]: Listener[] };
 
@@ -14,35 +14,50 @@ class WebSocketService {
     this.listeners = {};
   }
 
-  connect(memberId: string, fanmeetingId: string) {
-    this.socket = new WebSocket(
-      `${this.url}/${fanmeetingId}?memberId=${memberId}`,
-    );
+  isConnected(): boolean {
+    return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
+  }
 
-    this.socket.onopen = () => {
-      console.log("WebSocket Connected");
-    };
+  connect(memberId: string, fanmeetingId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.isConnected()) {
+        console.log("WebSocket is already connected.");
+        resolve();
+        return;
+      }
 
-    this.socket.onmessage = (event) => {
-      console.log("Raw WebSocket Message Received:", event.data);
+      this.socket = new WebSocket(
+        `${this.url}/${fanmeetingId}?memberId=${memberId}`,
+      );
 
-      const data = JSON.parse(event.data);
-      // console.log("WebSocket Message Received:", data);
-      this.notifyListeners(data);
-    };
+      this.socket.onopen = () => {
+        console.log("WebSocket Connected");
+        resolve();
+      };
 
-    this.socket.onerror = () => {
-      // console.error("WebSocket Error: ", error);
-    };
+      this.socket.onmessage = (event) => {
+        console.log("Raw WebSocket Message Received:", event.data);
 
-    this.socket.onclose = () => {
-      console.log("WebSocket Disconnected");
-    };
+        const data = JSON.parse(event.data);
+        this.notifyListeners(data);
+      };
+
+      this.socket.onerror = (error) => {
+        console.error("WebSocket Error: ", error);
+        reject(error);
+      };
+
+      this.socket.onclose = () => {
+        console.log("WebSocket Disconnected");
+        this.socket = null;
+      };
+    });
   }
 
   disconnect() {
     if (this.socket) {
       this.socket.close();
+      this.socket = null;
     }
   }
 
@@ -78,7 +93,7 @@ class WebSocketService {
 }
 
 const webSocketService = new WebSocketService(
-  // "wss://i11a107.p.ssafy.io/ws/ticket",
-  "ws://localhost:8080/ws/ticket",
+  "wss://i11a107.p.ssafy.io/ws/ticket",
+  // "ws://localhost:8080/ws/ticket",
 );
 export default webSocketService;

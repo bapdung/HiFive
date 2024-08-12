@@ -51,7 +51,7 @@ const StoryList: React.FC<StoryListProps> = ({
         <table className="w-full text-h6">
           <thead className="border-b-2 border-t-2 border-secondary">
             <tr>
-              <td className="w-[10%] py-2.5 px-5 font-semibold">번호</td>
+              {/* <td className="w-[10%] py-2.5 px-5 font-semibold">번호</td> */}
               <td className="w-[25%] py-2.5 px-5 font-semibold">작성자</td>
               <td className="w-[45%] py-2.5 px-5 font-semibold">사연 제목</td>
               <td className="w-[20%] py-2.5 px-5 font-semibold">선택 여부</td>
@@ -68,7 +68,7 @@ const StoryList: React.FC<StoryListProps> = ({
                       )
                     }
                   >
-                    <td className="py-3 px-5">{story.storyId}</td>
+                    {/* <td className="py-3 px-5">{story.storyId}</td> */}
                     <td className="py-3 px-5 ">{story.nickname}</td>
                     <td className="py-3 px-5 ">{story.title}</td>
                     {story.picked ? (

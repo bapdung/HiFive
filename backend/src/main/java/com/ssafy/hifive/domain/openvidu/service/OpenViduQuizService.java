@@ -89,10 +89,12 @@ public class OpenViduQuizService {
 		OpenViduQuizRequestDto openViduQuizRequestDto) {
 		String redisKey = getQuestionAnswerRedisKey(fanmeetingId, sequence);
 
-		redisTemplate.opsForHash()
-			.put(redisKey, String.valueOf(member.getMemberId()), openViduQuizRequestDto.isCorrect());
+		log.info("Received isCorrect: {}", openViduQuizRequestDto.getIsCorrect());
 
-		if (openViduQuizRequestDto.isCorrect()) {
+		redisTemplate.opsForHash()
+			.put(redisKey, String.valueOf(member.getMemberId()), openViduQuizRequestDto.getIsCorrect());
+
+		if (openViduQuizRequestDto.getIsCorrect() == 1) {
 			redisTemplate.opsForZSet()
 				.incrementScore(getMemberAnswerRedisKey(fanmeetingId), String.valueOf(member.getMemberId()), 1);
 		}
@@ -117,6 +119,7 @@ public class OpenViduQuizService {
 		String redisKey = getMemberAnswerRedisKey(fanmeetingId);
 
 		Set<ZSetOperations.TypedTuple<Object>> rankedSet = zSetOperations.reverseRangeWithScores(redisKey, 0, -1);
+		log.info(rankedSet.toString());
 
 		return rankedSet.stream()
 			.map(tuple -> OpenViduQuizResultDto.from(Long.parseLong(tuple.getValue().toString()),

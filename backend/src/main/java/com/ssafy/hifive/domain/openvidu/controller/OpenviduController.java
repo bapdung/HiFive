@@ -9,21 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
+import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCustomSessionDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduQuizRequestDto;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduSequenceDto;
+import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuestionDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResultDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResultSequenceDto;
-import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCustomSessionDto;
-import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduSequenceDto;
-import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuestionDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduStoryDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduQuestionService;
@@ -31,6 +32,8 @@ import com.ssafy.hifive.domain.openvidu.service.OpenViduQuizService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduSessionService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduStoryService;
+import com.ssafy.hifive.global.error.ErrorCode;
+import com.ssafy.hifive.global.error.type.BadRequestException;
 
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.ConnectionProperties;
@@ -49,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/sessions")
 public class OpenviduController {
 	private final OpenViduQuestionService openViduQuestionService;
+	private final FanmeetingRepository fanmeetingRepository;
 	@Value("${openvidu.url}")
 	private String openviduUrl;
 
@@ -95,6 +99,11 @@ public class OpenviduController {
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
 
+	@GetMapping("/{fanmeetingId}")
+	public ResponseEntity<Boolean> isEnded(@PathVariable Long fanmeetingId) {
+		return ResponseEntity.ok(fanmeetingRepository.existsByFanmeetingIdAndIsEndedTrue(fanmeetingId));
+	}
+
 	@PostMapping("/{fanmeetingId}")
 	public ResponseEntity<Void> saveCurrentSequence(@PathVariable Long fanmeetingId,
 		@RequestBody OpenViduSequenceDto openViduSequenceDto) {
@@ -102,17 +111,24 @@ public class OpenviduController {
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/{sessionId}")
-	public ResponseEntity<String> deleteSession(@PathVariable("sessionId") String sessionId) throws
+	@DeleteMapping("/{fanmeetingId}")
+	public ResponseEntity<String> deleteSession(@PathVariable("fanmeetingId") String sessionId,
+		@AuthenticationPrincipal Member member) throws
 		OpenViduJavaClientException,
 		OpenViduHttpException {
+		Fanmeeting fanmeeting = fanmeetingRepository.findById(Long.valueOf(sessionId))
+			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
+		openViduService.isCreator(fanmeeting.getCreator().getMemberId(), member);
 		Session session = openVidu.getActiveSession(sessionId);
-		if (session == null)
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		openViduSessionService.isValidSession(session);
 
 		for (Connection conn : session.getConnections()) {
 			session.forceDisconnect(conn);
 		}
+
+		fanmeeting.updateIsEnded();
+		fanmeetingRepository.save(fanmeeting);
+
 		return new ResponseEntity<>("Session deleted", HttpStatus.OK);
 	}
 
@@ -150,7 +166,7 @@ public class OpenviduController {
 	public ResponseEntity<Void> submitSingleUserAnswer(
 		@PathVariable(name = "fanmeetingId") long fanmeetingId,
 		@PathVariable(name = "sequence") int sequence,
-		@ModelAttribute OpenViduQuizRequestDto openViduQuizRequestDto,
+		@RequestBody OpenViduQuizRequestDto openViduQuizRequestDto,
 		@AuthenticationPrincipal Member member) {
 
 		openViduQuizService.submitSingleUserAnswer(fanmeetingId, sequence, member, openViduQuizRequestDto);
@@ -175,7 +191,8 @@ public class OpenviduController {
 	}
 
 	@GetMapping(path = "/question/{fanmeetingId}/{sequence}")
-	public ResponseEntity<OpenViduQuestionDto> getQuestionBySequence(@PathVariable(name = "fanmeetingId") long fanmeetingId,
+	public ResponseEntity<OpenViduQuestionDto> getQuestionBySequence(
+		@PathVariable(name = "fanmeetingId") long fanmeetingId,
 		@PathVariable(name = "sequence") int sequence, @AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(openViduQuestionService.getQuestionBySequence(fanmeetingId, sequence, member));
 	}
@@ -186,10 +203,5 @@ public class OpenviduController {
 		openViduQuestionService.getQuestions(fanmeetingId, member);
 		return ResponseEntity.ok().build();
 	}
-
-
-
-
-
 
 }

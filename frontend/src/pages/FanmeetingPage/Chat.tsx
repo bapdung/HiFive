@@ -1,6 +1,7 @@
 // import React, { useEffect, useState } from "react";
 
 interface ChatMessage {
+  isCreator: boolean;
   id: string;
   user: string;
   text: string;
@@ -25,7 +26,7 @@ const Chat: React.FC<ChatProps> = ({
     <h3>채팅</h3>
     <div id="chat-box">
       {chatMessages.map((msg) => (
-        <div key={msg.id} className="chat-message">
+        <div key={msg.id} className={msg.isCreator ? "bg-primary-300" : ""}>
           <strong style={{ color: userColors[msg.user] }}>{msg.user}:</strong>{" "}
           {msg.text}
         </div>
