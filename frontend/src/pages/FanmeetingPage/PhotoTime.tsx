@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Publisher, Subscriber } from "openvidu-browser";
 import UserVideoComponent from "./UserVideoComponent";
+import client from "../../client";
 
 interface Quiz {
   problem: string;
@@ -17,6 +18,8 @@ interface PhotoTimeProps {
   isQuizTime: boolean;
   currentQuiz: Quiz | null;
   isReveal: boolean;
+  token: string | null;
+  mySessionId: string | null;
 }
 
 const PhotoTime: React.FC<PhotoTimeProps> = ({
@@ -27,8 +30,11 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
   isQuizTime,
   currentQuiz,
   isReveal,
+  token,
+  mySessionId,
 }) => {
   const [randomFan, setRandomFan] = useState<Subscriber | null>(null);
+  const [recordId, setRecordId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isCreator) {
@@ -45,10 +51,35 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
     }
   }, [subscribers, isCreator]);
 
+  const startPhoto = async () => {
+    if (token && mySessionId) {
+      const response = await client(token).post(`/api/sessions/record`, {
+        fanmeetingId: mySessionId,
+      });
+      console.log("녹화성공", response.data.recordId);
+      setRecordId(response.data.recordId);
+    }
+  };
+
+  const stopPhoto = async () => {
+    if (token && mySessionId && recordId) {
+      const response = await client(token).post(`/api/sessions/record/stop`, {
+        recordId,
+      });
+      console.log("녹화 중지", response.data.recordId);
+    }
+  };
+
   return (
     <div className="photo-time-container">
       {isCreator ? (
         <>
+          <button type="button" onClick={startPhoto}>
+            촬영시작
+          </button>
+          <button type="button" onClick={stopPhoto}>
+            촬영중지
+          </button>
           {publisher && (
             <div className="p-5 bg-emerald-500">
               <UserVideoComponent

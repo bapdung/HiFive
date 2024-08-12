@@ -35,6 +35,8 @@ interface VideoContainerProps {
   currentQuiz: Quiz | null;
   isReveal: boolean;
   ranks: Rank[] | null;
+  token: string | null;
+  mySessionId: string | null;
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -51,6 +53,8 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   currentQuiz,
   isReveal,
   ranks,
+  token,
+  mySessionId,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
 
@@ -82,6 +86,8 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
         isQuizTime={isQuizTime}
         currentQuiz={currentQuiz}
         isReveal={isReveal}
+        token={token}
+        mySessionId={mySessionId}
       />
     );
   }
