@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -18,6 +19,7 @@ import TimeTableComponent from "./TimeTableComponent";
 import StoryTime from "./StoryTime";
 import QuestionTime from "./QuestionTime";
 import QuizTime from "./QuizTime";
+import WaitingPage from "./WaitingPage";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
@@ -92,7 +94,7 @@ export default function Main() {
 
   // 타임 테이블 관련 상태
   const [timetables, setTimetables] = useState<Timetable[]>([]);
-  const [currentSequence, setCurrentSequence] = useState(1);
+  const [currentSequence, setCurrentSequence] = useState(0);
 
   // 채팅 관련 상태 추가
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -639,6 +641,8 @@ export default function Main() {
           joinSession={joinSession}
           setIsCreator={setIsCreator}
         />
+      ) : currentSequence === 0 ? (
+        <WaitingPage />
       ) : (
         <div id="session">
           <div id="session-header">
