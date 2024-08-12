@@ -83,7 +83,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
       {creatorSub && (
         <div
           key={JSON.parse(creatorSub.stream.connection.data).clientData}
-          className="p-5"
+          className="p-5 bg-emerald-500"
         >
           {/* UserVideoComponent 컴포넌트에 스트림 전달 */}
           <UserVideoComponent
@@ -98,8 +98,6 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
       )}
 
       {isCreator && publisher && (
-        <div className="p-5">
-          <UserVideoComponent streamManager={publisher} />
         <div className="p-5 bg-emerald-500">
           <UserVideoComponent
             streamManager={publisher}
