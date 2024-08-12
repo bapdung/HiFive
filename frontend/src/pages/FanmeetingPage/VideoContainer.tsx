@@ -129,6 +129,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           isReveal={isReveal}
           token={token}
           mySessionId={mySessionId}
+          session={session}
         />
       </>
     );
