@@ -387,6 +387,20 @@ export default function Main() {
     setPublisher(undefined);
   }, [session]);
 
+  // const closeSessionApi = async () => {
+  //   if (!token || !session || !mySessionId) {
+  //     return;
+  //   }
+  //   try {
+  //     const response = await client(token).delete(
+  //       `api/sessions/${mySessionId}`,
+  //     );
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error("Error closing the session:", error);
+  //   }
+  // };
+
   const closeSession = useCallback(() => {
     if (session) {
       session
@@ -398,12 +412,15 @@ export default function Main() {
         })
         .then(() => {
           leaveSession(); // 세션 종료 후 자신도 나가도록 처리
+          console.log("나갔어");
         })
         .catch((error) => {
           console.error("Error sending closeSession signal:", error);
         });
+      // closeSessionApi();
     }
-  }, [session, leaveSession]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, token, mySessionId]);
 
   const switchCamera = useCallback(async () => {
     try {
@@ -569,15 +586,12 @@ export default function Main() {
   const handleSendMessage = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-
       const now = Date.now();
-
       // 0.5초에 채팅 하나 보낼 수 있다.
       if (lastMessageTime && now - lastMessageTime < 500) {
         alert("도배 금지!!");
         return;
       }
-
       if (newMessage.trim() !== "") {
         const message = {
           id: uuidv4(),
@@ -595,6 +609,24 @@ export default function Main() {
     },
     [newMessage, myUserName, session, lastMessageTime, isCreator],
   );
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (session) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleSignal = (event: any) => {
+        if (event.data) {
+          console.log("Received closeSession signal:", event.data);
+          leaveSession();
+        }
+      };
+      session.on("signal:closeSession", handleSignal);
+      return () => {
+        session.off("signal:closeSession", handleSignal);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   const goToNextCorner = useCallback(
     (newSequence: number) => {
