@@ -17,6 +17,9 @@ spring:
   oauth2:
     redirect-uri: https://i11a107.p.ssafy.io/main
 
+  baseUrl: "https://i11a107.p.ssafy.io"
+
+
   data:
     redis:
       host: i11a107.p.ssafy.io
