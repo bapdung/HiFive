@@ -21,15 +21,19 @@ import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCheckDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCustomSessionDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduQuizRequestDto;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduRecordRequestDto;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduRecordStopDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduSequenceDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuestionDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResultDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduQuizResultSequenceDto;
+import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduRecordDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduStoryDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduQuestionService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduQuizService;
+import com.ssafy.hifive.domain.openvidu.service.OpenViduRecordService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduSessionService;
 import com.ssafy.hifive.domain.openvidu.service.OpenViduStoryService;
@@ -66,6 +70,7 @@ public class OpenviduController {
 	private final OpenViduStoryService openViduStoryService;
 	private final OpenViduQuizService openViduQuizService;
 	private final OpenViduSessionService openViduSessionService;
+	private final OpenViduRecordService openViduRecordService;
 
 	@PostConstruct
 	public void init() {
@@ -120,7 +125,6 @@ public class OpenviduController {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(Long.valueOf(sessionId))
 			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
 		openViduService.isCreator(fanmeeting.getCreator().getMemberId(), member);
-
 		fanmeeting.updateIsEnded();
 		fanmeetingRepository.save(fanmeeting);
 
@@ -203,6 +207,22 @@ public class OpenviduController {
 	public ResponseEntity<Void> checkMember(@RequestBody OpenViduCheckDto openViduCheckDto,
 		@AuthenticationPrincipal Member member) {
 		openViduService.validateMemberAndFanmeeting(openViduCheckDto, member);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/record")
+	public ResponseEntity<OpenViduRecordDto> recordVideo(@AuthenticationPrincipal Member member,
+		@RequestBody OpenViduRecordRequestDto openViduRecordRequestDto
+	) throws OpenViduJavaClientException, OpenViduHttpException {
+		return ResponseEntity.ok(openViduRecordService.recordVideo(openVidu, openViduRecordRequestDto.getFanmeetingId(),
+			openViduRecordRequestDto.getMemberId()));
+	}
+
+	@PostMapping("/record/stop")
+	public ResponseEntity<Void> recordStop(@AuthenticationPrincipal Member member,
+		@RequestBody OpenViduRecordStopDto openViduRecordStopDto
+	) throws OpenViduJavaClientException, OpenViduHttpException {
+		openViduRecordService.stopRecordVideo(openVidu, openViduRecordStopDto.getRecordingId());
 		return ResponseEntity.ok().build();
 	}
 }
