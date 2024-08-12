@@ -73,8 +73,7 @@ function Detail() {
             "/api/fanmeeting/server-time",
           );
           const { serverTime } = response.data;
-          const localTime = Date.now();
-          setServerTimeOffset(serverTime - localTime);
+          setServerTimeOffset(serverTime);
         }
       } catch (error) {
         console.error("Error fetching server time:", error);
@@ -148,9 +147,12 @@ function Detail() {
   useEffect(() => {
     if (fanMeetingDetails) {
       const updateRemainingTime = () => {
-        const now = new Date().getTime() + serverTimeOffset;
-        const openDate = new Date(fanMeetingDetails.openDate).getTime();
-        const timeDiff = openDate - now;
+        const now = new Date().getTime();
+        const timeDiff =
+          serverTimeOffset -
+          now +
+          (new Date(fanMeetingDetails.openDate).getTime() -
+            new Date().getTime());
 
         if (timeDiff > 0) {
           const hours = Math.floor(timeDiff / (1000 * 60 * 60));
@@ -160,14 +162,15 @@ function Detail() {
           );
           const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
-          if (day > 0) {
+          if (hours >= 24) {
+            const day = Math.floor(hours / 24);
             setTimeRemaining(`D-${day}`);
           } else {
             setTimeRemaining(`${hours}시간 ${minutes}분 ${seconds}초`);
           }
         } else {
           setTimeRemaining("");
-          setIsButtonDisabled(false);
+          setIsButtonDisabled(false); // 시간이 경과하면 버튼을 활성화
         }
       };
 
