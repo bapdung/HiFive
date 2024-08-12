@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCheckDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCustomSessionDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduQuizRequestDto;
 import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduSequenceDto;
@@ -198,4 +199,10 @@ public class OpenviduController {
 		return ResponseEntity.ok().build();
 	}
 
+	@PostMapping("/check")
+	public ResponseEntity<Void> checkMember(@RequestBody OpenViduCheckDto openViduCheckDto,
+		@AuthenticationPrincipal Member member) {
+		openViduService.validateMemberAndFanmeeting(openViduCheckDto, member);
+		return ResponseEntity.ok().build();
+	}
 }
