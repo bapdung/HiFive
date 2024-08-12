@@ -13,6 +13,9 @@ spring:
   oauth2:
     redirect-uri: http://localhost:3000/main
 
+  baseUrl: "http://localhost:8080"
+
+
   data:
     redis:
       host: localhost
