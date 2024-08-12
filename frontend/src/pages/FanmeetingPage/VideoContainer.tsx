@@ -136,16 +136,44 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
 
   return (
     // 포토타임이 아닐 경우
-    <div id="video-container" className="w-full relative h-full">
-      <TimeTableComponent
-        token={token}
-        mySessionId={mySessionId}
-        timetables={timetables}
-        currentSequence={currentSequence}
-        isCreator={isCreator}
-        setCurrentSequence={setCurrentSequence}
-        onSequenceChange={onSequenceChange}
-      />
+    <div
+      id="video-container"
+      className="w-full relative h-full flex flex-col items-center"
+    >
+      <div className="flex">
+        <div className="w-[300px] h-[409px] mr-3">
+          <TimeTableComponent
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            setCurrentSequence={setCurrentSequence}
+            onSequenceChange={onSequenceChange}
+          />
+        </div>
+        <div className="w-[540px] mr-3">
+          <CreatorCamera
+            publisher={publisher}
+            subscribers={subscribers}
+            isCreator={isCreator}
+            userAnswers={userAnswers}
+            isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
+            isReveal={isReveal}
+            fanAudioStatus={fanAudioStatus}
+          />
+        </div>
+        <div className="w-[300px] h-[409px]">
+          <Chat
+            chatMessages={chatMessages}
+            newMessage={newMessage}
+            handleChangeMessage={handleChangeMessage}
+            handleSendMessage={handleSendMessage}
+            userColors={userColors}
+          />
+        </div>
+      </div>
       <StoryTime
         token={token}
         mySessionId={mySessionId}
@@ -172,23 +200,6 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
         handleFetchQuiz={handleFetchQuiz}
         handleReveal={handleReveal}
         handleRank={handleRank}
-      />
-      <CreatorCamera
-        publisher={publisher}
-        subscribers={subscribers}
-        isCreator={isCreator}
-        userAnswers={userAnswers}
-        isQuizTime={isQuizTime}
-        currentQuiz={currentQuiz}
-        isReveal={isReveal}
-        fanAudioStatus={fanAudioStatus}
-      />
-      <Chat
-        chatMessages={chatMessages}
-        newMessage={newMessage}
-        handleChangeMessage={handleChangeMessage}
-        handleSendMessage={handleSendMessage}
-        userColors={userColors}
       />
       {focusedSubscriber &&
         (subscribers.find(
@@ -268,17 +279,19 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           return (
             <div
               key={sub.stream.connection.connectionId}
-              className="stream-container col-md-6 col-xs-6"
+              className="stream-container col-md-6 col-xs-6 mt-20"
               id={`fan-camera-component-${userId}`}
             >
-              <UserVideoComponent
-                streamManager={sub}
-                userAnswers={userAnswers}
-                isQuizTime={isQuizTime}
-                currentQuiz={currentQuiz}
-                isReveal={isReveal}
-                rank={getRankForUser(userId)}
-              />
+              <div className="">
+                <UserVideoComponent
+                  streamManager={sub}
+                  userAnswers={userAnswers}
+                  isQuizTime={isQuizTime}
+                  currentQuiz={currentQuiz}
+                  isReveal={isReveal}
+                  rank={getRankForUser(userId)}
+                />
+              </div>
               <div>
                 <span>{clientData}</span>
                 {isCreator && (
