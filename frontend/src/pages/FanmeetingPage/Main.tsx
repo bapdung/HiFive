@@ -138,6 +138,25 @@ export default function Main() {
     }
   };
 
+  const checkIsEnded = async () => {
+    if (!token || !session || !mySessionId) {
+      return;
+    }
+    try {
+      const response = await client(token).get(`api/fanmeeting/${mySessionId}`);
+      if (response.data.data) {
+        navigate(`/fanmeeting/result/${mySessionId}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    checkIsEnded();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, token, mySessionId]);
+
   useEffect(() => {
     fetchFanmeeting();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -387,21 +406,22 @@ export default function Main() {
     setPublisher(undefined);
   }, [session]);
 
-  // const closeSessionApi = async () => {
-  //   if (!token || !session || !mySessionId) {
-  //     return;
-  //   }
-  //   try {
-  //     const response = await client(token).delete(
-  //       `api/sessions/${mySessionId}`,
-  //     );
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error("Error closing the session:", error);
-  //   }
-  // };
+  const closeSessionApi = async () => {
+    if (!token || !session || !mySessionId) {
+      return;
+    }
+    try {
+      const response = await client(token).delete(
+        `api/sessions/${mySessionId}`,
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error closing the session:", error);
+    }
+  };
 
   const closeSession = useCallback(() => {
+    closeSessionApi();
     if (session) {
       session
         .signal({
@@ -417,7 +437,6 @@ export default function Main() {
         .catch((error) => {
           console.error("Error sending closeSession signal:", error);
         });
-      // closeSessionApi();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, token, mySessionId]);
