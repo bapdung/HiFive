@@ -214,8 +214,8 @@ public class OpenviduController {
 	public ResponseEntity<OpenViduRecordDto> recordVideo(@AuthenticationPrincipal Member member,
 		@RequestBody OpenViduRecordRequestDto openViduRecordRequestDto
 	) throws OpenViduJavaClientException, OpenViduHttpException {
-		return ResponseEntity.ok(openViduRecordService.recordVideo(openVidu, openViduRecordRequestDto.getFanmeetingId(),
-			openViduRecordRequestDto.getMemberId()));
+		return ResponseEntity.ok(
+			openViduRecordService.recordVideo(openVidu, openViduRecordRequestDto.getFanmeetingId()));
 	}
 
 	@PostMapping("/record/stop")

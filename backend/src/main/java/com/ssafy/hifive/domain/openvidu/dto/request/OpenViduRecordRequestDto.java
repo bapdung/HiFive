@@ -7,5 +7,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OpenViduRecordRequestDto {
 	private String fanmeetingId;
-	private Long memberId;
 }
