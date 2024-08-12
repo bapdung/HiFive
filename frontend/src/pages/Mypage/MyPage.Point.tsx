@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
+import { formatNumberWithCommas } from "../../utils/formatNumber";
 
 import Table from "./MyPage.Point.Table";
 
@@ -10,9 +11,16 @@ function Point() {
 
   const token = useAuthStore((state) => state.accessToken);
 
-  const inputMoney = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeMoney = (e: React.ChangeEvent<HTMLInputElement>) => {
     const stringMoney = e.target.value;
-    setMoney(Number(stringMoney));
+
+    const check = /^[0-9]*$/;
+
+    if (check.test(stringMoney)) {
+      setMoney(Number(stringMoney));
+    } else {
+      alert("숫자만 입력해주세요");
+    }
   };
 
   const postPoint = async () => {
@@ -44,7 +52,7 @@ function Point() {
           setTotalPoint(money);
         }
         alert(`${money} 포인트 충전이 완료되었습니다!`);
-        setMoney(undefined);
+        setMoney(null);
       }
     }
   };
@@ -76,7 +84,7 @@ function Point() {
               type="text"
               value={money ?? ""}
               placeholder="충전할 포인트를 입력해주세요."
-              onChange={inputMoney}
+              onChange={changeMoney}
               className="flex justify-center items-center border border-1 w-full h-12 placeholder py-3.5 px-6 text-small rounded-3xl mt-2"
             />
           </div>
@@ -88,7 +96,9 @@ function Point() {
             <div className="flex flex-col items-start mt-2">
               {/* <span className="text-primary-text ml-7">500,000</span> */}
               <span className="text-large text-primary-text">
-                {totalPoint} point
+                {totalPoint
+                  ? `${formatNumberWithCommas(totalPoint)} Point`
+                  : "0 Point"}
               </span>
             </div>
           </div>

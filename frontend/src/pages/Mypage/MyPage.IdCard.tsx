@@ -172,21 +172,17 @@ function IdCard() {
               <>
                 <div className="flex items-center justify-between mt-5">
                   <span className="text-h6">이름</span>
-                  <span
-                    className={`text-small ${checkName === "사용 가능한 이름입니다." ? "text-green" : "text-red"}`}
-                  >
-                    {checkName}
-                  </span>
+                  {checkName !== "사용 가능한 이름입니다." ? (
+                    <span className="text-small text-red">{checkName}</span>
+                  ) : null}
                 </div>
-
                 <input
                   type="text"
                   placeholder="이름 입력"
                   value={name}
                   onChange={inputName}
-                  className="flex justify-center items-center btn-light-lg h-11 rounded-3xl mt-3 text-black p-2"
+                  className="flex justify-center items-center btn-light-lg h-11 rounded-3xl mt-3 text-gray-700 font-normal py-2 px-5 hover:outline-none"
                 />
-
                 <div
                   className="flex justify-center items-center btn-lg mt-5 hover:cursor-pointer"
                   onClick={postIdCard}
