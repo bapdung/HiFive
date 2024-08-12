@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class OpenViduRecordStopDto {
-	private String recordingId;
+	private String recordId;
 }
