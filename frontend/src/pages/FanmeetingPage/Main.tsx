@@ -471,6 +471,7 @@ export default function Main() {
     } catch (e) {
       console.error(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentVideoDevice, session, mainStreamManager, isCreator]);
 
   const toggleMyAudio = useCallback(() => {
