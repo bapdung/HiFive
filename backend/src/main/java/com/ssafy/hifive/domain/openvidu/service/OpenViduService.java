@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
 import com.ssafy.hifive.domain.fanmeeting.repository.FanmeetingRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
+import com.ssafy.hifive.domain.openvidu.dto.request.OpenViduCheckDto;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduTimetableDto;
 import com.ssafy.hifive.domain.reservation.repository.ReservationRepository;
 import com.ssafy.hifive.domain.timetable.dto.response.TimetableResponseDto;
@@ -32,6 +33,16 @@ public class OpenViduService {
 		return OpenViduTimetableDto.from(sessionId, timetables);
 	}
 
+	public void validateMemberAndFanmeeting(OpenViduCheckDto dto, Member member) {
+		Fanmeeting fanmeeting = fanmeetingRepository.findById(dto.getFanmeetingId())
+			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
+
+		if (!reservationRepository.checkReservation(fanmeeting.getFanmeetingId(), dto.getMemberId())
+			&& fanmeeting.getCreator().getMemberId() != dto.getMemberId()) {
+			throw new ForbiddenException(ErrorCode.ENTER_NOT_ALLOWED);
+		}
+	}
+	
 	public void isValidMember(Long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
