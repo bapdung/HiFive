@@ -1,8 +1,13 @@
-import { Publisher, Subscriber } from "openvidu-browser";
+import { Publisher, Subscriber, Session } from "openvidu-browser";
 import { useEffect, useState } from "react";
 import UserVideoComponent from "./UserVideoComponent";
 import PhotoTime from "./PhotoTime";
 import CreatorCamera from "./CreatorCamera";
+import TimeTableComponent from "./TimeTableComponent";
+import StoryTime from "./StoryTime";
+import QuestionTime from "./QuestionTime";
+import QuizTime from "./QuizTime";
+import Chat from "./Chat";
 
 interface Timetable {
   categoryName: string;
@@ -21,6 +26,12 @@ interface Rank {
   fanId: number;
   score: number;
 }
+interface ChatMessage {
+  isCreator: boolean;
+  id: string;
+  user: string;
+  text: string;
+}
 
 interface VideoContainerProps {
   publisher: Publisher | undefined;
@@ -38,6 +49,17 @@ interface VideoContainerProps {
   ranks: Rank[] | null;
   token: string | null;
   mySessionId: string | null;
+  setCurrentSequence: (seq: number) => void;
+  onSequenceChange: (newSequence: number) => void;
+  session: Session | undefined;
+  handleFetchQuiz: (quiz: Quiz | null) => void;
+  handleReveal: (bool: boolean) => void;
+  handleRank: (rank: Rank[]) => void;
+  chatMessages: ChatMessage[];
+  newMessage: string;
+  handleChangeMessage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSendMessage: (e: React.FormEvent<HTMLFormElement>) => void;
+  userColors: { [key: string]: string };
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -56,6 +78,17 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   ranks,
   token,
   mySessionId,
+  setCurrentSequence,
+  onSequenceChange,
+  session,
+  handleFetchQuiz,
+  handleReveal,
+  handleRank,
+  chatMessages,
+  newMessage,
+  handleChangeMessage,
+  handleSendMessage,
+  userColors,
 }) => {
   const [isQuizTime, setIsQuizTime] = useState(false);
 
@@ -75,22 +108,71 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
 
   if (timetables[currentSequence - 1]?.categoryName === "포토 타임") {
     return (
-      <PhotoTime
-        publisher={publisher}
-        subscribers={subscribers}
-        isCreator={isCreator}
-        userAnswers={userAnswers}
-        isQuizTime={isQuizTime}
-        currentQuiz={currentQuiz}
-        isReveal={isReveal}
-        token={token}
-        mySessionId={mySessionId}
-      />
+      <>
+        {/* 포토 타임일 경우 */}
+        <TimeTableComponent
+          token={token}
+          mySessionId={mySessionId}
+          timetables={timetables}
+          currentSequence={currentSequence}
+          isCreator={isCreator}
+          setCurrentSequence={setCurrentSequence}
+          onSequenceChange={onSequenceChange}
+        />
+        <PhotoTime
+          publisher={publisher}
+          subscribers={subscribers}
+          isCreator={isCreator}
+          userAnswers={userAnswers}
+          isQuizTime={isQuizTime}
+          currentQuiz={currentQuiz}
+          isReveal={isReveal}
+          token={token}
+          mySessionId={mySessionId}
+        />
+      </>
     );
   }
 
   return (
+    // 포토타임이 아닐 경우
     <div id="video-container" className="w-full relative h-full">
+      <TimeTableComponent
+        token={token}
+        mySessionId={mySessionId}
+        timetables={timetables}
+        currentSequence={currentSequence}
+        isCreator={isCreator}
+        setCurrentSequence={setCurrentSequence}
+        onSequenceChange={onSequenceChange}
+      />
+      <StoryTime
+        token={token}
+        mySessionId={mySessionId}
+        timetables={timetables}
+        currentSequence={currentSequence}
+        isCreator={isCreator}
+        session={session}
+      />
+      <QuestionTime
+        token={token}
+        mySessionId={mySessionId}
+        timetables={timetables}
+        currentSequence={currentSequence}
+        isCreator={isCreator}
+        session={session}
+      />
+      <QuizTime
+        token={token}
+        mySessionId={mySessionId}
+        timetables={timetables}
+        currentSequence={currentSequence}
+        isCreator={isCreator}
+        session={session}
+        handleFetchQuiz={handleFetchQuiz}
+        handleReveal={handleReveal}
+        handleRank={handleRank}
+      />
       <CreatorCamera
         publisher={publisher}
         subscribers={subscribers}
@@ -101,7 +183,13 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
         isReveal={isReveal}
         fanAudioStatus={fanAudioStatus}
       />
-
+      <Chat
+        chatMessages={chatMessages}
+        newMessage={newMessage}
+        handleChangeMessage={handleChangeMessage}
+        handleSendMessage={handleSendMessage}
+        userColors={userColors}
+      />
       {focusedSubscriber &&
         (subscribers.find(
           (sub) => sub.stream.connection.connectionId === focusedSubscriber,
