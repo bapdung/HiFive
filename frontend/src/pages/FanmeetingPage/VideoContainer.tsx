@@ -2,6 +2,7 @@ import { Publisher, Subscriber } from "openvidu-browser";
 import { useEffect, useState } from "react";
 import UserVideoComponent from "./UserVideoComponent";
 import PhotoTime from "./PhotoTime";
+import CreatorCamera from "./CreatorCamera";
 
 interface Timetable {
   categoryName: string;
@@ -66,10 +67,6 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
     }
   }, [timetables, currentSequence]);
 
-  const creatorSub = subscribers.find(
-    (sub) => JSON.parse(sub.stream.connection.data).clientData === "##",
-  );
-
   const getRankForUser = (userId: number): number | null => {
     if (!ranks) return null;
     const rankIndex = ranks.findIndex((rank) => rank.fanId === userId);
@@ -94,42 +91,16 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
 
   return (
     <div id="video-container" className="w-full relative h-full">
-      {creatorSub && (
-        <div
-          key={JSON.parse(creatorSub.stream.connection.data).clientData}
-          className="p-5 bg-emerald-500"
-        >
-          <UserVideoComponent
-            streamManager={creatorSub}
-            userAnswers={userAnswers}
-            isQuizTime={isQuizTime}
-            currentQuiz={currentQuiz}
-            isReveal={isReveal}
-            rank={null}
-          />
-        </div>
-      )}
-
-      {isCreator && publisher && (
-        <div className="p-5 bg-emerald-500">
-          <UserVideoComponent
-            streamManager={publisher}
-            userAnswers={userAnswers}
-            isQuizTime={isQuizTime}
-            currentQuiz={currentQuiz}
-            isReveal={isReveal}
-            rank={null}
-          />
-          <div>
-            <span>
-              My Mic:{" "}
-              {fanAudioStatus[publisher.stream.connection.connectionId]
-                ? "Mic ON"
-                : "Mic OFF"}
-            </span>
-          </div>
-        </div>
-      )}
+      <CreatorCamera
+        publisher={publisher}
+        subscribers={subscribers}
+        isCreator={isCreator}
+        userAnswers={userAnswers}
+        isQuizTime={isQuizTime}
+        currentQuiz={currentQuiz}
+        isReveal={isReveal}
+        fanAudioStatus={fanAudioStatus}
+      />
 
       {focusedSubscriber &&
         (subscribers.find(
