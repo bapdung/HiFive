@@ -144,6 +144,30 @@
   .btn-gray {
     @apply px-4 py-2 rounded-3xl bg-gray-300 border-solid font-semibold text-small text-black;
   }
+
+  .meetingroom-btn-lg {
+    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-600 font-semibold text-medium text-white;
+  }
+
+  .meetingroom-btn-md {
+    @apply px-4 py-2 rounded-3xl bg-meetingroom-600 font-semibold text-small text-white;
+  }
+
+  .meetingroom-btn-light-lg {
+    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-300 font-semibold text-medium text-meetingroom-800;
+  }
+
+  .meetingroom-btn-light-md {
+    @apply px-4 py-2 rounded-3xl bg-meetingroom-300 font-semibold text-small text-meetingroom-800;
+  }
+
+  .meetingroom-btn-outline-lg {
+    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-medium text-meetingroom-800;
+  }
+
+  .meetingroom-btn-outline-md {
+    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-small text-meetingroom-800;
+  }
 }
 
 * {
