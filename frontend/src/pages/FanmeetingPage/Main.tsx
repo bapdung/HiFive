@@ -150,6 +150,29 @@ export default function Main() {
     }
   };
 
+  const validateUser = async () => {
+    if (!token || !mySessionId || !userId) {
+      return;
+    }
+    try {
+      await client(token).post(`api/sessions/check`, {
+        memberId: userId,
+        fanmeetingId: parseInt(mySessionId, 10),
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        navigate(
+          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    validateUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, mySessionId, userId]);
+
   useEffect(() => {
     checkIsEnded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
