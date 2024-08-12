@@ -22,9 +22,10 @@ public class OpenViduRecordService {
 		if (session == null) {
 			throw new DataNotFoundException(ErrorCode.FANMEETING_NO_SESSION, "해당 세션 Id가 존재하지 않습니다.");
 		}
+		session.fetch();
 
 		RecordingProperties properties = new RecordingProperties.Builder()
-			.name("fanmeeting-" + fanmeetingId + "-member-" + memberId)
+			.name("fanmeeting-" + fanmeetingId)
 			.outputMode(Recording.OutputMode.INDIVIDUAL)
 			.recordingLayout(RecordingLayout.BEST_FIT)
 			.build();

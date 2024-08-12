@@ -211,7 +211,7 @@ public class OpenviduController {
 	}
 
 	@PostMapping("/record/stop")
-	public ResponseEntity<Void> recordVideo(@AuthenticationPrincipal Member member,
+	public ResponseEntity<Void> recordStop(@AuthenticationPrincipal Member member,
 		@RequestBody OpenViduRecordStopDto openViduRecordStopDto
 	) throws OpenViduJavaClientException, OpenViduHttpException {
 		openViduRecordService.stopRecordVideo(openVidu, openViduRecordStopDto.getRecordingId());
