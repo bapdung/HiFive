@@ -420,23 +420,21 @@ export default function Main() {
     }
   };
 
-  const closeSession = useCallback(() => {
-    closeSessionApi();
-    if (session) {
-      session
-        .signal({
+  const closeSession = useCallback(async () => {
+    try {
+      await closeSessionApi();
+      if (session) {
+        await session.signal({
           type: "closeSession",
           data: JSON.stringify({
             reason: "The session has been closed by the creator.",
           }),
-        })
-        .then(() => {
-          leaveSession(); // 세션 종료 후 자신도 나가도록 처리
-          console.log("나갔어");
-        })
-        .catch((error) => {
-          console.error("Error sending closeSession signal:", error);
         });
+        leaveSession();
+        console.log("나갔어");
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, token, mySessionId]);
@@ -456,7 +454,7 @@ export default function Main() {
         if (newVideoInputDevice) {
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoInputDevice.deviceId,
-            publishAudio: isCreator,
+            publishAudio: false,
             publishVideo: true,
             mirror: true,
           });
