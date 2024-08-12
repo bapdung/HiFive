@@ -14,7 +14,9 @@ import io.openvidu.java.client.Recording;
 import io.openvidu.java.client.RecordingLayout;
 import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class OpenViduRecordService {
 	public OpenViduRecordDto recordVideo(OpenVidu openVidu, String fanmeetingId) throws
@@ -40,5 +42,7 @@ public class OpenViduRecordService {
 			throw new BadRequestException(ErrorCode.RECORDING_NOT_FOUND, "Record가 존재하지 않습니다." + recordId);
 		}
 		openVidu.stopRecording(recordId);
+
+		log.info(openVidu.getRecording(recordId).getUrl());
 	}
 }
