@@ -814,6 +814,8 @@ export default function Main() {
             currentQuiz={currentQuiz}
             isReveal={isReveal}
             ranks={ranks}
+            token={token}
+            mySessionId={mySessionId}
           />
           <Chat
             chatMessages={chatMessages}
