@@ -4,7 +4,7 @@ spring:
 
   profiles:
     include: private
-    active: dev # 기본 활성화 프로파일을 dev로 설정
+    active: dev
 
   datasource:
     url: jdbc:mysql://${db.host}:${db.port}/${db.database}
@@ -19,7 +19,7 @@ spring:
           kakao:
             client-id: ${kakao.client-id}
             client-secret: ${kakao.client-secret}
-            redirect-uri: "https://i11a107.p.ssafy.io/login/oauth2/code/kakao"
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
             authorization-grant-type: authorization_code
             scope: profile_nickname, account_email, profile_image
             client-authentication-method: client_secret_post
