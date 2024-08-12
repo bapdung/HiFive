@@ -34,6 +34,13 @@ public class ReservationService {
 
 		reservationFanmeetingReserveService.checkReservation(fanmeeting, member);
 
+		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+		String waitingQueueKey = "fanmeeting:" + fanmeetingId +  ":waiting-queue";
+
+		if(reservationValidService.isMemberAlreadyInQueue(waitingQueueKey, payingQueueKey, member.getMemberId())){
+			return null;
+		}
+
 		addToQueue(fanmeetingId, member.getMemberId());
 
 		return ReservationMemberDto.from(member);
