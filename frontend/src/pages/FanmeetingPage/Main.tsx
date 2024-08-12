@@ -12,13 +12,8 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import VideoContainer from "./VideoContainer";
 import JoinForm from "./JoinForm";
-import Chat from "./Chat";
 import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
-import TimeTableComponent from "./TimeTableComponent";
-import StoryTime from "./StoryTime";
-import QuestionTime from "./QuestionTime";
-import QuizTime from "./QuizTime";
 import WaitingPage from "./WaitingPage";
 
 import roomframe from "../../assets/Fanmeeting/roomframe.png";
@@ -721,7 +716,7 @@ export default function Main() {
         />
       ) : currentSequence === 0 ? (
         <div>
-          <TimeTableComponent
+          <WaitingPage
             token={token}
             mySessionId={mySessionId}
             timetables={timetables}
@@ -729,8 +724,8 @@ export default function Main() {
             isCreator={isCreator}
             setCurrentSequence={setCurrentSequence}
             onSequenceChange={goToNextCorner}
+            waitingUrl={waitingUrl}
           />
-          <WaitingPage waitingUrl={waitingUrl} />
         </div>
       ) : (
         <div
@@ -796,43 +791,8 @@ export default function Main() {
               value="비디오껐다키기"
             />
           </div>
-          <TimeTableComponent
-            token={token}
-            mySessionId={mySessionId}
-            timetables={timetables}
-            currentSequence={currentSequence}
-            isCreator={isCreator}
-            setCurrentSequence={setCurrentSequence}
-            onSequenceChange={goToNextCorner}
-          />
-          <StoryTime
-            token={token}
-            mySessionId={mySessionId}
-            timetables={timetables}
-            currentSequence={currentSequence}
-            isCreator={isCreator}
-            session={session}
-          />
-          <QuestionTime
-            token={token}
-            mySessionId={mySessionId}
-            timetables={timetables}
-            currentSequence={currentSequence}
-            isCreator={isCreator}
-            session={session}
-          />
-          <QuizTime
-            token={token}
-            mySessionId={mySessionId}
-            timetables={timetables}
-            currentSequence={currentSequence}
-            isCreator={isCreator}
-            session={session}
-            handleFetchQuiz={handleFetchQuiz}
-            handleReveal={handleReveal}
-            handleRank={handleRank}
-          />
           <VideoContainer
+            session={session}
             publisher={publisher}
             subscribers={subscribers}
             isCreator={isCreator}
@@ -848,8 +808,11 @@ export default function Main() {
             ranks={ranks}
             token={token}
             mySessionId={mySessionId}
-          />
-          <Chat
+            setCurrentSequence={setCurrentSequence}
+            onSequenceChange={goToNextCorner}
+            handleFetchQuiz={handleFetchQuiz}
+            handleReveal={handleReveal}
+            handleRank={handleRank}
             chatMessages={chatMessages}
             newMessage={newMessage}
             handleChangeMessage={handleChangeMessage}

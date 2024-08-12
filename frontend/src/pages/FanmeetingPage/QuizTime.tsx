@@ -28,8 +28,8 @@ interface QuizTimeProps {
   currentSequence: number;
   timetables: Timetable[];
   isCreator: boolean | undefined;
-  handleFetchQuiz: (quiz: Quiz | null) => void;
   session: Session | undefined; // 세션을 props로 전달받습니다.
+  handleFetchQuiz: (quiz: Quiz | null) => void;
   handleReveal: (bool: boolean) => void;
   handleRank: (rank: Rank[]) => void;
 }
