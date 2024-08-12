@@ -61,7 +61,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
   };
 
   return (
-    <div className="bg-white flex flex-col items-center z-10">
+    <div className="bg-white h-[409px] rounded-2xl p-2 flex flex-col items-center z-10">
       {/* <p>{currentCorner}</p> */}
       {isCreator && (
         <div className="flex gap-2">
