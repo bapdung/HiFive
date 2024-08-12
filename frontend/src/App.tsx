@@ -24,7 +24,6 @@ import ProtectedRoute from "./ProtectedRoute";
 import StoryDetail from "./pages/CreatorOnly/CreatorOnly.Settings.StoryDetail";
 import ErrorPage from "./pages/ErrorPage";
 import FanmeetingPage from "./pages/FanmeetingPage/Main";
-import FanmeetingWaiting from "./pages/FanmeetingPage/WaitingPage";
 
 function App() {
   const location = useLocation();
@@ -97,7 +96,6 @@ function App() {
               element={<StoryForm />}
             />
             <Route path="/meet-up/:fanmeetingId" element={<FanmeetingPage />} />
-            <Route path="/wait" element={<FanmeetingWaiting />} />
           </Route>
 
           <Route element={<ProtectedRoute requiredCreator />}>
