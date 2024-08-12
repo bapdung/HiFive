@@ -1,9 +1,28 @@
 import { Publisher, Subscriber } from "openvidu-browser";
+import { useEffect, useState } from "react";
 import UserVideoComponent from "./UserVideoComponent";
 // import MainBackground from "../../assets/Fanmeeting/mainBackground.png";
 // import CreatorMainBackground from "../../assets/Fanmeeting/creatorMainBackground.png";
 // import micOn from "../../assets/Fanmeeting/micOn.svg";
 // import micOff from "../../assets/Fanmeeting/micOff.svg";
+
+interface Timetable {
+  categoryName: string;
+  sequence: number;
+  detail: string;
+}
+
+interface Quiz {
+  problem: string;
+  answer: boolean;
+  totalQuizCount: number;
+  detail: string;
+}
+
+interface Rank {
+  fanId: number;
+  score: number;
+}
 
 interface VideoContainerProps {
   publisher: Publisher | undefined; // 현재 세션의 발행자 (스트림 발행자)
@@ -13,6 +32,12 @@ interface VideoContainerProps {
   fanAudioStatus: { [key: string]: boolean }; // 각 구독자의 오디오 상태 (켜짐/꺼짐)
   focusedSubscriber: string | null; // 집중 모드에서 포커스된 구독자의 connectionId
   focusOnSubscriber: (subscriber: Subscriber) => void; // 특정 구독자에게 포커스를 맞추는 함수
+  userAnswers: { [key: string]: boolean };
+  currentSequence: number;
+  timetables: Timetable[];
+  currentQuiz: Quiz | null;
+  isReveal: boolean;
+  ranks: Rank[] | null;
 }
 
 const VideoContainer: React.FC<VideoContainerProps> = ({
@@ -23,13 +48,35 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
   fanAudioStatus,
   focusedSubscriber,
   focusOnSubscriber,
+  userAnswers,
+  currentSequence,
+  timetables,
+  currentQuiz,
+  isReveal,
+  ranks,
 }) => {
-  console.log(subscribers, "구독자@#@@@@@@@@@@@@@@");
+  const [isQuizTime, setIsQuizTime] = useState(false);
+  useEffect(() => {
+    if (timetables[currentSequence - 1]?.categoryName === "O/X게임") {
+      setIsQuizTime(true);
+    } else {
+      setIsQuizTime(false);
+    }
+  }, [timetables, currentSequence]);
+
+  // console.log(subscribers, "구독자@#@@@@@@@@@@@@@@");
   const creatorSub = subscribers.find(
     (sub) => JSON.parse(sub.stream.connection.data).clientData === "##",
   );
   console.log(publisher, "자기자신@@@@@@@@@@@@@");
-  console.log(creatorSub, "크리에이터@#@@@");
+  // console.log(creatorSub, "크리에이터@#@@@");
+
+  const getRankForUser = (userId: number): number | null => {
+    if (!ranks) return null;
+    const rankIndex = ranks.findIndex((rank) => rank.fanId === userId);
+    return rankIndex !== -1 ? rankIndex + 1 : null; // 1등부터 시작하도록 인덱스 조정
+  };
+
   return (
     <div id="video-container" className="w-full relative h-full">
       {/* 크리에이터 스트림을 찾음 */}
@@ -39,13 +86,29 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           className="p-5"
         >
           {/* UserVideoComponent 컴포넌트에 스트림 전달 */}
-          <UserVideoComponent streamManager={creatorSub} />
+          <UserVideoComponent
+            streamManager={creatorSub}
+            userAnswers={userAnswers}
+            isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
+            isReveal={isReveal}
+            rank={null}
+          />
         </div>
       )}
 
       {isCreator && publisher && (
         <div className="p-5">
           <UserVideoComponent streamManager={publisher} />
+        <div className="p-5 bg-emerald-500">
+          <UserVideoComponent
+            streamManager={publisher}
+            userAnswers={userAnswers}
+            isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
+            isReveal={isReveal}
+            rank={null}
+          />
           <div>
             <span>
               My Mic:{" "}
@@ -59,25 +122,63 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
 
       {/* 포커스된 구독자가 있을 때 해당 스트림을 표시 */}
       {focusedSubscriber &&
-        subscribers
-          .filter(
-            (sub) => sub.stream.connection.connectionId === focusedSubscriber,
-          )
-          .map((sub) => (
-            <div
-              key={sub.stream.connection.connectionId}
-              className="bg-[#FDD1AE] p-4"
-            >
-              <div>
-                <UserVideoComponent streamManager={sub} />
+        (subscribers.find(
+          (sub) => sub.stream.connection.connectionId === focusedSubscriber,
+        )
+          ? subscribers
+              .filter(
+                (sub) =>
+                  sub.stream.connection.connectionId === focusedSubscriber,
+              )
+              .map((sub) => (
+                <div
+                  key={sub.stream.connection.connectionId}
+                  className="bg-[#FDD1AE] p-4"
+                >
+                  <div>
+                    <UserVideoComponent
+                      streamManager={sub}
+                      userAnswers={userAnswers}
+                      isQuizTime={isQuizTime}
+                      currentQuiz={currentQuiz}
+                      isReveal={isReveal}
+                      rank={null}
+                    />
+                  </div>
+                </div>
+              ))
+          : publisher &&
+            publisher.stream.connection.connectionId === focusedSubscriber && (
+              <div
+                key={publisher.stream.connection.connectionId}
+                className="bg-[#FDD1AE] p-4"
+              >
+                <div>
+                  <UserVideoComponent
+                    streamManager={publisher}
+                    userAnswers={userAnswers}
+                    isQuizTime={isQuizTime}
+                    currentQuiz={currentQuiz}
+                    isReveal={isReveal}
+                    rank={null}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
       {/* 자신의 스트림 표시 */}
       {!isCreator && publisher && (
         <div className="p-5 bg-primary-300">
-          <UserVideoComponent streamManager={publisher} />
+          <UserVideoComponent
+            streamManager={publisher}
+            userAnswers={userAnswers}
+            isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
+            isReveal={isReveal}
+            rank={getRankForUser(
+              JSON.parse(publisher.stream.connection.data).userId,
+            )}
+          />
           <div>
             <span>
               My Mic:{" "}
@@ -96,14 +197,23 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           return clientData !== "##";
         })
         .map((sub) => {
-          const { clientData } = JSON.parse(sub.stream.connection.data);
-          console.log(clientData, "클라이언트 데이타");
+          const { clientData, userId } = JSON.parse(sub.stream.connection.data);
+          console.log(clientData, "클라이언트 이름");
+          console.log(userId, "클라이언트 멤버 번호");
           return (
             <div
               key={sub.stream.connection.connectionId}
               className="stream-container col-md-6 col-xs-6"
+              id={`fan-camera-component-${userId}`}
             >
-              <UserVideoComponent streamManager={sub} />
+              <UserVideoComponent
+                streamManager={sub}
+                userAnswers={userAnswers}
+                isQuizTime={isQuizTime}
+                currentQuiz={currentQuiz}
+                isReveal={isReveal}
+                rank={getRankForUser(userId)}
+              />
               <div>
                 <span>{clientData}</span> {/* 구독자의 clientData 표시 */}
                 {isCreator && (
