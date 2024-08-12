@@ -644,7 +644,18 @@ export default function Main() {
           setIsCreator={setIsCreator}
         />
       ) : currentSequence === 0 ? (
-        <WaitingPage />
+        <div>
+          <TimeTableComponent
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            setCurrentSequence={setCurrentSequence}
+            onSequenceChange={goToNextCorner}
+          />
+          <WaitingPage />
+        </div>
       ) : (
         <div
           id="session"

@@ -264,9 +264,10 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     }
     try {
       const isUserCorrect = userAnswer === currentQuiz?.answer;
+      const isCorrectAnswer = isUserCorrect ? 1 : 0;
       await client(token).post(
         `/api/sessions/quiz/answer/${mySessionId}/${quizSequence}`,
-        { isCorrect: isUserCorrect },
+        { isCorrect: isCorrectAnswer },
       );
     } catch (error) {
       console.error("Send answer error:", error);
