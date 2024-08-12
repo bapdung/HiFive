@@ -139,7 +139,7 @@ const Ticket: React.FC<TicketProps> = ({
           onRequestClose={() => setVerifying(false)}
           onSuccess={() => {
             setVerifying(false);
-            navigate(`/ticket/${fanmeetingId}`);
+            navigate(`/meet-up/${fanmeetingId}`);
           }}
           fanmeetingId={fanmeetingId}
         />
