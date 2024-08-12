@@ -16,7 +16,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   typeOfQuestion,
   handleToggleQuestion,
 }) => (
-  <div className="border-2 border-secondary-700 rounded-[20px] w-[30%] flex flex-col items-center min-h-48 py-[0.5rem] px-10 justify-between bg-white">
+  <div className="border-2 border-secondary-700 rounded-[20px] w-[350px] flex flex-col items-center min-h-48 py-[0.5rem] px-10 justify-between bg-white">
     <p className="text-large">{question.nickname}</p>
     <p className="text-large text-gray-700">{question.contents}</p>
     {question.picked ? (

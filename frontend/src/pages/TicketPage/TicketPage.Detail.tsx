@@ -57,11 +57,30 @@ function Detail() {
   const [showWaitingModal, setShowWaitingModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailureModal, setShowFailureModal] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState<string>("");
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 오류 메시지 상태 추가
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [serverTimeOffset, setServerTimeOffset] = useState<number>(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.accessToken);
+
+  useEffect(() => {
+    const fetchServerTime = async () => {
+      try {
+        if (token) {
+          const response = await client(token).get(
+            "/api/fanmeeting/server-time",
+          );
+          const { serverTime } = response.data;
+          const localTime = Date.now();
+          setServerTimeOffset(serverTime - localTime);
+        }
+      } catch (error) {
+        console.error("Error fetching server time:", error);
+      }
+    };
+
+    fetchServerTime();
+  }, [token]);
 
   useEffect(() => {
     const fetchFanmeetingDetails = async () => {
@@ -76,6 +95,13 @@ function Detail() {
 
           setFanMeetingDetails(data);
           setIsReserved(data.reservation);
+
+          // 예매 시작 전인지 확인하여 버튼 활성화 상태 설정
+          const now = Date.now() + serverTimeOffset;
+          const openDate = new Date(data.openDate).getTime();
+          if (now >= openDate) {
+            setIsButtonDisabled(false);
+          }
         }
       } catch (error) {
         console.error("Error fetching details:", error);
@@ -85,20 +111,15 @@ function Detail() {
     fetchFanmeetingDetails();
 
     const handleWebSocketMessage = (data: WebSocketMessage) => {
-      console.log("WebSocket Message Received:", data);
       if (data.event === "currentQueueSize") {
-        console.log(data.event);
         const queueSize = parseInt(data.message.split(":")[1].trim(), 10);
-        console.log(queueSize);
         setCurrentQueueSize(queueSize);
         setShowWaitingModal(true);
       } else if (data.event === "moveToPayment") {
-        console.log(data.event);
         webSocketService.disconnect();
         setShowWaitingModal(false);
         setShowPaymentModal(true);
       } else if (data.event === "alreadyReserved") {
-        console.log(data.event);
         alert(data.message);
       }
     };
@@ -118,46 +139,12 @@ function Detail() {
         handleWebSocketMessage,
       );
     };
-  }, [token, fanmeetingId]);
-
-  // eslint-disable-next-line consistent-return
-  useEffect(() => {
-    if (fanMeetingDetails) {
-      const updateRemainingTime = () => {
-        const now = new Date().getTime();
-        const openDate = new Date(fanMeetingDetails.openDate).getTime();
-        const timeDiff = openDate - now;
-
-        if (timeDiff > 0) {
-          const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-          const day = Math.floor(hours / 24);
-          const minutes = Math.floor(
-            (timeDiff % (1000 * 60 * 60)) / (1000 * 60),
-          );
-          const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
-          if (day > 0) {
-            setTimeRemaining(`D-${day}`);
-          } else {
-            setTimeRemaining(`${hours}시간 ${minutes}분 ${seconds}초`);
-          }
-        } else {
-          setTimeRemaining("");
-        }
-      };
-
-      updateRemainingTime();
-      const timer = setInterval(updateRemainingTime, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [fanMeetingDetails]);
+  }, [token, fanmeetingId, serverTimeOffset]);
 
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
       try {
-        console.log(fanMeetingDetails.memberId.toString(), fanmeetingId);
-        webSocketService.connect(
+        await webSocketService.connect(
           fanMeetingDetails.memberId.toString(),
           fanmeetingId,
         );
@@ -171,7 +158,6 @@ function Detail() {
         const { nickname, email } = response.data;
         setReservationMember({ nickname, email });
       } catch (error) {
-        console.error("Error during reservation:", error);
         setErrorMessage(
           "현재 접속자가 많아 오류가 발생했습니다. 다시 시도 부탁드립니다.",
         );
@@ -183,7 +169,6 @@ function Detail() {
 
   async function handlePayment() {
     try {
-      // 결제 로직 추가
       setShowPaymentModal(false);
       setShowSuccessModal(true);
     } catch (error) {
@@ -234,10 +219,14 @@ function Detail() {
       );
     }
 
-    if (timeRemaining) {
+    // eslint-disable-next-line no-shadow
+    const now = Date.now() + serverTimeOffset;
+    const openDate = new Date(fanMeetingDetails.openDate).getTime();
+
+    if (now < openDate) {
       return (
         <button type="button" className="btn-light-lg w-full mt-5" disabled>
-          예매 시작까지 {timeRemaining}
+          예매 시작 전
         </button>
       );
     }

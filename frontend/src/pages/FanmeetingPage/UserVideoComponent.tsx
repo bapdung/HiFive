@@ -15,10 +15,15 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
     <div>
       {streamManager !== undefined ? (
         <div className="streamcomponent">
-          <OpenViduVideoComponent streamManager={streamManager} />
+          <OpenViduVideoComponent
+            streamManager={streamManager}
+            userName={
+              JSON.parse(streamManager.stream.connection.data).clientData
+            }
+          />
           <div>
             <p className="text-center text-gray-900 text-small m-1">
-              {getNicknameTag() === "creator" ? null : getNicknameTag()}
+              {getNicknameTag() === "##" ? null : getNicknameTag()}
             </p>
           </div>
         </div>
