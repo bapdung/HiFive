@@ -16,7 +16,7 @@ import io.openvidu.java.client.Session;
 
 @Service
 public class OpenViduRecordService {
-	public OpenViduRecordDto recordVideo(OpenVidu openVidu, String fanmeetingId, Long memberId) throws
+	public OpenViduRecordDto recordVideo(OpenVidu openVidu, String fanmeetingId) throws
 		OpenViduJavaClientException, OpenViduHttpException {
 		Session session = openVidu.getActiveSession(fanmeetingId);
 		if (session == null) {
