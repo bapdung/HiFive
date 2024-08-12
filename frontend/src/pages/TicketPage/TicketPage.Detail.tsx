@@ -58,6 +58,8 @@ function Detail() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailureModal, setShowFailureModal] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [timeRemaining, setTimeRemaining] = useState<string>("");
+
   const [serverTimeOffset, setServerTimeOffset] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -141,6 +143,40 @@ function Detail() {
     };
   }, [token, fanmeetingId, serverTimeOffset]);
 
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (fanMeetingDetails) {
+      const updateRemainingTime = () => {
+        const now = new Date().getTime() + serverTimeOffset;
+        const openDate = new Date(fanMeetingDetails.openDate).getTime();
+        const timeDiff = openDate - now;
+
+        if (timeDiff > 0) {
+          const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+          const day = Math.floor(hours / 24);
+          const minutes = Math.floor(
+            (timeDiff % (1000 * 60 * 60)) / (1000 * 60),
+          );
+          const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+          if (day > 0) {
+            setTimeRemaining(`D-${day}`);
+          } else {
+            setTimeRemaining(`${hours}시간 ${minutes}분 ${seconds}초`);
+          }
+        } else {
+          setTimeRemaining("");
+          setIsButtonDisabled(false); // 시간이 경과하면 버튼을 활성화
+        }
+      };
+
+      updateRemainingTime();
+      const timer = setInterval(updateRemainingTime, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [fanMeetingDetails, serverTimeOffset]);
+
   async function toggleReserved() {
     if (!isReserved && fanMeetingDetails && token && fanmeetingId) {
       try {
@@ -219,14 +255,10 @@ function Detail() {
       );
     }
 
-    // eslint-disable-next-line no-shadow
-    const now = Date.now() + serverTimeOffset;
-    const openDate = new Date(fanMeetingDetails.openDate).getTime();
-
-    if (now < openDate) {
+    if (timeRemaining) {
       return (
         <button type="button" className="btn-light-lg w-full mt-5" disabled>
-          예매 시작 전
+          예매 시작까지 {timeRemaining}
         </button>
       );
     }
