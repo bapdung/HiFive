@@ -125,6 +125,22 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
     }
   };
 
+  const stopPhoto = async () => {
+    if (token && mySessionId && recordId) {
+      const response = await client(token).post(`/api/sessions/record/stop`, {
+        recordId,
+      });
+      console.log("녹화 중지", response.data.recordId);
+    }
+    setIsPhotoTimeEnd(true);
+    if (isCreator && session) {
+      session.signal({
+        type: "endPhoto",
+        data: JSON.stringify({}),
+      });
+    }
+  };
+
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (session) {
@@ -141,25 +157,24 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
           setPhotoSequence(data.sequence);
         }
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handlePhotoTimeEndSignal = (event: any) => {
+        if (event.data) {
+          setIsPhotoTimeEnd(true);
+        }
+      };
+
       session.on("signal:startPhotoTimer", handleStartTimerSignal);
       session.on("signal:nextPhoto", handlePhotoSignal);
+      session.on("signal:endPhoto", handlePhotoTimeEndSignal);
 
       return () => {
         session.off("signal:startPhotoTimer", handleStartTimerSignal);
         session.off("signal:nextPhoto", handlePhotoSignal);
+        session.off("signal:endPhoto", handlePhotoTimeEndSignal);
       };
     }
   });
-
-  const stopPhoto = async () => {
-    if (token && mySessionId && recordId) {
-      const response = await client(token).post(`/api/sessions/record/stop`, {
-        recordId,
-      });
-      console.log("녹화 중지", response.data.recordId);
-    }
-    setIsPhotoTimeEnd(true);
-  };
 
   return (
     <div className="photo-time-container">
@@ -175,11 +190,14 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               촬영시작
             </button>
           )}
-          {showShootButton && !isPhotoTimeEnd && photoSequence > 0 && (
-            <button type="button" onClick={nextPhoto}>
-              다음 사진
-            </button>
-          )}
+          {showShootButton &&
+            !isPhotoTimeEnd &&
+            photoSequence > 0 &&
+            photoSequence < 4 && (
+              <button type="button" onClick={nextPhoto}>
+                다음 사진
+              </button>
+            )}
           {photoSequence >= 4 && !isPhotoTimeEnd && !timer && (
             <button type="button" onClick={stopPhoto}>
               촬영중지
