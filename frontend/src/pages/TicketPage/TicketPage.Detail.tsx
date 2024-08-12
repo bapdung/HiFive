@@ -73,7 +73,8 @@ function Detail() {
             "/api/fanmeeting/server-time",
           );
           const { serverTime } = response.data;
-          setServerTimeOffset(serverTime);
+          const localTime = Date.now();
+          setServerTimeOffset(serverTime - localTime);
         }
       } catch (error) {
         console.error("Error fetching server time:", error);
@@ -143,16 +144,11 @@ function Detail() {
   }, [token, fanmeetingId, serverTimeOffset]);
 
   // eslint-disable-next-line consistent-return
-  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (fanMeetingDetails) {
       const updateRemainingTime = () => {
-        const now = new Date().getTime();
-        const timeDiff =
-          serverTimeOffset -
-          now +
-          (new Date(fanMeetingDetails.openDate).getTime() -
-            new Date().getTime());
+        const now = Date.now() + serverTimeOffset;
+        const timeDiff = new Date(fanMeetingDetails.openDate).getTime() - now;
 
         if (timeDiff > 0) {
           const hours = Math.floor(timeDiff / (1000 * 60 * 60));
@@ -257,8 +253,6 @@ function Detail() {
         </button>
       );
     }
-
-    // eslint-disable-next-line no-shadow
 
     if (timeRemaining) {
       return (
