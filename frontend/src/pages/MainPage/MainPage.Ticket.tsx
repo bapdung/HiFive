@@ -72,9 +72,9 @@ const Ticket: React.FC<TicketProps> = ({
   };
   if (!event && !startTime) {
     if (fanmeetingId) {
-      return <div className="w-[737px] h-[500px]" />;
+      return <div className="w-[617px] h-[500px]" />;
     }
-    return <div className="w-[737px] h-[500px] mr-6" />; // Empty ticket
+    return <div className="w-[617px] h-[500px] mr-6" />; // Empty ticket
   }
 
   return (
@@ -83,7 +83,7 @@ const Ticket: React.FC<TicketProps> = ({
         isActive ? "opacity-100" : "opacity-40 scale-95"
       }`}
     >
-      <div className="w-[360px] h-[500px] flex flex-col bg-primary-100 rounded-2xl items-center justify-center shadow-ticket-shadow-left z-10">
+      <div className="w-[360px] h-[500px] flex flex-col bg-primary-300 rounded-2xl items-center justify-center shadow-ticket-shadow-left z-10">
         <img
           src={poster || defaultPoster}
           alt="poster"
