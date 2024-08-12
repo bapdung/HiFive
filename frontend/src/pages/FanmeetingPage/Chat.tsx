@@ -22,7 +22,7 @@ const Chat: React.FC<ChatProps> = ({
   handleSendMessage,
   userColors,
 }) => (
-  <div id="chat-container" className="col-md-12">
+  <div id="chat-container" className="col-md-12 z-10">
     <h3>채팅</h3>
     <div id="chat-box">
       {chatMessages.map((msg) => (

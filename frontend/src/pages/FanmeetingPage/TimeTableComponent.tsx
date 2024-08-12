@@ -61,17 +61,25 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
   };
 
   return (
-    <div>
+    <div className="bg-white flex flex-col items-center z-10">
       {/* <p>{currentCorner}</p> */}
       {isCreator && (
-        <>
-          <button type="button" onClick={nextSequence}>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={nextSequence}
+            className="btn-gray hover:cursor-pointer"
+          >
             다음 세션
           </button>
-          <button type="button" onClick={prevSequence}>
+          <button
+            type="button"
+            onClick={prevSequence}
+            className="btn-gray hover:cursor-pointer"
+          >
             이전 세션
           </button>
-        </>
+        </div>
       )}
       {timetables && currentSequence > 0 && (
         <div>
