@@ -40,7 +40,9 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
   const [photoSequence, setPhotoSequence] = useState(0);
   const [timer, setTimer] = useState<number | null>(null);
   const [showShootButton, setShowShootButton] = useState(true); // 촬영 시작 버튼
+  const [showShutterMessage, setShowShutterMessage] = useState(false); // "찰칵!" 문구 상태
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const shutterMessageRef = useRef<NodeJS.Timeout | null>(null);
   const [isPhotoTimeEnd, setIsPhotoTimeEnd] = useState(false);
 
   const startTimer = () => {
@@ -48,6 +50,9 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
     setTimer(5);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
+    }
+    if (shutterMessageRef.current) {
+      clearTimeout(shutterMessageRef.current);
     }
     intervalRef.current = setInterval(() => {
       setTimer((prevTimer) => {
@@ -57,7 +62,11 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
         }
-        setShowShootButton(true);
+        setShowShutterMessage(true);
+        shutterMessageRef.current = setTimeout(() => {
+          setShowShutterMessage(false);
+          setShowShootButton(true);
+        }, 1500);
         return null;
       });
     }, 1000);
@@ -158,6 +167,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
       {photoSequence > 0 && !isPhotoTimeEnd && <p>{photoSequence}/4</p>}
       {isPhotoTimeEnd && <p>포토 타임이 끝났습니다!</p>}
       {timer && <p>{timer}</p>}
+      {showShutterMessage && <p>찰칵!</p>}
       {isCreator ? (
         <>
           {showShootButton && !isPhotoTimeEnd && photoSequence === 0 && (
