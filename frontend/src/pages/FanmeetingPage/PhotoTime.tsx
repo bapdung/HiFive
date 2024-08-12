@@ -45,6 +45,19 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
   const shutterMessageRef = useRef<NodeJS.Timeout | null>(null);
   const [isPhotoTimeEnd, setIsPhotoTimeEnd] = useState(false);
 
+  const stopPhotoApi = async () => {
+    if (token && mySessionId && recordId) {
+      try {
+        const response = await client(token).post(`/api/sessions/record/stop`, {
+          recordId,
+        });
+        console.log("녹화 중지", response.data.recordId);
+      } catch {
+        console.error("Error stopping the record:", error);
+      }
+    }
+  };
+
   const startTimer = () => {
     setShowShootButton(false);
     setTimer(5);
@@ -67,6 +80,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
           setShowShutterMessage(false);
           setShowShootButton(true);
         }, 1500);
+        stopPhotoApi();
         return null;
       });
     }, 1000);
@@ -88,13 +102,13 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
   }, [subscribers, isCreator]);
 
   const startPhoto = async () => {
-    // if (token && mySessionId) {
-    //   const response = await client(token).post(`/api/sessions/record`, {
-    //     fanmeetingId: mySessionId,
-    //   });
-    //   console.log("녹화성공", response.data.recordId);
-    //   setRecordId(response.data.recordId);
-    // }
+    if (token && mySessionId) {
+      const response = await client(token).post(`/api/sessions/record`, {
+        fanmeetingId: mySessionId,
+      });
+      console.log("녹화성공", response.data.recordId);
+      setRecordId(response.data.recordId);
+    }
     // 임시로 바깥에 빼놓기
     setRecordId("");
     startTimer();
@@ -111,27 +125,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
     }
   };
 
-  const nextPhoto = () => {
-    if (isCreator && session) {
-      const nextseq = photoSequence + 1;
-      session.signal({
-        type: "nextPhoto",
-        data: JSON.stringify({ sequence: nextseq }),
-      });
-      session.signal({
-        type: "startPhotoTimer",
-        data: JSON.stringify({}),
-      });
-    }
-  };
-
   const stopPhoto = async () => {
-    if (token && mySessionId && recordId) {
-      const response = await client(token).post(`/api/sessions/record/stop`, {
-        recordId,
-      });
-      console.log("녹화 중지", response.data.recordId);
-    }
     setIsPhotoTimeEnd(true);
     if (isCreator && session) {
       session.signal({
@@ -194,7 +188,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
             !isPhotoTimeEnd &&
             photoSequence > 0 &&
             photoSequence < 4 && (
-              <button type="button" onClick={nextPhoto}>
+              <button type="button" onClick={startPhoto}>
                 다음 사진
               </button>
             )}
