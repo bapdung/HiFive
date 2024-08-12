@@ -1,7 +1,10 @@
 package com.ssafy.hifive.domain.openvidu.service;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Service;
 
+import com.ssafy.hifive.domain.file.service.FileService;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduRecordDto;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
@@ -14,11 +17,15 @@ import io.openvidu.java.client.Recording;
 import io.openvidu.java.client.RecordingLayout;
 import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OpenViduRecordService {
+	private final FileService fileService;
+
 	public OpenViduRecordDto recordVideo(OpenVidu openVidu, String fanmeetingId) throws
 		OpenViduJavaClientException, OpenViduHttpException {
 		Session session = openVidu.getActiveSession(fanmeetingId);
@@ -37,12 +44,16 @@ public class OpenViduRecordService {
 	}
 
 	public void stopRecordVideo(OpenVidu openVidu, String recordId) throws
-		OpenViduJavaClientException, OpenViduHttpException {
+		Exception {
 		if (openVidu.getRecording(recordId) == null) {
 			throw new BadRequestException(ErrorCode.RECORDING_NOT_FOUND, "Record가 존재하지 않습니다." + recordId);
 		}
 		openVidu.stopRecording(recordId);
 
 		log.info(openVidu.getRecording(recordId).getUrl());
+		fileService.downloadFile(openVidu.getRecording(recordId).getUrl(), "test");
+	}
+
+	private void unzipFileAndSaveS3(OpenVidu openVidu, String fanmeetingId, String url) throws IOException {
 	}
 }
