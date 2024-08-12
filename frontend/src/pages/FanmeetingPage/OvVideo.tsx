@@ -60,7 +60,7 @@ const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = ({
       ref={videoRef}
       id={`openvidu-video-${userName}`}
       className="rounded-xl"
-      hidden={!isCameraOn} // 카메라가 꺼져있으면 hidden 속성을 true로 설정
+      hidden={!isCameraOn && userName !== "##"} // 카메라가 꺼져있으면 hidden 속성을 true로 설정
     />
   );
 };
