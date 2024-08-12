@@ -49,4 +49,14 @@ public class ReservationValidService {
 		long timeout = TimeUnit.MINUTES.toMillis(1);
 		return currentTime - score > timeout;
 	}
+
+	public boolean isMemberAlreadyInQueue(String waitingQueueKey, String payingQueueKey, Long memberId) {
+		if(reservationQueueService.isMemberInQueue(payingQueueKey,memberId)){
+			return true;
+		}
+		if(reservationQueueService.isMemberInQueue(waitingQueueKey, memberId)){
+			return true;
+		}
+		return false;
+	}
 }
