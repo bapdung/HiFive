@@ -73,7 +73,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
           </button>
         </>
       )}
-      {timetables && (
+      {timetables && currentSequence > 0 && (
         <div>
           {/* 코너 순서 */}
           <p>{currentSequence} 번째 코너</p>

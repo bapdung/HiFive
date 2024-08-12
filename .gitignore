@@ -336,3 +336,4 @@ gradle-app.setting
 application-private.yml
 
 # End of https://www.toptal.com/developers/gitignore/api/redis
+backend/logs/spring-boot-application.log.2024-08-11.0.gz

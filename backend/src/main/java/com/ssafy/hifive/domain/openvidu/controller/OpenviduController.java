@@ -124,14 +124,6 @@ public class OpenviduController {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(Long.valueOf(sessionId))
 			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
 		openViduService.isCreator(fanmeeting.getCreator().getMemberId(), member);
-		Session session = openVidu.getActiveSession(sessionId);
-		log.info(session.getSessionId());
-		openViduSessionService.isValidSession(session);
-
-		for (Connection conn : session.getConnections()) {
-			session.forceDisconnect(conn);
-		}
-
 		fanmeeting.updateIsEnded();
 		fanmeetingRepository.save(fanmeeting);
 

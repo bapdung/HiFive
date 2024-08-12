@@ -39,6 +39,12 @@ class WebSocketService {
         console.log("Raw WebSocket Message Received:", event.data);
 
         const data = JSON.parse(event.data);
+
+        if (data.event === "alreadyConnected") {
+          console.log("Already connected. Disconnecting WebSocket.");
+          this.disconnect();
+        }
+
         this.notifyListeners(data);
       };
 

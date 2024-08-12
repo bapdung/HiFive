@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 interface OpenViduVideoComponentProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,14 +12,47 @@ const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = ({
   userName,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // console.log(videoRef, "비디오ref");
+  const [isCameraOn, setIsCameraOn] = useState(true);
+
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (streamManager && videoRef.current) {
       streamManager.addVideoElement(videoRef.current);
+
+      const videoElement = videoRef.current;
+      const handleVideoElementEvent = () => {
+        setIsCameraOn(videoElement.readyState >= 2);
+      };
+
+      videoElement.addEventListener("loadeddata", handleVideoElementEvent);
+      videoElement.addEventListener("emptied", handleVideoElementEvent);
+
+      return () => {
+        videoElement.removeEventListener("loadeddata", handleVideoElementEvent);
+        videoElement.removeEventListener("emptied", handleVideoElementEvent);
+      };
     }
   }, [streamManager]);
 
-  // eslint-disable-next-line jsx-a11y/media-has-caption
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleStreamPropertyChanged = (event: any) => {
+      if (event.changedProperty === "videoActive") {
+        setIsCameraOn(event.newValue);
+      }
+    };
+
+    if (streamManager) {
+      streamManager.on("streamPropertyChanged", handleStreamPropertyChanged);
+    }
+
+    return () => {
+      if (streamManager) {
+        streamManager.off("streamPropertyChanged", handleStreamPropertyChanged);
+      }
+    };
+  }, [streamManager]);
+
   return (
     // eslint-disable-next-line jsx-a11y/media-has-caption
     <video
@@ -27,6 +60,7 @@ const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = ({
       ref={videoRef}
       id={`openvidu-video-${userName}`}
       className="rounded-xl"
+      hidden={!isCameraOn && userName !== "##"} // 카메라가 꺼져있으면 hidden 속성을 true로 설정
     />
   );
 };
