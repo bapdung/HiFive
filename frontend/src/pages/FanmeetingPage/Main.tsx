@@ -71,6 +71,7 @@ export default function Main() {
   const location = useLocation();
   const mySessionId = location.pathname.split("/")[2];
   const [isCreator, setIsCreator] = useState<boolean | undefined>();
+  const [waitingUrl, setWaitingUrl] = useState<string | null>(null);
   const [fanAudioStatus, setFanAudioStatus] = useState<{
     [key: string]: boolean;
   }>({});
@@ -131,6 +132,7 @@ export default function Main() {
       if (response.data.creatorId === userId) {
         setIsCreator(true);
       }
+      setWaitingUrl(response.data.link);
     } catch (error) {
       console.error(error);
     }
@@ -652,7 +654,7 @@ export default function Main() {
             setCurrentSequence={setCurrentSequence}
             onSequenceChange={goToNextCorner}
           />
-          <WaitingPage />
+          <WaitingPage waitingUrl={waitingUrl} />
         </div>
       ) : (
         <div id="session">
