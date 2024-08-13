@@ -35,12 +35,11 @@ public class ReservationService {
 		reservationFanmeetingReserveService.checkReservation(fanmeeting, member);
 
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
-		String waitingQueueKey = "fanmeeting:" + fanmeetingId +  ":waiting-queue";
+		String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 
-		if(reservationValidService.isMemberAlreadyInQueue(waitingQueueKey, payingQueueKey, member.getMemberId())){
+		if (reservationValidService.isMemberAlreadyInQueue(waitingQueueKey, payingQueueKey, member.getMemberId())) {
 			return null;
 		}
-
 
 		addToQueue(fanmeetingId, member.getMemberId());
 
@@ -74,7 +73,7 @@ public class ReservationService {
 		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
 
 		//하드코딩 : 1로 수정
-		int slotsAvailable = 1 - currentPayingQueueSize.intValue();
+		int slotsAvailable = 10 - currentPayingQueueSize.intValue();
 
 		if (slotsAvailable > 0) {
 			try {
