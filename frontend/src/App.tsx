@@ -98,7 +98,7 @@ function App() {
             />
             <Route path="/meet-up/:fanmeetingId" element={<FanmeetingPage />} />
             <Route
-              path="/fanmeeting/result/:fanmeetingId"
+              path="/meet-up/:fanmeetingId/result"
               element={<FanmeetingEndPage />}
             />
           </Route>
