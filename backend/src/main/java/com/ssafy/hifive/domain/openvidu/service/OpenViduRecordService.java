@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduRecordDto;
+import com.ssafy.hifive.domain.photo.service.PhotoService;
 import com.ssafy.hifive.domain.s3.service.S3Service;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
@@ -42,6 +43,7 @@ public class OpenViduRecordService {
 	private String openviduSecret;
 
 	private final S3Service s3Service;
+	private final PhotoService photoService;
 
 	private static final String path = "/app/recordings";
 	// private static final String path = "/";
@@ -63,16 +65,16 @@ public class OpenViduRecordService {
 		return OpenViduRecordDto.from(openVidu.startRecording(fanmeetingId, properties).getId());
 	}
 
-	public void stopRecordVideo(OpenVidu openVidu, String recordId) throws
+	public void stopRecordVideo(OpenVidu openVidu, String recordId, int sequence) throws
 		Exception {
 		if (openVidu.getRecording(recordId) == null) {
 			throw new BadRequestException(ErrorCode.RECORDING_NOT_FOUND, "Record가 존재하지 않습니다." + recordId);
 		}
 		openVidu.stopRecording(recordId);
 
-		log.info(openVidu.getRecording(recordId).getUrl());
-		File donwloadZip = downloadFile(openVidu.getRecording(recordId).getUrl(), recordId);
-		processDownloadedZip(donwloadZip, recordId);
+		Recording record = openVidu.getRecording(recordId);
+		File donwloadZip = downloadFile(record.getUrl(), recordId);
+		processDownloadedZip(donwloadZip, record.getSessionId(), recordId, sequence);
 	}
 
 	private File downloadFile(String fileUrl, String fileName) throws IOException {
@@ -111,7 +113,8 @@ public class OpenViduRecordService {
 		return destinationFile;
 	}
 
-	private void processDownloadedZip(File zipFile, String recordId) throws IOException {
+	private void processDownloadedZip(File zipFile, String sessionId, String recordId, int sequence) throws
+		IOException {
 		Map<String, String> userIdToFileMap = new HashMap<>();
 
 		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
@@ -134,9 +137,7 @@ public class OpenViduRecordService {
 					String fileName = "fanmeeting-" + recordId + "-" + userId + ".webm";
 					if (userId != null) {
 						String s3Url = s3Service.uploadFile(videoFile, fileName);
-						log.info("==============");
-						log.info(s3Url);
-						log.info("==============");
+						photoService.save(userId, sessionId, s3Url, sequence);
 					}
 				}
 			}
@@ -180,15 +181,4 @@ public class OpenViduRecordService {
 		}
 		return extractedFile;
 	}
-
-	// private String uploadFile(Map<String, String> userIdToFileMap, String recordId) throws IOException {
-	// 	for (Map.Entry<String, String> entry : userIdToFileMap.entrySet()) {
-	// 		String userId = entry.getKey();
-	// 		String originalFileName = entry.getValue();
-	//
-	// 		String newFileName = "fanmeeting-" + recordId + "-" + userId + ".webm";
-	//
-	// 		File fileToUpload = new File(path, )
-	// 	}
-	// }
 }
