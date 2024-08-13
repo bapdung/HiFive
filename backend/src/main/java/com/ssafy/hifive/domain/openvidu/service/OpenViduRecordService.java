@@ -127,6 +127,7 @@ public class OpenViduRecordService {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		JsonNode rootNode = objectMapper.readTree(jsonFile);
+		log.info(jsonFile.getName());
 		JsonNode filesNode = rootNode.get("files");
 
 		if (filesNode.isArray()) {
