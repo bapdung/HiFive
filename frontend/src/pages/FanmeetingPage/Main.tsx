@@ -17,7 +17,7 @@ import client from "../../client";
 import WaitingPage from "./WaitingPage";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -135,20 +135,6 @@ export default function Main() {
     }
   };
 
-  const checkIsEnded = async () => {
-    if (!token || !session || !mySessionId) {
-      return;
-    }
-    try {
-      const response = await client(token).get(`api/fanmeeting/${mySessionId}`);
-      if (response.data.data) {
-        navigate(`/fanmeeting/result/${mySessionId}`);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const validateUser = async () => {
     if (!token || !mySessionId || !userId) {
       return;
@@ -160,9 +146,13 @@ export default function Main() {
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        navigate(
-          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
-        );
+        if (error.response?.data.errorCode === "FANMEETING-005") {
+          navigate(`/meet-up/${mySessionId}/result`);
+        } else {
+          navigate(
+            `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+          );
+        }
       }
     }
   };
@@ -171,11 +161,6 @@ export default function Main() {
     validateUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, mySessionId, userId]);
-
-  useEffect(() => {
-    checkIsEnded();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, token, mySessionId]);
 
   useEffect(() => {
     fetchFanmeeting();
