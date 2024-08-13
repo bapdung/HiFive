@@ -705,7 +705,7 @@ export default function Main() {
   };
 
   return (
-    <div className="w-full h-full items-center bg-meetingroom-700">
+    <div className="w-full h-[100vh] items-center bg-meetingroom-700">
       {session === undefined ? (
         <JoinForm
           myUserName={myUserName}

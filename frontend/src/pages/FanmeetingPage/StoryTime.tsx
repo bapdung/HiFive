@@ -137,23 +137,38 @@ const StoryTime: React.FC<StoryTimeProps> = ({
   }, [session]);
 
   return isStoryTime ? (
-    <div>
-      {isCreator && (
-        <div>
-          <button type="button" onClick={prevStory}>
-            이전 사연
-          </button>
-          <button type="button" onClick={nextStory}>
-            다음 사연
-          </button>
-        </div>
-      )}
+    <div className="flex flex-col justify-center items-center m-2">
       {currentStory && (
         <div>
-          <p>{storySequence}번째 사연</p>
-          <p>작성자 : {currentStory.nickname}</p>
-          <p>제목 : {currentStory.title}</p>
-          <p>{currentStory.content}</p>
+          <div className="flex justify-between mb-2">
+            <p className="text-small">{storySequence}번째 사연</p>
+            <p className="text-small text-meetingroom-800">
+              작성자 : {currentStory.nickname}
+            </p>
+          </div>
+
+          <p className="text-medium font-semibold mb-2">
+            제목 : {currentStory.title}
+          </p>
+          <p className="text-medium leading-snug">{currentStory.content}</p>
+        </div>
+      )}
+      {isCreator && (
+        <div className="flex gap-4 my-2">
+          <button
+            type="button"
+            onClick={prevStory}
+            className="meetingroom-btn-outline-md"
+          >
+            이전 사연
+          </button>
+          <button
+            type="button"
+            onClick={nextStory}
+            className="meetingroom-btn-outline-md"
+          >
+            다음 사연
+          </button>
         </div>
       )}
     </div>
