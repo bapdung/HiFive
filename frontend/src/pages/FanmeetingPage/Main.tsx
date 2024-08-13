@@ -75,6 +75,8 @@ export default function Main() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
+  const [creatorName, setCreatorName] = useState<string | null>(null);
+  const [fanmeetingName, setFanmeetingName] = useState<string | null>(null);
 
   // 퀴즈 관련 상태
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: boolean }>(
@@ -130,20 +132,8 @@ export default function Main() {
         setIsCreator(true);
       }
       setWaitingUrl(response.data.link);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const checkIsEnded = async () => {
-    if (!token || !session || !mySessionId) {
-      return;
-    }
-    try {
-      const response = await client(token).get(`api/fanmeeting/${mySessionId}`);
-      if (response.data.data) {
-        navigate(`/fanmeeting/result/${mySessionId}`);
-      }
+      setFanmeetingName(response.data.title);
+      setCreatorName(response.data.creatorName);
     } catch (error) {
       console.error(error);
     }
@@ -160,9 +150,13 @@ export default function Main() {
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        navigate(
-          `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
-        );
+        if (error.response?.data.errorCode === "FANMEETING-005") {
+          navigate(`/meet-up/${mySessionId}/result`);
+        } else {
+          navigate(
+            `/error?code=${error.response?.data.errorCode}&message=${encodeURIComponent(error.response?.data.errorMessage)}`,
+          );
+        }
       }
     }
   };
@@ -171,11 +165,6 @@ export default function Main() {
     validateUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, mySessionId, userId]);
-
-  useEffect(() => {
-    checkIsEnded();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, token, mySessionId]);
 
   useEffect(() => {
     fetchFanmeeting();
@@ -713,6 +702,8 @@ export default function Main() {
           isCreator={isCreator}
           joinSession={joinSession}
           setIsCreator={setIsCreator}
+          creatorName={creatorName}
+          fanmeetingName={fanmeetingName}
         />
       ) : currentSequence === 0 ? (
         <div>
