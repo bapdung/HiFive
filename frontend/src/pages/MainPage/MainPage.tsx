@@ -67,8 +67,8 @@ function MainPage() {
 
   return (
     <div className="flex flex-col items-center w-full max-w-[1200px]">
-      <div className="my-6 flex justify-between items-center w-full max-w-[1200px] px-4">
-        <span className="text-h4 text-gray-900 font-bold mx-auto">
+      <div className="my-6 flex justify-center gap-x-4 items-center w-full max-w-[1200px] px-4">
+        <span className="text-h4 text-gray-900 font-bold">
           하이파이브 한 번 해요,{" "}
           <span
             className={`${
