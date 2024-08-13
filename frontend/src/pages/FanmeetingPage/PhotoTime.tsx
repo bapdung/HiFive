@@ -52,8 +52,8 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
           recordId,
         });
         console.log("녹화 중지", response.data.recordId);
-      } catch {
-        console.error("Error stopping the record:", error);
+      } catch (error) {
+        console.error("녹화중지 : ", error);
       }
     }
   };
