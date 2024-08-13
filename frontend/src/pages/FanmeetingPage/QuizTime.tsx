@@ -310,14 +310,14 @@ const QuizTime: React.FC<QuizTimeProps> = ({
               <button
                 type="button"
                 onClick={() => handleAnswer(true)}
-                className="text-[64px] font-bold text-meetingroom-800 px-4 shadow-lg rounded-xl hover:bg-meetingroom-100"
+                className="text-[64px] font-bold text-meetingroom-800 w-[80px] shadow-lg rounded-xl hover:bg-meetingroom-100"
               >
                 O
               </button>
               <button
                 type="button"
                 onClick={() => handleAnswer(false)}
-                className="text-[64px] font-bold text-meetingroom-800 px-4 shadow-lg rounded-xl hover:bg-meetingroom-100"
+                className="text-[64px] font-bold text-meetingroom-800 w-[80px] shadow-lg rounded-xl hover:bg-meetingroom-100"
               >
                 X
               </button>
