@@ -30,7 +30,7 @@ function FanmeetingInfo({ fanmeeting }: FanmeetingInfoProps) {
       <img
         src={posterImg}
         alt="팬미팅포스터"
-        className="w-full h-72 bg-gray-300 rounded-xl"
+        className="w-full h-72 bg-gray-300 rounded-xl bg-cover"
       />
       <div className="flex flex-col items-center mt-2.5 w-full">
         <h4 className="w-full text-h5 truncate">{title}</h4>
