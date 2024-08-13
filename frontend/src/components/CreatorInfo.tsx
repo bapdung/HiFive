@@ -14,7 +14,7 @@ function CreatorInfo({ creator }: CreatorProps) {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center hover:cursor-pointer">
+    <div className="flex flex-col items-center hover:cursor-pointer hover:cursor-pointer items-center transform transition-transform duration-300 hover:translate-y-1">
       <img
         src={creator.profileImg}
         alt="프로필이미지"
