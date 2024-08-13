@@ -646,6 +646,7 @@ export default function Main() {
         if (event.data) {
           console.log("Received closeSession signal:", event.data);
           leaveSession();
+          navigate("result");
         }
       };
       session.on("signal:closeSession", handleSignal);
