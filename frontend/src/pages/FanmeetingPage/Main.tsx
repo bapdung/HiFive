@@ -297,10 +297,17 @@ export default function Main() {
     mySession.on("signal:userAnswer", (event) => {
       if (event.data) {
         const data = JSON.parse(event.data);
-        setUserAnswers((prevAnswers) => ({
-          ...prevAnswers,
-          [data.userId]: data.answer,
-        }));
+        setUserAnswers((prevAnswers) => {
+          // 이전의 userAnswers에서 "##" userId를 제외한 새로운 객체를 생성
+          const filteredAnswers = Object.fromEntries(
+            Object.entries(prevAnswers).filter(([key]) => key !== "##"),
+          );
+          // 새로운 userId와 answer를 추가한 후 반환
+          return {
+            ...filteredAnswers,
+            [data.userId]: data.answer,
+          };
+        });
       }
     });
 
