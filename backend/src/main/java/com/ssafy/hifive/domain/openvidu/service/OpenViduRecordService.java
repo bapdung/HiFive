@@ -58,10 +58,10 @@ public class OpenViduRecordService {
 		openVidu.stopRecording(recordId);
 
 		log.info(openVidu.getRecording(recordId).getUrl());
-		downloadFile(openVidu.getRecording(recordId).getUrl(), "test");
+		downloadFile(openVidu.getRecording(recordId).getUrl(), recordId);
 	}
 
-	public void downloadFile(String fileUrl, String fileName) throws IOException {
+	private void downloadFile(String fileUrl, String fileName) throws IOException {
 		URL url = new URL(fileUrl);
 		File destinationFile = new File("/app/recordings", fileName);
 
