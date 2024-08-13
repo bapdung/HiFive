@@ -290,39 +290,67 @@ const QuizTime: React.FC<QuizTimeProps> = ({
   };
 
   return isQuizTime ? (
-    <div>
+    <div className="flex flex-col justify-center items-center my-4">
+      {currentQuiz && (
+        <div className="flex flex-col justify-center items-center mb-4">
+          <p className="text-small font-semibold">{quizSequence}번 문제</p>
+          {quizSequence === lastQuizSequence && (
+            <p className="bg-vivid-gradient text-white font-bold px-3 rounded-full">
+              마지막 문제입니다!
+            </p>
+          )}
+          <p className="font-semibold m-2">{currentQuiz.problem}</p>
+          {timer !== null && (
+            <p className="bg-meetingroom-100 px-4 py-2 rounded-full">
+              남은 시간 : {timer}초
+            </p>
+          )}
+          {showAnswerButtons && (
+            <div className="flex gap-6 mt-4">
+              <button
+                type="button"
+                onClick={() => handleAnswer(true)}
+                className="text-[64px] font-bold text-meetingroom-800 px-4 shadow-lg rounded-xl hover:bg-meetingroom-100"
+              >
+                O
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAnswer(false)}
+                className="text-[64px] font-bold text-meetingroom-800 px-4 shadow-lg rounded-xl hover:bg-meetingroom-100"
+              >
+                X
+              </button>
+            </div>
+          )}
+        </div>
+      )}
       {isCreator && (
-        <div>
-          <button type="button" onClick={nextQuestion}>
+        <div className="flex gap-4 justify-center">
+          <button
+            type="button"
+            onClick={nextQuestion}
+            className="meetingroom-btn-outline-md"
+          >
             다음 문제
           </button>
           {showAnswerRevealButton && (
-            <button type="button" onClick={revealAnswer}>
+            <button
+              type="button"
+              onClick={revealAnswer}
+              className="meetingroom-btn-outline-md"
+            >
               정답 공개
             </button>
           )}
           {showRankingRevealButton && (
-            <button type="button" onClick={revealRanking}>
+            <button
+              type="button"
+              onClick={revealRanking}
+              className="meetingroom-btn-md"
+            >
               순위 공개
             </button>
-          )}
-        </div>
-      )}
-      {currentQuiz && (
-        <div>
-          <p>{quizSequence}번째 문제</p>
-          {quizSequence === lastQuizSequence && <p>마지막 문제입니다!</p>}
-          <p>문제 : {currentQuiz.problem}</p>
-          {timer !== null && <p>남은 시간: {timer}초</p>}
-          {showAnswerButtons && (
-            <div>
-              <button type="button" onClick={() => handleAnswer(true)}>
-                O
-              </button>
-              <button type="button" onClick={() => handleAnswer(false)}>
-                X
-              </button>
-            </div>
           )}
         </div>
       )}

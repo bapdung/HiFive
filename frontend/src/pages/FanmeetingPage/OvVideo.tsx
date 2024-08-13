@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/media-has-caption */
+
 import React, { useRef, useEffect, useState } from "react";
 
 interface OpenViduVideoComponentProps {
@@ -54,14 +56,19 @@ const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = ({
   }, [streamManager]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/media-has-caption
-    <video
-      autoPlay
-      ref={videoRef}
-      id={`openvidu-video-${userName}`}
-      className={`rounded-xl ${userName !== "##" ? "rounded-full w-[200px] h-[200px]" : ""}`}
-      hidden={!isCameraOn && userName !== "##"} // 카메라가 꺼져있으면 hidden 속성을 true로 설정
-    />
+    <div
+      className={`${
+        userName !== "##" ? "rounded-full w-[156px] h-[156px]" : "rounded-xl"
+      } overflow-hidden`}
+    >
+      <video
+        autoPlay
+        ref={videoRef}
+        id={`openvidu-video-${userName}`}
+        className="object-cover w-full h-full"
+        hidden={!isCameraOn && userName !== "##"} // 카메라가 꺼져있으면 hidden 속성을 true로 설정
+      />
+    </div>
   );
 };
 
