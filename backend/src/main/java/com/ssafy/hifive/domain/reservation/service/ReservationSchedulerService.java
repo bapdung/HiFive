@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.hifive.domain.fanmeeting.service.FanmeetingSchedulerService;
 import com.ssafy.hifive.global.config.redis.RedisPublisher;
+import com.ssafy.hifive.global.config.websocket.ReservationWebSocketHandler;
 import com.ssafy.hifive.global.config.websocket.WebSocketMessage;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,10 @@ public class ReservationSchedulerService {
 	private final RedisPublisher redisPublisher;
 	private final ObjectMapper objectMapper;
 	private final RedisTemplate redisTemplateForObject;
+	private final ReservationWebSocketHandler reservationWebSocketHandler;
+	private int cnt = 0;
 
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 5000)
 	public void checkWaiting() {
 		String pattern = "fanmeeting:*:waiting-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
@@ -34,7 +36,7 @@ public class ReservationSchedulerService {
 				String[] parts = waitingQueueKey.split(":");
 				Long fanmeetingId = Long.valueOf(parts[1]);
 				try {
-					Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
+					Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey) - ((cnt++) * 100);
 					if (currentWaitingQueueSize > 0) {
 						WebSocketMessage message = new WebSocketMessage(
 							"현재 대기자 수: " + currentWaitingQueueSize,
@@ -42,6 +44,9 @@ public class ReservationSchedulerService {
 
 						String jsonMessage = objectMapper.writeValueAsString(message);
 						redisPublisher.publish(fanmeetingId, jsonMessage);
+					}
+					if(currentWaitingQueueSize == 0){
+						reservationWebSocketHandler.sendMessageToSession(fanmeetingId, 2L, "결제창으로 이동합니다.", "moveToPayment");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
