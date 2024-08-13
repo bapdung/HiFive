@@ -17,7 +17,7 @@ import client from "../../client";
 import WaitingPage from "./WaitingPage";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -71,6 +71,8 @@ export default function Main() {
   const [focusedSubscriber, setFocusedSubscriber] = useState<string | null>(
     null,
   );
+  const [creatorName, setCreatorName] = useState<string | null>(null);
+  const [fanmeetingName, setFanmeetingName] = useState<string | null>(null);
 
   // 퀴즈 관련 상태
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: boolean }>(
@@ -126,6 +128,8 @@ export default function Main() {
         setIsCreator(true);
       }
       setWaitingUrl(response.data.link);
+      setFanmeetingName(response.data.title);
+      setCreatorName(response.data.creatorName);
     } catch (error) {
       console.error(error);
     }
@@ -708,6 +712,8 @@ export default function Main() {
           isCreator={isCreator}
           joinSession={joinSession}
           setIsCreator={setIsCreator}
+          creatorName={creatorName}
+          fanmeetingName={fanmeetingName}
         />
       ) : currentSequence === 0 ? (
         <div>
