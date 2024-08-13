@@ -107,7 +107,7 @@ function MeetingList() {
         {fanMeetings.map((meeting) => (
           <div
             key={meeting.fanmeetingId}
-            className="flex flex-col p-4 items-center hover:cursor-pointer"
+            className="flex flex-col p-4 items-center hover:cursor-pointer transform transition-transform duration-300 hover:translate-y-2"
             onClick={() => navigate(`/ticket/${meeting.fanmeetingId}`)}
             role="presentation"
           >
