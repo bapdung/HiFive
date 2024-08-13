@@ -79,8 +79,8 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
         shutterMessageRef.current = setTimeout(() => {
           setShowShutterMessage(false);
           setShowShootButton(true);
+          stopPhotoApi();
         }, 1500);
-        stopPhotoApi();
         return null;
       });
     }, 1000);
@@ -184,6 +184,11 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               촬영시작
             </button>
           )}
+          {!isPhotoTimeEnd && !showShootButton && (
+            <button type="button" onClick={stopPhotoApi}>
+              한컷 중지
+            </button>
+          )}
           {showShootButton &&
             !isPhotoTimeEnd &&
             photoSequence > 0 &&
@@ -194,7 +199,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
             )}
           {photoSequence >= 4 && !isPhotoTimeEnd && !timer && (
             <button type="button" onClick={stopPhoto}>
-              촬영중지
+              촬영 마무리
             </button>
           )}
           {publisher && (
