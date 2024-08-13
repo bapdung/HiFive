@@ -116,7 +116,7 @@ function MeetingList() {
               alt={meeting.title}
               className="w-[200px] h-[280px] min-w-44 object-cover rounded-lg"
             />
-            <span className="mt-2 text-h6 font-bold text-gray-900">
+            <span className="mt-2 text-h6 font-bold text-gray-900 truncate w-full">
               {meeting.title}
             </span>
             <p className="text-gray-600">{formatDate(meeting.startDate)}</p>
