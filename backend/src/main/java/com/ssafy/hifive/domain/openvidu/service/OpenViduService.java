@@ -37,12 +37,16 @@ public class OpenViduService {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(dto.getFanmeetingId())
 			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
 
+		if (fanmeeting.isEnded()) {
+			throw new BadRequestException(ErrorCode.FANMEETING_ENDED);
+		}
+		
 		if (!reservationRepository.checkReservation(fanmeeting.getFanmeetingId(), dto.getMemberId())
 			&& fanmeeting.getCreator().getMemberId() != dto.getMemberId()) {
 			throw new ForbiddenException(ErrorCode.ENTER_NOT_ALLOWED);
 		}
 	}
-	
+
 	public void isValidMember(Long fanmeetingId, Member member) {
 		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.FANMEETING_NOT_FOUND));
