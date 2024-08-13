@@ -79,14 +79,11 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
             const response = await axios.post<{
               verified: boolean;
               error?: string;
-            }>(
-              `${process.env.REACT_APP_FLASK_END_POINT}/service/verification`,
-              {
-                user_image: base64Image,
-                id_card_image: identificationImg,
-                fanmeeting_id: fanmeetingId,
-              },
-            );
+            }>(`${process.env.REACT_APP_END_POINT}/service/verification`, {
+              user_image: base64Image,
+              id_card_image: identificationImg,
+              fanmeeting_id: fanmeetingId,
+            });
 
             setLoading(false);
             if (response.data.error) {
