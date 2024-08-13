@@ -45,15 +45,16 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
           <div>
             {userAnswers[userId] != null && (
               <p className="absolute bottom-0 left-14 bg-white p-2 bg-opacity-90 shadow-lg font-bold rounded-md text-h2 leading-none text-meetingroom-800">
-                {userAnswers[userId] ? "O" : "X"}
+                {/* eslint-disable-next-line no-nested-ternary */}
+                {userName === "##" ? null : userAnswers[userId] ? "O" : "X"}
               </p>
             )}
-            {isWrong && isReveal && (
+            {isWrong && isReveal && userName !== "##" && (
               <p className="absolute top-0 left-10 bg-white p-2 bg-opacity-90 shadow-lg font-bold rounded-md text-red">
                 틀렸어요.
               </p>
             )}
-            {!isWrong && isReveal && (
+            {!isWrong && isReveal && userName !== "##" && (
               <p className="absolute top-0 left-10 bg-white p-2 bg-opacity-90 shadow-lg font-bold rounded-md text-green">
                 맞았어요!
               </p>
