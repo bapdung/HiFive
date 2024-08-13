@@ -7,6 +7,7 @@ import stamp from "../../assets/img/ticket-stamp.png";
 import barcode from "../../assets/img/ticket-barcode.png";
 import prev from "../../assets/icons/preIcon.svg";
 import next from "../../assets/icons/nextIcon.svg";
+import noContent from "../../assets/img/nocontent.png";
 
 type TicketData = {
   fanmeetingId: number;
@@ -19,8 +20,9 @@ type TicketData = {
 };
 
 const Carousel: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(1); // Start from the first actual ticket
+  const [currentIndex, setCurrentIndex] = useState(1);
   const [tickets, setTickets] = useState<TicketData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const accessToken = useAuthStore((state) => state.accessToken);
 
@@ -47,41 +49,38 @@ const Carousel: React.FC = () => {
               new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
           );
 
-        setTickets([
-          {
-            fanmeetingId: 0,
-            title: "",
-            posterImg: "",
-            openDate: "",
-            startDate: "",
-            runningTime: "",
-            creatorName: "",
-          },
-          ...fetchedTickets,
-          {
-            fanmeetingId: -2,
-            title: "",
-            posterImg: "",
-            openDate: "",
-            startDate: "",
-            runningTime: "",
-            creatorName: "",
-          },
-        ]);
+        setTickets(fetchedTickets);
       } catch (err) {
         console.error("Error fetching tickets:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchTickets();
   }, [accessToken]);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (tickets.length === 0) {
+    return (
+      <div className="flex flex-col w-full items-center justify-center mt-12">
+        <img src={noContent} alt="nocontent" className="w-72" />
+        <span className="text-medium my-8 text-center text-white">
+          높이 날며 찾아 봤지만, 아무 것도 찾지 못했어요...
+        </span>
+      </div>
+    );
+  }
+
   const handlePrevClick = () => {
     setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 1));
   };
 
   const handleNextClick = () => {
-    setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, tickets.length - 2));
+    setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, tickets.length - 1));
   };
 
   return (
@@ -90,7 +89,9 @@ const Carousel: React.FC = () => {
         <div
           className="flex transition-transform duration-300"
           style={{
-            transform: `translateX(-${currentIndex * (ticketWidth + margin) - ticketWidth / 2}px)`,
+            transform: `translateX(-${
+              currentIndex * (ticketWidth + margin) - ticketWidth / 2
+            }px)`,
           }}
         >
           {tickets.map((ticket, index) => (
@@ -123,7 +124,7 @@ const Carousel: React.FC = () => {
           type="button"
           onClick={handleNextClick}
           className=" bg-gray-100 text-gray-900 px-[1px] py-[1px] rounded-full"
-          disabled={currentIndex === tickets.length - 2}
+          disabled={currentIndex === tickets.length}
         >
           <span className="sr-only">Next</span>
           <img src={next} alt="Next" className=" ml-[2px]" />
