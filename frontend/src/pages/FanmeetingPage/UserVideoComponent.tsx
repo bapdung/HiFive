@@ -28,13 +28,13 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
   const userId = streamManager.stream.connection.connectionId;
   const userName = JSON.parse(streamManager.stream.connection.data).clientData;
 
-  const getNicknameTag = () => userName || "Unknown";
+  // const getNicknameTag = () => userName || "Unknown";
 
   const isWrong =
     isQuizTime && currentQuiz && userAnswers[userId] !== currentQuiz.answer;
 
   return (
-    <div>
+    <div className="z-10">
       {streamManager && (
         <div className="streamcomponent">
           {isQuizTime && rank && <p>{rank}등</p>}
@@ -43,14 +43,21 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
             userName={userName}
           />
           <div>
-            {isQuizTime && userAnswers[userId] != null && (
-              <p>
-                {getNicknameTag()} 님이 선택한 답 :{" "}
+            {userAnswers[userId] != null && (
+              <p className="absolute bottom-0 left-14 bg-white p-2 bg-opacity-90 shadow-lg font-bold rounded-md text-h2 leading-none text-meetingroom-800">
                 {userAnswers[userId] ? "O" : "X"}
               </p>
             )}
-            {isWrong && isReveal && <p>틀렸어</p>}
-            {!isWrong && isReveal && <p>맞았어</p>}
+            {isWrong && isReveal && (
+              <p className="absolute top-0 left-10 bg-white p-2 bg-opacity-90 shadow-lg font-bold rounded-md text-red">
+                틀렸어요.
+              </p>
+            )}
+            {!isWrong && isReveal && (
+              <p className="absolute top-0 left-10 bg-white p-2 bg-opacity-90 shadow-lg font-bold rounded-md text-green">
+                맞았어요!
+              </p>
+            )}
           </div>
         </div>
       )}

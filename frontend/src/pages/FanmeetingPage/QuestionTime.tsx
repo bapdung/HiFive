@@ -137,22 +137,32 @@ const QuestionTime: React.FC<QuestionProps> = ({
   }, [session]);
 
   return isQuestionTime ? (
-    <div>
-      {isCreator && (
-        <div>
-          <button type="button" onClick={prevQuestion}>
-            이전 질문
-          </button>
-          <button type="button" onClick={nextQuestion}>
-            다음 질문
-          </button>
+    <div className="flex flex-col justify-center items-center my-4">
+      {currentQuestion && (
+        <div className="flex flex-col justify-center items-center mb-4">
+          <p className="text-medium">{questionSequence}번 질문</p>
+          <p className="text-small text-meetingroom-600 mb-2">
+            작성자 : {currentQuestion.nickname}
+          </p>
+          <p className="text-medium font-semibold">{currentQuestion.content}</p>
         </div>
       )}
-      {currentQuestion && (
-        <div>
-          <p>{questionSequence}번째 질문</p>
-          <p>작성자 : {currentQuestion.nickname}</p>
-          <p>{currentQuestion.content}</p>
+      {isCreator && (
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={prevQuestion}
+            className="meetingroom-btn-outline-md"
+          >
+            이전 질문
+          </button>
+          <button
+            type="button"
+            onClick={nextQuestion}
+            className="meetingroom-btn-outline-md"
+          >
+            다음 질문
+          </button>
         </div>
       )}
     </div>

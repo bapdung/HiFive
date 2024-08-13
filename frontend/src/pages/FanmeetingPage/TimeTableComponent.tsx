@@ -61,27 +61,41 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
   };
 
   return (
-    <div>
+    <div
+      className={`w-full flex ${isCreator ? "justify-between" : "justify-center"} items-center z-10`}
+    >
       {/* <p>{currentCorner}</p> */}
       {isCreator && (
-        <>
-          <button type="button" onClick={nextSequence}>
-            다음 세션
-          </button>
-          <button type="button" onClick={prevSequence}>
-            이전 세션
-          </button>
-        </>
+        <button
+          type="button"
+          onClick={prevSequence}
+          className="meetingroom-btn-light-md"
+        >
+          이전
+        </button>
       )}
       {timetables && currentSequence > 0 && (
-        <div>
+        <div className="flex flex-col justify-center items-center">
           {/* 코너 순서 */}
-          <p>{currentSequence} 번째 코너</p>
+          <p className="text-small font-medium text-meetingroom-600">
+            {currentSequence} / {timetables.length}
+          </p>
           {/* 코너이름 */}
-          <p>{timetables[currentSequence - 1]?.categoryName} 코너</p>{" "}
+          <p className="text-large font-semibold text-meetingroom-800">
+            {timetables[currentSequence - 1]?.categoryName}
+          </p>{" "}
           {/* 코너설명 */}
-          <p>{timetables[currentSequence - 1]?.detail}</p>
+          {/* <p>{timetables[currentSequence - 1]?.detail}</p> */}
         </div>
+      )}
+      {isCreator && (
+        <button
+          type="button"
+          onClick={nextSequence}
+          className="meetingroom-btn-light-md"
+        >
+          다음
+        </button>
       )}
     </div>
   );
