@@ -43,8 +43,8 @@ public class OpenViduRecordService {
 
 	private final S3Service s3Service;
 
-	// private static final String path = "/app/recordings";
-	private static final String path = "/";
+	private static final String path = "/app/recordings";
+	// private static final String path = "/";
 
 	public OpenViduRecordDto recordVideo(OpenVidu openVidu, String fanmeetingId) throws
 		OpenViduJavaClientException, OpenViduHttpException {
