@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hifive.domain.openvidu.dto.response.OpenViduRecordDto;
+import com.ssafy.hifive.domain.s3.service.S3Service;
 import com.ssafy.hifive.global.error.ErrorCode;
 import com.ssafy.hifive.global.error.type.BadRequestException;
 import com.ssafy.hifive.global.error.type.DataNotFoundException;
@@ -39,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 public class OpenViduRecordService {
 	@Value("${openvidu.secret}")
 	private String openviduSecret;
+
+	private final S3Service s3Service;
 
 	// private static final String path = "/app/recordings";
 	private static final String path = "/";
@@ -69,7 +72,7 @@ public class OpenViduRecordService {
 
 		log.info(openVidu.getRecording(recordId).getUrl());
 		File donwloadZip = downloadFile(openVidu.getRecording(recordId).getUrl(), recordId);
-		processDownloadedZip(donwloadZip);
+		processDownloadedZip(donwloadZip, recordId);
 	}
 
 	private File downloadFile(String fileUrl, String fileName) throws IOException {
@@ -108,7 +111,7 @@ public class OpenViduRecordService {
 		return destinationFile;
 	}
 
-	private void processDownloadedZip(File zipFile) throws IOException {
+	private void processDownloadedZip(File zipFile, String recordId) throws IOException {
 		Map<String, String> userIdToFileMap = new HashMap<>();
 
 		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
@@ -117,6 +120,24 @@ public class OpenViduRecordService {
 				if (zipEntry.getName().endsWith(".json")) {
 					File jsonFile = extractFile(zis, zipEntry.getName());
 					userIdToFileMap = processJsonFile(jsonFile);
+				}
+			}
+			zis.closeEntry();
+		}
+
+		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+			ZipEntry zipEntry;
+			while ((zipEntry = zis.getNextEntry()) != null) {
+				if (zipEntry.getName().endsWith(".webm")) {
+					File videoFile = extractFile(zis, zipEntry.getName());
+					String userId = userIdToFileMap.get(zipEntry.getName());
+					String fileName = "fanmeeting-" + recordId + "-" + userId + ".webm";
+					if (userId != null) {
+						String s3Url = s3Service.uploadFile(videoFile, fileName);
+						log.info("==============");
+						log.info(s3Url);
+						log.info("==============");
+					}
 				}
 			}
 			zis.closeEntry();
@@ -141,7 +162,7 @@ public class OpenViduRecordService {
 					JsonNode clientDataJson = objectMapper.readTree(clientDataStr);
 
 					String userId = clientDataJson.get("userId").asText();
-					userIdToFileMap.put(userId, fileName);
+					userIdToFileMap.put(fileName, userId);
 				}
 			}
 		}
@@ -159,4 +180,15 @@ public class OpenViduRecordService {
 		}
 		return extractedFile;
 	}
+
+	// private String uploadFile(Map<String, String> userIdToFileMap, String recordId) throws IOException {
+	// 	for (Map.Entry<String, String> entry : userIdToFileMap.entrySet()) {
+	// 		String userId = entry.getKey();
+	// 		String originalFileName = entry.getValue();
+	//
+	// 		String newFileName = "fanmeeting-" + recordId + "-" + userId + ".webm";
+	//
+	// 		File fileToUpload = new File(path, )
+	// 	}
+	// }
 }
