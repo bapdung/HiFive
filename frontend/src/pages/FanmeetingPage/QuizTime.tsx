@@ -332,7 +332,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
             onClick={nextQuestion}
             className="meetingroom-btn-outline-md"
           >
-            다음 문제
+            {quizSequence === 0 ? "문제 시작" : "다음 문제"}
           </button>
           {showAnswerRevealButton && (
             <button
