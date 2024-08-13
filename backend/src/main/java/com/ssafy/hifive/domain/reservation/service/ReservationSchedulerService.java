@@ -25,9 +25,9 @@ public class ReservationSchedulerService {
 	private final ObjectMapper objectMapper;
 	private final RedisTemplate redisTemplateForObject;
 	private final ReservationWebSocketHandler reservationWebSocketHandler;
-	private int cnt = 0;
+	private int t = 0;
 
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 2000)
 	public void checkWaiting() {
 		String pattern = "fanmeeting:*:waiting-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
@@ -38,7 +38,7 @@ public class ReservationSchedulerService {
 				try {
 					Long a = 1264L;
 					// Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey) - ((cnt++) * 100);
-					Long currentWaitingQueueSize = a - ((cnt++) * 32);
+					Long currentWaitingQueueSize = a - ((t++) * 132);
 					if (currentWaitingQueueSize > 0) {
 						WebSocketMessage message = new WebSocketMessage(
 							"현재 대기자 수: " + currentWaitingQueueSize,
@@ -48,6 +48,7 @@ public class ReservationSchedulerService {
 						redisPublisher.publish(fanmeetingId, jsonMessage);
 					}
 					if(currentWaitingQueueSize <= 0){
+						t = 0;
 						reservationWebSocketHandler.sendMessageToSession(fanmeetingId, 2L, "결제창으로 이동합니다.", "moveToPayment");
 					}
 				} catch (Exception e) {
