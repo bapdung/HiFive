@@ -27,7 +27,7 @@ public class ReservationSchedulerService {
 	private final ReservationWebSocketHandler reservationWebSocketHandler;
 	private int t = 0;
 
-	@Scheduled(fixedRate = 2000)
+	@Scheduled(fixedRate = 10000)
 	public void checkWaiting() {
 		String pattern = "fanmeeting:*:waiting-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
@@ -36,9 +36,7 @@ public class ReservationSchedulerService {
 				String[] parts = waitingQueueKey.split(":");
 				Long fanmeetingId = Long.valueOf(parts[1]);
 				try {
-					Long a = 2742L;
-					// Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey) - ((cnt++) * 100);
-					Long currentWaitingQueueSize = a - ((t++) * 132);
+					Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
 					if (currentWaitingQueueSize > 0) {
 						WebSocketMessage message = new WebSocketMessage(
 							"현재 대기자 수: " + currentWaitingQueueSize,
@@ -63,7 +61,7 @@ public class ReservationSchedulerService {
 		String pattern = "fanmeeting:*:paying-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
 		long currentTime = System.currentTimeMillis();
-		long timeout = TimeUnit.MINUTES.toMillis(1); //나중에 5분으로 다시 수정
+		long timeout = TimeUnit.MINUTES.toMillis(5); //나중에 5분으로 다시 수정
 
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
