@@ -46,7 +46,9 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
   const [isPhotoTimeEnd, setIsPhotoTimeEnd] = useState(false);
 
   const stopPhotoApi = async () => {
-    if (token && mySessionId && recordId) {
+    console.log(token);
+    console.log(recordId, "recordid");
+    if (token && recordId) {
       try {
         const response = await client(token).post(`/api/sessions/record/stop`, {
           recordId,
@@ -110,7 +112,6 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
       setRecordId(response.data.recordId);
     }
     // 임시로 바깥에 빼놓기
-    setRecordId("");
     startTimer();
     if (isCreator && session) {
       const nextseq = photoSequence + 1;
@@ -124,7 +125,6 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
       });
     }
   };
-
   const stopPhoto = async () => {
     setIsPhotoTimeEnd(true);
     if (isCreator && session) {
@@ -184,7 +184,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               촬영시작
             </button>
           )}
-          {!isPhotoTimeEnd && !showShootButton && (
+          {!isPhotoTimeEnd && (
             <button type="button" onClick={stopPhotoApi}>
               한컷 중지
             </button>
