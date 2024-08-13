@@ -40,7 +40,8 @@ public class OpenViduRecordService {
 	@Value("${openvidu.secret}")
 	private String openviduSecret;
 
-	private static final String path = "/app/recordings";
+	// private static final String path = "/app/recordings";
+	private static final String path = "/";
 
 	public OpenViduRecordDto recordVideo(OpenVidu openVidu, String fanmeetingId) throws
 		OpenViduJavaClientException, OpenViduHttpException {
@@ -127,20 +128,21 @@ public class OpenViduRecordService {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		JsonNode rootNode = objectMapper.readTree(jsonFile);
-		log.info(jsonFile.getName());
 		JsonNode filesNode = rootNode.get("files");
 
 		if (filesNode.isArray()) {
 			for (JsonNode fileNode : filesNode) {
-				log.info("1231241242");
-				log.info("fileNode : ", fileNode);
-				log.info("1231241242");
 				String fileName = fileNode.get("name").asText();
-				String userId = fileNode.get("clientData").get("userId").asText();
-				userIdToFileMap.put(userId, fileName);
-				log.info("=================================");
-				log.info("File Name : " + fileName + " |||||||| UserId : " + userId);
-				log.info("=================================");
+				JsonNode clientDataNode = fileNode.get("clientData");
+				log.info("clientDataNode : {}", clientDataNode);
+
+				if (clientDataNode != null) {
+					String clientDataStr = clientDataNode.asText();
+					JsonNode clientDataJson = objectMapper.readTree(clientDataStr);
+
+					String userId = clientDataJson.get("userId").asText();
+					userIdToFileMap.put(userId, fileName);
+				}
 			}
 		}
 		return userIdToFileMap;
@@ -156,9 +158,5 @@ public class OpenViduRecordService {
 			}
 		}
 		return extractedFile;
-	}
-
-	private String getUserIdFromMap(Map<String, String> userIdToFileMap, String fileName) {
-		return userIdToFileMap.getOrDefault(fileName, null);
 	}
 }
