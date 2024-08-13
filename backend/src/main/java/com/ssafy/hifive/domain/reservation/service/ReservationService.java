@@ -41,6 +41,7 @@ public class ReservationService {
 			return null;
 		}
 
+
 		addToQueue(fanmeetingId, member.getMemberId());
 
 		return ReservationMemberDto.from(member);
