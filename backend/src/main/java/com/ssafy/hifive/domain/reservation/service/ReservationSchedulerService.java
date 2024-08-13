@@ -36,7 +36,7 @@ public class ReservationSchedulerService {
 				String[] parts = waitingQueueKey.split(":");
 				Long fanmeetingId = Long.valueOf(parts[1]);
 				try {
-					Long a = 1264L;
+					Long a = 2742L;
 					// Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey) - ((cnt++) * 100);
 					Long currentWaitingQueueSize = a - ((t++) * 132);
 					if (currentWaitingQueueSize > 0) {

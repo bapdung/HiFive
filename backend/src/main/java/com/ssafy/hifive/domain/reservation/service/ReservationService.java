@@ -42,7 +42,7 @@ public class ReservationService {
 		}
 
 
-		addToQueue(fanmeetingId, member.getMemberId());
+		// addToQueue(fanmeetingId, member.getMemberId());
 
 		return ReservationMemberDto.from(member);
 	}
@@ -53,10 +53,10 @@ public class ReservationService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
-		if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
-			checkAndMoveQueues(fanmeetingId);
-			throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
-		}
+		// if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
+		// 	checkAndMoveQueues(fanmeetingId);
+		// 	throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+		// }
 
 		int remainingTicket = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
 
