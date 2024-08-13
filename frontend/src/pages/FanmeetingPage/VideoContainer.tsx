@@ -101,6 +101,10 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
     }
   }, [timetables, currentSequence]);
 
+  useEffect(() => {
+    console.log("fanAudioStatus updated:", fanAudioStatus);
+  }, [fanAudioStatus]);
+
   const getRankForUser = (userId: number): number | null => {
     if (!ranks) return null;
     const rankIndex = ranks.findIndex((rank) => rank.fanId === userId);
@@ -278,13 +282,13 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                   JSON.parse(publisher.stream.connection.data).userId,
                 )}
               />
-              <span className="absolute bottom-4">
-                Mic{" "}
-                {fanAudioStatus[publisher.stream.connection.connectionId]
-                  ? " ON"
-                  : " OFF"}
-              </span>
             </div>
+            <span className="absolute bottom-4 bg-meetingroom-100 bg-opacity-90 px-4 py-1 rounded-full">
+              Mic{" "}
+              {fanAudioStatus[publisher.stream.connection.connectionId]
+                ? " ON"
+                : " OFF"}
+            </span>
           </div>
         )}
 
@@ -315,36 +319,46 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                       rank={getRankForUser(userId)}
                     />
                   </div>
-                </div>
-                <div className="mt-2 text-center">
-                  <span>{clientData}</span>
+                  <div className="absolute top-[-40px] mt-2 text-center w-full">
+                    <div className="flex flex-col">
+                      <div className="flex justify-center w-full">
+                        <span className="text-large font-bold bg-meetingroom-100 bg-opacity-90 px-4 py-1 rounded-full">
+                          {clientData}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                   {isCreator && (
-                    <>
-                      <span className="ml-2">
-                        {fanAudioStatus[sub.stream.connection.connectionId]
-                          ? "Mic ON"
-                          : "Mic OFF"}
-                      </span>
-                      <button
-                        onClick={() => toggleFanAudio(sub)}
-                        type="button"
-                        className="ml-2"
-                      >
-                        {fanAudioStatus[sub.stream.connection.connectionId]
-                          ? "음소거"
-                          : "활성화"}
-                      </button>
-                      <button
-                        onClick={() => focusOnSubscriber(sub)}
-                        type="button"
-                        className="ml-2"
-                      >
-                        {focusedSubscriber ===
-                        sub.stream.connection.connectionId
-                          ? "되돌리기"
-                          : "보여주기"}
-                      </button>
-                    </>
+                    <div className="w-full absolute bottom-[-20px]">
+                      <div className="flex justify-center">
+                        <div className="inline-flex items-center text-small">
+                          <span className="ml-2 bg-gray-200 pl-4 pr-3 py-2 rounded-l-full">
+                            {fanAudioStatus[sub.stream.connection.connectionId]
+                              ? "MIC ON"
+                              : "MIC OFF"}
+                          </span>
+                          <button
+                            onClick={() => toggleFanAudio(sub)}
+                            type="button"
+                            className="ml-0 bg-meetingroom-400 text-white px-3 py-2 rounded-none hover:bg-meetingroom-600"
+                          >
+                            {fanAudioStatus[sub.stream.connection.connectionId]
+                              ? "음소거"
+                              : "활성화"}
+                          </button>
+                          <button
+                            onClick={() => focusOnSubscriber(sub)}
+                            type="button"
+                            className="ml-0 bg-meetingroom-400 text-white pr-4 pl-3  py-2 rounded-r-full hover:bg-meetingroom-600"
+                          >
+                            {focusedSubscriber ===
+                            sub.stream.connection.connectionId
+                              ? "돌려놓기"
+                              : "데려오기"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
