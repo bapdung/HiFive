@@ -65,7 +65,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
       className={`w-full flex ${isCreator ? "justify-between" : "justify-center"} items-center z-10`}
     >
       {/* <p>{currentCorner}</p> */}
-      {isCreator && (
+      {isCreator && currentSequence !== 0 && (
         <button
           type="button"
           onClick={prevSequence}
@@ -88,13 +88,13 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
           {/* <p>{timetables[currentSequence - 1]?.detail}</p> */}
         </div>
       )}
-      {isCreator && (
+      {isCreator && currentSequence < timetables.length && (
         <button
           type="button"
           onClick={nextSequence}
           className="meetingroom-btn-light-md"
         >
-          다음
+          {currentSequence === 0 ? "팬미팅 시작" : "다음"}
         </button>
       )}
     </div>

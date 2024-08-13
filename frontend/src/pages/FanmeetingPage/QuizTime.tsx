@@ -70,7 +70,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
       }
     };
 
-    if (timetables[currentSequence - 1]?.categoryName === "O/X게임") {
+    if (timetables[currentSequence - 1]?.categoryName === "O/X 게임") {
       setIsQuizTime(true);
       quizStartApi();
     } else {
@@ -180,7 +180,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
           `api/sessions/quiz/result/${mySessionId}`,
         );
         console.log(response.data);
-        handleRank([{ fanId: 2, score: 3 }]);
+        handleRank(response.data);
       } catch (error) {
         console.error("Fetch rank error:", error);
       }
@@ -332,7 +332,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
             onClick={nextQuestion}
             className="meetingroom-btn-outline-md"
           >
-            다음 문제
+            {quizSequence === 0 ? "문제 시작" : "다음 문제"}
           </button>
           {showAnswerRevealButton && (
             <button
