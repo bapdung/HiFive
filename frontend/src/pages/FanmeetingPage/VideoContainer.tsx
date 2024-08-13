@@ -8,6 +8,7 @@ import StoryTime from "./StoryTime";
 import QuestionTime from "./QuestionTime";
 import QuizTime from "./QuizTime";
 import Chat from "./Chat";
+import frame1 from "../../assets/Fanmeeting/frame1.png";
 
 interface Timetable {
   categoryName: string;
@@ -137,176 +138,219 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
 
   return (
     // 포토타임이 아닐 경우
-    <div id="video-container" className="w-full relative h-full">
-      <TimeTableComponent
-        token={token}
-        mySessionId={mySessionId}
-        timetables={timetables}
-        currentSequence={currentSequence}
-        isCreator={isCreator}
-        setCurrentSequence={setCurrentSequence}
-        onSequenceChange={onSequenceChange}
-      />
-      <StoryTime
-        token={token}
-        mySessionId={mySessionId}
-        timetables={timetables}
-        currentSequence={currentSequence}
-        isCreator={isCreator}
-        session={session}
-      />
-      <QuestionTime
-        token={token}
-        mySessionId={mySessionId}
-        timetables={timetables}
-        currentSequence={currentSequence}
-        isCreator={isCreator}
-        session={session}
-      />
-      <QuizTime
-        token={token}
-        mySessionId={mySessionId}
-        timetables={timetables}
-        currentSequence={currentSequence}
-        isCreator={isCreator}
-        session={session}
-        handleFetchQuiz={handleFetchQuiz}
-        handleReveal={handleReveal}
-        handleRank={handleRank}
-      />
-      <CreatorCamera
-        publisher={publisher}
-        subscribers={subscribers}
-        isCreator={isCreator}
-        userAnswers={userAnswers}
-        isQuizTime={isQuizTime}
-        currentQuiz={currentQuiz}
-        isReveal={isReveal}
-        fanAudioStatus={fanAudioStatus}
-      />
-      <Chat
-        chatMessages={chatMessages}
-        newMessage={newMessage}
-        handleChangeMessage={handleChangeMessage}
-        handleSendMessage={handleSendMessage}
-        userColors={userColors}
-      />
-      {focusedSubscriber &&
-        (subscribers.find(
-          (sub) => sub.stream.connection.connectionId === focusedSubscriber,
-        )
-          ? subscribers
-              .filter(
-                (sub) =>
-                  sub.stream.connection.connectionId === focusedSubscriber,
-              )
-              .map((sub) => (
-                <div
-                  key={sub.stream.connection.connectionId}
-                  className="bg-[#FDD1AE] p-4"
-                >
-                  <div>
+    <div
+      id="video-container"
+      className="w-full relative h-full flex flex-col items-center"
+    >
+      <div className="flex">
+        <div className="w-[300px] h-[409px] mr-3 bg-white rounded-2xl px-4 py-2 flex flex-col items-center">
+          <TimeTableComponent
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            setCurrentSequence={setCurrentSequence}
+            onSequenceChange={onSequenceChange}
+          />
+          <StoryTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            session={session}
+          />
+          <QuestionTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            session={session}
+          />
+          <QuizTime
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            session={session}
+            handleFetchQuiz={handleFetchQuiz}
+            handleReveal={handleReveal}
+            handleRank={handleRank}
+          />
+          {focusedSubscriber &&
+            (subscribers.find(
+              (sub) => sub.stream.connection.connectionId === focusedSubscriber,
+            )
+              ? subscribers
+                  .filter(
+                    (sub) =>
+                      sub.stream.connection.connectionId === focusedSubscriber,
+                  )
+                  .map((sub) => (
+                    <div
+                      key={sub.stream.connection.connectionId}
+                      className="absolute top-20 bg-white shadow-2xl rounded-xl z-20"
+                    >
+                      <div className="relative w-[256px] h-[256px] mt-4">
+                        <img
+                          src={frame1}
+                          alt="frame"
+                          className="w-full h-full"
+                        />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                          <UserVideoComponent
+                            streamManager={sub}
+                            userAnswers={userAnswers}
+                            isQuizTime={isQuizTime}
+                            currentQuiz={currentQuiz}
+                            isReveal={isReveal}
+                            rank={null}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+              : publisher &&
+                publisher.stream.connection.connectionId ===
+                  focusedSubscriber && (
+                  <div
+                    key={publisher.stream.connection.connectionId}
+                    className="absolute top-20 bg-white shadow-2xl rounded-xl z-20"
+                  >
+                    <div className="relative w-[256px] h-[256px] mt-4">
+                      <img
+                        src={frame1}
+                        alt="frame"
+                        className="w-full h-full "
+                      />
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <UserVideoComponent
+                          streamManager={publisher}
+                          userAnswers={userAnswers}
+                          isQuizTime={isQuizTime}
+                          currentQuiz={currentQuiz}
+                          isReveal={isReveal}
+                          rank={null}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+        </div>
+        <div className="w-[540px] mr-3">
+          <CreatorCamera
+            publisher={publisher}
+            subscribers={subscribers}
+            isCreator={isCreator}
+            userAnswers={userAnswers}
+            isQuizTime={isQuizTime}
+            currentQuiz={currentQuiz}
+            isReveal={isReveal}
+            fanAudioStatus={fanAudioStatus}
+          />
+        </div>
+        <div className="w-[300px] h-[409px]">
+          <Chat
+            chatMessages={chatMessages}
+            newMessage={newMessage}
+            handleChangeMessage={handleChangeMessage}
+            handleSendMessage={handleSendMessage}
+            userColors={userColors}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap justify-center">
+        {!isCreator && publisher && (
+          <div className="relative w-[256px] h-[256px] mt-4">
+            <img src={frame1} alt="frame" className="w-full h-full" />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <UserVideoComponent
+                streamManager={publisher}
+                userAnswers={userAnswers}
+                isQuizTime={isQuizTime}
+                currentQuiz={currentQuiz}
+                isReveal={isReveal}
+                rank={getRankForUser(
+                  JSON.parse(publisher.stream.connection.data).userId,
+                )}
+              />
+              <span className="absolute bottom-4">
+                Mic{" "}
+                {fanAudioStatus[publisher.stream.connection.connectionId]
+                  ? " ON"
+                  : " OFF"}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {subscribers
+          .filter((sub) => {
+            const { clientData } = JSON.parse(sub.stream.connection.data);
+            return clientData !== "##";
+          })
+          .map((sub) => {
+            const { clientData, userId } = JSON.parse(
+              sub.stream.connection.data,
+            );
+            return (
+              <div
+                key={sub.stream.connection.connectionId}
+                className="stream-container mt-4"
+                id={`fan-camera-component-${userId}`}
+              >
+                <div className="relative w-[256px] h-[256px]">
+                  <img src={frame1} alt="frame" className="w-full h-full" />
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <UserVideoComponent
                       streamManager={sub}
                       userAnswers={userAnswers}
                       isQuizTime={isQuizTime}
                       currentQuiz={currentQuiz}
                       isReveal={isReveal}
-                      rank={null}
+                      rank={getRankForUser(userId)}
                     />
                   </div>
                 </div>
-              ))
-          : publisher &&
-            publisher.stream.connection.connectionId === focusedSubscriber && (
-              <div
-                key={publisher.stream.connection.connectionId}
-                className="bg-[#FDD1AE] p-4"
-              >
-                <div>
-                  <UserVideoComponent
-                    streamManager={publisher}
-                    userAnswers={userAnswers}
-                    isQuizTime={isQuizTime}
-                    currentQuiz={currentQuiz}
-                    isReveal={isReveal}
-                    rank={null}
-                  />
+                <div className="mt-2 text-center">
+                  <span>{clientData}</span>
+                  {isCreator && (
+                    <>
+                      <span className="ml-2">
+                        {fanAudioStatus[sub.stream.connection.connectionId]
+                          ? "Mic ON"
+                          : "Mic OFF"}
+                      </span>
+                      <button
+                        onClick={() => toggleFanAudio(sub)}
+                        type="button"
+                        className="ml-2"
+                      >
+                        {fanAudioStatus[sub.stream.connection.connectionId]
+                          ? "음소거"
+                          : "활성화"}
+                      </button>
+                      <button
+                        onClick={() => focusOnSubscriber(sub)}
+                        type="button"
+                        className="ml-2"
+                      >
+                        {focusedSubscriber ===
+                        sub.stream.connection.connectionId
+                          ? "되돌리기"
+                          : "보여주기"}
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
-            ))}
-
-      {!isCreator && publisher && (
-        <div className="p-5 bg-primary-300">
-          <UserVideoComponent
-            streamManager={publisher}
-            userAnswers={userAnswers}
-            isQuizTime={isQuizTime}
-            currentQuiz={currentQuiz}
-            isReveal={isReveal}
-            rank={getRankForUser(
-              JSON.parse(publisher.stream.connection.data).userId,
-            )}
-          />
-          <div>
-            <span>
-              My Mic:{" "}
-              {fanAudioStatus[publisher.stream.connection.connectionId]
-                ? "Mic ON"
-                : "Mic OFF"}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {subscribers
-        .filter((sub) => {
-          const { clientData } = JSON.parse(sub.stream.connection.data);
-          return clientData !== "##";
-        })
-        .map((sub) => {
-          const { clientData, userId } = JSON.parse(sub.stream.connection.data);
-          return (
-            <div
-              key={sub.stream.connection.connectionId}
-              className="stream-container col-md-6 col-xs-6"
-              id={`fan-camera-component-${userId}`}
-            >
-              <UserVideoComponent
-                streamManager={sub}
-                userAnswers={userAnswers}
-                isQuizTime={isQuizTime}
-                currentQuiz={currentQuiz}
-                isReveal={isReveal}
-                rank={getRankForUser(userId)}
-              />
-              <div>
-                <span>{clientData}</span>
-                {isCreator && (
-                  <span>
-                    {fanAudioStatus[sub.stream.connection.connectionId]
-                      ? "Mic ON"
-                      : "Mic OFF"}
-                  </span>
-                )}
-                {isCreator && (
-                  <button onClick={() => toggleFanAudio(sub)} type="button">
-                    {fanAudioStatus[sub.stream.connection.connectionId]
-                      ? "음소거"
-                      : "활성화"}
-                  </button>
-                )}
-                {isCreator && (
-                  <button onClick={() => focusOnSubscriber(sub)} type="button">
-                    {focusedSubscriber === sub.stream.connection.connectionId
-                      ? "되돌리기"
-                      : "보여주기"}
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+      </div>
     </div>
   );
 };

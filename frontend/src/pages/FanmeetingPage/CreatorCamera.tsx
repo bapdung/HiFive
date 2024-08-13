@@ -37,7 +37,7 @@ const CreatorCamera: React.FC<CreatorCameraProps> = ({
       {creatorSub && (
         <div
           key={JSON.parse(creatorSub.stream.connection.data).clientData}
-          className="p-5 bg-emerald-500"
+          className="p-2 bg-meetingroom-100 rounded-2xl"
         >
           <UserVideoComponent
             streamManager={creatorSub}
@@ -51,21 +51,21 @@ const CreatorCamera: React.FC<CreatorCameraProps> = ({
       )}
 
       {isCreator && publisher && (
-        <div className="p-5 bg-emerald-500">
-          <UserVideoComponent
-            streamManager={publisher}
-            userAnswers={userAnswers}
-            isQuizTime={isQuizTime}
-            currentQuiz={currentQuiz}
-            isReveal={isReveal}
-            rank={null}
-          />
-          <div>
-            <span>
-              My Mic:{" "}
+        <div className="p-2 bg-meetingroom-100 rounded-2xl">
+          <div className="relative">
+            <UserVideoComponent
+              streamManager={publisher}
+              userAnswers={userAnswers}
+              isQuizTime={isQuizTime}
+              currentQuiz={currentQuiz}
+              isReveal={isReveal}
+              rank={null}
+            />
+            <span className="absolute bottom-2 left-2 bg-meetingroom-600 text-white py-2 px-4 rounded-full font-semibold">
+              마이크 :{" "}
               {fanAudioStatus[publisher.stream.connection.connectionId]
-                ? "Mic ON"
-                : "Mic OFF"}
+                ? "ON"
+                : "OFF"}
             </span>
           </div>
         </div>
