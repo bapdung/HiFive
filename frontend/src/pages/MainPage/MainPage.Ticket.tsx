@@ -95,23 +95,23 @@ const Ticket: React.FC<TicketProps> = ({
       <div className="relative w-[300px] h-[500px] flex flex-col bg-white rounded-2xl items-center shadow-ticket-shadow">
         <img src={stamp} alt="stamp" className="mt-3" />
         <div className="mx-10 my-5 w-full">
-          <div className="flex flex-start flex-col justify-start mb-5 ml-8 w-full">
+          <div className="flex flex-start flex-col justify-start mb-5 mx-6">
             <span className="text-medium text-gray-500 font-bold">EVENT</span>
-            <span className="text-large text-gray-900 font-bold w-full">
+            <span className="text-large text-gray-900 font-bold w-full whitespace-normal">
               {event}
             </span>
           </div>
-          <div className="flex flex-start flex-col justify-start mb-5 ml-8 w-full">
+          <div className="flex flex-start flex-col justify-start mb-5 mx-6">
             <span className="text-medium text-gray-500 font-bold">CREATOR</span>
-            <span className="text-large text-gray-900 font-bold w-full">
+            <span className="text-large text-gray-900 font-bold w-full whitespace-normal">
               {creatorName}
             </span>
           </div>
-          <div className="flex flex-start flex-col justify-start mb-5 ml-8 w-full">
+          <div className="flex flex-start flex-col justify-start mb-5 mx-6 w-full">
             <span className="text-medium text-gray-500 font-bold">
               START TIME (Est.)
             </span>
-            <span className="text-large text-gray-900 font-bold w-full">
+            <span className="text-large text-gray-900 font-bold w-full whitespace-normal">
               {formatDate(startTime)} ({runningTime}분)
             </span>
           </div>

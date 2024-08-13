@@ -154,19 +154,19 @@
   }
 
   .meetingroom-btn-light-lg {
-    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-300 font-semibold text-medium text-meetingroom-800;
+    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-200 font-semibold text-medium text-meetingroom-800 hover:bg-meetingroom-300;
   }
 
   .meetingroom-btn-light-md {
-    @apply px-4 py-2 rounded-3xl bg-meetingroom-300 font-semibold text-small text-meetingroom-800;
+    @apply px-4 py-2 rounded-3xl bg-meetingroom-200 font-semibold text-small text-meetingroom-800 hover:bg-meetingroom-300;
   }
 
   .meetingroom-btn-outline-lg {
-    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-medium text-meetingroom-800;
+    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-medium text-meetingroom-800 hover:bg-meetingroom-200;
   }
 
   .meetingroom-btn-outline-md {
-    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-small text-meetingroom-800;
+    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-small text-meetingroom-800 hover:bg-meetingroom-200;
   }
 }
 
@@ -207,6 +207,20 @@ main {
 
   input[type="number"] {
     -moz-appearance: textfield;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* 스크롤바의 너비 */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #A28BAD; /* 스크롤바의 색상 */
+    border-radius: 10px; /* 스크롤바의 둥근 모서리 */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #F0EDF1; /* 스크롤바 트랙의 색상 */
+    border-radius: 10px; /* 트랙의 둥근 모서리 */
   }
 }
 .lds-ring {

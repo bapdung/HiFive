@@ -16,8 +16,12 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 import WaitingPage from "./WaitingPage";
 
+import roomframe from "../../assets/Fanmeeting/roomframe.png";
+
+// const APPLICATION_SERVER_URL =
+// process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -182,6 +186,7 @@ export default function Main() {
   }, []);
 
   const createSession = async (sessionId: string): Promise<string> => {
+    console.log(APPLICATION_SERVER_URL);
     const response = await axios.post<ResponseData>(
       `${APPLICATION_SERVER_URL}api/sessions/open`,
       { customSessionId: sessionId },
@@ -689,7 +694,7 @@ export default function Main() {
   };
 
   return (
-    <div className="w-full items-center">
+    <div className="w-full h-[100vh] items-center bg-meetingroom-700">
       {session === undefined ? (
         <JoinForm
           myUserName={myUserName}
@@ -714,8 +719,16 @@ export default function Main() {
           />
         </div>
       ) : (
-        <div id="session">
-          <div id="session-header">
+        <div
+          id="session"
+          className="bg-meetingroom-700 w-full h-full flex flex-col items-center"
+        >
+          <img
+            src={roomframe}
+            alt="frame"
+            className="w-11/12 min-w-[1400px] absolute top-8"
+          />
+          <div id="session-header" className="w-[300px] absolute ">
             <h1 id="session-title">{mySessionId}</h1>
             <input
               className="btn btn-large btn-danger"
@@ -773,34 +786,36 @@ export default function Main() {
               value="비디오껐다키기"
             />
           </div>
-          <VideoContainer
-            session={session}
-            publisher={publisher}
-            subscribers={subscribers}
-            isCreator={isCreator}
-            toggleFanAudio={toggleFanAudio}
-            fanAudioStatus={fanAudioStatus}
-            focusedSubscriber={focusedSubscriber}
-            focusOnSubscriber={focusOnSubscriber}
-            userAnswers={userAnswers}
-            currentSequence={currentSequence}
-            timetables={timetables}
-            currentQuiz={currentQuiz}
-            isReveal={isReveal}
-            ranks={ranks}
-            token={token}
-            mySessionId={mySessionId}
-            setCurrentSequence={setCurrentSequence}
-            onSequenceChange={goToNextCorner}
-            handleFetchQuiz={handleFetchQuiz}
-            handleReveal={handleReveal}
-            handleRank={handleRank}
-            chatMessages={chatMessages}
-            newMessage={newMessage}
-            handleChangeMessage={handleChangeMessage}
-            handleSendMessage={handleSendMessage}
-            userColors={userColorsRef.current}
-          />
+          <div className="mt-28">
+            <VideoContainer
+              session={session}
+              publisher={publisher}
+              subscribers={subscribers}
+              isCreator={isCreator}
+              toggleFanAudio={toggleFanAudio}
+              fanAudioStatus={fanAudioStatus}
+              focusedSubscriber={focusedSubscriber}
+              focusOnSubscriber={focusOnSubscriber}
+              userAnswers={userAnswers}
+              currentSequence={currentSequence}
+              timetables={timetables}
+              currentQuiz={currentQuiz}
+              isReveal={isReveal}
+              ranks={ranks}
+              token={token}
+              mySessionId={mySessionId}
+              setCurrentSequence={setCurrentSequence}
+              onSequenceChange={goToNextCorner}
+              handleFetchQuiz={handleFetchQuiz}
+              handleReveal={handleReveal}
+              handleRank={handleRank}
+              chatMessages={chatMessages}
+              newMessage={newMessage}
+              handleChangeMessage={handleChangeMessage}
+              handleSendMessage={handleSendMessage}
+              userColors={userColorsRef.current}
+            />
+          </div>
         </div>
       )}
     </div>
