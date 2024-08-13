@@ -1,5 +1,6 @@
 package com.ssafy.hifive.domain.s3.service;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.s3.dto.request.S3RequestDto;
 import com.ssafy.hifive.domain.s3.dto.response.S3ResponseDto;
@@ -34,6 +36,15 @@ public class S3Service {
 		URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
 		return S3ResponseDto.from(url.toString());
+	}
+
+	public String uploadFile(File fileToUpload, String fileName) {
+		try {
+			amazonS3.putObject(new PutObjectRequest(bucket, fileName, fileToUpload));
+			return amazonS3.getUrl(bucket, fileName).toString();
+		} catch (Exception e) {
+			throw new RuntimeException("S3 파일 업로드 오류. 파일명 : " + fileToUpload.getName());
+		}
 	}
 
 	private GeneratePresignedUrlRequest getGeneratePresignedUrlRequest(String bucket, String fileName) {
