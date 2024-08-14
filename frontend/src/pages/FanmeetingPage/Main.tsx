@@ -753,7 +753,7 @@ export default function Main() {
           <img
             src={roomframe}
             alt="frame"
-            className="w-11/12 min-w-[1400px] absolute top-8"
+            className="w-11/12 min-w-[1400px] absolute top-8 -z-10"
           />
           <div id="session-header" className="w-[300px] absolute ">
             <h1 id="session-title">{mySessionId}</h1>
