@@ -38,7 +38,7 @@ public class Photo extends BaseTimeEntity {
 	@Column(name = "photo_img")
 	private String photoImg;
 
-	@Column(nullable = false)
+	@Column(name = "sequence")
 	private int sequence;
 
 	@Builder
