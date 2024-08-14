@@ -45,7 +45,7 @@ const Chat: React.FC<ChatProps> = ({
             key={msg.id}
             className={
               msg.isCreator
-                ? "bg-meetingroom-600 font-semibold bg-opacity-20 py-0.5 px-2 mt-1.5 rounded break-words"
+                ? "bg-meetingroom-200 font-semibold py-0.5 px-2 mt-1.5 rounded break-words"
                 : "bg-white rounded py-0.5 px-2 mt-1.5 break-words"
             }
           >
