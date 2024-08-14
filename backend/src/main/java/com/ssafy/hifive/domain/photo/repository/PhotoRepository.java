@@ -24,7 +24,6 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
 			select p
 			from Photo p
 			join fetch p.fan
-			join fetch p.fan.creatorProfile
 			join fetch p.fanmeeting
 			where p.fan.memberId = :fanId
 				and p.fanmeeting.fanmeetingId =:fanmeetingId
