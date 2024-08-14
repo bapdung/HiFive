@@ -62,6 +62,7 @@ const MyFanmeetingPreList: React.FC<MyFanmeetingPreListProps> = ({
             fanmeetingId={fanmeeting.fanmeetingId}
             posterImg={fanmeeting.posterImg}
             startDate={formatDate(fanmeeting.startDate)}
+            realStartDate={fanmeeting.startDate}
             isDone={false}
           />
         ))}
