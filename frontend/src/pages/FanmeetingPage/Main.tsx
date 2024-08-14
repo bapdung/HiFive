@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -17,6 +16,7 @@ import client from "../../client";
 import WaitingPage from "./WaitingPage";
 
 import roomframe from "../../assets/Fanmeeting/roomframe.png";
+import drop from "../../assets/Fanmeeting/drop.png";
 
 // const APPLICATION_SERVER_URL =
 //   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
@@ -58,13 +58,13 @@ export default function Main() {
   const [myUserName, setMyUserName] = useState<string>("");
   const token = useAuthStore((state) => state.accessToken);
   const [session, setSession] = useState<Session | undefined>(undefined);
-  const [mainStreamManager, setMainStreamManager] = useState<
-    Publisher | Subscriber | undefined
-  >(undefined);
+  // const [mainStreamManager, setMainStreamManager] = useState<
+  //   Publisher | Subscriber | undefined
+  // >(undefined);
   const [publisher, setPublisher] = useState<Publisher | undefined>(undefined);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [currentVideoDevice, setCurrentVideoDevice] =
-    useState<MediaDeviceInfo | null>(null);
+  // const [currentVideoDevice, setCurrentVideoDevice] =
+  //   useState<MediaDeviceInfo | null>(null);
   const location = useLocation();
   const mySessionId = location.pathname.split("/")[2];
   const [isCreator, setIsCreator] = useState<boolean | undefined>();
@@ -102,6 +102,9 @@ export default function Main() {
   const userColorsRef = useRef<{ [key: string]: string }>({});
   const [userId, setUserId] = useState<number | undefined>();
   const [lastMessageTime, setLastMessageTime] = useState<number | null>(null);
+
+  // 헤더 최소화 상태 관리
+  const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
 
   // 유저 정보 불러오기
   const fetchUser = async () => {
@@ -319,9 +322,9 @@ export default function Main() {
       }
       // 밝은 색상 제외
       if (
-        parseInt(color.substring(1, 3), 16) > 200 &&
-        parseInt(color.substring(3, 5), 16) > 200 &&
-        parseInt(color.substring(5, 7), 16) > 200
+        parseInt(color.substring(1, 3), 16) > 150 &&
+        parseInt(color.substring(3, 5), 16) > 150 &&
+        parseInt(color.substring(5, 7), 16) > 150
       ) {
         return generateColor();
       }
@@ -367,23 +370,23 @@ export default function Main() {
 
           session.publish(newPublisher);
 
-          const devices = await OV.current.getDevices();
-          const videoDevices = devices.filter(
-            (device) => device.kind === "videoinput",
-          );
+          // const devices = await OV.current.getDevices();
+          // const videoDevices = devices.filter(
+          //   (device) => device.kind === "videoinput",
+          // );
 
-          const currentVideoDeviceId = newPublisher.stream
-            .getMediaStream()
-            .getVideoTracks()[0]
-            .getSettings().deviceId;
+          // const currentVideoDeviceId = newPublisher.stream
+          //   .getMediaStream()
+          //   .getVideoTracks()[0]
+          //   .getSettings().deviceId;
 
-          const currentVideoInputDevice = videoDevices.find(
-            (device) => device.deviceId === currentVideoDeviceId,
-          ) as MediaDeviceInfo;
+          // const currentVideoInputDevice = videoDevices.find(
+          //   (device) => device.deviceId === currentVideoDeviceId,
+          // ) as MediaDeviceInfo;
 
-          setMainStreamManager(newPublisher);
+          // setMainStreamManager(newPublisher);
           setPublisher(newPublisher);
-          setCurrentVideoDevice(currentVideoInputDevice || null);
+          // setCurrentVideoDevice(currentVideoInputDevice || null);
 
           setFanAudioStatus((prevStatus) => ({
             ...prevStatus,
@@ -412,7 +415,7 @@ export default function Main() {
     OV.current = new OpenVidu();
     setSession(undefined);
     setSubscribers([]);
-    setMainStreamManager(undefined);
+    // setMainStreamManager(undefined);
     setPublisher(undefined);
   }, [session]);
 
@@ -449,40 +452,40 @@ export default function Main() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, token, mySessionId]);
 
-  const switchCamera = useCallback(async () => {
-    try {
-      const devices = await OV.current.getDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput",
-      );
+  // const switchCamera = useCallback(async () => {
+  //   try {
+  //     const devices = await OV.current.getDevices();
+  //     const videoDevices = devices.filter(
+  //       (device) => device.kind === "videoinput",
+  //     );
 
-      if (videoDevices.length > 1) {
-        const newVideoInputDevice = videoDevices.find(
-          (device) => device.deviceId !== currentVideoDevice?.deviceId,
-        ) as MediaDeviceInfo;
+  //     if (videoDevices.length > 1) {
+  //       const newVideoInputDevice = videoDevices.find(
+  //         (device) => device.deviceId !== currentVideoDevice?.deviceId,
+  //       ) as MediaDeviceInfo;
 
-        if (newVideoInputDevice) {
-          const newPublisher = OV.current.initPublisher(undefined, {
-            videoSource: newVideoInputDevice.deviceId,
-            publishAudio: false,
-            publishVideo: true,
-            mirror: true,
-          });
+  //       if (newVideoInputDevice) {
+  //         const newPublisher = OV.current.initPublisher(undefined, {
+  //           videoSource: newVideoInputDevice.deviceId,
+  //           publishAudio: false,
+  //           publishVideo: true,
+  //           mirror: true,
+  //         });
 
-          if (session) {
-            await session.unpublish(mainStreamManager as Publisher);
-            await session.publish(newPublisher);
-            setCurrentVideoDevice(newVideoInputDevice);
-            setMainStreamManager(newPublisher);
-            setPublisher(newPublisher);
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentVideoDevice, session, mainStreamManager, isCreator]);
+  //         if (session) {
+  //           await session.unpublish(mainStreamManager as Publisher);
+  //           await session.publish(newPublisher);
+  //           setCurrentVideoDevice(newVideoInputDevice);
+  //           setMainStreamManager(newPublisher);
+  //           setPublisher(newPublisher);
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentVideoDevice, session, mainStreamManager, isCreator]);
 
   const toggleMyAudio = useCallback(() => {
     if (publisher) {
@@ -720,8 +723,14 @@ export default function Main() {
     setCurrentQuiz(quiz);
   };
 
+  // 헤더 클릭 시 확장 상태 변경
+  const toggleHeader = () => {
+    setIsHeaderExpanded((prev) => !prev);
+  };
+
   return (
     <div className="w-full h-[100vh] items-center bg-meetingroom-700">
+      {/* eslint-disable-next-line no-nested-ternary */}
       {session === undefined ? (
         <JoinForm
           myUserName={myUserName}
@@ -753,65 +762,95 @@ export default function Main() {
           <img
             src={roomframe}
             alt="frame"
-            className="w-11/12 min-w-[1400px] absolute top-8"
+            className="w-11/12 min-w-[1400px] absolute top-7"
           />
-          <div id="session-header" className="w-[300px] absolute ">
-            <h1 id="session-title">{mySessionId}</h1>
-            <input
-              className="btn btn-large btn-danger"
+          <div
+            id="session-header"
+            className="w-[200px] absolute top-0 flex flex-col justify-start items-center"
+          >
+            <button
               type="button"
-              id="buttonLeaveSession"
-              onClick={leaveSession}
-              value="세션나가기"
-            />
-            {isCreator && (
-              <>
+              className="bg-meetingroom-100 text-white cursor-pointer w-[100px] h-[20px] rounded-b-2xl bg-opacity-80 flex justify-center items-center"
+              onClick={toggleHeader}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  toggleHeader();
+                }
+              }}
+              aria-expanded={isHeaderExpanded}
+            >
+              {/* <h1 id="session-title" className="text-center">
+                {mySessionId}
+              </h1> */}
+              <img src={drop} alt="drop" className="w-8 h-3" />
+            </button>
+            <div
+              className={`transition-max-height duration-200 overflow-hidden ${
+                isHeaderExpanded
+                  ? "max-h-[500px] w-[200px] bg-white bg-opacity-80 flex flex-col justify-center items-center rounded-xl p-2 gap-2 z-30 shadow-lg backdrop-blur-sm"
+                  : "max-h-0 flex flex-col justify-center items-center"
+              }`}
+            >
+              <input
+                className="btn btn-large meetingroom-btn-md"
+                type="button"
+                id="buttonLeaveSession"
+                onClick={leaveSession}
+                value="입장 화면으로"
+              />
+              {isCreator ? (
                 <input
-                  className="btn btn-large btn-success"
+                  className="meetingroom-btn-light-md"
                   type="button"
-                  id="buttonSwitchCamera"
-                  onClick={switchCamera}
-                  value="카메라 기종 변경"
+                  id="buttonToggleAudio"
+                  onClick={toggleMyAudio}
+                  value="마이크 On / Off"
                 />
-                <button type="button" className="btn-md" onClick={closeSession}>
-                  세션 종료
-                </button>
-              </>
-            )}
-            {isCreator ? (
+              ) : (
+                <input
+                  className={
+                    publisher && publisher.stream.audioActive
+                      ? "btn-md hover:pointer"
+                      : "btn-md bg-gray-700 hover:default"
+                  }
+                  type="button"
+                  id="buttonToggleAudio"
+                  onClick={muteMyAudio}
+                  value={
+                    publisher && publisher.stream.audioActive
+                      ? "음소거 하기"
+                      : "음소거 중"
+                  }
+                />
+              )}
               <input
-                className="btn btn-large btn-warning"
+                className="meetingroom-btn-light-md"
                 type="button"
-                id="buttonToggleAudio"
-                onClick={toggleMyAudio}
-                value="마이크 껐다 키기"
+                id="buttonToggleVideo"
+                onClick={toggleMyVideo}
+                value="카메라 On / Off"
               />
-            ) : (
-              <input
-                className={
-                  publisher && publisher.stream.audioActive
-                    ? "btn-md hover:pointer"
-                    : "btn-md bg-gray-700 hover:default"
-                }
-                type="button"
-                id="buttonToggleAudio"
-                onClick={muteMyAudio}
-                value={
-                  publisher && publisher.stream.audioActive
-                    ? "음소거 하기"
-                    : "음소거 중"
-                }
-              />
-            )}
-            <input
-              className="btn btn-large btn-warning"
-              type="button"
-              id="buttonToggleVideo"
-              onClick={toggleMyVideo}
-              value="비디오껐다키기"
-            />
+              {isCreator && (
+                <>
+                  {/* <input
+                    className="btn btn-large btn-success"
+                    type="button"
+                    id="buttonSwitchCamera"
+                    onClick={switchCamera}
+                    value="카메라 기종 변경"
+                  /> */}
+                  <button
+                    type="button"
+                    className="btn-md"
+                    onClick={closeSession}
+                  >
+                    세션 종료
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-          <div className="mt-28 z-10">
+          <div className="mt-[108px] z-10">
             <VideoContainer
               session={session}
               publisher={publisher}

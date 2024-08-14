@@ -8,7 +8,12 @@ import StoryTime from "./StoryTime";
 import QuestionTime from "./QuestionTime";
 import QuizTime from "./QuizTime";
 import Chat from "./Chat";
+
 import frame1 from "../../assets/Fanmeeting/frame1.png";
+import frame2 from "../../assets/Fanmeeting/frame2.png";
+import frame3 from "../../assets/Fanmeeting/frame3.png";
+import frame4 from "../../assets/Fanmeeting/frame4.png";
+import frame5 from "../../assets/Fanmeeting/frame5.png";
 
 interface Timetable {
   categoryName: string;
@@ -111,6 +116,16 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
     return rankIndex !== -1 ? rankIndex + 1 : null;
   };
 
+  const creatorFrames = [frame1, frame2, frame3, frame4, frame5];
+  const frames = [frame2, frame3, frame4, frame5];
+
+  const getRandomFrame = () => {
+    console.log(`@@@${isCreator}`);
+    const framesToUse = isCreator ? creatorFrames : frames;
+    const randomIndex = Math.floor(Math.random() * framesToUse.length);
+    return framesToUse[randomIndex];
+  };
+
   if (timetables[currentSequence - 1]?.categoryName === "포토 타임") {
     return (
       <div className="flex">
@@ -202,7 +217,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                     >
                       <div className="relative w-[256px] h-[256px] mt-4">
                         <img
-                          src={frame1}
+                          src={getRandomFrame()}
                           alt="frame"
                           className="w-full h-full"
                         />
@@ -269,9 +284,18 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center">
+      <div className="flex flex-wrap justify-center mt-10">
         {!isCreator && publisher && (
-          <div className="relative w-[256px] h-[256px] mt-4">
+          <div className="relative w-[256px] h-[256px]">
+            <div className="absolute top-[-40px] mt-2 text-center w-full">
+              <div className="flex flex-col">
+                <div className="flex justify-center w-full">
+                  <span className="text-large font-bold text-white bg-meetingroom-600 bg-opacity-95 px-4 py-1 rounded-full border-2 border-white border-opacity-70">
+                    당신입니다.
+                  </span>
+                </div>
+              </div>
+            </div>
             <img src={frame1} alt="frame" className="w-full h-full" />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <UserVideoComponent
@@ -285,9 +309,9 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                 )}
               />
             </div>
-            <span className="absolute bottom-4 bg-meetingroom-100 bg-opacity-90 px-4 py-1 rounded-full">
-              Mic {publisher.stream.audioActive ? " ON" : " OFF"}
-            </span>
+            {/* <span className="absolute bottom-12 left-20 bg-meetingroom-100 bg-opacity-90 px-4 py-1 rounded-full text-small font-semibold">
+              마이크 {publisher.stream.audioActive ? "켜짐" : "꺼짐"}
+            </span> */}
           </div>
         )}
 
@@ -296,18 +320,23 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
             const { clientData } = JSON.parse(sub.stream.connection.data);
             return clientData !== "##";
           })
-          .map((sub) => {
+          .map((sub, index) => {
             const { clientData, userId } = JSON.parse(
               sub.stream.connection.data,
             );
+            const framesource = isCreator ? creatorFrames : frames;
+            const frame =
+              index < framesource.length
+                ? framesource[index]
+                : getRandomFrame();
             return (
               <div
                 key={sub.stream.connection.connectionId}
-                className="stream-container mt-4"
+                className="stream-container"
                 id={`fan-camera-component-${userId}`}
               >
                 <div className="relative w-[256px] h-[256px]">
-                  <img src={frame1} alt="frame" className="w-full h-full" />
+                  <img src={frame} alt="frame" className="w-full h-full" />
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <UserVideoComponent
                       streamManager={sub}
@@ -328,7 +357,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                     </div>
                   </div>
                   {isCreator && (
-                    <div className="w-full absolute bottom-[-20px]">
+                    <div className="w-full absolute bottom-[-8px]">
                       <div className="flex justify-center">
                         <div className="inline-flex items-center text-small">
                           <span className="ml-2 bg-gray-200 pl-4 pr-3 py-2 rounded-l-full">
