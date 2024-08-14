@@ -15,6 +15,8 @@ interface UserVideoComponentProps {
   isQuizTime: boolean;
   isReveal: boolean;
   rank: number | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isPhotoTime?: any;
 }
 
 const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
@@ -24,6 +26,7 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
   currentQuiz,
   isReveal,
   rank,
+  isPhotoTime,
 }) => {
   const userId = streamManager.stream.connection.connectionId;
   const userName = JSON.parse(streamManager.stream.connection.data).clientData;
@@ -41,6 +44,7 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
           <OpenViduVideoComponent
             streamManager={streamManager}
             userName={userName}
+            isPhotoTime={isPhotoTime}
           />
           <div>
             {userAnswers[userId] != null && (

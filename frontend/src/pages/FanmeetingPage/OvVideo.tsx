@@ -6,12 +6,14 @@ interface OpenViduVideoComponentProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   streamManager: any;
   userName: string;
+  isPhotoTime: boolean;
 }
 
 // 비디오 객체를 반환하는 오픈비두 비디오 컴포넌트
 const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = ({
   streamManager,
   userName,
+  isPhotoTime,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isCameraOn, setIsCameraOn] = useState(true);
@@ -54,6 +56,20 @@ const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = ({
       }
     };
   }, [streamManager]);
+
+  if (isPhotoTime) {
+    return (
+      <div className="rounded-xl overflow-hidden">
+        <video
+          autoPlay
+          ref={videoRef}
+          id={`openvidu-video-${userName}`}
+          className="object-contain w-full h-full"
+          hidden={!isCameraOn && userName !== "##"} // 카메라가 꺼져있으면 hidden 속성을 true로 설정
+        />
+      </div>
+    );
+  }
 
   return (
     <div
