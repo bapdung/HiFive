@@ -38,7 +38,7 @@ public class ReservationSchedulerService {
 				Long fanmeetingId = Long.valueOf(parts[1]);
 				try {
 					Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
-					currentWaitingQueueSize = 12342 - (98 * t++);
+					currentWaitingQueueSize = 12342 - (787 * t++);
 					//조건문 하드코딩 고쳐
 					if (currentWaitingQueueSize > 0) {
 						WebSocketMessage message = new WebSocketMessage(
