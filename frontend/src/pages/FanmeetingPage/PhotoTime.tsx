@@ -209,7 +209,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               </div>
             )}
           </div>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 mt-5">
             {showShootButton && !isPhotoTimeEnd && photoSequence === 0 && (
               <button
                 type="button"
@@ -220,7 +220,11 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               </button>
             )}
             {!isPhotoTimeEnd && (
-              <button type="button" onClick={stopPhotoApi}>
+              <button
+                type="button"
+                onClick={stopPhotoApi}
+                className="meetingroom-btn-light-lg"
+              >
                 한컷 중지
               </button>
             )}
@@ -228,12 +232,20 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               !isPhotoTimeEnd &&
               photoSequence > 0 &&
               photoSequence < 4 && (
-                <button type="button" onClick={startPhoto}>
+                <button
+                  type="button"
+                  onClick={startPhoto}
+                  className="meetingroom-btn-outline-lg"
+                >
                   다음 사진
                 </button>
               )}
             {photoSequence >= 4 && !isPhotoTimeEnd && !timer && (
-              <button type="button" onClick={stopPhoto}>
+              <button
+                type="button"
+                onClick={stopPhoto}
+                className="meetingroom-btn-lg"
+              >
                 촬영 마무리
               </button>
             )}
@@ -242,39 +254,43 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
       ) : (
         <>
           {/* 읿반사용자들이 보는 화면 */}
-          {subscribers
-            .filter(
-              (sub) =>
-                JSON.parse(sub.stream.connection.data).clientData === "##",
-            )
-            .map((creatorSub) => (
-              <div
-                key={creatorSub.stream.connection.connectionId}
-                className="p-5 bg-emerald-500"
-              >
-                <UserVideoComponent
-                  streamManager={creatorSub}
-                  userAnswers={userAnswers}
-                  isQuizTime={isQuizTime}
-                  currentQuiz={currentQuiz}
-                  isReveal={isReveal}
-                  rank={null}
-                />
-              </div>
-            ))}
-          {publisher && (
-            <div className="p-5 bg-primary-300">
-              <UserVideoComponent
-                streamManager={publisher}
-                userAnswers={userAnswers}
-                isQuizTime={isQuizTime}
-                currentQuiz={currentQuiz}
-                isReveal={isReveal}
-                rank={null}
-                isPhotoTime={!isPhotoTimeEnd ?? false}
-              />
+          <div className="w-[852px] h-[409px] flex flex-col items-center p-2 bg-meetingroom-100 rounded-2xl">
+            <div className="flex gap-2">
+              {subscribers
+                .filter(
+                  (sub) =>
+                    JSON.parse(sub.stream.connection.data).clientData === "##",
+                )
+                .map((creatorSub) => (
+                  <div
+                    key={creatorSub.stream.connection.connectionId}
+                    className="w-[412px]"
+                  >
+                    <UserVideoComponent
+                      streamManager={creatorSub}
+                      userAnswers={userAnswers}
+                      isQuizTime={isQuizTime}
+                      currentQuiz={currentQuiz}
+                      isReveal={isReveal}
+                      rank={null}
+                    />
+                  </div>
+                ))}
+              {publisher && (
+                <div className="w-[412px]">
+                  <UserVideoComponent
+                    streamManager={publisher}
+                    userAnswers={userAnswers}
+                    isQuizTime={isQuizTime}
+                    currentQuiz={currentQuiz}
+                    isReveal={isReveal}
+                    rank={null}
+                    isPhotoTime={!isPhotoTimeEnd ?? false}
+                  />
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </>
       )}
     </div>
