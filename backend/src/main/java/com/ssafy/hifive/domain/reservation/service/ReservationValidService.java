@@ -32,7 +32,7 @@ public class ReservationValidService {
 	}
 
 	public boolean addToPayingQueueIsValid(String queueKey) {
-		if (reservationQueueService.getQueueSize(queueKey) < 10) {
+		if (reservationQueueService.getQueueSize(queueKey) < 2) {
 			// log.info("현재 payingQueue 인원이 0명입니다. payingQueue에 추가됩니다.");
 			return true;
 		}
