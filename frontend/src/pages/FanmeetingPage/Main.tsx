@@ -18,10 +18,10 @@ import WaitingPage from "./WaitingPage";
 
 import roomframe from "../../assets/Fanmeeting/roomframe.png";
 
-const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
 // const APPLICATION_SERVER_URL =
-// process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
+//   process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+const APPLICATION_SERVER_URL =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -811,7 +811,7 @@ export default function Main() {
               value="비디오껐다키기"
             />
           </div>
-          <div className="mt-28">
+          <div className="mt-28 z-10">
             <VideoContainer
               session={session}
               publisher={publisher}
