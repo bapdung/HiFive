@@ -39,13 +39,13 @@ const Photo: React.FC<PhotoProps> = ({ photo }) => (
       </video> */}
     <div className="flex px-4">
       <ReactPlayer
-        url={photo.fanUrl || ""}
+        url={photo.creatorUrl || ""}
         width="200px"
         height="220px"
         playing
       />
       <ReactPlayer
-        url={photo.creatorUrl || ""}
+        url={photo.fanUrl || ""}
         width="200px"
         height="220px"
         playing
