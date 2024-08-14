@@ -105,6 +105,8 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
   }, [subscribers, isCreator]);
 
   const startPhoto = async () => {
+    console.log("토큰", token);
+    console.log("세션아이디", mySessionId);
     if (token && mySessionId) {
       const response = await client(token).post(`/api/sessions/record`, {
         fanmeetingId: mySessionId,

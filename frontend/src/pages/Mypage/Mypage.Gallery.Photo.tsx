@@ -1,41 +1,44 @@
-import download from "../../assets/icons/download.png";
+// import download from "../../assets/icons/download.png";
 
-type Photo = {
-  creatorName: string;
-  title: string;
-  fanmeetingStartDate: string;
-  photoImg: string[];
+type PhotoType = {
+  creatorUrl: string;
+  fanUrl: string;
 };
 
 interface PhotoProps {
-  photo: Photo;
+  photo: PhotoType;
 }
 
-function Photo({ photo }: PhotoProps) {
-  const date = photo.fanmeetingStartDate.split("T")[0].replaceAll("-", ". ");
+const Photo: React.FC<PhotoProps> = ({ photo }) => {
+  // const date = photo.fanmeetingStartDate.split("T")[0].replaceAll("-", ". ");
 
-  const handleDownload = async (imgSrc: string) => {
-    try {
-      const response = await fetch(imgSrc, { mode: "cors" });
-      const blob = await response.blob();
-      const blobURL = window.URL.createObjectURL(blob);
+  // const handleDownload = async (imgSrc: string) => {
+  //   try {
+  //     const response = await fetch(imgSrc, { mode: "cors" });
+  //     const blob = await response.blob();
+  //     const blobURL = window.URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
-      link.href = blobURL;
-      link.download = "image.jpg";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  //     const link = document.createElement("a");
+  //     link.href = blobURL;
+  //     link.download = "image.jpg";
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
 
-      window.URL.revokeObjectURL(blobURL);
-    } catch (error) {
-      console.error("다운로드 중 문제 발생 :", error);
-    }
-  };
+  //     window.URL.revokeObjectURL(blobURL);
+  //   } catch (error) {
+  //     console.error("다운로드 중 문제 발생 :", error);
+  //   }
+  console.log(photo.fanUrl);
+  console.log(photo.creatorUrl);
 
   return (
     <div className="flex flex-col items-center justify-center mb-10">
-      <div className="text-h5 mb-5">
+      {/* <video controls autoPlay>
+        <source src={photo.fanUrl} />
+      </video> */}
+      <p>{photo.fanUrl}</p>
+      {/* <div className="text-h5 mb-5">
         {date} - [{photo.creatorName}] {photo.title}
       </div>
       <div className="flex w-full justify-between px-10">
@@ -55,9 +58,9 @@ function Photo({ photo }: PhotoProps) {
             />
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
-}
+};
 
 export default Photo;
