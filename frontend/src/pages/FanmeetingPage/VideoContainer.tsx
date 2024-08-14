@@ -286,10 +286,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
               />
             </div>
             <span className="absolute bottom-4 bg-meetingroom-100 bg-opacity-90 px-4 py-1 rounded-full">
-              Mic{" "}
-              {fanAudioStatus[publisher.stream.connection.connectionId]
-                ? " ON"
-                : " OFF"}
+              Mic {publisher.stream.audioActive ? " ON" : " OFF"}
             </span>
           </div>
         )}

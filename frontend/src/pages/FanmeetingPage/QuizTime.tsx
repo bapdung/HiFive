@@ -70,7 +70,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
       }
     };
 
-    if (timetables[currentSequence - 1]?.categoryName === "O/X 게임") {
+    if (timetables[currentSequence - 1]?.categoryName === "O/X게임") {
       setIsQuizTime(true);
       quizStartApi();
     } else {
