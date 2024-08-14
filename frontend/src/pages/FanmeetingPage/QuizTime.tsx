@@ -55,6 +55,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     useState<boolean>(false);
   const [showRankingRevealButton, setShowRankingRevealButton] =
     useState<boolean>(false);
+  // eslint-disable-next-line
   const [userAnswer, setUserAnswer] = useState<boolean | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -258,17 +259,21 @@ const QuizTime: React.FC<QuizTimeProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  const sendAnswer = async () => {
+  const sendAnswer = async (answer: boolean) => {
     if (!token || !mySessionId || !currentQuiz) {
       return;
     }
     try {
-      const isUserCorrect = userAnswer === currentQuiz?.answer;
+      // console.log(currentQuiz?.answer);
+      // console.log(userAnswer);
+      const isUserCorrect = answer === currentQuiz?.answer;
+      // console.log(isUserCorrect);
       const isCorrectAnswer = isUserCorrect ? 1 : 0;
       await client(token).post(
         `/api/sessions/quiz/answer/${mySessionId}/${quizSequence}`,
         { isCorrect: isCorrectAnswer },
       );
+      // console.log(isCorrectAnswer);
     } catch (error) {
       console.error("Send answer error:", error);
     }
@@ -276,6 +281,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
 
   const handleAnswer = (answer: boolean) => {
     setUserAnswer(answer);
+    // console.log(`222${answer}`);
     setShowAnswerButtons(false);
     if (session) {
       session.signal({
@@ -285,7 +291,7 @@ const QuizTime: React.FC<QuizTimeProps> = ({
           answer,
         }),
       });
-      sendAnswer();
+      sendAnswer(answer);
     }
   };
 
