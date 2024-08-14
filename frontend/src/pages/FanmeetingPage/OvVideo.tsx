@@ -81,7 +81,7 @@ const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = ({
         autoPlay
         ref={videoRef}
         id={`openvidu-video-${userName}`}
-        className="object-cover w-full h-full transform -scale-x-100"
+        className="object-cover w-full h-full"
         hidden={!isCameraOn && userName !== "##"} // 카메라가 꺼져있으면 hidden 속성을 true로 설정
       />
     </div>
