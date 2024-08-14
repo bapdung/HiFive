@@ -306,6 +306,27 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
                 </div>
               )}
             </div>
+            {/* 현재 몇번째 사진 찍는중인지 보여주기 */}
+            <div className="flex flex-col justify-center gap-4 ">
+              {photoSequence > 0 && !isPhotoTimeEnd && (
+                <p className="text-h5 font-semibold text-meetingroom-800 p-2">
+                  {photoSequence}/4번째 사진
+                </p>
+              )}
+              {isPhotoTimeEnd && (
+                <p className="text-meetingroom-800 p-2">
+                  포토 타임이 끝났습니다!
+                </p>
+              )}
+              {timer && (
+                <p className="text-h6 font-semibold bg-meetingroom-200 text-meetingroom-800 px-4 py-2 rounded-full">
+                  {timer}
+                </p>
+              )}
+              {showShutterMessage && (
+                <p className="text-h6 text-meetingroom-800 p-2">찰칵!</p>
+              )}
+            </div>
           </div>
         </>
       )}
