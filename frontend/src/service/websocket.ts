@@ -99,7 +99,6 @@ class WebSocketService {
 }
 
 const webSocketService = new WebSocketService(
-  // "wss://i11a107.p.ssafy.io/ws/ticket",
-  "ws://localhost:8080/ws/ticket",
+  "wss://i11a107.p.ssafy.io/ws/ticket",
 );
 export default webSocketService;

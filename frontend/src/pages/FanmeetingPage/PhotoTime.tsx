@@ -52,6 +52,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
       try {
         const response = await client(token).post(`/api/sessions/record/stop`, {
           recordId,
+          sequence: photoSequence,
         });
         console.log("녹화 중지", response.data.recordId);
       } catch (error) {
