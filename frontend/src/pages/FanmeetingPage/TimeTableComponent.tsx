@@ -62,7 +62,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
 
   return (
     <div
-      className={`w-full flex ${isCreator ? "justify-between" : "justify-center"} items-center z-10`}
+      className={`w-full flex ${isCreator && currentSequence !== 0 ? "justify-between" : "justify-center"} items-center z-10`}
     >
       {/* <p>{currentCorner}</p> */}
       {isCreator && currentSequence !== 0 && (
