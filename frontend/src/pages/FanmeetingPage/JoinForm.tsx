@@ -28,7 +28,7 @@ const JoinForm: React.FC<JoinFormProps> = ({
       id="join"
       className="flex w-full flex-col items-center bg-meetingroom-800 min-h-[800px] pt-20 relative"
     >
-      <div id="text-div" className="absolute left-0">
+      <div id="text-div" className="absolute left-0 hidden">
         <p className="text-white">테스트 공간 (나중에 지울거임)</p>
         <p className="text-white">참가자: {myUserName}</p>
         <p className="text-white">세션: {mySessionId}</p>

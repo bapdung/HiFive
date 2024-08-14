@@ -40,13 +40,17 @@ const UserVideoComponent: React.FC<UserVideoComponentProps> = ({
     <div className="z-10">
       {streamManager && (
         <div className="streamcomponent">
-          {isQuizTime && rank && <p>{rank}등</p>}
+          {isQuizTime && rank && (
+            <p className="absolute bg-vivid-gradient border-4 text-white border-white font-bold text-[20px] rounded-full p-2 px-3 z-40 shadow-xl">
+              {rank}등
+            </p>
+          )}
           <OpenViduVideoComponent
             streamManager={streamManager}
             userName={userName}
             isPhotoTime={isPhotoTime}
           />
-          <div>
+          <div className={`${rank ? "hidden" : ""}`}>
             {userAnswers[userId] != null && (
               <p className="absolute bottom-0 left-14 bg-white p-2 bg-opacity-90 shadow-lg font-bold rounded-md text-h2 leading-none text-meetingroom-800">
                 {/* eslint-disable-next-line no-nested-ternary */}
