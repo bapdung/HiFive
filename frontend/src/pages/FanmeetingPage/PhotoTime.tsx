@@ -178,57 +178,67 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
       {timer && <p>{timer}</p>}
       {showShutterMessage && <p>찰칵!</p>}
       {isCreator ? (
-        <>
-          {showShootButton && !isPhotoTimeEnd && photoSequence === 0 && (
-            <button type="button" onClick={startPhoto}>
-              촬영시작
-            </button>
-          )}
-          {!isPhotoTimeEnd && (
-            <button type="button" onClick={stopPhotoApi}>
-              한컷 중지
-            </button>
-          )}
-          {showShootButton &&
-            !isPhotoTimeEnd &&
-            photoSequence > 0 &&
-            photoSequence < 4 && (
-              <button type="button" onClick={startPhoto}>
-                다음 사진
+        <div className="w-[852px] h-[409px] flex flex-col items-center p-2 bg-meetingroom-100 rounded-2xl">
+          <div className="flex gap-2">
+            {publisher && (
+              <div className="w-[412px]">
+                <UserVideoComponent
+                  streamManager={publisher}
+                  userAnswers={userAnswers}
+                  isQuizTime={isQuizTime}
+                  currentQuiz={currentQuiz}
+                  isReveal={isReveal}
+                  rank={null}
+                />
+              </div>
+            )}
+            {randomFan && (
+              <div className="w-[412px]">
+                <UserVideoComponent
+                  streamManager={randomFan}
+                  userAnswers={userAnswers}
+                  isQuizTime={isQuizTime}
+                  currentQuiz={currentQuiz}
+                  isReveal={isReveal}
+                  rank={null}
+                  isPhotoTime={!isPhotoTimeEnd ?? false}
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex justify-center gap-4">
+            {showShootButton && !isPhotoTimeEnd && photoSequence === 0 && (
+              <button
+                type="button"
+                onClick={startPhoto}
+                className="meetingroom-btn-lg"
+              >
+                촬영 시작
               </button>
             )}
-          {photoSequence >= 4 && !isPhotoTimeEnd && !timer && (
-            <button type="button" onClick={stopPhoto}>
-              촬영 마무리
-            </button>
-          )}
-          {publisher && (
-            <div className="p-5 bg-emerald-500">
-              <UserVideoComponent
-                streamManager={publisher}
-                userAnswers={userAnswers}
-                isQuizTime={isQuizTime}
-                currentQuiz={currentQuiz}
-                isReveal={isReveal}
-                rank={null}
-              />
-            </div>
-          )}
-          {randomFan && (
-            <div className="p-5 bg-primary-300">
-              <UserVideoComponent
-                streamManager={randomFan}
-                userAnswers={userAnswers}
-                isQuizTime={isQuizTime}
-                currentQuiz={currentQuiz}
-                isReveal={isReveal}
-                rank={null}
-              />
-            </div>
-          )}
-        </>
+            {!isPhotoTimeEnd && (
+              <button type="button" onClick={stopPhotoApi}>
+                한컷 중지
+              </button>
+            )}
+            {showShootButton &&
+              !isPhotoTimeEnd &&
+              photoSequence > 0 &&
+              photoSequence < 4 && (
+                <button type="button" onClick={startPhoto}>
+                  다음 사진
+                </button>
+              )}
+            {photoSequence >= 4 && !isPhotoTimeEnd && !timer && (
+              <button type="button" onClick={stopPhoto}>
+                촬영 마무리
+              </button>
+            )}
+          </div>
+        </div>
       ) : (
         <>
+          {/* 읿반사용자들이 보는 화면 */}
           {subscribers
             .filter(
               (sub) =>
@@ -258,6 +268,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
                 currentQuiz={currentQuiz}
                 isReveal={isReveal}
                 rank={null}
+                isPhotoTime={!isPhotoTimeEnd ?? false}
               />
             </div>
           )}
