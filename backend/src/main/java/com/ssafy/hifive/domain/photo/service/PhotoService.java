@@ -46,6 +46,9 @@ public class PhotoService {
 			fanmeeting.getFanmeetingId(), fanmeeting.getCreator().getMemberId());
 
 		List<PhotoUrlDto> photoUrlDtos = new ArrayList<>();
+		log.info("=============");
+		log.info(fanPhotos.size() + "");
+		log.info("=============");
 		for (int i = 0; i < fanPhotos.size(); i++) {
 			Photo fanPhoto = fanPhotos.get(i);
 			Photo creatorPhoto = creatorPhotos.get(i);
