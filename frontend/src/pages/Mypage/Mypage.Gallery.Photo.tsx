@@ -38,8 +38,18 @@ const Photo: React.FC<PhotoProps> = ({ photo }) => (
         <source src={photo.fanUrl} />
       </video> */}
     <div className="flex px-4">
-      <ReactPlayer url={photo.fanUrl || ""} width="200px" height="220px" />
-      <ReactPlayer url={photo.creatorUrl || ""} width="200px" height="220px" />
+      <ReactPlayer
+        url={photo.fanUrl || ""}
+        width="200px"
+        height="220px"
+        playing
+      />
+      <ReactPlayer
+        url={photo.creatorUrl || ""}
+        width="200px"
+        height="220px"
+        playing
+      />
     </div>
     {/* <div className="text-h5 mb-5">
         {date} - [{photo.creatorName}] {photo.title}
