@@ -24,13 +24,10 @@ public class ReservationSchedulerService {
 	private final RedisPublisher redisPublisher;
 	private final ObjectMapper objectMapper;
 	private final RedisTemplate redisTemplateForObject;
-	private final ReservationWebSocketHandler reservationWebSocketHandler;
-	private Long t = 0L;
 
 	@Scheduled(fixedRate = 5000)
 	public void checkWaiting() {
 		String pattern = "fanmeeting:*:waiting-queue";
-		//대기자수 하드코딩 고쳐
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);
 		if (queueKeys != null) {
 			for (String waitingQueueKey : queueKeys) {
@@ -38,8 +35,6 @@ public class ReservationSchedulerService {
 				Long fanmeetingId = Long.valueOf(parts[1]);
 				try {
 					Long currentWaitingQueueSize = reservationQueueService.getQueueSize(waitingQueueKey);
-					currentWaitingQueueSize = 12342 - (787 * t++);
-					//조건문 하드코딩 고쳐
 					if (currentWaitingQueueSize > 0) {
 						WebSocketMessage message = new WebSocketMessage(
 							"현재 대기자 수: " + currentWaitingQueueSize,
@@ -48,10 +43,6 @@ public class ReservationSchedulerService {
 						String jsonMessage = objectMapper.writeValueAsString(message);
 						redisPublisher.publish(fanmeetingId, jsonMessage);
 					}
-					if(currentWaitingQueueSize <= 0){
-						t = 0L;
-						reservationWebSocketHandler.sendMessageToSession(fanmeetingId, 24L, "결제창으로 이동합니다.", "moveToPayment");
-					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -59,7 +50,7 @@ public class ReservationSchedulerService {
 		}
 	}
 
-	@Scheduled(fixedRate = 60000) // 3분마다 실행, 1분으로 수정
+	@Scheduled(fixedRate = 60000) // 1분마다 실행
 	public void checkExpiredPayments() {
 		String pattern = "fanmeeting:*:paying-queue";
 		Set<String> queueKeys = redisTemplateForObject.keys(pattern);

@@ -37,13 +37,11 @@ public class ReservationService {
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		String waitingQueueKey = "fanmeeting:" + fanmeetingId + ":waiting-queue";
 
-		reservationQueueService.addToWaitingQueue(waitingQueueKey, member.getMemberId());
+		if (reservationValidService.isMemberAlreadyInQueue(waitingQueueKey, payingQueueKey, member.getMemberId())) {
+			return null;
+		}
 
-		// if (reservationValidService.isMemberAlreadyInQueue(waitingQueueKey, payingQueueKey, member.getMemberId())) {
-		// 	return null;
-		// }
-
-		// addToQueue(fanmeetingId, member.getMemberId());
+		addToQueue(fanmeetingId, member.getMemberId());
 
 		return ReservationMemberDto.from(member);
 	}
@@ -54,10 +52,10 @@ public class ReservationService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
 
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
-		// if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
-		// 	checkAndMoveQueues(fanmeetingId);
-		// 	throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
-		// }
+		if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
+			checkAndMoveQueues(fanmeetingId);
+			throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+		}
 
 		int remainingTicket = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
 
@@ -74,7 +72,7 @@ public class ReservationService {
 		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
 		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
 
-		//하드코딩 : 1로 수정
+		//큐사이즈 : 2
 		int slotsAvailable = 2 - currentPayingQueueSize.intValue();
 
 		if (slotsAvailable > 0) {
