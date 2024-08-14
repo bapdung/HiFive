@@ -88,7 +88,7 @@ const TimeTableComponent: React.FC<TimeTableProps> = ({
           {/* <p>{timetables[currentSequence - 1]?.detail}</p> */}
         </div>
       )}
-      {isCreator && currentSequence < timetables.length && (
+      {isCreator && currentSequence <= timetables.length && (
         <button
           type="button"
           onClick={nextSequence}
