@@ -146,11 +146,11 @@
   }
 
   .meetingroom-btn-lg {
-    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-600 font-semibold text-medium text-white;
+    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-600 font-semibold text-medium text-white hover:bg-meetingroom-500;
   }
 
   .meetingroom-btn-md {
-    @apply px-4 py-2 rounded-3xl bg-meetingroom-600 font-semibold text-small text-white;
+    @apply px-4 py-2 rounded-3xl bg-meetingroom-600 font-semibold text-small text-white hover:bg-meetingroom-500;
   }
 
   .meetingroom-btn-light-lg {
