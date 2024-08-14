@@ -30,18 +30,22 @@ const WaitingPage: React.FC<WaitingProps> = ({
   timetables,
   onSequenceChange,
 }) => (
-  <div className="bg-meetingroom-600 flex flex-col items-center w-full h-[100vh]">
-    <img src={logo} alt="logo" className="w-[200px] mr-4 my-10" />
-    <TimeTableComponent
-      token={token}
-      mySessionId={mySessionId}
-      timetables={timetables}
-      currentSequence={currentSequence}
-      isCreator={isCreator}
-      setCurrentSequence={setCurrentSequence}
-      onSequenceChange={onSequenceChange}
-    />
-    <p className="text-h3 text-white mb-4">잠시 후 팬미팅이 시작됩니다!</p>
+  <div className="bg-meetingroom-600 flex flex-col items-center w-full h-[100vh] gap-5">
+    <img src={logo} alt="logo" className="w-[180px] mr-4 mt-8" />
+    {isCreator ? (
+      <TimeTableComponent
+        token={token}
+        mySessionId={mySessionId}
+        timetables={timetables}
+        currentSequence={currentSequence}
+        isCreator={isCreator}
+        setCurrentSequence={setCurrentSequence}
+        onSequenceChange={onSequenceChange}
+      />
+    ) : (
+      <p className="text-h5 text-white mb-4">잠시 후 팬미팅이 시작됩니다!</p>
+    )}
+
     <WaitingVideo waitingUrl={waitingUrl} />
 
     <div className="absolute bottom-0 left-0 w-full">
