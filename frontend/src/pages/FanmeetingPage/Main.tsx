@@ -18,10 +18,10 @@ import WaitingPage from "./WaitingPage";
 
 import roomframe from "../../assets/Fanmeeting/roomframe.png";
 
-// const APPLICATION_SERVER_URL =
-// process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
+  process.env.NODE_ENV === "production" ? "" : "https://i11a107.p.ssafy.io/";
+// const APPLICATION_SERVER_URL =
+// process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 interface Timetable {
   categoryName: string;
@@ -357,7 +357,7 @@ export default function Main() {
           const newPublisher = await OV.current.initPublisherAsync(undefined, {
             audioSource: undefined,
             videoSource: undefined,
-            publishAudio: isCreator, // 크리에이터일경우만 마이크 킨 상태로 시작
+            publishAudio: false,
             publishVideo: true,
             resolution: "640x480",
             frameRate: 30,
@@ -505,6 +505,7 @@ export default function Main() {
   // 내 오디오 끄기 함수
   const muteMyAudio = useCallback(() => {
     if (publisher && publisher.stream.audioActive) {
+      console.log(publisher?.stream.audioActive);
       publisher.publishAudio(false);
       setFanAudioStatus((prevStatus) => ({
         ...prevStatus,
@@ -526,31 +527,56 @@ export default function Main() {
     }
   }, [publisher]);
 
+  // 크리에이터가 특정 subscriber의 마이크 상태를 토글하는 함수
   const toggleFanAudio = useCallback(
     (subscriber: Subscriber) => {
       const newAudioStatus = !subscriber.stream.audioActive;
+      console.log(newAudioStatus);
 
-      // 객체 구조를 복사하여 수정
-      const updatedStream = {
-        ...subscriber.stream,
-        audioActive: newAudioStatus,
-      };
-      const updatedSubscriber = { ...subscriber, stream: updatedStream };
+      // 해당 subscriber에게 마이크 상태 변경 신호를 보냄
+      session?.signal({
+        to: [subscriber.stream.connection], // 특정 subscriber에게 신호를 보냄
+        data: JSON.stringify({
+          audioActive: newAudioStatus,
+        }),
+        type: "fanAudioStatus", // 신호 타입
+      });
 
       setFanAudioStatus((prevStatus) => ({
         ...prevStatus,
-        [updatedSubscriber.stream.connection.connectionId]: newAudioStatus,
+        [subscriber.stream.connection.connectionId]: newAudioStatus,
       }));
-      session?.signal({
-        data: JSON.stringify({
-          connectionId: updatedSubscriber.stream.connection.connectionId,
-          audioActive: newAudioStatus,
-        }),
-        type: "audioStatus",
-      });
     },
     [session],
   );
+
+  // subscriber가 신호를 받아 자신의 마이크 상태를 변경하는 로직
+  useEffect(() => {
+    if (!session || !publisher) {
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleAudioStatusSignal = (event: any) => {
+      const { audioActive } = JSON.parse(event.data);
+      console.log(publisher.stream);
+      publisher.publishAudio(audioActive);
+      const { connectionId } = event.from;
+
+      setFanAudioStatus((prevStatus) => ({
+        ...prevStatus,
+        [connectionId]: audioActive,
+      }));
+    };
+    // 신호 수신 이벤트 리스너 등록
+    session.on("signal:fanAudioStatus", handleAudioStatusSignal);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 해제
+    // eslint-disable-next-line consistent-return
+    return () => {
+      session.off("signal:fanAudioStatus", handleAudioStatusSignal);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, publisher]);
 
   const focusOnSubscriber = useCallback(
     (subscriber: Subscriber | Publisher) => {
@@ -646,6 +672,7 @@ export default function Main() {
         if (event.data) {
           console.log("Received closeSession signal:", event.data);
           leaveSession();
+          navigate("result");
         }
       };
       session.on("signal:closeSession", handleSignal);
@@ -762,8 +789,7 @@ export default function Main() {
             ) : (
               <input
                 className={
-                  publisher &&
-                  fanAudioStatus[publisher.stream.connection.connectionId]
+                  publisher && publisher.stream.audioActive
                     ? "btn-md hover:pointer"
                     : "btn-md bg-gray-700 hover:default"
                 }
@@ -771,8 +797,7 @@ export default function Main() {
                 id="buttonToggleAudio"
                 onClick={muteMyAudio}
                 value={
-                  publisher &&
-                  fanAudioStatus[publisher.stream.connection.connectionId]
+                  publisher && publisher.stream.audioActive
                     ? "음소거 하기"
                     : "음소거 중"
                 }
