@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ssafy.hifive.domain.fanmeeting.entity.Fanmeeting;
-import com.ssafy.hifive.domain.photo.entity.Photo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,17 +13,17 @@ import lombok.Getter;
 public class PhotoOverViewDto {
 	private String creatorName;
 	private String title;
-	private LocalDateTime fanmeetingStartDate;
-	private List<String> photoImg;
+	private Long fanmeetingId;
+	private LocalDateTime fanmeetingDate;
+	private List<PhotoUrlDto> photoImg;
 
-	public static PhotoOverViewDto from(Photo photo, Fanmeeting fanmeeting, List<String> photoImg) {
+	public static PhotoOverViewDto from(Fanmeeting fanmeeting, List<PhotoUrlDto> photoImg) {
 		return new PhotoOverViewDto(
 			fanmeeting.getCreator().getName(),
 			fanmeeting.getTitle(),
+			fanmeeting.getFanmeetingId(),
 			fanmeeting.getStartDate(),
 			photoImg
 		);
-
 	}
-
 }
