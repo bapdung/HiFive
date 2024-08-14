@@ -1,3 +1,4 @@
+import ReactPlayer from "react-player";
 // import download from "../../assets/icons/download.png";
 
 type PhotoType = {
@@ -9,7 +10,7 @@ interface PhotoProps {
   photo: PhotoType;
 }
 
-const Photo: React.FC<PhotoProps> = ({ photo }) => {
+const Photo: React.FC<PhotoProps> = ({ photo }) => (
   // const date = photo.fanmeetingStartDate.split("T")[0].replaceAll("-", ". ");
 
   // const handleDownload = async (imgSrc: string) => {
@@ -29,16 +30,28 @@ const Photo: React.FC<PhotoProps> = ({ photo }) => {
   //   } catch (error) {
   //     console.error("다운로드 중 문제 발생 :", error);
   //   }
-  console.log(photo.fanUrl);
-  console.log(photo.creatorUrl);
+  // console.log(photo.fanUrl);
+  // console.log(photo.creatorUrl);
 
-  return (
-    <div className="flex flex-col items-center justify-center mb-10">
-      {/* <video controls autoPlay>
+  <div className="flex items-center">
+    {/* <video controls autoPlay>
         <source src={photo.fanUrl} />
       </video> */}
-      <p>{photo.fanUrl}</p>
-      {/* <div className="text-h5 mb-5">
+    <div className="flex px-4">
+      <ReactPlayer
+        url={photo.fanUrl || ""}
+        width="200px"
+        height="220px"
+        playing
+      />
+      <ReactPlayer
+        url={photo.creatorUrl || ""}
+        width="200px"
+        height="220px"
+        playing
+      />
+    </div>
+    {/* <div className="text-h5 mb-5">
         {date} - [{photo.creatorName}] {photo.title}
       </div>
       <div className="flex w-full justify-between px-10">
@@ -59,8 +72,6 @@ const Photo: React.FC<PhotoProps> = ({ photo }) => {
           </div>
         ))}
       </div> */}
-    </div>
-  );
-};
-
+  </div>
+);
 export default Photo;
