@@ -1,3 +1,4 @@
+import ReactPlayer from "react-player";
 // import download from "../../assets/icons/download.png";
 
 type PhotoType = {
@@ -33,11 +34,18 @@ const Photo: React.FC<PhotoProps> = ({ photo }) => {
   console.log(photo.creatorUrl);
 
   return (
-    <div className="flex flex-col items-center justify-center mb-10">
+    <div className="flex items-center">
       {/* <video controls autoPlay>
         <source src={photo.fanUrl} />
       </video> */}
-      <p>{photo.fanUrl}</p>
+      <div className="flex px-4">
+        <ReactPlayer url={photo.fanUrl || ""} width="200px" height="220px" />
+        <ReactPlayer
+          url={photo.creatorUrl || ""}
+          width="200px"
+          height="220px"
+        />
+      </div>
       {/* <div className="text-h5 mb-5">
         {date} - [{photo.creatorName}] {photo.title}
       </div>
