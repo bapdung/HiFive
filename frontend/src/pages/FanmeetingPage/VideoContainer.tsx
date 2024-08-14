@@ -113,17 +113,19 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
 
   if (timetables[currentSequence - 1]?.categoryName === "포토 타임") {
     return (
-      <>
-        {/* 포토 타임일 경우 */}
-        <TimeTableComponent
-          token={token}
-          mySessionId={mySessionId}
-          timetables={timetables}
-          currentSequence={currentSequence}
-          isCreator={isCreator}
-          setCurrentSequence={setCurrentSequence}
-          onSequenceChange={onSequenceChange}
-        />
+      <div className="flex">
+        <div className="w-[300px] h-[409px] mr-3 bg-white rounded-2xl px-4 py-2 flex flex-col items-center">
+          {/* 포토 타임일 경우 */}
+          <TimeTableComponent
+            token={token}
+            mySessionId={mySessionId}
+            timetables={timetables}
+            currentSequence={currentSequence}
+            isCreator={isCreator}
+            setCurrentSequence={setCurrentSequence}
+            onSequenceChange={onSequenceChange}
+          />
+        </div>
         <PhotoTime
           publisher={publisher}
           subscribers={subscribers}
@@ -136,7 +138,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
           mySessionId={mySessionId}
           session={session}
         />
-      </>
+      </div>
     );
   }
 

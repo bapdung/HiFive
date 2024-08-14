@@ -786,7 +786,7 @@ export default function Main() {
               value="비디오껐다키기"
             />
           </div>
-          <div className="mt-28">
+          <div className="mt-28 z-10">
             <VideoContainer
               session={session}
               publisher={publisher}

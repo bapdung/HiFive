@@ -171,7 +171,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
   });
 
   return (
-    <div className="photo-time-container">
+    <div className="photo-time-container z-10">
       {/* 현재 몇번째 사진 찍는중인지 보여주기 */}
       {photoSequence > 0 && !isPhotoTimeEnd && <p>{photoSequence}/4</p>}
       {isPhotoTimeEnd && <p>포토 타임이 끝났습니다!</p>}
