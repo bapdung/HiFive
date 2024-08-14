@@ -14,8 +14,35 @@ import com.ssafy.hifive.domain.photo.entity.Photo;
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
 	@Query("""
-		select p from Photo p
-		where p.fan.memberId = :memberId
-	""")
+			select p from Photo p
+			where p.fan.memberId = :memberId
+		""")
 	List<Photo> findByFan_MemberId(@Param("memberId") Long memberId, Sort sort);
+
+	@Query(
+		"""
+			select p
+			from Photo p
+			join fetch p.fan
+			join fetch p.fan.creatorProfile
+			join fetch p.fanmeeting
+			where p.fan.memberId = :fanId
+				and p.fanmeeting.fanmeetingId =:fanmeetingId
+			"""
+	)
+	List<Photo> findByFanIdAndFanmeetingId(@Param("fanId") Long fanId,
+		@Param("fanmeetingId") Long fanmeetingId);
+
+	@Query("""
+			select p
+			from Photo p 
+			join fetch p.fan
+			join fetch p.fan.creatorProfile
+			join fetch p.fanmeeting
+			where p.fan.memberId =:memberId
+				and p.fanmeeting.fanmeetingId =:fanmeetingId 
+				
+		""")
+	List<Photo> findCreatorPhotoByFanmeetingIdAndCreatorId(@Param("fanmeetingId") Long fanmeetingId,
+		@Param("memberId") Long memberId);
 }
