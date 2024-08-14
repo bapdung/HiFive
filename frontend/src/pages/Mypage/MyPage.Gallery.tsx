@@ -35,11 +35,23 @@ function Gallery() {
   return (
     <>
       <div className="text-h4 font-semibold py-6">추억 갤러리</div>
-      <div className="flex flex-col bg-page-background w-full items-center">
-        <div className="mt-10 pt-10 w-full mb-10">
+      <div className="flex bg-page-background w-full items-center overflow-x-scroll">
+        <div className="flex px-4 relative">
           {photoList.map((fanmeetingPhoto) =>
-            fanmeetingPhoto.photoImg.map((photo) => (
-              <Photo key={photo.fanUrl} photo={photo} />
+            fanmeetingPhoto.photoImg.map((photo, index) => (
+              <>
+                {index === 0 && (
+                  <p className="absolute px-4">
+                    <span className="text-primary-text">
+                      {fanmeetingPhoto.creatorName
+                        ? fanmeetingPhoto.creatorName
+                        : "크리에이터"}
+                    </span>
+                    &nbsp; 와/과의 팬미팅 추억
+                  </p>
+                )}
+                <Photo key={photo.fanUrl} photo={photo} />
+              </>
             )),
           )}
         </div>
