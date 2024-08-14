@@ -73,7 +73,7 @@ public class ReservationService {
 		Long currentPayingQueueSize = reservationQueueService.getQueueSize(payingQueueKey);
 
 		//하드코딩 : 1로 수정
-		int slotsAvailable = 10 - currentPayingQueueSize.intValue();
+		int slotsAvailable = 2 - currentPayingQueueSize.intValue();
 
 		if (slotsAvailable > 0) {
 			try {
