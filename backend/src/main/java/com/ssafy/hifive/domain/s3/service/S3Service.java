@@ -40,6 +40,7 @@ public class S3Service {
 
 	public String uploadFile(File fileToUpload, String fileName) {
 		try {
+			fileName = "photo/" + fileName;
 			amazonS3.putObject(new PutObjectRequest(bucket, fileName, fileToUpload));
 			return amazonS3.getUrl(bucket, fileName).toString();
 		} catch (Exception e) {
