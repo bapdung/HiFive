@@ -4,30 +4,13 @@ spring:
 
   profiles:
     include: private
+    active: dev
 
   datasource:
     url: jdbc:mysql://${db.host}:${db.port}/${db.database}
     username: ${db.username}
     password: ${db.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    open-in-view: false
-    database: mysql
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-
-  logging:
-    level:
-      root: INFO
-      org.springframework.web: DEBUG
-      com.example: DEBUG
-    file:
-      name: logs/spring-boot-application.log
 
   security:
     oauth2:
@@ -47,7 +30,26 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-
   jwt:
     issuer: ${jwt.issuer}
     secret_key: ${jwt.secret_key}
+
+cloud:
+  s3:
+    bucket: ${aws.bucket}
+  aws:
+    credentials:
+      accessKey: ${aws.accessKey}
+      secretKey: ${aws.secretKey}
+    region:
+      static: ${aws.region}
+    stack:
+      auto: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.example: DEBUG
+  file:
+    name: logs/spring-boot-application.log

@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.hifive.domain.auth.entity.Token;
+import com.ssafy.hifive.domain.auth.repository.TokenRepository;
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.member.service.MemberService;
-import com.ssafy.hifive.domain.token.entity.Token;
-import com.ssafy.hifive.domain.token.repository.TokenRepository;
 import com.ssafy.hifive.global.config.jwt.TokenProvider;
 import com.ssafy.hifive.global.util.CookieUtil;
 
@@ -25,15 +27,16 @@ import lombok.RequiredArgsConstructor;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
-	public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
-	public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(10);
-	public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
-	public static final String REDIRECT_PATH = "/";
+	public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 
 	private final TokenProvider tokenProvider;
 	private final TokenRepository tokenRepository;
 	private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 	private final MemberService memberService;
+	private final ObjectMapper objectMapper;
+
+	@Value("${spring.oauth2.redirect-uri}")
+	private String redirectUri;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -46,26 +49,17 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		saveRefreshToken(member, refreshToken);
 		addRefreshToken(request, response, refreshToken);
 
-		String accessToken = tokenProvider.generateToken(member, ACCESS_TOKEN_DURATION);
-		addAccessToken(response, accessToken);
-
 		clearAuthenticationAttributes(request, response);
 
-		getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
+		getRedirectStrategy().sendRedirect(request, response, redirectUri);
 
-	}
-
-	private void addAccessToken(HttpServletResponse response, String accessToken) {
-		int cookieMaxAge = (int)ACCESS_TOKEN_DURATION.toSeconds();
-
-		CookieUtil.addCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, cookieMaxAge, true, false);
 	}
 
 	private void addRefreshToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
 		int cookieMaxAge = (int)REFRESH_TOKEN_DURATION.toSeconds();
 
 		CookieUtil.deleteCookie(request, response, REFRESH_TOKEN_COOKIE_NAME);
-		CookieUtil.addCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookieMaxAge, true, false);
+		CookieUtil.addCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookieMaxAge, false, false);
 	}
 
 	private void saveRefreshToken(Member member, String newRefreshToken) {
@@ -85,5 +79,4 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 		return (String)kakaoAccount.get("email");
 	}
-
 }

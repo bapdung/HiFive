@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberIdentificationDto {
+public final class MemberIdentificationDto {
 	private String identificationImg;
+	private String name;
 
 	public Member toEntity(Member member) {
 		return Member.builder()
 			.identificationImg(identificationImg)
+			.name(name)
 			.build();
 	}
 }
