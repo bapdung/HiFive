@@ -33,7 +33,7 @@ function FanmeetingInfo({ fanmeeting }: FanmeetingInfoProps) {
         className="w-full h-72 bg-gray-300 rounded-xl bg-cover"
       />
       <div className="flex flex-col items-center mt-2.5 w-full">
-        <h4 className="w-full text-h5 truncate">{title}</h4>
+        <h4 className="w-full text-h5 text-center truncate">{title}</h4>
         <span className="text-h6 text-gray-600">{date}</span>
       </div>
     </div>
