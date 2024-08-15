@@ -98,7 +98,7 @@ function Question() {
   }, [allQuestions, typeOfQuestion, doFilterQuestions]);
   return (
     <div className="flex flex-col w-full items-center">
-      <p className="text-h4 w-1/3 flex justify-around my-10">
+      <p className="text-h5 w-1/3 flex justify-around my-10 ml-4">
         <button
           type="button"
           onClick={() => handleTypeOfQuestion("all")}

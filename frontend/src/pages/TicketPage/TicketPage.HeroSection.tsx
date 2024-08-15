@@ -3,7 +3,7 @@ import waiting from "../../assets/img/waiting.png";
 function HeroSection() {
   return (
     <div className="relative flex flex-col items-center w-full h-[240px] bg-waiting-gradient">
-      <span className="text-h2 text-white font-bold text-center mt-12">
+      <span className="text-h2 text-white font-bold text-center mt-16 leading-tight">
         HiFive 팬미팅 <br /> 전체 예매 페이지
       </span>
       <img

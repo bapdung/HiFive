@@ -43,10 +43,10 @@ const MyFanmeetingItem = forwardRef<HTMLDivElement, MyFanmeetingItemProps>(
         <img
           src={posterImg}
           alt="poster-img"
-          className={isDone ? "rounded-[10px] brightness-50" : "rounded-[10px]"}
+          className={`w-[200px] h-[300px] ${isDone ? "rounded-[10px] brightness-50" : "rounded-[10px]"}`}
         />
 
-        <h1 className="text-h6 mt-1">{title}</h1>
+        <h1 className="text-h6 mt-1 truncate">{title}</h1>
         <h2 className="text-medium text-gray-500">{startDate}</h2>
 
         {check30Minutes() ? (
