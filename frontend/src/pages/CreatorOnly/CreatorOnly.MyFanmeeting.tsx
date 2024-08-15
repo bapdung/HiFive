@@ -34,7 +34,7 @@ function MyFanmeeting() {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="my-10 w-4/5 bg-white p-10 rounded-[25px] flex flex-col items-center">
+      <div className="my-10 w-5/6 bg-white p-10 rounded-[25px] flex flex-col items-center">
         <p className="text-h4 font-semibold">예정된 팬미팅</p>
         <button
           onClick={goCreateFanmeeting}
@@ -45,7 +45,7 @@ function MyFanmeeting() {
         </button>
         <MyFanmeetingPreList userId={userId} />
       </div>
-      <div className="mb-10 w-4/5 bg-white p-10 rounded-[25px] flex flex-col items-center">
+      <div className="mb-10 w-5/6 bg-white p-10 rounded-[25px] flex flex-col items-center">
         <p className="text-h4">종료된 팬미팅</p>
         <div className="flex w-full justify-end">
           <button
