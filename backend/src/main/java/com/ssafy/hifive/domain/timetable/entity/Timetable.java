@@ -16,10 +16,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "timetable")
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Timetable extends BaseTimeEntity {
 
@@ -33,7 +35,7 @@ public class Timetable extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "category_id", nullable = false)
-	private Category categoryId;
+	private Category category;
 
 	@Column(nullable = false)
 	private int sequence;
@@ -42,10 +44,11 @@ public class Timetable extends BaseTimeEntity {
 	private String detailName;
 
 	@Builder
-	private Timetable(Fanmeeting fanmeeting, Category categoryId, Integer sequence, String detailName) {
+	private Timetable(Fanmeeting fanmeeting, Category category, int sequence, String detailName) {
 		this.fanmeeting = fanmeeting;
-		this.categoryId = categoryId;
+		this.category = category;
 		this.sequence = sequence;
 		this.detailName = detailName;
 	}
+
 }

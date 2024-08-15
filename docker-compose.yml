@@ -1,0 +1,90 @@
+services: # container setting info
+  portainer-docker:
+    container_name: portainer-container
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - db-network
+    ports:
+      - "5000:9000"
+
+  mysql-docker:
+    container_name: mysql-container
+    image: mysql:8.0
+    volumes:
+      - db-mysql:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=1q2w3e4r!
+      - MYSQL_USER=hifive
+      - MYSQL_PASSWORD=1q2w3e4r!
+      - MYSQL_DATABASE=hifive
+    networks:
+      - db-network
+    ports:
+      - "3306:3306"
+
+  redis-docker:
+    container_name: redis-container
+    image: redis:7.0
+    ports:
+      - "6380:6379"
+    volumes:
+      - db-redis:/var/lib/redis
+    networks:
+      - db-network
+
+  spring-application:
+    container_name: hifive_spring
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    #    env_file:
+    #      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/hifive
+      SPRING_DATASOURCE_USERNAME: hifive
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r!
+      SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
+    ports:
+      - "5442:8080"
+    networks:
+      - db-network
+      - webnet
+    depends_on:
+      - mysql-docker
+      - redis-docker
+
+  frontend:
+    depends_on:
+      - spring-application
+    container_name: hifive-react
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - webnet
+  
+  ai-server:
+    container_name: hifive_flask
+    build:
+      context: ./ai-server
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    networks:
+      - webnet
+
+volumes:
+  db-mysql:
+  db-redis:
+  portainer_data:
+
+networks:
+  db-network:
+    driver: bridge
+  webnet:

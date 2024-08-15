@@ -1,0 +1,8 @@
+.react-datepicker {
+  display: flex;
+  width: fit-content !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #4fb2ff;
+}

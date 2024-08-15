@@ -35,21 +35,26 @@ public class Question extends BaseTimeEntity {
 	@JoinColumn(name = "fan_id", nullable = false)
 	private Member fan;
 
-	@Column(nullable = false, length = 30)
-	private String problem;
-
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(nullable = false, length = 100)
 	private String content;
 
 	@Column(name = "is_picked", nullable = false)
 	private boolean isPicked;
 
+	public void toggleIsPicked() {
+		this.isPicked = !this.isPicked;
+	}
+
+	public void updateQuestion(String content) {
+		this.content = content;
+	}
+
 	@Builder
-	private Question(Fanmeeting fanmeeting, Member fan, String problem, String content) {
+	private Question(Fanmeeting fanmeeting, Member fan, String content) {
 		this.fanmeeting = fanmeeting;
 		this.fan = fan;
-		this.problem = problem;
 		this.content = content;
 		this.isPicked = false;
 	}
+
 }

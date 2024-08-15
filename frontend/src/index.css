@@ -82,56 +82,260 @@
       format("truetype");
 }
 
+@font-face {
+  font-family: "Jua";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/jua/v16/co3KmW9ljjATdOrY.woff2)
+    format("woff2");
+  unicode-range: U+0000-00FF, U+AC00-D7AF; /* Added full Unicode range for Latin and Hangul */
+}
+
 @layer components {
   .btn-lg {
-    @apply p-[10px_19px] rounded-3xl bg-primary font-semibold text-medium text-white;
+    @apply px-5 py-2.5 rounded-3xl bg-primary font-semibold text-medium text-white;
   }
 
   .btn-md {
-    @apply p-[7px_15px] rounded-3xl bg-primary font-semibold text-small text-white;
+    @apply px-4 py-2 rounded-3xl bg-primary font-semibold text-small text-white;
   }
 
   .btn-light-lg {
-    @apply p-[10px_19px] rounded-3xl bg-primary-300 font-semibold text-medium text-primary-text;
+    @apply px-5 py-2.5 rounded-3xl bg-primary-300 font-semibold text-medium text-primary-text;
   }
 
   .btn-light-md {
-    @apply p-[7px_15px] rounded-3xl bg-primary-300 font-semibold text-small text-primary-text;
+    @apply px-4 py-2 rounded-3xl bg-primary-300 font-semibold text-small text-primary-text;
   }
 
   .btn-outline-lg {
-    @apply p-[10px_19px] rounded-3xl bg-white border-[2px] border-solid border-primary font-semibold text-medium text-primary;
+    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-primary font-semibold text-medium text-primary;
   }
 
   .btn-outline-md {
-    @apply p-[7px_15px] rounded-3xl bg-white border-[2px] border-solid border-primary font-semibold text-small text-primary;
+    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-primary font-semibold text-small text-primary;
   }
 
   .creator-btn-lg {
-    @apply p-[10px_19px] rounded-3xl bg-secondary font-semibold text-medium text-white;
+    @apply px-5 py-2.5 rounded-3xl bg-secondary font-semibold text-medium text-white;
   }
 
   .creator-btn-md {
-    @apply p-[7px_15px] rounded-3xl bg-secondary font-semibold text-small text-white;
+    @apply px-4 py-2 rounded-3xl bg-secondary font-semibold text-small text-white;
   }
 
   .creator-btn-light-lg {
-    @apply p-[10px_19px] rounded-3xl bg-secondary-300 font-semibold text-medium text-secondary;
+    @apply px-5 py-2.5 rounded-3xl bg-secondary-300 font-semibold text-medium text-secondary;
   }
 
   .creator-btn-light-md {
-    @apply p-[7px_15px] rounded-3xl bg-secondary-300 font-semibold text-small text-secondary;
+    @apply px-4 py-2 rounded-3xl bg-secondary-300 font-semibold text-small text-secondary;
   }
 
   .creator-btn-outline-lg {
-    @apply p-[10px_19px] rounded-3xl bg-white border-[2px] border-solid border-secondary font-semibold text-medium text-secondary;
+    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-secondary font-semibold text-medium text-secondary;
   }
 
   .creator-btn-outline-md {
-    @apply p-[7px_15px] rounded-3xl bg-white border-[2px] border-solid border-secondary font-semibold text-small text-secondary;
+    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-secondary font-semibold text-small text-secondary;
+  }
+
+  .btn-gray {
+    @apply px-4 py-2 rounded-3xl bg-gray-300 border-solid font-semibold text-small text-black;
+  }
+
+  .meetingroom-btn-lg {
+    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-600 font-semibold text-medium text-white hover:bg-meetingroom-500;
+  }
+
+  .meetingroom-btn-md {
+    @apply px-4 py-2 rounded-3xl bg-meetingroom-600 font-semibold text-small text-white hover:bg-meetingroom-500;
+  }
+
+  .meetingroom-btn-light-lg {
+    @apply px-5 py-2.5 rounded-3xl bg-meetingroom-200 font-semibold text-medium text-meetingroom-800 hover:bg-meetingroom-300;
+  }
+
+  .meetingroom-btn-light-md {
+    @apply px-4 py-2 rounded-3xl bg-meetingroom-200 font-semibold text-small text-meetingroom-800 hover:bg-meetingroom-300;
+  }
+
+  .meetingroom-btn-outline-lg {
+    @apply px-5 py-2.5 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-medium text-meetingroom-800 hover:bg-meetingroom-200;
+  }
+
+  .meetingroom-btn-outline-md {
+    @apply px-4 py-2 rounded-3xl bg-white border-2 border-solid border-meetingroom-600 font-semibold text-small text-meetingroom-800 hover:bg-meetingroom-200;
   }
 }
 
 * {
   font-family: "Pretendard";
+  color: #333333;
+}
+
+body {
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+main {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-grow: 1;
+}
+
+@layer utilities {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* 스크롤바의 너비 */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #A28BAD; /* 스크롤바의 색상 */
+    border-radius: 10px; /* 스크롤바의 둥근 모서리 */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #F0EDF1; /* 스크롤바 트랙의 색상 */
+    border-radius: 10px; /* 트랙의 둥근 모서리 */
+  }
+}
+.lds-ring {
+  color: #e55883;
+}
+.lds-ring,
+.lds-ring div {
+  box-sizing: border-box;
+}
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #e55883;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #e55883 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.shake-bottom {
+  -webkit-animation: shake-bottom 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+    infinite both;
+  animation: shake-bottom 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite
+    both;
+}
+
+@-webkit-keyframes shake-bottom {
+  0%,
+  100% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+  }
+  10% {
+    -webkit-transform: rotate(2deg);
+    transform: rotate(2deg);
+  }
+  20%,
+  40%,
+  60% {
+    -webkit-transform: rotate(-4deg);
+    transform: rotate(-4deg);
+  }
+  30%,
+  50%,
+  70% {
+    -webkit-transform: rotate(4deg);
+    transform: rotate(4deg);
+  }
+  80% {
+    -webkit-transform: rotate(-2deg);
+    transform: rotate(-2deg);
+  }
+  90% {
+    -webkit-transform: rotate(2deg);
+    transform: rotate(2deg);
+  }
+}
+@keyframes shake-bottom {
+  0%,
+  100% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+  }
+  10% {
+    -webkit-transform: rotate(2deg);
+    transform: rotate(2deg);
+  }
+  20%,
+  40%,
+  60% {
+    -webkit-transform: rotate(-4deg);
+    transform: rotate(-4deg);
+  }
+  30%,
+  50%,
+  70% {
+    -webkit-transform: rotate(4deg);
+    transform: rotate(4deg);
+  }
+  80% {
+    -webkit-transform: rotate(-2deg);
+    transform: rotate(-2deg);
+  }
+  90% {
+    -webkit-transform: rotate(2deg);
+    transform: rotate(2deg);
+  }
 }

@@ -333,10 +333,13 @@ gradle-app.setting
 # Ignore redis binary dump (dump.rdb) files
 
 *.rdb
-application-private.yml
-
+application.yml
 *.xml
 *.iml
 *.name
+
+src/main/resources/static/*
+
+**/generated
 
 # End of https://www.toptal.com/developers/gitignore/api/redis

@@ -1,14 +1,17 @@
 package com.ssafy.hifive.domain.member.entity;
 
+import com.ssafy.hifive.domain.creator.entity.Creator;
 import com.ssafy.hifive.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -52,6 +55,9 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "identification_img")
 	private String identificationImg;
 
+	@OneToOne(mappedBy = "creator", fetch = FetchType.LAZY)
+	private Creator creatorProfile;
+
 	@Builder
 	private Member(String profileImg, boolean isCreator, String name, String nickname, String email,
 		OauthServerType oAuthServer, String identificationImg) {
@@ -67,9 +73,26 @@ public class Member extends BaseTimeEntity {
 
 	}
 
-	public void update(String nickname, String profileImg) {
-		this.nickname = nickname;
+	public void updateMember(String profileImg, String nickname) {
 		this.profileImg = profileImg;
+		this.nickname = nickname;
+	}
+
+	public void updatePoint(int point) {
+		this.point = point;
+	}
+
+	public void updateIdentification(String identificationImg, String name) {
+		this.identificationImg = identificationImg;
+		this.name = name;
+	}
+
+	public void deleteMember() {
+		this.isDeleted = true;
+	}
+
+	public String toString() {
+		return memberId + " " + nickname + " " + profileImg;
 	}
 
 }
