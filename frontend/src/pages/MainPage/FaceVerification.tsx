@@ -87,7 +87,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({
 
             setLoading(false);
             if (response.data.error) {
-              setResult(`Error: ${response.data.error}`);
+              setResult(`${response.data.error}`);
             } else if (response.data.verified) {
               onSuccess();
             } else {
