@@ -38,7 +38,7 @@ const MyFanmeetingItem = forwardRef<HTMLDivElement, MyFanmeetingItemProps>(
     return (
       <div
         ref={ref}
-        className="w-[18%] flex flex-col items-center m-3 flex-shrink-0"
+        className="w-[18%] flex flex-col items-center flex-shrink-0"
       >
         <img
           src={posterImg}
