@@ -114,22 +114,24 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
   }, [fetchFanmeetings, isEnd]);
 
   return (
-    <div className="w-full flex flex-wrap">
+    <div className="w-full flex flex-col items-center">
       {fanmeetings.length === 0 && !isLoading ? (
         <p className="mr-auto ml-auto text-xl my-5 text-gray-500">
           종료된 팬미팅이 없습니다.
         </p>
       ) : null}
-      {fanmeetings.map((fanmeeting) => (
-        <MyFanmeetingItem
-          key={fanmeeting.fanmeetingId}
-          isDone
-          fanmeetingId={fanmeeting.fanmeetingId}
-          title={fanmeeting.title}
-          posterImg={fanmeeting.posterImg}
-          startDate={formatDate(fanmeeting.startDate)}
-        />
-      ))}
+      <div className="max-w-[1200px] grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-6 my-10">
+        {fanmeetings.map((fanmeeting) => (
+          <MyFanmeetingItem
+            key={fanmeeting.fanmeetingId}
+            isDone
+            fanmeetingId={fanmeeting.fanmeetingId}
+            title={fanmeeting.title}
+            posterImg={fanmeeting.posterImg}
+            startDate={formatDate(fanmeeting.startDate)}
+          />
+        ))}
+      </div>
       {isLoading && <div>Loading...</div>}
     </div>
   );
