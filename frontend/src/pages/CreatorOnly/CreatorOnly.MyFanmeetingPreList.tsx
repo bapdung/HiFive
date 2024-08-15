@@ -49,23 +49,22 @@ const MyFanmeetingPreList: React.FC<MyFanmeetingPreListProps> = ({
 
   return (
     <div className="w-full overflow-x-auto py-4">
-      <div className="flex flex-wrap space-x-4 justify-between">
+      <div className="flex flex-nowrap space-x-4">
         {prevFanmeetings.length === 0 ? (
           <p className="text-xl text-gray-500 mr-auto ml-auto my-5">
             생성한 팬미팅이 없습니다.
           </p>
         ) : null}
         {prevFanmeetings.map((fanmeeting) => (
-          <div key={fanmeeting.fanmeetingId} className="w-[19%] flex-shrink-0">
-            <MyFanmeetingItem
-              title={fanmeeting.title}
-              fanmeetingId={fanmeeting.fanmeetingId}
-              posterImg={fanmeeting.posterImg}
-              startDate={formatDate(fanmeeting.startDate)}
-              realStartDate={fanmeeting.startDate}
-              isDone={false}
-            />
-          </div>
+          <MyFanmeetingItem
+            key={fanmeeting.fanmeetingId}
+            title={fanmeeting.title}
+            fanmeetingId={fanmeeting.fanmeetingId}
+            posterImg={fanmeeting.posterImg}
+            startDate={formatDate(fanmeeting.startDate)}
+            realStartDate={fanmeeting.startDate}
+            isDone={false}
+          />
         ))}
       </div>
     </div>
