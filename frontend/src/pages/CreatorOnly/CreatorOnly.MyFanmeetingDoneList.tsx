@@ -120,7 +120,7 @@ const MyFanmeetingDoneList: React.FC<MyFanmeetingDoneListProps> = ({
           종료된 팬미팅이 없습니다.
         </p>
       ) : null}
-      <div className="max-w-[1200px] grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-6 my-10">
+      <div className="max-w-[1200px] grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-6 gap-x-3 my-10">
         {fanmeetings.map((fanmeeting) => (
           <MyFanmeetingItem
             key={fanmeeting.fanmeetingId}
