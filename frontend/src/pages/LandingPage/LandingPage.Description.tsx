@@ -1,4 +1,4 @@
-import Meetup from "../../assets/img/description1.svg";
+import Meetup from "../../assets/img/meeting.svg";
 import Creatorfeed from "../../assets/img/description2.svg";
 
 const Description = () => (

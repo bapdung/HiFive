@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import Ticketing from "../../assets/icons/ticketing.png";
+import Ticketing from "../../assets/img/sc_meetinglist.png";
 
 function TicketingShortcut() {
   return (
     <Link to="/ticket">
       <div className="flex flex-col justify-center items-center bg-white rounded-3xl gap-5 w-[580px] h-[200px] shadow-lg">
         <img src={Ticketing} alt="Ticketing" />
-        <span className="text-h5 font-semibold text-gray-900">
+        <span className="text-h6 font-semibold text-gray-900">
           예매 가능한 팬미팅 찾아보기
         </span>
       </div>
