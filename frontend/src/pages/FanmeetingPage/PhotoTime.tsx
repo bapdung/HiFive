@@ -204,12 +204,12 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               </div>
             )}
           </div>
-          <div className="flex justify-center gap-4 mt-5">
+          <div className="flex justify-center gap-2 mt-2">
             {showShootButton && !isPhotoTimeEnd && photoSequence === 0 && (
               <button
                 type="button"
                 onClick={startPhoto}
-                className="meetingroom-btn-lg"
+                className="meetingroom-btn-md"
               >
                 촬영 시작
               </button>
@@ -218,7 +218,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               <button
                 type="button"
                 onClick={stopPhotoApi}
-                className="meetingroom-btn-light-lg"
+                className="meetingroom-btn-light-md"
               >
                 한컷 중지
               </button>
@@ -230,7 +230,7 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
                 <button
                   type="button"
                   onClick={startPhoto}
-                  className="meetingroom-btn-outline-lg"
+                  className="meetingroom-btn-outline-md"
                 >
                   다음 사진
                 </button>
@@ -239,31 +239,34 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
               <button
                 type="button"
                 onClick={stopPhoto}
-                className="meetingroom-btn-lg"
+                className="meetingroom-btn-md"
               >
                 촬영 마무리
               </button>
             )}
           </div>
+
           {/* 현재 몇번째 사진 찍는중인지 보여주기 */}
-          <div className="flex flex-col justify-center gap-4 ">
+          <div className="flex justify-center items-center gap-4 leading-none mt-1 ">
             {photoSequence > 0 && !isPhotoTimeEnd && (
               <p className="text-h5 font-semibold text-meetingroom-800 p-2">
                 {photoSequence}/4번째 사진
               </p>
             )}
             {isPhotoTimeEnd && (
-              <p className="text-meetingroom-800 p-2">
+              <p className="text-meetingroom-800 p-2 font-semibold">
                 포토 타임이 끝났습니다!
               </p>
             )}
             {timer && (
-              <p className="text-h6 font-semibold bg-meetingroom-200 text-meetingroom-800 px-4 py-2 rounded-full">
+              <p className="text-h6 font-semibold border-2 border-meetingroom-600 text-meetingroom-800 px-2 py-1 leading-tight rounded-full">
                 {timer}
               </p>
             )}
             {showShutterMessage && (
-              <p className="text-h6 text-meetingroom-800 p-2">찰칵!</p>
+              <p className="text-h6 text-meetingroom-800 p-2 font-semibold">
+                찰칵!
+              </p>
             )}
           </div>
         </div>
@@ -306,25 +309,28 @@ const PhotoTime: React.FC<PhotoTimeProps> = ({
                 </div>
               )}
             </div>
+
             {/* 현재 몇번째 사진 찍는중인지 보여주기 */}
-            <div className="flex flex-col justify-center gap-4 ">
+            <div className="flex justify-center items-center gap-4 leading-none mt-6 ">
               {photoSequence > 0 && !isPhotoTimeEnd && (
                 <p className="text-h5 font-semibold text-meetingroom-800 p-2">
                   {photoSequence}/4번째 사진
                 </p>
               )}
               {isPhotoTimeEnd && (
-                <p className="text-meetingroom-800 p-2">
+                <p className="text-meetingroom-800 p-2 font-semibold">
                   포토 타임이 끝났습니다!
                 </p>
               )}
               {timer && (
-                <p className="text-h6 font-semibold bg-meetingroom-200 text-meetingroom-800 px-4 py-2 rounded-full">
+                <p className="text-h6 font-semibold border-2 border-meetingroom-600 text-meetingroom-800 px-2 py-1 leading-tight rounded-full">
                   {timer}
                 </p>
               )}
               {showShutterMessage && (
-                <p className="text-h6 text-meetingroom-800 p-2">찰칵!</p>
+                <p className="text-h6 text-meetingroom-800 p-2 font-semibold">
+                  찰칵!
+                </p>
               )}
             </div>
           </div>

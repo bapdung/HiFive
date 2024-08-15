@@ -48,7 +48,7 @@ function Settings() {
         ) : null}
 
         <div className="w-screen bg-white py-8 flex flex-col items-center">
-          <p className="w-[40%] mb-5 flex justify-around text-h3 text-gray-700">
+          <p className="w-[40%] mb-5 flex justify-around text-h4 text-gray-700">
             <button
               type="button"
               onClick={() => handleLocation("question")}
@@ -68,10 +68,10 @@ function Settings() {
               onClick={() => handleLocation("quiz")}
               className={currentPath === "quiz" ? "text-secondary" : ""}
             >
-              O/X 퀴즈 관리
+              O/X 퀴즈
             </button>
           </p>
-          <div className="rounded-lg bg-page-background text-gray-700 text-large px-8 py-5 text-center">
+          <div className="rounded-lg bg-page-background text-gray-700 text-medium px-8 py-5 text-center">
             {currentPath === "question" ? (
               <>
                 <p>팬분들이 남겨주신 질문 목록입니다!</p>

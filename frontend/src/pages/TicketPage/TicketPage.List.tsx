@@ -103,11 +103,11 @@ function MeetingList() {
           role="presentation"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-6 my-10">
+      <div className="max-w-[1200px] grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-6 my-10">
         {fanMeetings.map((meeting) => (
           <div
             key={meeting.fanmeetingId}
-            className="flex flex-col p-4 items-center hover:cursor-pointer transform transition-transform duration-300 hover:translate-y-2"
+            className="flex flex-col p-4 items-center justify-center hover:cursor-pointer transform transition-transform duration-300 hover:translate-y-2"
             onClick={() => navigate(`/ticket/${meeting.fanmeetingId}`)}
             role="presentation"
           >
@@ -116,7 +116,7 @@ function MeetingList() {
               alt={meeting.title}
               className="w-[200px] h-[280px] min-w-44 object-cover rounded-lg"
             />
-            <span className="mt-2 text-h6 font-bold text-gray-900 truncate w-full">
+            <span className="mt-2 text-h6 font-bold text-gray-900 truncate w-[200px] text-center">
               {meeting.title}
             </span>
             <p className="text-gray-600">{formatDate(meeting.startDate)}</p>

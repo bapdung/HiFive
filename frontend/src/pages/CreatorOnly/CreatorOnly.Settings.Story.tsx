@@ -91,11 +91,11 @@ function Story() {
 
   return (
     <div className="flex flex-col w-full items-center">
-      <p className="text-h4 w-1/3 flex justify-around my-10">
+      <p className="text-h5 w-1/3 flex justify-around my-10 ml-4">
         <button
           type="button"
           onClick={() => handleTypeOfStory("all")}
-          className="text-gray-900"
+          className={typeOfStory === "all" ? "text-gray-900" : "text-gray-500"}
         >
           전체 사연
         </button>{" "}
