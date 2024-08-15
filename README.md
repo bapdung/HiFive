@@ -295,7 +295,7 @@
 
 # <img src="img/right1.png" alt="HiFive Logo" width="40" /> 팀원소개
 
-| <img src="./img/혁진.jpg" width="100%" height="100"> | <img src="./img/민서.jpg" width="100%" height="100"> | <img src="./img/지흔.jpg" width="100%" height="100"> | <img src="./img/서희.jpg" width="100%" height="100"> | <img src="./img/민채.jpg" width="100%" height="100"> | <img src="./img/민서.jpg" width="100%" height="100"> |
+| <img src="./img/혁진.jpg" width="100%" height="100"> | <img src="./img/민서.jpg" width="100%" height="100"> | <img src="./img/지흔.jpg" width="100%" height="100"> | <img src="./img/서희.jpg" width="100%" height="100"> | <img src="./img/민채.jpg" width="100%" height="100"> | <img src="./img/원우.jpg" width="100%" height="100"> |
 | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: |
 |                        김혁진                        |                        강민서                        |                        서지흔                        |                         서희                         |                        김민채                        |                        조원우                        |
 |                     Backend 팀장                     |                       Backend                        |                       Backend                        |                    Frontend 팀장                     |                       Frontend                       |                       Frontend                       |
