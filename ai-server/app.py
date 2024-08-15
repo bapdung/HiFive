@@ -56,7 +56,7 @@ def verify_face():
     aligned_id_image = align_face(id_image)
 
     if aligned_user_image is None or aligned_id_image is None:
-        return jsonify({"error": "Face not detected"}), 400
+        return jsonify({"error": "얼굴을 인식할 수 없습니다. 신분증을 확인해 주세요"}), 422
 
     result = DeepFace.verify(aligned_user_image, aligned_id_image, model_name='ArcFace', detector_backend='retinaface')
 
