@@ -36,10 +36,7 @@ const MyFanmeetingItem = forwardRef<HTMLDivElement, MyFanmeetingItemProps>(
       return diffTime > 0 && diffTime <= standardTime;
     };
     return (
-      <div
-        ref={ref}
-        className="w-[18%] flex flex-col items-center flex-shrink-0"
-      >
+      <div ref={ref} className="flex flex-col items-center flex-shrink-0">
         <img
           src={posterImg}
           alt="poster-img"
