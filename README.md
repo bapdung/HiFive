@@ -19,7 +19,7 @@
 
 <br >
 
-### 1. 로고
+### 1. 로고 및 캐릭터
 
 ![alt text](img/Logo.png)
 
@@ -28,6 +28,11 @@
   - Secondary : <span style="background-color: #4FB2FF; color: white;">#4FB2FF</span>
 - 서비스 이용자를 크리에이터와 팬으로 분리하여 고려
 - 크리에이터만 접속 가능한 팬미팅 관리 페이지는 <span style="background-color: #4FB2FF; color: white;">Secondary</span> 로 표현하여 사용자가 관리 페이지임을 명확히 인식할 수 있도록 함
+
+![alt text](img/birds.png)
+
+- 로고를 구성하는 요소의 형태에서 새의 날개를 떠올려 이를 기반으로 캐릭터 형태 구상
+- 팬들의 다양한 성향과 성격을 나타내기 위해 총 5종류의 캐릭터 제작
 
 ### 2. 서비스 목적
 
