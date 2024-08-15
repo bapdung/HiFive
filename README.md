@@ -98,8 +98,10 @@
 | ------------------------------------------------ | ----------------------------------------------------- |
 | ![Description of the image](./img/API명세서.gif) | ![Description of the image](./img/요구사항정의서.gif) |
 | 📃 API 명세서(Swagger)                           | 🌞 요구사항정의서                                     |
-| ![Description of the image](./img/피그마.gif)    |                                                       |
-| 🎨 피그마                                        |
+| ![Description of the image](./img/피그마.gif)    | ![Description of the image](./img/피그마디자인가이드.gif)   |
+| 🎨 피그마                                        | 🎨 피그마 - 디자인 가이드                                |
+| ![Description of the image](./img/피그마로고깎기.gif)    | ![Description of the image](./img/피그마캐릭터.gif)   |
+| 🎨 피그마 - 로고 디자인                          | 🎨 피그마 - 캐릭터 디자인                                |
 
 ### 🔧 ERD
 
@@ -396,7 +398,7 @@
 
 # <img src="img/right1.png" alt="HiFive Logo" width="40" /> 팀원소개
 
-| <img src="./img/혁진.jpg" width="100%" height="100"> | <img src="./img/민서.jpg" width="100%" height="100"> | <img src="./img/지흔.jpg" width="100%" height="100"> | <img src="./img/서희.jpg" width="100%" height="100"> | <img src="./img/민채.jpg" width="100%" height="100"> | <img src="./img/민서.jpg" width="100%" height="100"> |
+| <img src="./img/혁진.jpg" width="100%" height="100"> | <img src="./img/민서.jpg" width="100%" height="100"> | <img src="./img/지흔.jpg" width="100%" height="100"> | <img src="./img/서희.jpg" width="100%" height="100"> | <img src="./img/민채.jpg" width="100%" height="100"> | <img src="./img/원우.jpg" width="100%" height="100"> |
 | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: |
 |                        김혁진                        |                        강민서                        |                        서지흔                        |                         서희                         |                        김민채                        |                        조원우                        |
 |                     Backend 팀장                     |                       Backend                        |                       Backend                        |                    Frontend 팀장                     |                       Frontend                       |                       Frontend                       |

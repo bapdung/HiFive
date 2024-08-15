@@ -217,7 +217,7 @@ const VideoContainer: React.FC<VideoContainerProps> = ({
                     >
                       <div className="relative w-[256px] h-[256px] mt-4">
                         <img
-                          src={getRandomFrame()}
+                          src={frame1}
                           alt="frame"
                           className="w-full h-full"
                         />

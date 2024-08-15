@@ -105,7 +105,7 @@ export default {
       animation: {
         "slide-in": "slide-in 0.5s forwards",
         "slide-out": "slide-out 0.5s forwards",
-        scroll: "scroll 60s linear infinite",
+        scroll: "scroll 120s linear infinite",
       },
       minHeight: {
         "screen-with-footer": "calc(100vh + 144px)",
