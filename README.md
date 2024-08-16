@@ -59,6 +59,10 @@
 
 [![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1723632215488?alt=media&token=20bc5978-d3b0-4065-9218-21ee628bae50)](https://github.com/msdio/stackticon)
 
+### 6. UCC
+
+<iframe width="956" height="538" src="https://www.youtube.com/embed/25wbb9hVTLo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 <div id="2"></div>
 
 # <img src="img/right3.png" alt="HiFive Logo" width="40" /> 서비스 화면
@@ -99,14 +103,14 @@
 
 # <img src="img/right5.png" alt="HiFive Logo" width="40" /> 프로젝트 산출물
 
-|                                                  |                                                       |
-| ------------------------------------------------ | ----------------------------------------------------- |
-| ![Description of the image](./img/API명세서.gif) | ![Description of the image](./img/요구사항정의서.gif) |
-| 📃 API 명세서(Swagger)                           | 🌞 요구사항정의서                                     |
-| ![Description of the image](./img/피그마.gif)    | ![Description of the image](./img/피그마디자인가이드.gif)   |
-| 🎨 피그마                                        | 🎨 피그마 - 디자인 가이드                                |
-| ![Description of the image](./img/피그마로고깎기.gif)    | ![Description of the image](./img/피그마캐릭터.gif)   |
-| 🎨 피그마 - 로고 디자인                          | 🎨 피그마 - 캐릭터 디자인                                |
+|                                                       |                                                           |
+| ----------------------------------------------------- | --------------------------------------------------------- |
+| ![Description of the image](./img/API명세서.gif)      | ![Description of the image](./img/요구사항정의서.gif)     |
+| 📃 API 명세서(Swagger)                                | 🌞 요구사항정의서                                         |
+| ![Description of the image](./img/피그마.gif)         | ![Description of the image](./img/피그마디자인가이드.gif) |
+| 🎨 피그마                                             | 🎨 피그마 - 디자인 가이드                                 |
+| ![Description of the image](./img/피그마로고깎기.gif) | ![Description of the image](./img/피그마캐릭터.gif)       |
+| 🎨 피그마 - 로고 디자인                               | 🎨 피그마 - 캐릭터 디자인                                 |
 
 ### 🔧 ERD
 
@@ -402,8 +406,8 @@
 
 # <img src="img/right1.png" alt="HiFive Logo" width="40" /> 팀원소개
 
-| <img src="./img/혁진.jpg" width="100%" height="100"> | <img src="./img/민서.jpg" width="100%" height="100"> | <img src="./img/지흔.jpg" width="100%" height="100"> | <img src="./img/서희.jpg" width="100%" height="100"> | <img src="./img/민채.jpg" width="100%" height="100"> | <img src="./img/원우.jpg" width="100%" height="100"> |
-| :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: |
-|                        김혁진                        |                        강민서                        |                        서지흔                        |                         서희                         |                        김민채                        |                        조원우                        |
-|                     Backend 팀장                     |                       Backend                        |                       Backend                        |                    Frontend 팀장                     |                       Frontend                       |                       Frontend                       |
-|                인프라, CI/CD DB <br>                 |                   API 설계 및 구현                   |                   API 설계 및 구현                   |                        UI/UX                         |                        UI/UX                         |                        UI/UX                         |
+|       <img src="./img/혁진.jpg" width="100%" height="100">       |             <img src="./img/민서.jpg" width="100%" height="100">             |    <img src="./img/지흔.jpg" width="100%" height="100">    |        <img src="./img/서희.jpg" width="100%" height="100">        |      <img src="./img/민채.jpg" width="100%" height="100">      |                 <img src="./img/원우.jpg" width="100%" height="100">                  |
+| :--------------------------------------------------------------: | :--------------------------------------------------------------------------: | :--------------------------------------------------------: | :----------------------------------------------------------------: | :------------------------------------------------------------: | :-----------------------------------------------------------------------------------: |
+|                              김혁진                              |                                    강민서                                    |                           서지흔                           |                                서희                                |                             김민채                             |                                        조원우                                         |
+|                           Backend 팀장                           |                                   Backend                                    |                          Backend                           |                           Frontend 팀장                            |                            Frontend                            |                                       Frontend                                        |
+| 기획, DB설계, Infra,<br> CI/CD, API 구현 <br>(포토 타임, 게시판) | 기획, DB설계, <br> Security 로그인, <br> 신분증 유사도 AI 구현,<br> API 구현 | 기획, DB설계,<br> 티켓팅 로직 구현,<br> API 구현, UCC 담당 | 기획, figma 작성,<br> 소셜 로그인 연동,<br> 화면 구현 및  API 연동 | 기획, figma 작성, <br> WebRTC 구현, <br> 화면 구현 및 API 연동 | 기획, 디자인 총괄, <br> 디자인 가이드 제작, <br> 화면 구현 및 API 연동, <br> 퍼블리싱 |
