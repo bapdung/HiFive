@@ -61,7 +61,7 @@
 
 ### 6. UCC
 
-<iframe width="956" height="538" src="https://www.youtube.com/embed/25wbb9hVTLo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="1156" height="650" src="https://www.youtube.com/embed/25wbb9hVTLo" title="HiFiveUCC_SSAFY_A107_개로로" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 <div id="2"></div>
 
