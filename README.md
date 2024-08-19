@@ -63,8 +63,6 @@
 
 [![YouTube](https://img.youtube.com/vi/25wbb9hVTLo/0.jpg)](https://www.youtube.com/watch?v=25wbb9hVTLo)
 
-
-
 <div id="2"></div>
 
 # <img src="img/right3.png" alt="HiFive Logo" width="40" /> 서비스 화면
@@ -89,6 +87,8 @@
 | 🎶 공연 세션                                                  | 💌 사연 세션                                            |
 | ![Description of the image](./img/QnA.gif)                    | ![Description of the image](./img/엔딩.gif)             |
 | ❓ QnA 세션                                                   | 💛 엔딩                                                 |
+| ![Description of the image](./img/[팬]티켓팅.gif)             |                                                         |
+| 🎫 티켓팅                                                     |                                                         |
 
 #### 2. 크리에이터 화면
 
