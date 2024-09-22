@@ -1,5 +1,9 @@
 package com.ssafy.hifive.domain.reservation.service;
 
+import java.util.concurrent.TimeUnit;
+
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
+	private final RedissonClient redissonClient;
 	private final FanmeetingRepository fanmeetingRepository;
 	private final ReservationFanmeetingPayService reservationFanmeetingPayService;
 	private final ReservationQueueService reservationQueueService;
@@ -48,23 +53,33 @@ public class ReservationService {
 
 	@Transactional
 	public void pay(long fanmeetingId, Member member) {
-		Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
+		String lockKey = "fanmeeting:" + fanmeetingId + ":lock";
+		RLock lock = redissonClient.getLock(lockKey);
 
-		String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
-		if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
-			checkAndMoveQueues(fanmeetingId);
-			throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+		try{
+			if(lock.tryLock(20, 60, TimeUnit.SECONDS)){
+				Fanmeeting fanmeeting = fanmeetingRepository.findById(fanmeetingId)
+					.orElseThrow(() -> new DataNotFoundException(ErrorCode.FANMEETING_NOT_FOUND));
+
+				String payingQueueKey = "fanmeeting:" + fanmeetingId + ":paying-queue";
+				if (reservationValidService.isPaymentSessionExpired(payingQueueKey, member.getMemberId())) {
+					checkAndMoveQueues(fanmeetingId);
+					throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+				}
+
+				int remainingTicket = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
+
+
+				reservationFanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
+
+				reservationFanmeetingPayService.recordReservation(fanmeeting, member);
+
+				reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
+				checkAndMoveQueues(fanmeetingId);
+			} else {
+				throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+			}
 		}
-
-		int remainingTicket = reservationFanmeetingPayService.checkRemainingTicket(fanmeeting);
-
-		reservationFanmeetingPayService.payTicket(fanmeeting, member, remainingTicket);
-
-		reservationFanmeetingPayService.recordReservation(fanmeeting, member);
-
-		reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
-		checkAndMoveQueues(fanmeetingId);
 	}
 
 	private void checkAndMoveQueues(long fanmeetingId) {
