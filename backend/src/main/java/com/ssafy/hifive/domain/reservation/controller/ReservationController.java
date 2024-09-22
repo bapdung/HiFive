@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hifive.domain.member.entity.Member;
 import com.ssafy.hifive.domain.reservation.dto.response.ReservationMemberDto;
+import com.ssafy.hifive.domain.reservation.service.ReservationLockFacadeService;
 import com.ssafy.hifive.domain.reservation.service.ReservationService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "reservation", description = "팬미팅 예약 관련 API")
 public class ReservationController {
 	private final ReservationService reservationService;
+	private final ReservationLockFacadeService reservationLockFacadeService;
 
 	@Operation(summary = "팬미팅 예약", description = "특정 팬미팅을 예약한다.")
 	@ApiResponse(responseCode = "401", description = "사용자 인증이 올바르지 않음",
@@ -47,7 +49,7 @@ public class ReservationController {
 	@PostMapping(path = "/{fanmeetingId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> pay(@PathVariable long fanmeetingId,
 		@AuthenticationPrincipal Member member) {
-		reservationService.pay(fanmeetingId, member);
+		reservationLockFacadeService.pay(fanmeetingId, member);
 		return ResponseEntity.ok().build();
 	}
 }
