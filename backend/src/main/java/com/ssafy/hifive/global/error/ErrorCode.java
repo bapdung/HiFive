@@ -75,6 +75,7 @@ public enum ErrorCode {
 	TICKET_SOLD_OUT(BAD_REQUEST, "RESERVATION-004", "티켓이 매진되었습니다."),
 	PAYMENT_SESSION_EXPIRED(BAD_REQUEST, "RESERVATION-005", "결제 시간이 만료되었습니다."),
 	ENTER_NOT_ALLOWED(FORBIDDEN, "RESERVATION-006", "해당 팬미팅을 결제한 사람만 입장할 수 있습니다."),
+	NOT_ACQUIRE_LOCK(REQUEST_TIMEOUT, "RESERVATION-007", "락을 획득하는데 실패하였습니다."),
 
 	/**
 	 * Category

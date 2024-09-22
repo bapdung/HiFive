@@ -77,7 +77,14 @@ public class ReservationService {
 				reservationQueueService.removeFromPayingQueue(payingQueueKey, member.getMemberId());
 				checkAndMoveQueues(fanmeetingId);
 			} else {
-				throw new BadRequestException(ErrorCode.PAYMENT_SESSION_EXPIRED);
+				throw new BadRequestException(ErrorCode.NOT_ACQUIRE_LOCK);
+			}
+		} catch (InterruptedException e){
+			Thread.currentThread().interrupt();
+			throw new BadRequestException(ErrorCode.NOT_ACQUIRE_LOCK);
+		} finally {
+			if (lock.isHeldByCurrentThread()) {
+				lock.unlock();
 			}
 		}
 	}
